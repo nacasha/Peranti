@@ -1,0 +1,18 @@
+.SingleTextOutput {
+  height: 100%;
+  display: flex;
+
+  .box {
+    white-space-collapse: preserve;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1;
+
+    width: 100%;
+    overflow: auto;
+    padding: 5px;
+    background-color: white;
+    text-wrap: nowrap;
+    border: 1px solid #dadada;
+  }
+}

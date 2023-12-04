@@ -1,0 +1,1 @@
+export { SingleTextOutput } from './SingleTextOutput'

@@ -1,0 +1,16 @@
+.SingleTextareaInput {
+  height: 100%;
+  display: flex;
+
+  textarea {
+    flex: 1;
+    border-radius: 4px;
+    padding: 5px;
+    outline: none !important;
+    font-size: 14px;
+    line-height: 1;
+    resize: none;
+    text-wrap: nowrap;
+    border: 1px solid #dadada;
+  }
+}
