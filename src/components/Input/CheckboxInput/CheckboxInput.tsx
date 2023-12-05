@@ -1,16 +1,15 @@
 import { FC, useId } from "react"
 
 import "./CheckboxInput.scss";
+import { BaseInputComponentProps } from "../../../types/BaseInputComponentProps";
 
-interface CheckboxInputProps {
+interface CheckboxInputProps extends BaseInputComponentProps<boolean> {
   label: string;
-  onSubmit: (value: boolean) => any;
-  initialValue: boolean;
 }
 
 export const CheckboxInput: FC<CheckboxInputProps> = (props) => {
-  const { label, onSubmit, initialValue } = props;
   const id = useId()
+  const { label, onSubmit, initialValue } = props;
 
   const onChange: React.InputHTMLAttributes<HTMLInputElement>['onChange'] = (event) => {
     onSubmit(event.target.checked)

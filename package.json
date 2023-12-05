@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.1",
+    "@udecode/zustood": "^2.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.6",

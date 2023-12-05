@@ -1,13 +1,12 @@
-.SingleTextareaInput {
+.SingleTextInput {
   height: 100%;
   display: flex;
   flex-direction: column;
   gap: 5px;
 
-  textarea {
-    flex: 1;
+  input {
     border-radius: var(--border-radius);
-    padding: 5px;
+    padding: 7px 5px;
     outline: none !important;
     font-size: 14px;
     line-height: 1;

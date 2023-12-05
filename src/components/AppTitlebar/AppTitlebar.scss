@@ -1,0 +1,44 @@
+$color-border: #DADADA;
+$padding: 10px;
+
+.AppTitlebar {
+  height: 35px;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid $color-border;
+  background-color: #f6f6f6;
+
+  .AppTitlebar-main {
+    padding: 0 7px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+
+    .AppTitlebar-main-button {
+      display: flex;
+      border-radius: var(--border-radius);
+      padding: 5px;
+
+      &:hover {
+        background-color: rgb(224, 224, 224);
+        cursor: pointer;
+      }
+    }
+  }
+
+  .AppTitlebar-control {
+    .titlebar-button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 30px;
+    }
+
+    .titlebar-button:hover {
+      background: #bdbdbd;
+    }
+  }
+}

@@ -1,32 +1,29 @@
-import { useState } from "react";
+import { rootStore } from "../../store/root-store";
+import { Tool } from "../../types/Tool";
+import "./AppSidebar.scss"
 
 export const AppSidebar = () => {
-  const [title, setTitle] = useState("");
+  const tools = rootStore.tool.get.tools();
+  const currentTool = rootStore.tool.use.currentToolOrEmpty()
 
-  const pipelines = [
-    {
-      title: "Remove Duplicate Lines",
-    },
-    {
-      title: "Sort Lines",
-    },
-    {
-      title: "Date To Miliseconds",
-    },
-    {
-      title: "Miliseconds To Date",
-    },
-  ]
+  const onClickTool = (tool: Tool) => () => {
+    rootStore.tool.set.currentTool(tool)
+    rootStore.input.set.resetParams()
+  }
 
-  const onClickItem = (pipeline: typeof pipelines[0]) => () => {
-    setTitle(pipeline.title)
+  const isActive = (tool: Tool) => {
+    return currentTool.title === tool.title
   }
 
   return (
-    <div className="app-sidebar">
-      {pipelines.map((pipeline) => (
-        <div key={pipeline.title} className="app-sidebar-item" onClick={onClickItem(pipeline)}>
-          {pipeline.title}
+    <div className="AppSidebar">
+      {tools.map((tool) => (
+        <div
+          key={tool.title}
+          className={"AppSidebar-item ".concat(isActive(tool) ? "active" : "")}
+          onClick={onClickTool(tool)}
+        >
+          {tool.title}
         </div>
       ))}
     </div>

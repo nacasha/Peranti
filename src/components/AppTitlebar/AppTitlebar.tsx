@@ -1,22 +1,22 @@
 import { FC } from "react";
 
+import "./AppTitlebar.scss";
 import { useWindowListener } from "../../hooks/useWindowListener";
 
-interface AppTitlebar {
-  title: string;
-}
+import PanelLeftSVG from "../../assets/panel-left.svg"
 
-export const AppTitlebar: FC<AppTitlebar> = (props) => {
-  const { title } = props;
-
+export const AppTitlebar: FC = () => {
   useWindowListener();
 
   return (
-    <div className="app-titlebar" data-tauri-drag-region>
-      <div className="app-titlebar-main">
-        {title}
+    <div className="AppTitlebar" data-tauri-drag-region>
+      <div className="AppTitlebar-main">
+        <div className="AppTitlebar-main-button">
+          <img src={PanelLeftSVG} style={{ width: 15 }} alt="" />
+        </div>
+        <div className="AppTitlebar-main-title"></div>
       </div>
-      <div className="app-titlebar-control">
+      <div className="AppTitlebar-control">
         <div className="titlebar-button" id="titlebar-minimize">
           <img
             src="https://api.iconify.design/mdi:window-minimize.svg"
