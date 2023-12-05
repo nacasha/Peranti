@@ -1,10 +1,6 @@
 import { FC } from "react";
 import { rootStore } from "../../store/root-store";
-import { SingleTextOutput } from "../Output/SingleTextOutput";
-
-const OutputComponents = {
-  SingleTextOutput: SingleTextOutput
-}
+import { listOfOutputComponent } from "../Output";
 
 interface OutputComponentProps {
   component: string;
@@ -15,7 +11,7 @@ interface OutputComponentProps {
 const OutputComponent: FC<OutputComponentProps> = (props) => {
   const { component, field, props: componentProps } = props;
 
-  const Component = (OutputComponents as any)[component]
+  const Component = (listOfOutputComponent as any)[component]
   const outputValue = rootStore.output.useTracked.params()[field]
 
   return (

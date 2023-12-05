@@ -1,14 +1,6 @@
 import { FC } from "react";
 import { rootStore } from "../../store/root-store";
-import { CheckboxInput } from "../Input/CheckboxInput";
-import { SingleTextareaInput } from "../Input/SingleTextareaInput";
-import { SingleTextInput } from "../Input/SingleTextInput";
-
-const InputComponents = {
-  CheckboxInput: CheckboxInput,
-  SingleTextareaInput: SingleTextareaInput,
-  SingleTextInput: SingleTextInput,
-}
+import { listOfInputComponent } from "../Input";
 
 interface InputComponentProps {
   component: string;
@@ -20,7 +12,7 @@ interface InputComponentProps {
 const InputComponent: FC<InputComponentProps> = (props) => {
   const { component, field, props: componentProps, initialValue } = props;
 
-  const Component = (InputComponents as any)[component]
+  const Component = (listOfInputComponent as any)[component]
   const onSubmit = (val: any) => rootStore.input.set.setParams(field, val)
 
   return (

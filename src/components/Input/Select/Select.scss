@@ -1,0 +1,13 @@
+.Select {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  select {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: #f9f9f9;
+    padding: var(--input-padding);
+    outline: none;
+  }
+}

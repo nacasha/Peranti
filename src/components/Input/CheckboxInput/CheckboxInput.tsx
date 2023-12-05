@@ -3,9 +3,7 @@ import { FC, useId } from "react"
 import "./CheckboxInput.scss";
 import { BaseInputComponentProps } from "../../../types/BaseInputComponentProps";
 
-interface CheckboxInputProps extends BaseInputComponentProps<boolean> {
-  label: string;
-}
+interface CheckboxInputProps extends BaseInputComponentProps<boolean> {}
 
 export const CheckboxInput: FC<CheckboxInputProps> = (props) => {
   const id = useId()

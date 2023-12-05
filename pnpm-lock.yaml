@@ -8,6 +8,9 @@ dependencies:
   '@tauri-apps/api':
     specifier: ^1.5.1
     version: 1.5.1
+  '@types/uuid':
+    specifier: ^9.0.7
+    version: 9.0.7
   '@udecode/zustood':
     specifier: ^2.0.0
     version: 2.0.0(react-dom@18.2.0)(react@18.2.0)(scheduler@0.23.0)(zustand@4.4.7)
@@ -17,6 +20,9 @@ dependencies:
   react-dom:
     specifier: ^18.2.0
     version: 18.2.0(react@18.2.0)
+  uuid:
+    specifier: ^9.0.1
+    version: 9.0.1
   zustand:
     specifier: ^4.4.7
     version: 4.4.7(@types/react@18.2.41)(react@18.2.0)
@@ -658,6 +664,10 @@ packages:
   /@types/scheduler@0.16.8:
     resolution: {integrity: sha512-WZLiwShhwLRmeV6zH+GkbOFT6Z6VklCItrDioxUnv+u4Ll+8vKeFySoFyK/0ctcRpOmwAicELfmys1sDc/Rw+A==}
 
+  /@types/uuid@9.0.7:
+    resolution: {integrity: sha512-WUtIVRUZ9i5dYXefDEAI7sh9/O7jGvHg7Df/5O/gtH3Yabe5odI3UWopVR1qbPXQtvOxWu3mM4XxlYeZtMWF4g==}
+    dev: false
+
   /@udecode/zustood@2.0.0(react-dom@18.2.0)(react@18.2.0)(scheduler@0.23.0)(zustand@4.4.7):
     resolution: {integrity: sha512-zMmEhP55PHVxIsMWuBf7LbNUTkGDPAGeCtcbJUD+k47ubkLR/yg0hjQh0hD0DARl2X86U+SJNe628qxVtMARVw==}
     peerDependencies:
@@ -1109,6 +1119,11 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    hasBin: true
     dev: false
 
   /vite@4.5.1(sass@1.69.5):

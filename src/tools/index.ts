@@ -4,6 +4,7 @@ import removeDuplicateLines from "./remove-duplicate-lines";
 import sortLines from "./sort-lines";
 import compareLines from "./compare-lines";
 import generateUuid from "./generate-uuid";
+import prefixSuffixLines from "./prefix-suffix-lines";
 
 export const listOfTools = [
   textToUppercase,
@@ -11,5 +12,6 @@ export const listOfTools = [
   removeDuplicateLines,
   sortLines,
   compareLines,
-  generateUuid
+  generateUuid,
+  prefixSuffixLines
 ]

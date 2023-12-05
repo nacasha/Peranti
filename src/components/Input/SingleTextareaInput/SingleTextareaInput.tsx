@@ -3,9 +3,7 @@ import { FC, useId } from "react";
 import "./SingleTextareaInput.scss";
 import { BaseInputComponentProps } from "../../../types/BaseInputComponentProps";
 
-interface SingleTextareaInputProps extends BaseInputComponentProps {
-  label: string;
-}
+interface SingleTextareaInputProps extends BaseInputComponentProps {}
 
 export const SingleTextareaInput: FC<SingleTextareaInputProps> = (props) => {
   const id = useId()

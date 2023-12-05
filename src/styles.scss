@@ -1,4 +1,3 @@
-$color-border: #DADADA;
 $padding: 10px;
 
 html, body {
@@ -13,6 +12,13 @@ html {
   --background-color-content: #ffffff;
   --background-color-statusbar: #f6f6f6;
   --border-radius: 4px;
+
+  // Input component styles
+  --input-padding: 10px;
+
+  // Output component styles
+  --output-padding: 10px;
+
 }
 
 button {
@@ -75,7 +81,7 @@ button {
     display: flex;
     gap: 0px;
     padding: 4px 15px;
-    border-bottom: 1px solid $color-border;
+    border-bottom: 1px solid var(--border-color);
     justify-content: space-between;
 
     .AppContentToolbar-title {
@@ -105,7 +111,7 @@ button {
     }
 
     .input-area {
-      border-right: 1px solid $color-border;
+      border-right: 1px solid var(--border-color);
     }
 
     .area-content {

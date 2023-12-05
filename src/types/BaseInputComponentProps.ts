@@ -11,4 +11,9 @@ export interface BaseInputComponentProps<T = string> {
    * Initial value of input component
    */
   initialValue: string;
+
+  /**
+   * Label to put on top of input component
+   */
+  label: string;
 }
