@@ -1,6 +1,7 @@
 import { Tool } from "../../types/Tool";
 
 const prefixSuffixLines: Tool = {
+  id: "prefix-suffix-lines",
   title: "Prefix Suffix Lines",
   action: ({ input, prefix, suffix }: { prefix: string, suffix: string, input: string }) => {
     const lines = input.split('\n')

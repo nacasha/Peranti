@@ -30,8 +30,8 @@ export const AreaInput = () => {
   const { inputs } = currentTool
 
   return (
-    <div className="input-area">
-      <div className="area-content-padded">
+    <div className="ToolRunArea-input">
+      <div className="ToolRunArea-component-list">
         {inputs.map((input) => (
           <InputComponent
             key={currentTool.title + input.field}

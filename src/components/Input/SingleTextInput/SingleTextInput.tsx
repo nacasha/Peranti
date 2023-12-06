@@ -16,7 +16,9 @@ export const SingleTextInput: FC<SingleTextInputProps> = (props) => {
 
   return (
     <div className="SingleTextInput">
-      <label htmlFor={id}>{label}</label>
+      <label className="InputOutputLabel" htmlFor={id}>
+        {label}
+      </label>
       <input id={id} onBlur={onInputBlur} defaultValue={initialValue} />
     </div>
   );

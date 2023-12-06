@@ -6,12 +6,18 @@ html, body {
 }
 
 html {
+  // Colors
   --accent-color: #0163e1;
   --border-color: #DADADA;
-  --background-color-sidebar: #f6f6f6;
-  --background-color-content: #ffffff;
-  --background-color-statusbar: #f6f6f6;
+
+  // General
   --border-radius: 4px;
+
+  // App Content
+  --background-color-content: #ffffff;
+
+  // App Statusbar
+  --background-color-statusbar: #f6f6f6;
 
   // Input component styles
   --input-padding: 10px;
@@ -19,6 +25,12 @@ html {
   // Output component styles
   --output-padding: 10px;
 
+  // Input and output component styles
+  --input-output-label-spacing: 10px;
+
+  // Sidebar
+  --sidebar-width: 250px;
+  --sidebar-background-color: #f6f6f6;
 }
 
 button {
@@ -36,6 +48,11 @@ button {
   &:active {
     background: rgb(224, 224, 224);
   }
+}
+
+.InputOutputLabel {
+  line-height: 1;
+  margin-bottom: var(--input-output-label-spacing);
 }
 
 :root {
@@ -77,53 +94,53 @@ button {
   display: flex;
   flex-direction: column;
 
-  .AppContentToolbar {
+  .ToolHeader {
     display: flex;
     gap: 0px;
     padding: 4px 15px;
     border-bottom: 1px solid var(--border-color);
     justify-content: space-between;
 
-    .AppContentToolbar-title {
+    .ToolHeader-title {
       font-weight: 500;
     }
 
-    .AppContentToolbar-button {
+    .ToolHeader-button {
       display: flex;
     }
   }
 
-  .AppContent-area {
+  .ToolRunArea {
     flex: 1;
     display: grid;
-    // grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr 1fr;
+
+    &.horizontal {
+      grid-template-rows: 1fr 1fr;
+      grid-template-columns: unset;
+
+      .ToolRunArea-input {
+        border-right: unset;
+        border-bottom: 1px solid var(--border-color);
+      }
+    }
 
     .area-content {
       height: 100%;
     }
 
-    .input-area, .output-area {
+    .ToolRunArea-input, .ToolRunArea-output {
       display: flex;
       flex-direction: column;
       overflow: auto;
       position: relative;
     }
 
-    .input-area {
+    .ToolRunArea-input {
       border-right: 1px solid var(--border-color);
     }
 
-    .area-content {
-      display: flex;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-    }
-
-    .area-content-padded {
+    .ToolRunArea-component-list {
       padding: 15px;
       flex: 1;
       display: flex;

@@ -12,7 +12,9 @@ export const SingleTextOutput: FC<SingleTextOutputProps> = (props) => {
 
   return (
       <div className="SingleTextOutput">
-        <div>{label}</div>
+        <div className="InputOutputLabel">
+          {label}
+        </div>
         <div className="box-container">
           <textarea className="box" value={output} readOnly />
         </div>

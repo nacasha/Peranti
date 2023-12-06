@@ -1,17 +1,10 @@
 import { Tool } from "../../types/Tool";
+import { compareLinesAction } from "./compare-lines-action";
 
 const compareLines: Tool = {
+  id: "compare-lines",
   title: "Compare Lines",
-  action: ({ inputA, inputB }: { inputA: String, inputB: String }) => {
-    const linesA = inputA.split('\n');
-    const linesB = inputB.split('\n');
-
-    const bothExist = linesA.filter(line => linesB.includes(line)).join('\n');
-    const onlyExistInputA = linesA.filter(line => !linesB.includes(line)).join('\n');
-    const onlyExistInputB = linesB.filter(line => !linesA.includes(line)).join('\n');
-
-    return { output: bothExist, onlyExistInputA, onlyExistInputB }
-  },
+  action: compareLinesAction,
   inputs: [
     {
       field: "inputA",

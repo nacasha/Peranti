@@ -4,6 +4,7 @@ import "./AppTitlebar.scss";
 import { useWindowListener } from "../../hooks/useWindowListener";
 
 import PanelLeftSVG from "../../assets/panel-left.svg"
+import { rootStore } from "../../store/root-store";
 
 export const AppTitlebar: FC = () => {
   useWindowListener();
@@ -11,9 +12,11 @@ export const AppTitlebar: FC = () => {
   return (
     <div className="AppTitlebar" data-tauri-drag-region>
       <div className="AppTitlebar-main">
-        <div className="AppTitlebar-main-button">
+
+        <div className="AppTitlebar-main-button" onClick={rootStore.ui.set.toggleSidebar}>
           <img src={PanelLeftSVG} style={{ width: 15 }} alt="" />
         </div>
+
         <div className="AppTitlebar-main-title"></div>
       </div>
       <div className="AppTitlebar-control">

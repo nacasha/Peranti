@@ -1,6 +1,7 @@
 import { Tool } from "../../types/Tool";
 
 const sortLines: Tool = {
+  id: "sort-lines",
   title: "Sort Lines",
   action: ({ input }: { input: String }) => {
     const lines = input.split('\n').filter((line) => line.trim() !== "");

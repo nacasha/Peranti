@@ -1,19 +1,10 @@
 import { Tool } from "../../types/Tool";
+import { removeDuplicateLinesActions } from "./remove-duplicate-lines-action";
 
 const removeDuplicateLines: Tool = {
+  id: "remove-duplicate-lines",
   title: "Remove Duplicate Lines",
-  action: ({ input }: { input: String }) => {
-    // Split the input string into an array of lines
-    const lines = input.split('\n');
-
-    // Use a Set to keep track of unique lines
-    const uniqueLines = new Set(lines);
-
-    // Convert the Set back to an array and join the lines
-    const resultString = Array.from(uniqueLines).join('\n');
-
-    return { output: resultString }
-  },
+  action: removeDuplicateLinesActions,
   inputs: [
     {
       field: "input",

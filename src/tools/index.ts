@@ -5,6 +5,7 @@ import sortLines from "./sort-lines";
 import compareLines from "./compare-lines";
 import generateUuid from "./generate-uuid";
 import prefixSuffixLines from "./prefix-suffix-lines";
+import millisecondsToDate from "./milliseconds-to-date";
 
 export const listOfTools = [
   textToUppercase,
@@ -13,5 +14,6 @@ export const listOfTools = [
   sortLines,
   compareLines,
   generateUuid,
-  prefixSuffixLines
+  prefixSuffixLines,
+  millisecondsToDate
 ]

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { rootStore } from "../../store/root-store";
 
-export const Runner = () => {
+export const ToolRunButton = () => {
   const currentTool = rootStore.tool.use.currentToolOrEmpty()
   const inputParams = rootStore.input.use.params()
 

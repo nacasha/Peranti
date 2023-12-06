@@ -28,8 +28,8 @@ export const AreaOutput = () => {
   const { outputs } = currentTool
 
   return (
-    <div className="output-area">
-      <div className="area-content-padded">
+    <div className="ToolRunArea-output">
+      <div className="ToolRunArea-component-list">
         {outputs.map((output) => (
           <OutputComponent
             key={currentTool.title + output.field}

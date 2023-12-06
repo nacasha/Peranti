@@ -1,7 +1,7 @@
 import { rootStore } from "../../store/root-store";
-import { Runner } from "../Runner"
+import { ToolRunButton } from "../ToolRunButton"
 
-export const AreaToolbar = () => {
+export const ToolHeader = () => {
   const { title } = rootStore.tool.use.currentToolOrEmpty()
 
   const onClickCopy = () => {
@@ -18,14 +18,14 @@ export const AreaToolbar = () => {
   }
 
   return (
-    <div className="AppContentToolbar">
-      <div className="AppContentToolbar-title">
+    <div className="ToolHeader">
+      <div className="ToolHeader-title">
         {title}
       </div>
-      <div className="AppContentToolbar-button">
-        <Runner />
+      <div className="ToolHeader-button">
+        <ToolRunButton />
         <div className="toolbar-button">
-          <button>Clear</button>
+          <button>Sample</button>
         </div>
         <div className="toolbar-button">
           <button onClick={onClickCopy}>Copy Output</button>

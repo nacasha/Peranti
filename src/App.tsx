@@ -1,9 +1,8 @@
 import { AppSidebar } from "./components/AppSidebar";
 import { AppStatusbar } from "./components/AppStatusbar";
 import { AppTitlebar } from "./components/AppTitlebar";
-import { AreaInput } from "./components/AreaInput";
-import { AreaOutput } from "./components/AreaOutput";
-import { AreaToolbar } from "./components/AreaToolbar";
+import { ToolHeader } from "./components/ToolHeader";
+import { ToolRunArea } from "./components/ToolRunArea/ToolRunArea";
 
 export const App = () => {
   return (
@@ -13,11 +12,8 @@ export const App = () => {
       <div className="AppContainer">
         <AppSidebar />
         <div className="AppContent">
-          <AreaToolbar />
-          <div className="AppContent-area">
-            <AreaInput />
-            <AreaOutput />
-          </div>
+          <ToolHeader />
+          <ToolRunArea />
         </div>
       </div>
 

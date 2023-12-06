@@ -15,12 +15,14 @@ export const AppSidebar = () => {
     return currentTool.title === tool.title
   }
 
+  const isSidebarHidden = rootStore.ui.use.hiddenSidebar()
+
   return (
-    <div className="AppSidebar">
+    <div className={"AppSidebar".concat(isSidebarHidden ? " hidden" : "")}>
       {tools.map((tool) => (
         <div
           key={tool.title}
-          className={"AppSidebar-item ".concat(isActive(tool) ? "active" : "")}
+          className={"AppSidebar-item".concat(isActive(tool) ? " active" : "")}
           onClick={onClickTool(tool)}
         >
           {tool.title}

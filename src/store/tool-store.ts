@@ -6,7 +6,7 @@ const toolStore = createStore('tool')({
   tools: listOfTools,
   currentTool: undefined as undefined | Tool,
 })
-  .extendSelectors((set, get, api) => ({
+  .extendSelectors((_set, get) => ({
     currentToolOrEmpty: () => {
       const currentTool = get.currentTool();
       if (currentTool) return currentTool

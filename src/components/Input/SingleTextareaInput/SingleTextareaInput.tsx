@@ -16,7 +16,9 @@ export const SingleTextareaInput: FC<SingleTextareaInputProps> = (props) => {
 
   return (
     <div className="SingleTextareaInput">
-      <label htmlFor={id}>{label}</label>
+      <label className="InputOutputLabel" htmlFor={id}>
+        {label}
+      </label>
       <textarea id={id} onBlur={onInputBlur} defaultValue={initialValue} />
     </div>
   );

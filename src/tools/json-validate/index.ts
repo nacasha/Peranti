@@ -3,8 +3,8 @@ import { v1, v4 } from 'uuid';
 import { Tool } from "../../types/Tool";
 
 const generateUuid: Tool = {
-  id: "generate-uuid",
-  title: "Generate UUID",
+  id: "json-validate",
+  title: "JSON Validate",
   action: ({ numberOfGenerated, type }: { numberOfGenerated: number, type: string }) => {
     const uuidGenerator = { v1, v4 }[type]
     if (!uuidGenerator) return { output: "" }

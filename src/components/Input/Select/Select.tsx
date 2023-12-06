@@ -17,7 +17,9 @@ export const Select: FC<SelectProps> = (props) => {
 
   return (
     <div className="Select">
-      <label htmlFor={id}>{label}</label>
+      <label className="InputOutputLabel" htmlFor={id}>
+        {label}
+      </label>
       <select id={id} onChange={onChange} defaultValue={initialValue}>
         {options.map((option) => (
           <option key={option.value} value={option.value}>{option.label}</option>
