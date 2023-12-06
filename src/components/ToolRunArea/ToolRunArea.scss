@@ -1,0 +1,56 @@
+$padding: 15px;
+$field-spacing: 15px;
+
+.ToolRunArea {
+  flex: 1;
+  display: grid;
+  padding: $padding;
+
+  &.side-by-side {
+    grid-template-columns: 1fr 1fr;
+    column-gap: $padding;
+  }
+
+  &.top-bottom {
+    grid-template-rows: 1fr 1fr;
+    row-gap: $padding;
+  }
+
+  &.top-bottom-auto {
+    grid-template-rows: auto 1fr;
+    row-gap: $padding;
+  }
+
+  &.separated-input-output {
+    padding: unset;
+    column-gap: unset;
+    row-gap: unset;
+
+    .ToolRunArea-input, .ToolRunArea-output {
+      padding: $padding;
+    }
+
+    &.side-by-side {
+      .ToolRunArea-input {
+        border-right: 1px solid var(--border-color);
+      }
+    }
+
+    &.top-bottom, &.top-bottom-auto {
+      .ToolRunArea-input {
+        border-bottom: 1px solid var(--border-color);
+      }
+    }
+  }
+
+  .ToolRunArea-input, .ToolRunArea-output {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $field-spacing;
+  }
+}

@@ -31,17 +31,15 @@ export const AreaInput = () => {
 
   return (
     <div className="ToolRunArea-input">
-      <div className="ToolRunArea-component-list">
-        {inputs.map((input) => (
-          <InputComponent
-            key={currentTool.title + input.field}
-            field={input.field}
-            component={input.component}
-            props={input.props}
-            initialValue={input.defaultValue}
-          />
-        ))}
-      </div>
+      {inputs.map((input) => (
+        <InputComponent
+          key={currentTool.title + input.field}
+          field={input.field}
+          component={input.component}
+          props={input.props}
+          initialValue={input.defaultValue}
+        />
+      ))}
     </div>
   );
 }

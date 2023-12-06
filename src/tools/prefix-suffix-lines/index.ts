@@ -3,6 +3,7 @@ import { Tool } from "../../types/Tool";
 const prefixSuffixLines: Tool = {
   id: "prefix-suffix-lines",
   title: "Prefix Suffix Lines",
+  category: "Text",
   action: ({ input, prefix, suffix }: { prefix: string, suffix: string, input: string }) => {
     const lines = input.split('\n')
       .filter((text) => text.trim() !== "")
@@ -14,7 +15,7 @@ const prefixSuffixLines: Tool = {
   inputs: [
     {
       field: "prefix",
-      component: "SingleTextInput",
+      component: "Text",
       defaultValue: "",
       props: {
         label: "Prefix"
@@ -22,7 +23,7 @@ const prefixSuffixLines: Tool = {
     },
     {
       field: "suffix",
-      component: "SingleTextInput",
+      component: "Text",
       defaultValue: "",
       props: {
         label: "Suffix"
@@ -30,7 +31,7 @@ const prefixSuffixLines: Tool = {
     },
     {
       field: "input",
-      component: "SingleTextareaInput",
+      component: "Textarea",
       defaultValue: "",
       props: {
         label: "Text Lines"
@@ -40,7 +41,7 @@ const prefixSuffixLines: Tool = {
   outputs: [
     {
       field: "output",
-      component: "SingleTextOutput",
+      component: "Textarea",
     },
   ]
 }

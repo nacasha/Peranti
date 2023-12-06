@@ -1,6 +1,6 @@
 interface InputParams {
-  inputA: string;
-  inputB: string;
+  listA: string;
+  listB: string;
 }
 
 interface OutputMap {
@@ -9,11 +9,11 @@ interface OutputMap {
   onlyExistInputB: unknown;
 }
 
-export function compareLinesAction(inputParams: InputParams): OutputMap {
-  const { inputA, inputB } = inputParams
+export function compareListAction(inputParams: InputParams): OutputMap {
+  const { listA, listB } = inputParams
 
-  const linesA = inputA.split('\n');
-  const linesB = inputB.split('\n');
+  const linesA = listA.split('\n');
+  const linesB = listB.split('\n');
 
   const bothExist = linesA.filter(line => linesB.includes(line)).join('\n');
   const onlyExistInputA = linesA.filter(line => !linesB.includes(line)).join('\n');

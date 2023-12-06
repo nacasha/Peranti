@@ -8,14 +8,14 @@ const millisecondsToDate: Tool = {
   inputs: [
     {
       field: "input",
-      component: "SingleTextareaInput",
+      component: "Textarea",
       defaultValue: "",
     },
   ],
   outputs: [
     {
       field: "output",
-      component: "SingleTextOutput",
+      component: "Textarea",
     }
   ]
 }

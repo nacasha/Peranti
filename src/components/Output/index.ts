@@ -1,5 +1,7 @@
-import { SingleTextOutput } from "./SingleTextOutput";
+import { SingleTextareaOutput } from "./SingleTextareaOutput";
+import { TextOutput } from "./TextOutput";
 
 export const listOfOutputComponent = {
-  SingleTextOutput: SingleTextOutput
+  Textarea: SingleTextareaOutput,
+  Text: TextOutput
 }

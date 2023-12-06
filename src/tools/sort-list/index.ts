@@ -1,8 +1,9 @@
 import { Tool } from "../../types/Tool";
 
-const sortLines: Tool = {
-  id: "sort-lines",
-  title: "Sort Lines",
+const sortList: Tool = {
+  id: "sort-list",
+  title: "Sort List",
+  category: "List",
   action: ({ input }: { input: String }) => {
     const lines = input.split('\n').filter((line) => line.trim() !== "");
     lines.sort();
@@ -13,16 +14,16 @@ const sortLines: Tool = {
   inputs: [
     {
       field: "input",
-      component: "SingleTextareaInput",
+      component: "Textarea",
       defaultValue: "",
     }
   ],
   outputs: [
     {
       field: "output",
-      component: "SingleTextOutput",
+      component: "Textarea",
     }
   ]
 }
 
-export default sortLines
+export default sortList

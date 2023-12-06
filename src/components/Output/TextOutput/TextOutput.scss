@@ -1,16 +1,9 @@
-.SingleTextOutput {
-  height: 100%;
+.TextOutput {
   position: relative;
   display: flex;
   flex-direction: column;
 
-  .box-container {
-    position: relative;
-    display: flex;
-    flex: 1;
-  }
-
-  .box {
+  input {
     white-space-collapse: preserve;
     font-family: monospace;
     font-size: 14px;
@@ -23,16 +16,13 @@
     border: 1px solid #dadada;
     border-radius: var(--border-radius);
 
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    resize: none;
-    outline: none !important;
-
     &:hover {
       border: 1px solid color-mix(in srgb, var(--accent-color), #ffffff 65%);
+    }
+
+    &:focus {
+      border: 1px solid var(--accent-color);
+      outline: none;
     }
   }
 }

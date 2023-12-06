@@ -1,23 +1,24 @@
 import { Tool } from "../../types/Tool";
 import { removeDuplicateLinesActions } from "./remove-duplicate-lines-action";
 
-const removeDuplicateLines: Tool = {
-  id: "remove-duplicate-lines",
-  title: "Remove Duplicate Lines",
+const removeDuplicateList: Tool = {
+  id: "remove-duplicate-list",
+  title: "Remove Duplicate List",
+  category: "List",
   action: removeDuplicateLinesActions,
   inputs: [
     {
       field: "input",
-      component: "SingleTextareaInput",
+      component: "Textarea",
       defaultValue: "",
     }
   ],
   outputs: [
     {
       field: "output",
-      component: "SingleTextOutput",
+      component: "Textarea",
     }
   ]
 }
 
-export default removeDuplicateLines
+export default removeDuplicateList

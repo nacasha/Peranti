@@ -1,11 +1,8 @@
 export interface BaseInputComponentProps<T = string> {
   /**
-   * Handle input value changes
-   *
-   * @param value
-   * @returns
+   * Label to put on top of input component
    */
-  onSubmit: (value: T) => any;
+  label: string;
 
   /**
    * Initial value of input component
@@ -13,7 +10,10 @@ export interface BaseInputComponentProps<T = string> {
   initialValue: string;
 
   /**
-   * Label to put on top of input component
+   * Handle input value changes
+   *
+   * @param value
+   * @returns
    */
-  label: string;
+  onSubmit: (value: T) => any;
 }

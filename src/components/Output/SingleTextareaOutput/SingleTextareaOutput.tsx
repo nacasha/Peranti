@@ -1,17 +1,17 @@
 import { FC } from "react";
 
-import "./SingleTextOutput.scss";
+import "./SingleTextareaOutput.scss";
 
-interface SingleTextOutputProps {
+interface SingleTextareaOutputProps {
   output: string;
   label: string;
 }
 
-export const SingleTextOutput: FC<SingleTextOutputProps> = (props) => {
+export const SingleTextareaOutput: FC<SingleTextareaOutputProps> = (props) => {
   const { output, label = "Output" } = props;
 
   return (
-      <div className="SingleTextOutput">
+      <div className="SingleTextareaOutput">
         <div className="InputOutputLabel">
           {label}
         </div>

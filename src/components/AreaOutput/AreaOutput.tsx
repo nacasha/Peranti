@@ -29,16 +29,14 @@ export const AreaOutput = () => {
 
   return (
     <div className="ToolRunArea-output">
-      <div className="ToolRunArea-component-list">
-        {outputs.map((output) => (
-          <OutputComponent
-            key={currentTool.title + output.field}
-            field={output.field}
-            component={output.component}
-            props={output.props}
-          />
-        ))}
-      </div>
+      {outputs.map((output) => (
+        <OutputComponent
+          key={currentTool.title + output.field}
+          field={output.field}
+          component={output.component}
+          props={output.props}
+        />
+      ))}
     </div>
   );
 }

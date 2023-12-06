@@ -19,7 +19,11 @@ export const SingleTextInput: FC<SingleTextInputProps> = (props) => {
       <label className="InputOutputLabel" htmlFor={id}>
         {label}
       </label>
-      <input id={id} onBlur={onInputBlur} defaultValue={initialValue} />
+      <input
+        id={id}
+        onBlur={onInputBlur}
+        defaultValue={initialValue}
+      />
     </div>
   );
 }

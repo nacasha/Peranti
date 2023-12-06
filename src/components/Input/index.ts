@@ -4,8 +4,8 @@ import { SingleTextInput } from "./SingleTextInput";
 import { SingleTextareaInput } from "./SingleTextareaInput";
 
 export const listOfInputComponent = {
-  CheckboxInput: CheckboxInput,
-  SingleTextareaInput: SingleTextareaInput,
-  SingleTextInput: SingleTextInput,
+  Checkbox: CheckboxInput,
+  Textarea: SingleTextareaInput,
+  Text: SingleTextInput,
   Select: Select,
 }

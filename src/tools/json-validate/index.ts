@@ -5,6 +5,7 @@ import { Tool } from "../../types/Tool";
 const generateUuid: Tool = {
   id: "json-validate",
   title: "JSON Validate",
+  category: "JSON",
   action: ({ numberOfGenerated, type }: { numberOfGenerated: number, type: string }) => {
     const uuidGenerator = { v1, v4 }[type]
     if (!uuidGenerator) return { output: "" }
@@ -32,7 +33,7 @@ const generateUuid: Tool = {
     },
     {
       field: "numberOfGenerated",
-      component: "SingleTextInput",
+      component: "Text",
       defaultValue: 1,
       props: {
         label: "Number of Generated UUID"
@@ -42,7 +43,7 @@ const generateUuid: Tool = {
   outputs: [
     {
       field: "output",
-      component: "SingleTextOutput",
+      component: "Textarea",
     },
   ]
 }

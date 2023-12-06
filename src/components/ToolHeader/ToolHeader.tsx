@@ -1,6 +1,8 @@
 import { rootStore } from "../../store/root-store";
 import { ToolRunButton } from "../ToolRunButton"
 
+import "./ToolHeader.scss"
+
 export const ToolHeader = () => {
   const { title } = rootStore.tool.use.currentToolOrEmpty()
 

@@ -1,0 +1,19 @@
+.ToolHeader {
+  display: flex;
+  gap: 0px;
+  padding: 4px 15px;
+  border-bottom: 1px solid var(--border-color);
+  justify-content: space-between;
+  background-color: var(--tool-header-background-color);
+  position: sticky;
+  z-index: 1;
+  top: 0;
+
+  .ToolHeader-title {
+    font-weight: 500;
+  }
+
+  .ToolHeader-button {
+    display: flex;
+  }
+}

@@ -1,7 +1,9 @@
 import { createStore } from '@udecode/zustood'
+import { ToolRunTypeEnum } from '../enums/ToolRunTypeEnum'
 
 const inputStore = createStore('input')({
   params: {} as Record<string, any>,
+  runType: ToolRunTypeEnum.OnBlur
 })
   .extendActions(
     (set) => ({

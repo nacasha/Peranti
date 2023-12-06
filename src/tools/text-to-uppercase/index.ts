@@ -3,20 +3,21 @@ import { Tool } from "../../types/Tool";
 const textToUppercase: Tool = {
   id: "text-to-uppercase",
   title: "Text To Uppercase",
+  category: "Text",
   action: ({ input }: { input: String }) => {
     return { output: input.toUpperCase() }
   },
   inputs: [
     {
       field: "input",
-      component: "SingleTextareaInput",
+      component: "Textarea",
       defaultValue: "",
     }
   ],
   outputs: [
     {
       field: "output",
-      component: "SingleTextOutput",
+      component: "Textarea",
     }
   ]
 }

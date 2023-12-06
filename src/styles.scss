@@ -31,6 +31,9 @@ html {
   // Sidebar
   --sidebar-width: 250px;
   --sidebar-background-color: #f6f6f6;
+
+  // Tool Header
+  --tool-header-background-color: #ffffff;
 }
 
 button {
@@ -93,59 +96,6 @@ button {
   width: 100%;
   display: flex;
   flex-direction: column;
-
-  .ToolHeader {
-    display: flex;
-    gap: 0px;
-    padding: 4px 15px;
-    border-bottom: 1px solid var(--border-color);
-    justify-content: space-between;
-
-    .ToolHeader-title {
-      font-weight: 500;
-    }
-
-    .ToolHeader-button {
-      display: flex;
-    }
-  }
-
-  .ToolRunArea {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-
-    &.horizontal {
-      grid-template-rows: 1fr 1fr;
-      grid-template-columns: unset;
-
-      .ToolRunArea-input {
-        border-right: unset;
-        border-bottom: 1px solid var(--border-color);
-      }
-    }
-
-    .area-content {
-      height: 100%;
-    }
-
-    .ToolRunArea-input, .ToolRunArea-output {
-      display: flex;
-      flex-direction: column;
-      overflow: auto;
-      position: relative;
-    }
-
-    .ToolRunArea-input {
-      border-right: 1px solid var(--border-color);
-    }
-
-    .ToolRunArea-component-list {
-      padding: 15px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-  }
+  overflow: auto;
+  position: relative;
 }

@@ -10,7 +10,7 @@ const toolStore = createStore('tool')({
     currentToolOrEmpty: () => {
       const currentTool = get.currentTool();
       if (currentTool) return currentTool
-      return { title: "", action: () => ({}), inputs: [], outputs: [] } as Tool
+      return { title: "", action: () => ({}), inputs: [], outputs: [], id: "", category: "" } as Tool
     },
   }))
 
