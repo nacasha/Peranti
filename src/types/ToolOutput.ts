@@ -1,3 +1,5 @@
+import { type listOfOutputComponent } from "src/components/Output"
+
 export interface ToolOutput {
   /**
    * Field name that will be used as key in output map to show the value
@@ -7,7 +9,7 @@ export interface ToolOutput {
   /**
    * Component to render output
    */
-  component: string
+  component: keyof typeof listOfOutputComponent
 
   /**
    * Properties that will be passed into component

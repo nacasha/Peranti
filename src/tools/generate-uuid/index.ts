@@ -4,7 +4,7 @@ import { Tool } from "src/models/Tool"
 
 const generateUuid = new Tool({
   id: "generate-uuid",
-  title: "Generate UUID",
+  name: "Generate UUID",
   category: "Generator",
   action: ({ numberOfGenerated, type }: { numberOfGenerated: number, type: string }) => {
     const uuidGenerator = { v1, v4 }[type]

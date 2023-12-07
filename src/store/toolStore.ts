@@ -1,6 +1,8 @@
 import { makeAutoObservable } from "mobx"
 import { Tool } from "src/models/Tool"
 import { toolHistoryStore } from "./toolHistoryStore"
+import { type ToolHistory } from "src/types/ToolHistory"
+import { listOfTools } from "src/tools"
 
 class ToolStore {
   protected activeTool?: Tool = undefined
@@ -9,15 +11,25 @@ class ToolStore {
     makeAutoObservable(this)
   }
 
-  setActiveTool(tool: Tool) {
-    this.savePreviousToolToHistory()
-    this.activeTool = tool.openTool()
+  openTool(tool: Tool) {
+    if (this.getActiveTool().id !== tool.id) {
+      this.savePreviousToolToHistory()
+      this.activeTool = tool.openTool()
+    }
+  }
+
+  openHistory(toolHistory: ToolHistory) {
+    const tool = listOfTools.find((tool) => tool.id === toolHistory.toolId)
+    if (tool) {
+      this.activeTool = Tool.fromHistory(tool, toolHistory)
+    }
   }
 
   savePreviousToolToHistory() {
-    if (this.activeTool && this.activeTool.getIsDirty() && !this.activeTool.isHistory) {
-      this.activeTool.stateToHistory()
-      toolHistoryStore.add(this.activeTool)
+    const activeTool = this.activeTool
+
+    if (activeTool && activeTool.getIsDirty() && !activeTool.isReadOnly) {
+      toolHistoryStore.add(activeTool.toHistory())
     }
   }
 
@@ -25,7 +37,7 @@ class ToolStore {
     const currentTool = this.activeTool
     if (currentTool) return currentTool
     const defaultTool = new Tool({
-      title: "",
+      name: "",
       action: () => ({}),
       inputs: [],
       outputs: [],
@@ -36,8 +48,8 @@ class ToolStore {
     return defaultTool
   }
 
-  getActiveToolTitle() {
-    return this.getActiveTool().title
+  getActiveToolName() {
+    return this.getActiveTool().name
   }
 
   isToolActive(tool: Tool) {

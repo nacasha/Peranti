@@ -1,37 +1,31 @@
 import { observer } from "mobx-react"
-import { rootStore } from "src/store/root-store"
 import "./AppSidebar.scss"
+
 import { toolStore } from "src/store/toolStore"
 import { type Tool } from "src/models/Tool"
 import { listOfTools } from "src/tools"
-import { toolHistoryStore } from "src/store/toolHistoryStore"
+import { userInterfaceStore } from "src/store/userInterfaceStore"
+import { ToolHistoryList } from "../ToolHistoryList/ToolHistoryList"
 
 const AppSidebarItem = observer(({ tool }: { tool: Tool }) => {
   return (
     <div
-      key={tool.title}
+      key={tool.name}
       className={"AppSidebar-item".concat(toolStore.isToolActive(tool) ? " active" : "")}
-      onClick={() => { toolStore.setActiveTool(tool) }}
+      onClick={() => { toolStore.openTool(tool) }}
     >
-      {tool.title}
+      {tool.name}
     </div>
   )
 })
 
-const AppSidebarHistory = observer(() => {
-  return toolHistoryStore.history
-    .map((tool) => <AppSidebarItem key={tool.id} tool={tool} />)
-})
-
-export const AppSidebar = () => {
-  const isSidebarHidden = rootStore.ui.use.hiddenSidebar()
+export const AppSidebar = observer(() => {
+  const { isSidebarHidden } = userInterfaceStore
 
   return (
     <div className={"AppSidebar".concat(isSidebarHidden ? " hidden" : "")}>
       {listOfTools.map((tool) => <AppSidebarItem key={tool.id} tool={tool} />)}
-      <div className="AppSidebar-history">
-        <AppSidebarHistory />
-      </div>
+      <ToolHistoryList />
     </div>
   )
-}
+})

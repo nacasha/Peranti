@@ -3,7 +3,7 @@ import { v1, v4 } from "uuid"
 
 const generateUuid = new Tool({
   id: "json-validate",
-  title: "JSON Validate",
+  name: "JSON Validate",
   category: "JSON",
   action: ({ numberOfGenerated, type }: { numberOfGenerated: number, type: string }) => {
     const uuidGenerator = { v1, v4 }[type]

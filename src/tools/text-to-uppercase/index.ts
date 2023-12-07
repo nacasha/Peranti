@@ -2,7 +2,7 @@ import { Tool } from "src/models/Tool"
 
 const textToUppercase = new Tool({
   id: "text-to-uppercase",
-  title: "Text To Uppercase",
+  name: "Text To Uppercase",
   category: "Text",
   action: ({ input }: { input: string }) => {
     return { output: input.toUpperCase() }

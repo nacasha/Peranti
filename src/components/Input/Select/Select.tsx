@@ -1,9 +1,9 @@
 import { type FC, useId } from "react"
-import { type BaseInputComponentProps } from "src/types/BaseInputComponentProps"
+import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./Select.scss"
 
-interface SelectProps extends BaseInputComponentProps {
+interface SelectProps extends InputComponentProps {
   options: Array<{ value: string, label: string }>
 }
 

@@ -3,7 +3,7 @@ import { millisecondsToDateAction } from "./milliseconds-to-date-action"
 
 const millisecondsToDate = new Tool({
   id: "milliseconds-to-date",
-  title: "Milliseconds To Date",
+  name: "Milliseconds To Date",
   category: "Date Time",
   action: millisecondsToDateAction,
   inputs: [

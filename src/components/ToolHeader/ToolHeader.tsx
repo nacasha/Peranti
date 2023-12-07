@@ -6,7 +6,7 @@ import { observer } from "mobx-react"
 
 const ToolHeaderTitle = observer(() => (
   <div className="ToolHeader-title">
-    {toolStore.getActiveToolTitle()}
+    {toolStore.getActiveToolName()}
   </div>
 ))
 

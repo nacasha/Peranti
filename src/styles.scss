@@ -8,6 +8,9 @@ html, body {
 html {
   // Colors
   --accent-color: #0163e1;
+  --accent-color-light: color-mix(in srgb, var(--accent-color), #ffffff 65%);
+  --accent-color-light-2: color-mix(in srgb, var(--accent-color), #ffffff 85%);
+
   --border-color: #DADADA;
 
   // General

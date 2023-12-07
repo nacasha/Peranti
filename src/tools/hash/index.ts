@@ -3,7 +3,7 @@ import { hashAction } from "./hash-action"
 
 const hash = new Tool({
   id: "hash",
-  title: "Hash",
+  name: "Hash",
   category: "Generator",
   action: hashAction,
   layout: "top-bottom-auto",

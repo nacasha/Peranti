@@ -2,7 +2,7 @@ import { Tool } from "src/models/Tool"
 
 const textToLowercase = new Tool({
   id: "text-to-lowercase",
-  title: "Text To Lowercase",
+  name: "Text To Lowercase",
   category: "Text",
   action: ({ input }: { input: string }) => {
     return { output: input.toLowerCase() }

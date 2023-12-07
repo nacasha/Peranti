@@ -1,4 +1,4 @@
-export interface BaseInputComponentProps<T = string> {
+export interface InputComponentProps<T = string> {
   /**
    * Label to put on top of input component
    */

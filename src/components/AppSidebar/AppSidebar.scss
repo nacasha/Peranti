@@ -21,7 +21,7 @@
     user-select: none;
 
     &:hover {
-      background: #D0DEF0;
+      background: var(--accent-color-light-2);
     }
 
     &.active {

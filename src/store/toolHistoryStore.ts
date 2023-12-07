@@ -1,15 +1,15 @@
 import { makeAutoObservable } from "mobx"
-import { type Tool } from "src/models/Tool"
+import { type ToolHistory } from "src/types/ToolHistory"
 
 class ToolHistoryStore {
-  history: Tool[] = []
+  history: ToolHistory[] = []
 
   constructor() {
     makeAutoObservable(this)
   }
 
-  add(tool: Tool) {
-    this.history.unshift(tool)
+  add(toolHistory: ToolHistory) {
+    this.history.unshift(toolHistory)
   }
 }
 

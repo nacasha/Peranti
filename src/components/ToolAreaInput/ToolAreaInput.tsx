@@ -15,6 +15,7 @@ export const ToolAreaInput = observer(() => {
           component={input.component}
           props={input.props}
           initialValue={input.defaultValue}
+          readOnly={true}
         />
       ))}
     </div>

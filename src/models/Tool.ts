@@ -1,10 +1,12 @@
 import { observable, action, makeObservable } from "mobx"
+import { type ToolHistory } from "src/types/ToolHistory"
 import { type ToolInput } from "src/types/ToolInput"
 import { type ToolOutput } from "src/types/ToolOutput"
+import { generateRandomString } from "src/utils/generateRandomString"
 
 interface ToolConstructor {
   id: string
-  title: string
+  name: string
   inputs: ToolInput[]
   outputs: ToolOutput[]
   category: string
@@ -12,28 +14,16 @@ interface ToolConstructor {
   layout?: "side-by-side" | "top-bottom" | "top-bottom-auto"
 }
 
-function generateRandomString(length: number): string {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-  let result = ""
-
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length)
-    result += characters.charAt(randomIndex)
-  }
-
-  return result
-}
-
-export class Tool {
+export class Tool implements ToolConstructor {
   /**
    * Unique ID of tool
    */
   id: string
 
   /**
-   * Title of tool that will be shown at header
+   * Name of tool
    */
-  title: string
+  name: string
 
   /**
    * List of input fields for tool
@@ -77,21 +67,54 @@ export class Tool {
   isHistory: boolean = false
 
   /**
+   * Indicates tool input is read only
+   */
+  isReadOnly: boolean = false
+
+  /**
+   * Indicates tool has been running at least once
+   */
+  hasRunning: boolean = false
+
+  /**
    * Action of tool.
    * Input always comes in form of Map as well as the returned value
    */
 
   constructor(params: ToolConstructor) {
-    const { action, category, id, inputs, outputs, title, layout } = params
+    const { action, category, id, inputs, outputs, name: title, layout } = params
     this.id = id
     this.action = action
     this.category = category
     this.inputs = inputs
     this.outputs = outputs
-    this.title = title
+    this.name = title
     this.layout = layout
+  }
 
-    makeObservable(this)
+  /**
+   * Load tool from history and make inputs read only
+   *
+   * @param toolHistory
+   */
+  static fromHistory(mainTool: Tool, toolHistory: ToolHistory) {
+    const tool = new Tool({ ...mainTool })
+    tool.id = toolHistory.id
+    tool.inputParams = toolHistory.inputParams
+    tool.outputParams = toolHistory.outputParams
+    tool.isReadOnly = true
+    return tool
+  }
+
+  /**
+   * Generate object of current tool state to save into history
+   *
+   * @returns
+   */
+  toHistory(): ToolHistory {
+    const { id: toolId, inputParams, outputParams } = this
+    const id = generateRandomString(15)
+    return { id, toolId, inputParams, outputParams }
   }
 
   /**
@@ -130,7 +153,7 @@ export class Tool {
     const hasInput = Object.values(this.inputParams).filter((value) => Boolean(value)).length > 0
     const hasOutput = Object.values(this.outputParams).filter((value) => Boolean(value)).length > 0
 
-    return hasInput || hasOutput
+    return hasInput && hasOutput && this.hasRunning
   }
 
   /**
@@ -149,29 +172,20 @@ export class Tool {
    */
   @action
   run() {
-    const fieldsWithDefaultValue = this.getInputParamsWithDefault()
+    if (this.isReadOnly) return
 
+    const fieldsWithDefaultValue = this.getInputParamsWithDefault()
     this.outputParams = this.action({ ...fieldsWithDefaultValue, ...this.inputParams })
+    this.hasRunning = true
   }
 
   /**
-   * Create new session of tool with default state of class
+   * Open tool by cloning instance of created tool that shown on sidebar
+   * As well as make it observable to the UI can react to variable changes
    *
    * @returns
    */
   openTool() {
-    if (this.getIsDirty()) {
-      return this
-    }
-
-    return new Tool({ ...this })
-  }
-
-  /**
-   * Generate new ID with random string
-   */
-  stateToHistory() {
-    this.id = this.id.concat(generateRandomString(15))
-    this.isHistory = true
+    return makeObservable(new Tool({ ...this }))
   }
 }

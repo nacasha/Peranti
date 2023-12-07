@@ -2,7 +2,7 @@ import { Tool } from "src/models/Tool"
 
 const prefixSuffixLines = new Tool({
   id: "prefix-suffix-lines",
-  title: "Prefix Suffix Lines",
+  name: "Prefix Suffix Lines",
   category: "Text",
   action: ({ input, prefix, suffix }: { prefix: string, suffix: string, input: string }) => {
     const lines = input.split("\n")

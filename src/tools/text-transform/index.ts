@@ -2,7 +2,7 @@ import { Tool } from "src/models/Tool"
 
 const textTransformTool = new Tool({
   id: "text-transform",
-  title: "Text Transform",
+  name: "Text Transform",
   category: "Text",
   inputs: [
     {

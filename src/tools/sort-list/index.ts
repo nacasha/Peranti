@@ -2,7 +2,7 @@ import { Tool } from "src/models/Tool"
 
 const sortList = new Tool({
   id: "sort-list",
-  title: "Sort List",
+  name: "Sort List",
   category: "List",
   action: ({ input }: { input: string }) => {
     const lines = input.split("\n").filter((line) => line.trim() !== "")

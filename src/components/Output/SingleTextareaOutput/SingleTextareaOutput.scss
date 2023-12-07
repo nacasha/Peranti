@@ -32,7 +32,7 @@
     outline: none !important;
 
     &:hover {
-      border: 1px solid color-mix(in srgb, var(--accent-color), #ffffff 65%);
+      border: 1px solid var(--accent-color-light);
     }
   }
 }

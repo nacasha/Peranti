@@ -1,7 +1,7 @@
 import { appWindow } from "@tauri-apps/api/window"
 import { useEffect } from "react"
 
-export function useWindowListener () {
+export function useWindowListener() {
   useEffect(() => {
     document.getElementById("titlebar-minimize")
       ?.addEventListener("click", () => { void appWindow.minimize() })

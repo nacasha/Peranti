@@ -1,9 +1,9 @@
 import { type FC, useId } from "react"
 
 import "./SingleTextInput.scss"
-import { type BaseInputComponentProps } from "src/types/BaseInputComponentProps"
+import { type InputComponentProps } from "src/types/InputComponentProps"
 
-interface SingleTextInputProps extends BaseInputComponentProps { }
+interface SingleTextInputProps extends InputComponentProps { }
 
 export const SingleTextInput: FC<SingleTextInputProps> = (props) => {
   const id = useId()

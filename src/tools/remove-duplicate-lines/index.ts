@@ -3,7 +3,7 @@ import { removeDuplicateLinesActions } from "./remove-duplicate-lines-action"
 
 const removeDuplicateList = new Tool({
   id: "remove-duplicate-list",
-  title: "Remove Duplicate List",
+  name: "Remove Duplicate List",
   category: "List",
   action: removeDuplicateLinesActions,
   inputs: [
