@@ -1,7 +1,7 @@
-import { createStore } from '@udecode/zustood'
+import { createStore } from "@udecode/zustood"
 
-const outputStore = createStore('output')({
-  params: { ehe: 'ok'} as Record<string, any>,
+const outputStore = createStore("output")({
+  params: { ehe: "ok" } as Record<string, any>
 })
   .extendActions(
     (set) => ({
@@ -16,6 +16,5 @@ const outputStore = createStore('output')({
       }
     })
   )
-
 
 export default outputStore

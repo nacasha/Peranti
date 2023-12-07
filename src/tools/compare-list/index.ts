@@ -1,5 +1,5 @@
-import { Tool } from "../../types/Tool";
-import { compareListAction } from "./compare-lines-action";
+import { type Tool } from "src/types/Tool"
+import { compareListAction } from "./compare-lines-action"
 
 const compareList: Tool = {
   id: "compare-lines",
@@ -18,7 +18,7 @@ const compareList: Tool = {
       component: "Textarea",
       defaultValue: "",
       props: { label: "List B" }
-    },
+    }
   ],
   outputs: [
     {

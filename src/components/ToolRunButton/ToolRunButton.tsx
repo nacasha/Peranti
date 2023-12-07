@@ -1,12 +1,12 @@
-import { useEffect } from "react";
-import { rootStore } from "../../store/root-store";
+import { useEffect } from "react"
+import { rootStore } from "src/store/root-store"
 
 export const ToolRunButton = () => {
   const currentTool = rootStore.tool.use.currentToolOrEmpty()
   const inputParams = rootStore.input.use.params()
 
   const onRun = () => {
-    const { action, inputs } = currentTool;
+    const { action, inputs } = currentTool
     const fieldsWithDefaultValue = Object.fromEntries(inputs.map((i) => [i.field, i.defaultValue]))
 
     const result: any = action({ ...fieldsWithDefaultValue, ...inputParams } as any)
@@ -15,7 +15,7 @@ export const ToolRunButton = () => {
 
   useEffect(() => {
     onRun()
-  }, [inputParams]);
+  }, [inputParams])
 
   return (
     <div className="toolbar-button">

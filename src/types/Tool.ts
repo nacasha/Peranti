@@ -1,32 +1,32 @@
-import { ToolInput } from "./ToolInput";
-import { ToolOutput } from "./ToolOutput";
+import { type ToolInput } from "./ToolInput"
+import { type ToolOutput } from "./ToolOutput"
 
 export interface Tool {
   /**
    * Unique ID of tool
    */
-  id: string;
+  id: string
 
   /**
    * Title of tool that will be shown at header
    */
-  title: string;
+  title: string
 
   /**
    * Action of tool.
    * Input always comes in form of Map as well as the returned value
    */
-  action: (input: any) => any;
+  action: (input: any) => any
 
   /**
    * List of input fields for tool
    */
-  inputs: ToolInput[];
+  inputs: ToolInput[]
 
   /**
    * List of output fields for tool
    */
-  outputs: ToolOutput[];
+  outputs: ToolOutput[]
 
   /**
    * Layout used to show the input and output area, default is "side-by-side"
@@ -47,5 +47,5 @@ export interface Tool {
   /**
    * Category of tool
    */
-  category: string;
+  category: string
 }

@@ -1,13 +1,13 @@
-import { Tool } from "../../types/Tool";
+import { type Tool } from "src/types/Tool"
 
 const sortList: Tool = {
   id: "sort-list",
   title: "Sort List",
   category: "List",
-  action: ({ input }: { input: String }) => {
-    const lines = input.split('\n').filter((line) => line.trim() !== "");
-    lines.sort();
-    const sortedString = lines.join('\n');
+  action: ({ input }: { input: string }) => {
+    const lines = input.split("\n").filter((line) => line.trim() !== "")
+    lines.sort()
+    const sortedString = lines.join("\n")
 
     return { output: sortedString }
   },
@@ -15,13 +15,13 @@ const sortList: Tool = {
     {
       field: "input",
       component: "Textarea",
-      defaultValue: "",
+      defaultValue: ""
     }
   ],
   outputs: [
     {
       field: "output",
-      component: "Textarea",
+      component: "Textarea"
     }
   ]
 }

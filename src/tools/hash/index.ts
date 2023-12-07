@@ -1,5 +1,5 @@
-import { Tool } from "../../types/Tool";
-import { hashAction } from "./hash-action";
+import { type Tool } from "src/types/Tool"
+import { hashAction } from "./hash-action"
 
 const hash: Tool = {
   id: "hash",
@@ -11,8 +11,8 @@ const hash: Tool = {
     {
       field: "input",
       component: "Text",
-      defaultValue: "",
-    },
+      defaultValue: ""
+    }
   ],
   outputs: [
     {

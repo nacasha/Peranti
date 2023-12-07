@@ -1,13 +1,13 @@
-import { FC } from "react";
+import { type FC } from "react"
 
-import "./AppTitlebar.scss";
-import { useWindowListener } from "../../hooks/useWindowListener";
+import { useWindowListener } from "src/hooks/useWindowListener"
+import PanelLeftSVG from "src/assets/panel-left.svg"
+import { rootStore } from "src/store/root-store"
 
-import PanelLeftSVG from "../../assets/panel-left.svg"
-import { rootStore } from "../../store/root-store";
+import "./AppTitlebar.scss"
 
 export const AppTitlebar: FC = () => {
-  useWindowListener();
+  useWindowListener()
 
   return (
     <div className="AppTitlebar" data-tauri-drag-region>
@@ -37,5 +37,5 @@ export const AppTitlebar: FC = () => {
         </div>
       </div>
     </div>
-  );
+  )
 }

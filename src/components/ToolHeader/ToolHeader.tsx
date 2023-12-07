@@ -1,5 +1,5 @@
-import { rootStore } from "../../store/root-store";
-import { ToolRunButton } from "../ToolRunButton"
+import { rootStore } from "src/store/root-store"
+import { ToolRunButton } from "src/components/ToolRunButton"
 
 import "./ToolHeader.scss"
 
@@ -8,15 +8,16 @@ export const ToolHeader = () => {
 
   const onClickCopy = () => {
     const outputParams = rootStore.output.get.params()
-    if (outputParams["output"]) {
-      navigator.clipboard.writeText(outputParams["output"])
+
+    if (outputParams.output) {
+      navigator.clipboard.writeText(outputParams.output)
         .then(() => {
-          console.log('Text successfully copied to clipboard');
+          console.log("Text successfully copied to clipboard")
         })
         .catch((err) => {
-          console.error('Unable to copy text to clipboard', err);
-        });
-      }
+          console.error("Unable to copy text to clipboard", err)
+        })
+    }
   }
 
   return (
@@ -34,5 +35,5 @@ export const ToolHeader = () => {
         </div>
       </div>
     </div>
-  );
+  )
 }

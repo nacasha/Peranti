@@ -1,5 +1,5 @@
-import { Tool } from "../../types/Tool";
-import { removeDuplicateLinesActions } from "./remove-duplicate-lines-action";
+import { type Tool } from "src/types/Tool"
+import { removeDuplicateLinesActions } from "./remove-duplicate-lines-action"
 
 const removeDuplicateList: Tool = {
   id: "remove-duplicate-list",
@@ -10,13 +10,13 @@ const removeDuplicateList: Tool = {
     {
       field: "input",
       component: "Textarea",
-      defaultValue: "",
+      defaultValue: ""
     }
   ],
   outputs: [
     {
       field: "output",
-      component: "Textarea",
+      component: "Textarea"
     }
   ]
 }

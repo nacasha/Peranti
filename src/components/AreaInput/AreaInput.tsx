@@ -1,19 +1,19 @@
-import { FC } from "react";
-import { rootStore } from "../../store/root-store";
-import { listOfInputComponent } from "../Input";
+import { type FC } from "react"
+import { rootStore } from "src/store/root-store"
+import { listOfInputComponent } from "src/components/Input"
 
 interface InputComponentProps {
-  component: string;
-  field: string;
-  props: any;
-  initialValue: any;
+  component: string
+  field: string
+  props: any
+  initialValue: any
 }
 
 const InputComponent: FC<InputComponentProps> = (props) => {
-  const { component, field, props: componentProps, initialValue } = props;
+  const { component, field, props: componentProps, initialValue } = props
 
   const Component = (listOfInputComponent as any)[component]
-  const onSubmit = (val: any) => rootStore.input.set.setParams(field, val)
+  const onSubmit = (val: any) => { rootStore.input.set.setParams(field, val) }
 
   return (
     <Component
@@ -41,5 +41,5 @@ export const AreaInput = () => {
         />
       ))}
     </div>
-  );
+  )
 }

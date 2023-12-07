@@ -1,9 +1,9 @@
-import { rootStore } from "../../store/root-store";
-import { Tool } from "../../types/Tool";
+import { rootStore } from "src/store/root-store"
+import { type Tool } from "src/types/Tool"
 import "./AppSidebar.scss"
 
 export const AppSidebar = () => {
-  const tools = rootStore.tool.get.tools();
+  const tools = rootStore.tool.get.tools()
   const currentTool = rootStore.tool.use.currentToolOrEmpty()
 
   const onClickTool = (tool: Tool) => () => {
@@ -29,5 +29,5 @@ export const AppSidebar = () => {
         </div>
       ))}
     </div>
-  );
+  )
 }

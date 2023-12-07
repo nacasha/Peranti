@@ -1,6 +1,5 @@
-import { v1, v4 } from 'uuid';
-
-import { Tool } from "../../types/Tool";
+import { type Tool } from "src/types/Tool"
+import { v1, v4 } from "uuid"
 
 const generateUuid: Tool = {
   id: "json-validate",
@@ -8,13 +7,13 @@ const generateUuid: Tool = {
   category: "JSON",
   action: ({ numberOfGenerated, type }: { numberOfGenerated: number, type: string }) => {
     const uuidGenerator = { v1, v4 }[type]
-    if (!uuidGenerator) return { output: "" }
+    if (uuidGenerator === undefined) return { output: "" }
 
     const generatedUuids = []
     for (let i = 0; i < numberOfGenerated; i++) {
       generatedUuids.push(uuidGenerator())
     }
-    const uuidsLines = generatedUuids.join('\n')
+    const uuidsLines = generatedUuids.join("\n")
 
     return { output: uuidsLines }
   },
@@ -27,7 +26,7 @@ const generateUuid: Tool = {
         label: "UUID Version",
         options: [
           { value: "v1", label: "V1" },
-          { value: "v4", label: "V4" },
+          { value: "v4", label: "V4" }
         ]
       }
     },
@@ -43,8 +42,8 @@ const generateUuid: Tool = {
   outputs: [
     {
       field: "output",
-      component: "Textarea",
-    },
+      component: "Textarea"
+    }
   ]
 }
 

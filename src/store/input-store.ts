@@ -1,8 +1,10 @@
-import { createStore } from '@udecode/zustood'
-import { ToolRunTypeEnum } from '../enums/ToolRunTypeEnum'
+import { createStore } from "@udecode/zustood"
+import { ToolRunTypeEnum } from "src/enums/ToolRunTypeEnum"
 
-const inputStore = createStore('input')({
-  params: {} as Record<string, any>,
+const defaultParams: Record<string, any> = {}
+
+const inputStore = createStore("input")({
+  params: defaultParams,
   runType: ToolRunTypeEnum.OnBlur
 })
   .extendActions(
@@ -18,6 +20,5 @@ const inputStore = createStore('input')({
       }
     })
   )
-
 
 export default inputStore

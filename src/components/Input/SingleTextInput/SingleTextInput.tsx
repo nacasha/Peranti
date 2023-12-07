@@ -1,16 +1,16 @@
-import { FC, useId } from "react";
+import { type FC, useId } from "react"
 
-import "./SingleTextInput.scss";
-import { BaseInputComponentProps } from "../../../types/BaseInputComponentProps";
+import "./SingleTextInput.scss"
+import { type BaseInputComponentProps } from "src/types/BaseInputComponentProps"
 
 interface SingleTextInputProps extends BaseInputComponentProps { }
 
 export const SingleTextInput: FC<SingleTextInputProps> = (props) => {
   const id = useId()
-  const { onSubmit, initialValue, label = "Input" } = props;
+  const { onSubmit, initialValue, label = "Input" } = props
 
-  const onInputBlur: React.DOMAttributes<HTMLInputElement>['onBlur'] = (event) => {
-    const value = event.target.value;
+  const onInputBlur: React.DOMAttributes<HTMLInputElement>["onBlur"] = (event) => {
+    const value = event.target.value
     onSubmit(value.trim())
   }
 
@@ -25,5 +25,5 @@ export const SingleTextInput: FC<SingleTextInputProps> = (props) => {
         defaultValue={initialValue}
       />
     </div>
-  );
+  )
 }

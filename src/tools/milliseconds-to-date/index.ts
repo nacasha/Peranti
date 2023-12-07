@@ -1,5 +1,5 @@
-import { Tool } from "../../types/Tool";
-import { millisecondsToDateAction } from "./milliseconds-to-date-action";
+import { type Tool } from "src/types/Tool"
+import { millisecondsToDateAction } from "./milliseconds-to-date-action"
 
 const millisecondsToDate: Tool = {
   id: "milliseconds-to-date",
@@ -9,13 +9,13 @@ const millisecondsToDate: Tool = {
     {
       field: "input",
       component: "Textarea",
-      defaultValue: "",
-    },
+      defaultValue: ""
+    }
   ],
   outputs: [
     {
       field: "output",
-      component: "Textarea",
+      component: "Textarea"
     }
   ]
 }

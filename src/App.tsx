@@ -1,8 +1,8 @@
-import { AppSidebar } from "./components/AppSidebar";
-import { AppStatusbar } from "./components/AppStatusbar";
-import { AppTitlebar } from "./components/AppTitlebar";
-import { ToolHeader } from "./components/ToolHeader";
-import { ToolRunArea } from "./components/ToolRunArea/ToolRunArea";
+import { AppSidebar } from "src/components/AppSidebar"
+import { AppStatusbar } from "src/components/AppStatusbar"
+import { AppTitlebar } from "src/components/AppTitlebar"
+import { ToolHeader } from "src/components/ToolHeader"
+import { ToolRunArea } from "src/components/ToolRunArea"
 
 export const App = () => {
   return (
@@ -19,5 +19,5 @@ export const App = () => {
 
       <AppStatusbar />
     </div>
-  );
+  )
 }

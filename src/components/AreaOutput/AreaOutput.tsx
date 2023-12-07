@@ -1,15 +1,15 @@
-import { FC } from "react";
-import { rootStore } from "../../store/root-store";
-import { listOfOutputComponent } from "../Output";
+import { type FC } from "react"
+import { rootStore } from "src/store/root-store"
+import { listOfOutputComponent } from "src/components/Output"
 
 interface OutputComponentProps {
-  component: string;
-  field: string;
-  props: any;
+  component: string
+  field: string
+  props: any
 }
 
 const OutputComponent: FC<OutputComponentProps> = (props) => {
-  const { component, field, props: componentProps } = props;
+  const { component, field, props: componentProps } = props
 
   const Component = (listOfOutputComponent as any)[component]
   const outputValue = rootStore.output.useTracked.params()[field]
@@ -38,5 +38,5 @@ export const AreaOutput = () => {
         />
       ))}
     </div>
-  );
+  )
 }
