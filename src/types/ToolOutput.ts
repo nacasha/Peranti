@@ -2,7 +2,7 @@ export interface ToolOutput {
   /**
    * Field name that will be used as key in output map to show the value
    */
-  field: string
+  key: string
 
   /**
    * Component to render output

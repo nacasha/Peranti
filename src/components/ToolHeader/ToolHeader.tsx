@@ -1,16 +1,21 @@
-import { rootStore } from "src/store/root-store"
 import { ToolRunButton } from "src/components/ToolRunButton"
 
 import "./ToolHeader.scss"
+import { toolStore } from "src/store/toolStore"
+import { observer } from "mobx-react"
+
+const ToolHeaderTitle = observer(() => (
+  <div className="ToolHeader-title">
+    {toolStore.getActiveToolTitle()}
+  </div>
+))
 
 export const ToolHeader = () => {
-  const { title } = rootStore.tool.use.currentToolOrEmpty()
-
   const onClickCopy = () => {
-    const outputParams = rootStore.output.get.params()
+    const outputParams = "ok"
 
-    if (outputParams.output) {
-      navigator.clipboard.writeText(outputParams.output)
+    if (outputParams) {
+      navigator.clipboard.writeText(outputParams)
         .then(() => {
           console.log("Text successfully copied to clipboard")
         })
@@ -22,9 +27,7 @@ export const ToolHeader = () => {
 
   return (
     <div className="ToolHeader">
-      <div className="ToolHeader-title">
-        {title}
-      </div>
+      <ToolHeaderTitle />
       <div className="ToolHeader-button">
         <ToolRunButton />
         <div className="toolbar-button">

@@ -1,7 +1,7 @@
-import { type Tool } from "src/types/Tool"
+import { Tool } from "src/models/Tool"
 import { v1, v4 } from "uuid"
 
-const generateUuid: Tool = {
+const generateUuid = new Tool({
   id: "json-validate",
   title: "JSON Validate",
   category: "JSON",
@@ -19,7 +19,7 @@ const generateUuid: Tool = {
   },
   inputs: [
     {
-      field: "type",
+      key: "type",
       component: "Select",
       defaultValue: "v4",
       props: {
@@ -31,7 +31,7 @@ const generateUuid: Tool = {
       }
     },
     {
-      field: "numberOfGenerated",
+      key: "numberOfGenerated",
       component: "Text",
       defaultValue: 1,
       props: {
@@ -41,10 +41,10 @@ const generateUuid: Tool = {
   ],
   outputs: [
     {
-      field: "output",
+      key: "output",
       component: "Textarea"
     }
   ]
-}
+})
 
 export default generateUuid

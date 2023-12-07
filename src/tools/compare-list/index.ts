@@ -1,20 +1,20 @@
-import { type Tool } from "src/types/Tool"
 import { compareListAction } from "./compare-lines-action"
+import { Tool } from "src/models/Tool"
 
-const compareList: Tool = {
+const compareList = new Tool({
   id: "compare-lines",
   title: "Compare List",
   category: "List",
   action: compareListAction,
   inputs: [
     {
-      field: "listA",
+      key: "listA",
       component: "Textarea",
       defaultValue: "",
       props: { label: "List A" }
     },
     {
-      field: "listB",
+      key: "listB",
       component: "Textarea",
       defaultValue: "",
       props: { label: "List B" }
@@ -22,21 +22,21 @@ const compareList: Tool = {
   ],
   outputs: [
     {
-      field: "onlyExistInputA",
+      key: "onlyExistInputA",
       component: "Textarea",
       props: { label: "Only Exist In List A" }
     },
     {
-      field: "output",
+      key: "output",
       component: "Textarea",
       props: { label: "Exist In Both List" }
     },
     {
-      field: "onlyExistInputB",
+      key: "onlyExistInputB",
       component: "Textarea",
       props: { label: "Only Exist In List B" }
     }
   ]
-}
+})
 
 export default compareList

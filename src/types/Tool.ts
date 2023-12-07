@@ -34,12 +34,6 @@ export interface Tool {
   layout?: "side-by-side" | "top-bottom" | "top-bottom-auto"
 
   /**
-   * Layout of input and output.
-   * Default layout of each type is 50% input and 50% output
-   */
-  // layout?: { horizontal: ["fit", ""]; vertical: ["fit"]; }
-
-  /**
    * List of keywords to describe the utilities of tool
    */
   keywords?: string[]
@@ -48,4 +42,17 @@ export interface Tool {
    * Category of tool
    */
   category: string
+
+  /**
+   * Pipelines of tool
+   */
+  pipelines?: [
+    {
+      id: "step-1-xxx"
+      tool: "hash"
+      inputMaps: [
+        { source: "input", target: "input" }
+      ]
+    }
+  ]
 }

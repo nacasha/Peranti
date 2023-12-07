@@ -1,6 +1,6 @@
-import { type Tool } from "src/types/Tool"
+import { Tool } from "src/models/Tool"
 
-const sortList: Tool = {
+const sortList = new Tool({
   id: "sort-list",
   title: "Sort List",
   category: "List",
@@ -13,17 +13,17 @@ const sortList: Tool = {
   },
   inputs: [
     {
-      field: "input",
+      key: "input",
       component: "Textarea",
       defaultValue: ""
     }
   ],
   outputs: [
     {
-      field: "output",
+      key: "output",
       component: "Textarea"
     }
   ]
-}
+})
 
 export default sortList

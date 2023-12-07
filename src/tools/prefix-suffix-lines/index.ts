@@ -1,6 +1,6 @@
-import { type Tool } from "src/types/Tool"
+import { Tool } from "src/models/Tool"
 
-const prefixSuffixLines: Tool = {
+const prefixSuffixLines = new Tool({
   id: "prefix-suffix-lines",
   title: "Prefix Suffix Lines",
   category: "Text",
@@ -14,7 +14,7 @@ const prefixSuffixLines: Tool = {
   },
   inputs: [
     {
-      field: "prefix",
+      key: "prefix",
       component: "Text",
       defaultValue: "",
       props: {
@@ -22,7 +22,7 @@ const prefixSuffixLines: Tool = {
       }
     },
     {
-      field: "suffix",
+      key: "suffix",
       component: "Text",
       defaultValue: "",
       props: {
@@ -30,7 +30,7 @@ const prefixSuffixLines: Tool = {
       }
     },
     {
-      field: "input",
+      key: "input",
       component: "Textarea",
       defaultValue: "",
       props: {
@@ -40,10 +40,10 @@ const prefixSuffixLines: Tool = {
   ],
   outputs: [
     {
-      field: "output",
+      key: "output",
       component: "Textarea"
     }
   ]
-}
+})
 
 export default prefixSuffixLines

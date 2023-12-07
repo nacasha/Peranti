@@ -44,6 +44,7 @@ module.exports = {
     "indent": ["error", 2],
     "@typescript-eslint/quotes": ["error", "double"],
     "import/no-unresolved": "error",
-    "@typescript-eslint/strict-boolean-expressions": "off"
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/space-before-function-paren": ["error", "never"]
   }
 }

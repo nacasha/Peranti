@@ -1,7 +1,7 @@
-import { type Tool } from "src/types/Tool"
+import { Tool } from "src/models/Tool"
 import { hashAction } from "./hash-action"
 
-const hash: Tool = {
+const hash = new Tool({
   id: "hash",
   title: "Hash",
   category: "Generator",
@@ -9,33 +9,33 @@ const hash: Tool = {
   layout: "top-bottom-auto",
   inputs: [
     {
-      field: "input",
+      key: "input",
       component: "Text",
       defaultValue: ""
     }
   ],
   outputs: [
     {
-      field: "md5",
+      key: "md5",
       component: "Text",
       props: { label: "MD5" }
     },
     {
-      field: "sha1",
+      key: "sha1",
       component: "Text",
       props: { label: "SHA1" }
     },
     {
-      field: "sha256",
+      key: "sha256",
       component: "Text",
       props: { label: "SHA256" }
     },
     {
-      field: "sha512",
+      key: "sha512",
       component: "Text",
       props: { label: "SHA512" }
     }
   ]
-}
+})
 
 export default hash

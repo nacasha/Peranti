@@ -1,6 +1,6 @@
-import { type Tool } from "src/types/Tool"
+import { Tool } from "src/models/Tool"
 
-const textToUppercase: Tool = {
+const textToUppercase = new Tool({
   id: "text-to-uppercase",
   title: "Text To Uppercase",
   category: "Text",
@@ -9,17 +9,17 @@ const textToUppercase: Tool = {
   },
   inputs: [
     {
-      field: "input",
+      key: "input",
       component: "Textarea",
       defaultValue: ""
     }
   ],
   outputs: [
     {
-      field: "output",
+      key: "output",
       component: "Textarea"
     }
   ]
-}
+})
 
 export default textToUppercase

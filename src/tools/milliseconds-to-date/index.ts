@@ -1,23 +1,24 @@
-import { type Tool } from "src/types/Tool"
+import { Tool } from "src/models/Tool"
 import { millisecondsToDateAction } from "./milliseconds-to-date-action"
 
-const millisecondsToDate: Tool = {
+const millisecondsToDate = new Tool({
   id: "milliseconds-to-date",
   title: "Milliseconds To Date",
+  category: "Date Time",
   action: millisecondsToDateAction,
   inputs: [
     {
-      field: "input",
+      key: "input",
       component: "Textarea",
       defaultValue: ""
     }
   ],
   outputs: [
     {
-      field: "output",
+      key: "output",
       component: "Textarea"
     }
   ]
-}
+})
 
 export default millisecondsToDate

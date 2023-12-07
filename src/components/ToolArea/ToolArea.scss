@@ -1,7 +1,7 @@
 $padding: 15px;
 $field-spacing: 15px;
 
-.ToolRunArea {
+.ToolArea {
   flex: 1;
   display: grid;
   padding: $padding;
@@ -26,24 +26,24 @@ $field-spacing: 15px;
     column-gap: unset;
     row-gap: unset;
 
-    .ToolRunArea-input, .ToolRunArea-output {
+    .ToolAreaInput, .ToolAreaOutput {
       padding: $padding;
     }
 
     &.side-by-side {
-      .ToolRunArea-input {
+      .ToolAreaInput {
         border-right: 1px solid var(--border-color);
       }
     }
 
     &.top-bottom, &.top-bottom-auto {
-      .ToolRunArea-input {
+      .ToolAreaInput {
         border-bottom: 1px solid var(--border-color);
       }
     }
   }
 
-  .ToolRunArea-input, .ToolRunArea-output {
+  .ToolAreaInput, .ToolAreaOutput {
     display: flex;
     flex-direction: column;
     overflow: auto;

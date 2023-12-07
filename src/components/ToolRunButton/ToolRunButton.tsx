@@ -1,25 +1,16 @@
-import { useEffect } from "react"
-import { rootStore } from "src/store/root-store"
+import { observer } from "mobx-react"
+import { toolStore } from "src/store/toolStore"
 
-export const ToolRunButton = () => {
-  const currentTool = rootStore.tool.use.currentToolOrEmpty()
-  const inputParams = rootStore.input.use.params()
+export const ToolRunButton = observer(() => {
+  const activeTool = toolStore.getActiveTool()
 
-  const onRun = () => {
-    const { action, inputs } = currentTool
-    const fieldsWithDefaultValue = Object.fromEntries(inputs.map((i) => [i.field, i.defaultValue]))
-
-    const result: any = action({ ...fieldsWithDefaultValue, ...inputParams } as any)
-    rootStore.output.set.params(result)
+  const onClickRun = () => {
+    activeTool.run()
   }
-
-  useEffect(() => {
-    onRun()
-  }, [inputParams])
 
   return (
     <div className="toolbar-button">
-      <button onClick={onRun}>Run</button>
+      <button onClick={onClickRun}>Run</button>
     </div>
   )
-}
+})

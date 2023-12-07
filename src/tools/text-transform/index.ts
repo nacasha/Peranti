@@ -1,12 +1,9 @@
 import { Tool } from "src/models/Tool"
 
-const textToLowercase = new Tool({
-  id: "text-to-lowercase",
-  title: "Text To Lowercase",
+const textTransformTool = new Tool({
+  id: "text-transform",
+  title: "Text Transform",
   category: "Text",
-  action: ({ input }: { input: string }) => {
-    return { output: input.toLowerCase() }
-  },
   inputs: [
     {
       key: "input",
@@ -19,7 +16,10 @@ const textToLowercase = new Tool({
       key: "output",
       component: "Textarea"
     }
-  ]
+  ],
+  action({ input }: any) {
+    return { output: input }
+  }
 })
 
-export default textToLowercase
+export default textTransformTool

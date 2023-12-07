@@ -2,7 +2,7 @@ export interface ToolInput {
   /**
    * Field name that will be used as key in map of input
    */
-  field: string
+  key: string
 
   /**
    * Component to render input

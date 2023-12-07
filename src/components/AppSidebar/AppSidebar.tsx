@@ -1,33 +1,37 @@
+import { observer } from "mobx-react"
 import { rootStore } from "src/store/root-store"
-import { type Tool } from "src/types/Tool"
 import "./AppSidebar.scss"
+import { toolStore } from "src/store/toolStore"
+import { type Tool } from "src/models/Tool"
+import { listOfTools } from "src/tools"
+import { toolHistoryStore } from "src/store/toolHistoryStore"
+
+const AppSidebarItem = observer(({ tool }: { tool: Tool }) => {
+  return (
+    <div
+      key={tool.title}
+      className={"AppSidebar-item".concat(toolStore.isToolActive(tool) ? " active" : "")}
+      onClick={() => { toolStore.setActiveTool(tool) }}
+    >
+      {tool.title}
+    </div>
+  )
+})
+
+const AppSidebarHistory = observer(() => {
+  return toolHistoryStore.history
+    .map((tool) => <AppSidebarItem key={tool.id} tool={tool} />)
+})
 
 export const AppSidebar = () => {
-  const tools = rootStore.tool.get.tools()
-  const currentTool = rootStore.tool.use.currentToolOrEmpty()
-
-  const onClickTool = (tool: Tool) => () => {
-    rootStore.tool.set.currentTool(tool)
-    rootStore.input.set.resetParams()
-  }
-
-  const isActive = (tool: Tool) => {
-    return currentTool.title === tool.title
-  }
-
   const isSidebarHidden = rootStore.ui.use.hiddenSidebar()
 
   return (
     <div className={"AppSidebar".concat(isSidebarHidden ? " hidden" : "")}>
-      {tools.map((tool) => (
-        <div
-          key={tool.title}
-          className={"AppSidebar-item".concat(isActive(tool) ? " active" : "")}
-          onClick={onClickTool(tool)}
-        >
-          {tool.title}
-        </div>
-      ))}
+      {listOfTools.map((tool) => <AppSidebarItem key={tool.id} tool={tool} />)}
+      <div className="AppSidebar-history">
+        <AppSidebarHistory />
+      </div>
     </div>
   )
 }

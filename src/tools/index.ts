@@ -7,6 +7,8 @@ import generateUuid from "./generate-uuid"
 import prefixSuffixLines from "./prefix-suffix-lines"
 import millisecondsToDate from "./milliseconds-to-date"
 import hash from "./hash"
+import testPipelines from "./test-pipelines"
+import textTransformTool from "./text-transform"
 
 export const listOfTools = [
   textToUppercase,
@@ -17,5 +19,7 @@ export const listOfTools = [
   generateUuid,
   prefixSuffixLines,
   millisecondsToDate,
-  hash
+  hash,
+  testPipelines,
+  textTransformTool
 ]

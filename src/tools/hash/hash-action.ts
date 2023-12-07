@@ -12,7 +12,7 @@ interface Output {
   sha512: unknown
 }
 
-export function hashAction (inputParams: Input): Output {
+export function hashAction(inputParams: Input): Output {
   const { input } = inputParams
 
   if (input.trim().length === 0) {

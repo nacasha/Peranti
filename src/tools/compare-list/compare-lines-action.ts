@@ -9,7 +9,7 @@ interface OutputMap {
   onlyExistInputB: unknown
 }
 
-export function compareListAction (inputParams: InputParams): OutputMap {
+export function compareListAction(inputParams: InputParams): OutputMap {
   const { listA, listB } = inputParams
 
   const linesA = listA.split("\n")
