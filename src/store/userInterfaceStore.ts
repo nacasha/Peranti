@@ -1,7 +1,11 @@
 import { makeAutoObservable } from "mobx"
 
 class UserInterfaceStore {
-  isSidebarHidden = false
+  isSidebarHidden = true
+
+  sidebarMode: "dock-pinned" | "dock-unpinned" | "unpinned" = "unpinned"
+
+  textAreaWordWrap = false
 
   constructor() {
     makeAutoObservable(this)

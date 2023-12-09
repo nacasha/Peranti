@@ -22,11 +22,15 @@ html {
   // App Statusbar
   --background-color-statusbar: #f6f6f6;
 
+  // App Titlebar
+  --app-titlebar-height: 40px;
+  --app-titlebar-background-color: #f6f6f6;
+
   // Input component styles
-  --input-padding: 10px;
+  --input-padding: 7px;
 
   // Output component styles
-  --output-padding: 10px;
+  --output-padding: 7px;
 
   // Input and output component styles
   --input-output-label-spacing: 10px;
@@ -36,16 +40,18 @@ html {
   --sidebar-background-color: #f6f6f6;
 
   // Tool Header
+  --tool-header-height: 40px;
   --tool-header-background-color: #ffffff;
 }
 
 button {
-  border: none;
+  border: 1px solid var(--border-color);
   background: transparent;
   border-radius: var(--border-radius);
   padding: 3px 9px;
   user-select: none;
   cursor: pointer;
+  font-family: "Inter";
 
   &:hover {
     background: rgb(241, 241, 241);
@@ -59,6 +65,7 @@ button {
 .InputOutputLabel {
   line-height: 1;
   margin-bottom: var(--input-output-label-spacing);
+  user-select: none;
 }
 
 :root {
@@ -93,12 +100,12 @@ button {
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--background-color-content);
+  position: relative;
 }
 
 .AppContent {
   width: 100%;
   display: flex;
   flex-direction: column;
-  overflow: auto;
   position: relative;
 }

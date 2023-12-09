@@ -1,21 +1,22 @@
 import { observer } from "mobx-react"
-import { useEffect } from "react"
+import { assets } from "src/constants/assets"
 import { toolStore } from "src/store/toolStore"
 
 export const ToolRunButton = observer(() => {
   const activeTool = toolStore.getActiveTool()
 
   const onClickRun = () => {
-    activeTool.run()
+    toolStore.runActiveTool()
   }
 
-  useEffect(() => {
-    activeTool.run()
-  }, [activeTool.inputParams])
+  if (activeTool.isReadOnly) {
+    return null
+  }
 
   return (
-    <div className="toolbar-button">
-      <button onClick={onClickRun}>Run</button>
+    <div className="toolbar-button" onClick={onClickRun}>
+      <img src={assets.RunSVG} alt="Run" />
+      Run
     </div>
   )
 })

@@ -1,40 +1,30 @@
 import { ToolRunButton } from "src/components/ToolRunButton"
 
 import "./ToolHeader.scss"
+import { assets } from "src/constants/assets"
+import { ToolLoadFromHistoryButton } from "../ToolLoadFromHistoryButton"
 import { toolStore } from "src/store/toolStore"
-import { observer } from "mobx-react"
-
-const ToolHeaderTitle = observer(() => (
-  <div className="ToolHeader-title">
-    {toolStore.getActiveToolName()}
-  </div>
-))
 
 export const ToolHeader = () => {
-  const onClickCopy = () => {
-    const outputParams = "ok"
-
-    if (outputParams) {
-      navigator.clipboard.writeText(outputParams)
-        .then(() => {
-          console.log("Text successfully copied to clipboard")
-        })
-        .catch((err) => {
-          console.error("Unable to copy text to clipboard", err)
-        })
-    }
+  const onClickHistory = () => {
+    toolStore.toggleHistoryPanel()
   }
 
   return (
     <div className="ToolHeader">
-      <ToolHeaderTitle />
-      <div className="ToolHeader-button">
+      <div>
+        <ToolLoadFromHistoryButton />
         <ToolRunButton />
+      </div>
+
+      <div className="ToolHeader-button-list">
         <div className="toolbar-button">
-          <button>Sample</button>
+          <img src={assets.SettingsSVG} alt="History" />
+          Tool Settings
         </div>
-        <div className="toolbar-button">
-          <button onClick={onClickCopy}>Copy Output</button>
+        <div className="toolbar-button" onClick={onClickHistory}>
+          <img src={assets.HistorySVG} alt="History" />
+          History
         </div>
       </div>
     </div>

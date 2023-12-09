@@ -14,7 +14,7 @@ export const TextOutput: FC<TextOutputProps> = (props) => {
   return (
     <div className="TextOutput">
       <label className="InputOutputLabel" htmlFor={id}>{label}</label>
-      <input value={output} readOnly />
+      <input id={id} value={output} readOnly />
     </div>
   )
 }

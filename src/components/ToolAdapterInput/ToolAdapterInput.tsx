@@ -2,6 +2,7 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 import { listOfInputComponent } from "src/components/Input"
 import { toolStore } from "src/store/toolStore"
+import { type InputComponentProps } from "src/types/InputComponentProps"
 
 interface ToolAdapterInputProps {
   /**
@@ -34,7 +35,7 @@ export const ToolAdapterInput: FC<ToolAdapterInputProps> = observer((props) => {
   const { component, field, props: componentProps, initialValue } = props
   const activeTool = toolStore.getActiveTool()
 
-  const Component = (listOfInputComponent as any)[component]
+  const Component: FC<InputComponentProps> = (listOfInputComponent as any)[component]
   const inputValue = toolStore.getActiveTool().inputParams[field]
 
   const onSubmit = (val: any) => {
@@ -47,6 +48,7 @@ export const ToolAdapterInput: FC<ToolAdapterInputProps> = observer((props) => {
       key={field}
       initialValue={inputValue ?? initialValue}
       onSubmit={onSubmit}
+      readOnly={activeTool.isReadOnly}
     />
   )
 })

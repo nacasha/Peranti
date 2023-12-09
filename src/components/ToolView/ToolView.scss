@@ -1,0 +1,42 @@
+.ToolView {
+  display: flex;
+  flex: 1;
+
+  .ToolView-right-panel {
+    border-left: 1px solid var(--border-color);
+    background-color: white;
+    width: 180px;
+    transition: all 0.2s;
+    overflow: hidden;
+    margin-right: -180px;
+
+    &.open {
+      margin-right: 0;
+    }
+  }
+
+  .ToolView-panel-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 7px;
+
+    .item {
+      text-align: center;
+      padding: 3px 0;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      user-select: none;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #fcfcfc;
+      }
+    }
+  }
+
+  .ToolView-main-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+}

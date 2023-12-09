@@ -16,4 +16,6 @@ export interface InputComponentProps<T = string> {
    * @returns
    */
   onSubmit: (value: T) => any
+
+  readOnly?: boolean
 }

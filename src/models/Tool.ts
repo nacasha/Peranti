@@ -12,6 +12,19 @@ interface ToolConstructor {
   category: string
   action: (input: any) => any
   layout?: "side-by-side" | "top-bottom" | "top-bottom-auto"
+  pipelines?: {
+    id: string
+    toolId: string
+    inputMapping: Array<{
+      target: ""
+      source: ""
+    }>
+    outputMapping: Array<{
+      source: ""
+      target: ""
+    }>
+
+  }
 }
 
 export class Tool implements ToolConstructor {
@@ -19,6 +32,11 @@ export class Tool implements ToolConstructor {
    * Unique ID of tool
    */
   id: string
+
+  /**
+   * Tool ID
+   */
+  toolId: string
 
   /**
    * Name of tool
@@ -62,11 +80,6 @@ export class Tool implements ToolConstructor {
   @observable outputParams: Record<string, any> = {}
 
   /**
-   * Indicates whether tool is part is history
-   */
-  isHistory: boolean = false
-
-  /**
    * Indicates tool input is read only
    */
   isReadOnly: boolean = false
@@ -76,20 +89,24 @@ export class Tool implements ToolConstructor {
    */
   hasRunning: boolean = false
 
+  pipelines?: any = []
+
   /**
    * Action of tool.
    * Input always comes in form of Map as well as the returned value
    */
 
   constructor(params: ToolConstructor) {
-    const { action, category, id, inputs, outputs, name: title, layout } = params
+    const { action, category, id, inputs, outputs, name: title, layout, pipelines } = params
     this.id = id
+    this.toolId = id
     this.action = action
     this.category = category
     this.inputs = inputs
     this.outputs = outputs
     this.name = title
     this.layout = layout
+    this.pipelines = pipelines as any
   }
 
   /**
@@ -97,12 +114,12 @@ export class Tool implements ToolConstructor {
    *
    * @param toolHistory
    */
-  static fromHistory(mainTool: Tool, toolHistory: ToolHistory) {
+  static fromHistory(mainTool: Tool, toolHistory: ToolHistory, readOnly = true) {
     const tool = new Tool({ ...mainTool })
     tool.id = toolHistory.id
     tool.inputParams = toolHistory.inputParams
     tool.outputParams = toolHistory.outputParams
-    tool.isReadOnly = true
+    tool.isReadOnly = readOnly
     return tool
   }
 
@@ -114,7 +131,30 @@ export class Tool implements ToolConstructor {
   toHistory(): ToolHistory {
     const { id: toolId, inputParams, outputParams } = this
     const id = generateRandomString(15)
-    return { id, toolId, inputParams, outputParams }
+    const createdAt = new Date().getTime()
+    return { id, toolId, inputParams, outputParams, createdAt }
+  }
+
+  /**
+   * Open tool by cloning instance of created tool that shown on sidebar
+   * As well as make it observable to the UI can react to variable changes
+   *
+   * @returns
+   */
+  openTool() {
+    return makeObservable(new Tool({ ...this }))
+  }
+
+  /**
+   * Load tool from history and make inputs read only
+   *
+   * @param toolHistory
+   */
+  static openFromHistory(mainTool: Tool, toolHistory: Tool) {
+    const tool = new Tool({ ...mainTool })
+    tool.inputParams = toolHistory.inputParams
+    tool.outputParams = toolHistory.outputParams
+    return makeObservable(tool)
   }
 
   /**
@@ -173,19 +213,17 @@ export class Tool implements ToolConstructor {
   @action
   run() {
     if (this.isReadOnly) return
+    if (this.pipelines) {
+      const result = (this.pipelines as any[] ?? []).reduce((pipeline, currentValue) => {
+        console.log(pipeline)
+        return {}
+      }, {})
+
+      console.log(result)
+    }
 
     const fieldsWithDefaultValue = this.getInputParamsWithDefault()
     this.outputParams = this.action({ ...fieldsWithDefaultValue, ...this.inputParams })
     this.hasRunning = true
-  }
-
-  /**
-   * Open tool by cloning instance of created tool that shown on sidebar
-   * As well as make it observable to the UI can react to variable changes
-   *
-   * @returns
-   */
-  openTool() {
-    return makeObservable(new Tool({ ...this }))
   }
 }

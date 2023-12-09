@@ -7,9 +7,9 @@ interface SingleTextareaInputProps extends InputComponentProps {}
 
 export const SingleTextareaInput: FC<SingleTextareaInputProps> = (props) => {
   const id = useId()
-  const { onSubmit, initialValue, label = "Input" } = props
+  const { onSubmit, initialValue, readOnly, label = "Input" } = props
 
-  const onInputBlur: React.DOMAttributes<HTMLTextAreaElement>["onBlur"] = (event) => {
+  const onInputChange: React.InputHTMLAttributes<HTMLTextAreaElement>["onBlur"] = (event) => {
     const value = event.target.value
     onSubmit(value.trim())
   }
@@ -19,7 +19,12 @@ export const SingleTextareaInput: FC<SingleTextareaInputProps> = (props) => {
       <label className="InputOutputLabel" htmlFor={id}>
         {label}
       </label>
-      <textarea id={id} onBlur={onInputBlur} defaultValue={initialValue} />
+      <textarea
+        id={id}
+        defaultValue={initialValue}
+        onChange={onInputChange}
+        readOnly={readOnly}
+      />
     </div>
   )
 }

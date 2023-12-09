@@ -7,7 +7,7 @@ interface CheckboxInputProps extends InputComponentProps<boolean> {}
 
 export const CheckboxInput: FC<CheckboxInputProps> = (props) => {
   const id = useId()
-  const { label, onSubmit, initialValue } = props
+  const { label, onSubmit, readOnly, initialValue } = props
 
   const onChange: React.InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
     onSubmit(event.target.checked)
@@ -15,7 +15,7 @@ export const CheckboxInput: FC<CheckboxInputProps> = (props) => {
 
   return (
     <div className="CheckboxInput">
-      <input id={id} type="checkbox" onChange={onChange} defaultChecked={Boolean(initialValue)} />
+      <input readOnly={readOnly} id={id} type="checkbox" onChange={onChange} defaultChecked={Boolean(initialValue)} />
       <label htmlFor={id}>{label}</label>
     </div>
   )

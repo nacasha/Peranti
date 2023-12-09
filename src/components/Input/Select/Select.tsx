@@ -9,7 +9,7 @@ interface SelectProps extends InputComponentProps {
 
 export const Select: FC<SelectProps> = (props) => {
   const id = useId()
-  const { label, options = [], onSubmit, initialValue } = props
+  const { label, options = [], onSubmit, readOnly, initialValue } = props
 
   const onChange: React.SelectHTMLAttributes<HTMLSelectElement>["onChange"] = (event) => {
     onSubmit(event.target.value)
@@ -20,7 +20,7 @@ export const Select: FC<SelectProps> = (props) => {
       <label className="InputOutputLabel" htmlFor={id}>
         {label}
       </label>
-      <select id={id} onChange={onChange} defaultValue={initialValue}>
+      <select disabled={readOnly} id={id} onChange={onChange} defaultValue={initialValue}>
         {options.map((option) => (
           <option key={option.value} value={option.value}>{option.label}</option>
         ))}

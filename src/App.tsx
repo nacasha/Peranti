@@ -1,8 +1,6 @@
 import { AppSidebar } from "src/components/AppSidebar"
-import { AppStatusbar } from "src/components/AppStatusbar"
 import { AppTitlebar } from "src/components/AppTitlebar"
-import { ToolHeader } from "src/components/ToolHeader"
-import { ToolArea } from "src/components/ToolArea"
+import { ToolView } from "src/components/ToolView"
 
 export const App = () => {
   return (
@@ -12,12 +10,9 @@ export const App = () => {
       <div className="AppContainer">
         <AppSidebar />
         <div className="AppContent">
-          <ToolHeader />
-          <ToolArea />
+          <ToolView />
         </div>
       </div>
-
-      <AppStatusbar />
     </div>
   )
 }

@@ -1,13 +1,13 @@
 $padding: 10px;
 
 .AppTitlebar {
-  height: 35px;
+  height: var(--app-titlebar-height);
   user-select: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
-  background-color: #f6f6f6;
+  background-color: var(--app-titlebar-background-color);
 
   .AppTitlebar-main {
     padding: 0 7px;
@@ -33,11 +33,43 @@ $padding: 10px;
       justify-content: center;
       align-items: center;
       width: 50px;
-      height: 30px;
+      height: var(--app-titlebar-height);
+
+      img {
+        width: 14px;
+      }
     }
 
     .titlebar-button:hover {
       background: #bdbdbd;
+    }
+  }
+
+  .AppTitlebarSearch {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    user-select: none;
+    pointer-events: none;
+
+    .main {
+      pointer-events: visible;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 0 10px;
+      background-color: white;
+      width: 40%;
+      text-align: center;
+      height: 24px;
+      font-size: 13px;
+
+      &:hover {
+        background-color: var(--accent-color-light-2);
+        border-color: var(--accent-color-light);
+        cursor: pointer;
+      }
     }
   }
 }

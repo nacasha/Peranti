@@ -5,8 +5,9 @@
   padding-top: 5px;
   overflow: auto;
   background-color: var(--sidebar-background-color);
-  box-shadow: 0 0 2px rgba(0,0,0,0.1);
+  box-shadow: 0 0 3px rgba(0,0,0,0.1);
   transition: margin-left 0.2s;
+  z-index: 2;
 
   &.hidden {
     margin-left: calc(0px - var(--sidebar-width));

@@ -3,4 +3,5 @@ export interface ToolHistory {
   toolId: string
   inputParams: any
   outputParams: any
+  createdAt: number
 }

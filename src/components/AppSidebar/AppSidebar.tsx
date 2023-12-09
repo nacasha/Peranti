@@ -5,7 +5,6 @@ import { toolStore } from "src/store/toolStore"
 import { type Tool } from "src/models/Tool"
 import { listOfTools } from "src/tools"
 import { userInterfaceStore } from "src/store/userInterfaceStore"
-import { ToolHistoryList } from "../ToolHistoryList/ToolHistoryList"
 
 const AppSidebarItem = observer(({ tool }: { tool: Tool }) => {
   return (
@@ -25,7 +24,6 @@ export const AppSidebar = observer(() => {
   return (
     <div className={"AppSidebar".concat(isSidebarHidden ? " hidden" : "")}>
       {listOfTools.map((tool) => <AppSidebarItem key={tool.id} tool={tool} />)}
-      <ToolHistoryList />
     </div>
   )
 })

@@ -6,7 +6,7 @@ interface OutputMap {
   output: unknown
 }
 
-export function millisecondsToDateAction (inputParams: InputParams): OutputMap {
+export function millisecondsToDateAction(inputParams: InputParams): OutputMap {
   const { input } = inputParams
   if (input.trim().length === 0) {
     return { output: "" }

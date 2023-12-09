@@ -1,15 +1,15 @@
-interface InputParams {
+interface Input {
   listA: string
   listB: string
 }
 
-interface OutputMap {
+interface Output {
   output: unknown
   onlyExistInputA: unknown
   onlyExistInputB: unknown
 }
 
-export function compareListAction(inputParams: InputParams): OutputMap {
+export function compareListAction(inputParams: Input): Output {
   const { listA, listB } = inputParams
 
   const linesA = listA.split("\n")

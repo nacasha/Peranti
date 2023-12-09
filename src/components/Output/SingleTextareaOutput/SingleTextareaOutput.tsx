@@ -1,4 +1,4 @@
-import { type FC } from "react"
+import { useId, type FC } from "react"
 
 import "./SingleTextareaOutput.scss"
 
@@ -8,15 +8,14 @@ interface SingleTextareaOutputProps {
 }
 
 export const SingleTextareaOutput: FC<SingleTextareaOutputProps> = (props) => {
+  const id = useId()
   const { output, label = "Output" } = props
 
   return (
     <div className="SingleTextareaOutput">
-      <div className="InputOutputLabel">
-        {label}
-      </div>
+      <label htmlFor={id} className="InputOutputLabel">{label}</label>
       <div className="box-container">
-        <textarea className="box" value={output} readOnly />
+        <textarea id={id} className="box" value={output} readOnly />
       </div>
     </div>
   )

@@ -1,13 +1,12 @@
 .ToolHistoryList {
-  border-top: 1px solid var(--border-color);
-
   .ToolHistoryList-item {
     border-radius: var(--border-radius);
-    margin: 2px 7px;
-    padding: 2px 6px;
+    padding: 1px 5px;
     user-select: none;
     cursor: pointer;
     transition: background 0.2s;
+    margin: 2px 5px;
+    font-family: monospace;
 
     &:hover {
       background: var(--accent-color-light-2);
