@@ -6,7 +6,7 @@
   input {
     white-space-collapse: preserve;
     font-family: monospace;
-    font-size: 14px;
+    font-size: var(--input-output-font-size);
     line-height: 1;
     background-color: #f9f9f9;
 

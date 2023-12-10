@@ -5,34 +5,16 @@ import { type ToolOutput } from "src/types/ToolOutput"
 import { generateRandomString } from "src/utils/generateRandomString"
 
 interface ToolConstructor {
-  id: string
+  toolId: string
   name: string
   inputs: ToolInput[]
   outputs: ToolOutput[]
   category: string
   action: (input: any) => any
   layout?: "side-by-side" | "top-bottom" | "top-bottom-auto"
-  pipelines?: {
-    id: string
-    toolId: string
-    inputMapping: Array<{
-      target: ""
-      source: ""
-    }>
-    outputMapping: Array<{
-      source: ""
-      target: ""
-    }>
-
-  }
 }
 
 export class Tool implements ToolConstructor {
-  /**
-   * Unique ID of tool
-   */
-  id: string
-
   /**
    * Tool ID
    */
@@ -42,6 +24,11 @@ export class Tool implements ToolConstructor {
    * Name of tool
    */
   name: string
+
+  /**
+   * Unique ID of created instance with this tool.
+   */
+  instanceId: string
 
   /**
    * List of input fields for tool
@@ -87,9 +74,7 @@ export class Tool implements ToolConstructor {
   /**
    * Indicates tool has been running at least once
    */
-  hasRunning: boolean = false
-
-  pipelines?: any = []
+  protected hasRunning: boolean = false
 
   /**
    * Action of tool.
@@ -97,16 +82,15 @@ export class Tool implements ToolConstructor {
    */
 
   constructor(params: ToolConstructor) {
-    const { action, category, id, inputs, outputs, name: title, layout, pipelines } = params
-    this.id = id
-    this.toolId = id
+    const { action, category, toolId, inputs, outputs, name: title, layout } = params
+    this.toolId = toolId
+    this.instanceId = toolId
     this.action = action
     this.category = category
     this.inputs = inputs
     this.outputs = outputs
     this.name = title
     this.layout = layout
-    this.pipelines = pipelines as any
   }
 
   /**
@@ -116,7 +100,7 @@ export class Tool implements ToolConstructor {
    */
   static fromHistory(mainTool: Tool, toolHistory: ToolHistory, readOnly = true) {
     const tool = new Tool({ ...mainTool })
-    tool.id = toolHistory.id
+    tool.instanceId = toolHistory.instanceId
     tool.inputParams = toolHistory.inputParams
     tool.outputParams = toolHistory.outputParams
     tool.isReadOnly = readOnly
@@ -129,10 +113,10 @@ export class Tool implements ToolConstructor {
    * @returns
    */
   toHistory(): ToolHistory {
-    const { id: toolId, inputParams, outputParams } = this
-    const id = generateRandomString(15)
+    const { instanceId: originalInstanceId, toolId, inputParams, outputParams } = this
+    const instanceId = originalInstanceId.concat(generateRandomString(15))
     const createdAt = new Date().getTime()
-    return { id, toolId, inputParams, outputParams, createdAt }
+    return { instanceId, toolId, inputParams, outputParams, createdAt }
   }
 
   /**
@@ -213,14 +197,6 @@ export class Tool implements ToolConstructor {
   @action
   run() {
     if (this.isReadOnly) return
-    if (this.pipelines) {
-      const result = (this.pipelines as any[] ?? []).reduce((pipeline, currentValue) => {
-        console.log(pipeline)
-        return {}
-      }, {})
-
-      console.log(result)
-    }
 
     const fieldsWithDefaultValue = this.getInputParamsWithDefault()
     this.outputParams = this.action({ ...fieldsWithDefaultValue, ...this.inputParams })

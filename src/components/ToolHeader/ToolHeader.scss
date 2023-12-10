@@ -30,7 +30,7 @@
     font-family: "Inter";
     display: flex;
     align-items: center;
-    font-size: 13px;
+    font-size: var(--font-size);
 
     &:hover {
       background: rgb(241, 241, 241);

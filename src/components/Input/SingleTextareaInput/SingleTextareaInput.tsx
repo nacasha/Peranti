@@ -24,6 +24,7 @@ export const SingleTextareaInput: FC<SingleTextareaInputProps> = (props) => {
         defaultValue={initialValue}
         onChange={onInputChange}
         readOnly={readOnly}
+        tabIndex={readOnly ? -1 : undefined}
       />
     </div>
   )

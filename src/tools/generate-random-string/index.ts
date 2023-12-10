@@ -2,7 +2,7 @@ import { Tool } from "src/models/Tool"
 import { generateRandomString } from "src/utils/generateRandomString"
 
 const generateRandomStringTool = new Tool({
-  id: "generate-random-string",
+  toolId: "generate-random-string",
   name: "Generate Random String",
   category: "Generator",
   action: ({ stringLength }: { stringLength: number }) => {

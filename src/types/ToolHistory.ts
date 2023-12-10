@@ -1,5 +1,5 @@
 export interface ToolHistory {
-  id: string
+  instanceId: string
   toolId: string
   inputParams: any
   outputParams: any

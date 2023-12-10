@@ -4,6 +4,7 @@ import { toolStore } from "src/store/toolStore"
 
 export const ToolRunButton = observer(() => {
   const activeTool = toolStore.getActiveTool()
+  const isRunModeAuto = toolStore.isRunModeAuto
 
   const onClickRun = () => {
     toolStore.runActiveTool()
@@ -16,7 +17,7 @@ export const ToolRunButton = observer(() => {
   return (
     <div className="toolbar-button" onClick={onClickRun}>
       <img src={assets.RunSVG} alt="Run" />
-      Run
+      {isRunModeAuto ? "Auto Run" : "Run"}
     </div>
   )
 })

@@ -41,7 +41,7 @@ module.exports = {
   "rules": {
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
-    "indent": ["error", 2],
+    "@typescript-eslint/indent": ["error", 2],
     "@typescript-eslint/quotes": ["error", "double"],
     "import/no-unresolved": "error",
     "@typescript-eslint/strict-boolean-expressions": "off",

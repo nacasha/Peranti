@@ -10,7 +10,7 @@ export const ToolAreaOutput = observer(() => {
     <div className="ToolAreaOutput">
       {outputs.map((output) => (
         <ToolAdapterOutput
-          key={activeTool.id + output.key}
+          key={activeTool.instanceId + output.key}
           field={output.key}
           component={output.component}
           props={output.props}

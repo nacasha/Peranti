@@ -18,7 +18,7 @@ export const ToolHistoryList = observer(() => {
       <div className="ToolHistoryList">
         {toolHistoryStore.getWithToolId(activeTool.toolId).map((toolHistory) => (
           <div
-            key={toolHistory.id}
+            key={toolHistory.instanceId}
             className={"ToolHistoryList-item".concat(toolStore.isToolActive(toolHistory) ? " active" : "")}
             onClick={onClickItem(toolHistory)}
           >

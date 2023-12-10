@@ -3,7 +3,7 @@ import { v1, v4 } from "uuid"
 import { Tool } from "src/models/Tool"
 
 const generateUuid = new Tool({
-  id: "generate-uuid",
+  toolId: "generate-uuid",
   name: "Generate UUID",
   category: "Generator",
   action: ({ numberOfGenerated, type }: { numberOfGenerated: number, type: string }) => {

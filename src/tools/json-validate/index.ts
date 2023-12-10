@@ -2,7 +2,7 @@ import { Tool } from "src/models/Tool"
 import { v1, v4 } from "uuid"
 
 const generateUuid = new Tool({
-  id: "json-validate",
+  toolId: "json-validate",
   name: "JSON Validate",
   category: "JSON",
   action: ({ numberOfGenerated, type }: { numberOfGenerated: number, type: string }) => {

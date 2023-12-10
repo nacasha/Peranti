@@ -1,7 +1,7 @@
 import { Tool } from "src/models/Tool"
 
 const sortList = new Tool({
-  id: "sort-list",
+  toolId: "sort-list",
   name: "Sort List",
   category: "List",
   action: ({ input }: { input: string }) => {

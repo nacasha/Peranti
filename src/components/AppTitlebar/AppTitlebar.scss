@@ -63,7 +63,7 @@ $padding: 10px;
       width: 40%;
       text-align: center;
       height: 24px;
-      font-size: 13px;
+      font-size: var(--font-size);
 
       &:hover {
         background-color: var(--accent-color-light-2);

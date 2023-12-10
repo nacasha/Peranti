@@ -1,8 +1,8 @@
 import { Tool } from "src/models/Tool"
 import { hashAction } from "./hash-action"
 
-const hash = new Tool({
-  id: "hash",
+const hashTool = new Tool({
+  toolId: "hash",
   name: "Hash",
   category: "Generator",
   action: hashAction,
@@ -38,4 +38,4 @@ const hash = new Tool({
   ]
 })
 
-export default hash
+export default hashTool

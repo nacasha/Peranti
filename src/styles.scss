@@ -13,6 +13,8 @@ html {
 
   --border-color: #DADADA;
 
+  --font-size: 13px;
+
   // General
   --border-radius: 4px;
 
@@ -34,6 +36,7 @@ html {
 
   // Input and output component styles
   --input-output-label-spacing: 10px;
+  --input-output-font-size: 14px;
 
   // Sidebar
   --sidebar-width: 250px;
@@ -66,11 +69,15 @@ button {
   line-height: 1;
   margin-bottom: var(--input-output-label-spacing);
   user-select: none;
+
+  &:empty {
+    display: none;
+  }
 }
 
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size);
   line-height: 24px;
   font-weight: 400;
 

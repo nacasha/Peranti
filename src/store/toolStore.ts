@@ -2,7 +2,7 @@ import { makeAutoObservable } from "mobx"
 import { Tool } from "src/models/Tool"
 import { toolHistoryStore } from "./toolHistoryStore"
 import { type ToolHistory } from "src/types/ToolHistory"
-import { mapOfTool } from "src/tools"
+import { mapOfTools } from "src/tools"
 
 class ToolStore {
   /**
@@ -10,7 +10,7 @@ class ToolStore {
    */
   protected activeTool?: Tool = undefined
 
-  protected runMode: "auto" | "manual" = "manual"
+  protected runMode: "auto" | "manual" = "auto"
 
   isHistoryPanelOpen = false
 
@@ -27,7 +27,7 @@ class ToolStore {
    * @param tool
    */
   openTool(tool: Tool) {
-    if (this.getActiveTool().id !== tool.id) {
+    if (this.getActiveTool().instanceId !== tool.instanceId) {
       this.saveActiveToolStateToHistory()
       this.activeTool = tool.openTool()
     }
@@ -35,7 +35,7 @@ class ToolStore {
 
   openToolFromViewedHistory() {
     const toolHistory = this.getActiveTool()
-    const mainTool = mapOfTool[toolHistory.toolId]
+    const mainTool = mapOfTools[toolHistory.toolId]
     if (toolHistory) {
       this.activeTool = Tool.openFromHistory(mainTool, toolHistory)
     }
@@ -47,7 +47,7 @@ class ToolStore {
    * @param toolHistory
    */
   openHistory(toolHistory: ToolHistory) {
-    const mainTool = mapOfTool[toolHistory.toolId]
+    const mainTool = mapOfTools[toolHistory.toolId]
     if (mainTool) {
       this.saveActiveToolStateToHistory()
       this.activeTool = Tool.fromHistory(mainTool, toolHistory)
@@ -90,7 +90,7 @@ class ToolStore {
       action: () => ({}),
       inputs: [],
       outputs: [],
-      id: "",
+      toolId: "",
       category: ""
     })
 
@@ -117,7 +117,7 @@ class ToolStore {
    * @returns
    */
   isToolActive(tool: Tool | ToolHistory) {
-    return this.getActiveTool().id === tool.id
+    return this.getActiveTool().instanceId === tool.instanceId
   }
 
   runActiveTool() {

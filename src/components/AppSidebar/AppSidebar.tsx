@@ -23,7 +23,7 @@ export const AppSidebar = observer(() => {
 
   return (
     <div className={"AppSidebar".concat(isSidebarHidden ? " hidden" : "")}>
-      {listOfTools.map((tool) => <AppSidebarItem key={tool.id} tool={tool} />)}
+      {listOfTools.map((tool) => <AppSidebarItem key={tool.instanceId} tool={tool} />)}
     </div>
   )
 })

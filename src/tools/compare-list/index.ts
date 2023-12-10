@@ -2,7 +2,7 @@ import { compareListAction } from "./compare-lines-action"
 import { Tool } from "src/models/Tool"
 
 const compareList = new Tool({
-  id: "compare-lines",
+  toolId: "compare-lines",
   name: "Compare List",
   category: "List",
   action: compareListAction,

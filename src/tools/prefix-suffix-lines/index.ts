@@ -1,7 +1,7 @@
 import { Tool } from "src/models/Tool"
 
 const prefixSuffixLines = new Tool({
-  id: "prefix-suffix-lines",
+  toolId: "prefix-suffix-lines",
   name: "Prefix Suffix Lines",
   category: "Text",
   action: ({ input, prefix, suffix }: { prefix: string, suffix: string, input: string }) => {

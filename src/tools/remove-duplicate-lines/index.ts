@@ -2,7 +2,7 @@ import { Tool } from "src/models/Tool"
 import { removeDuplicateLinesActions } from "./remove-duplicate-lines-action"
 
 const removeDuplicateList = new Tool({
-  id: "remove-duplicate-list",
+  toolId: "remove-duplicate-list",
   name: "Remove Duplicate List",
   category: "List",
   action: removeDuplicateLinesActions,

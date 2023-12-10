@@ -8,7 +8,7 @@
     border-radius: var(--border-radius);
     padding: var(--input-padding);
     outline: none !important;
-    font-size: 14px;
+    font-size: var(--input-output-font-size);
     line-height: 1;
     resize: none;
     text-wrap: nowrap;
@@ -22,5 +22,11 @@
     &:focus {
       border: 1px solid var(--accent-color);
     }
+  }
+}
+
+.ToolArea.text-area-word-wrap {
+  .SingleTextareaInput textarea {
+    text-wrap: wrap;
   }
 }

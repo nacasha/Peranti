@@ -5,7 +5,7 @@ class UserInterfaceStore {
 
   sidebarMode: "dock-pinned" | "dock-unpinned" | "unpinned" = "unpinned"
 
-  textAreaWordWrap = false
+  textAreaWordWrap = true
 
   constructor() {
     makeAutoObservable(this)

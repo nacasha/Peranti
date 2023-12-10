@@ -1,7 +1,7 @@
 import { Tool } from "src/models/Tool"
 
 const testPipelines = new Tool({
-  id: "test-pipelines",
+  toolId: "test-pipelines",
   name: "Test Pipelines",
   category: "Pipelines",
   action: (input: any) => {

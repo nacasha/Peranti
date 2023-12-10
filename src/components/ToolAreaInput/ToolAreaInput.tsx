@@ -10,7 +10,7 @@ export const ToolAreaInput = observer(() => {
     <div className="ToolAreaInput">
       {inputs.map((input) => (
         <ToolAdapterInput
-          key={activeTool.id + input.key}
+          key={activeTool.instanceId + input.key}
           field={input.key}
           component={input.component}
           props={input.props}
