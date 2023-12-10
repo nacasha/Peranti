@@ -54,7 +54,7 @@ $padding: 10px;
     user-select: none;
     pointer-events: none;
 
-    .main {
+    .ToolSearch {
       pointer-events: visible;
       border: 1px solid var(--border-color);
       border-radius: var(--border-radius);
@@ -69,6 +69,55 @@ $padding: 10px;
         background-color: var(--accent-color-light-2);
         border-color: var(--accent-color-light);
         cursor: pointer;
+      }
+    }
+
+    .ToolSearchResult {
+      position: fixed;
+      z-index: 12121212;
+      width: 350px;
+      max-height: 300px;
+      overflow: auto;
+      pointer-events: all;
+      background-color: white;
+      border: 1px solid rgb(228, 228, 228);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
+      border-radius: 4px;
+
+      .search {
+        margin: 5px;
+        flex: 1;
+        padding: 4px 7px;
+        background-color: var(--accent-color-light-2);
+        border: 1px solid var(--accent-color-light);
+        border-radius: 4px;
+        outline: none;
+      }
+
+      .list {
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      &-item {
+        all: unset;
+        margin: 1px 3px;
+        padding: 1px 6px;
+        border-radius: 4px;
+        transition: all 0.2s;
+        cursor: pointer;
+
+        &:hover {
+          background: var(--accent-color);
+          color: white;
+        }
+
+        &:focus {
+          background-color: var(--accent-color-light-2);
+        }
       }
     }
   }

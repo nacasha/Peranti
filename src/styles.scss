@@ -47,24 +47,6 @@ html {
   --tool-header-background-color: #ffffff;
 }
 
-button {
-  border: 1px solid var(--border-color);
-  background: transparent;
-  border-radius: var(--border-radius);
-  padding: 3px 9px;
-  user-select: none;
-  cursor: pointer;
-  font-family: "Inter";
-
-  &:hover {
-    background: rgb(241, 241, 241);
-  }
-
-  &:active {
-    background: rgb(224, 224, 224);
-  }
-}
-
 .InputOutputLabel {
   line-height: 1;
   margin-bottom: var(--input-output-label-spacing);
