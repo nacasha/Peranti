@@ -12,7 +12,7 @@ export const ToolArea: FC = observer(() => {
   const textAreaWordWrap = userInterfaceStore.textAreaWordWrap
 
   return (
-    <div className={(`ToolArea ${layout}`).concat(textAreaWordWrap ? " text-area-word-wrap" : "")}>
+    <div className={(`ToolArea separated-input-output ${layout}`).concat(textAreaWordWrap ? " text-area-word-wrap" : "")}>
       <ToolAreaInput />
       <ToolAreaOutput />
     </div>

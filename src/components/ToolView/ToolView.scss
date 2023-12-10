@@ -1,15 +1,31 @@
+$sidebar-width: 250px;
+
 .ToolView {
   display: flex;
   flex: 1;
 
-  .ToolView-right-panel {
-    border-left: 1px solid var(--border-color);
+  .ToolView-right-panel, .ToolView-left-panel {
     background-color: white;
-    width: 180px;
+    width: $sidebar-width;
     transition: all 0.2s;
     overflow: hidden;
-    margin-right: -180px;
 
+    &.open {
+      margin-right: 0;
+    }
+  }
+
+  .ToolView-left-panel {
+    border-right: 1px solid var(--border-color);
+    margin-left: -$sidebar-width;
+    &.open {
+      margin-left: 0;
+    }
+  }
+
+  .ToolView-right-panel {
+    border-left: 1px solid var(--border-color);
+    margin-right: -$sidebar-width;
     &.open {
       margin-right: 0;
     }

@@ -10,12 +10,12 @@ export const ToolView: FC = () => {
   return (
     <div className="ToolView">
       <ToolRunner />
+      <ToolHistoryList />
+
       <div className="ToolView-main-panel">
         <ToolHeader />
         <ToolArea />
       </div>
-
-      <ToolHistoryList />
     </div>
   )
 }

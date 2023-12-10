@@ -1,23 +1,9 @@
-import { useEffect } from "react"
 import { AppSidebar } from "src/components/AppSidebar"
 import { AppTitlebar } from "src/components/AppTitlebar"
 import { ToolView } from "src/components/ToolView"
+import { AppStatusbar } from "./components/AppStatusbar"
 
 export const App = () => {
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === "p") {
-        event.preventDefault()
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [])
-
   return (
     <div className="AppRoot">
       <AppTitlebar />
@@ -28,6 +14,7 @@ export const App = () => {
           <ToolView />
         </div>
       </div>
+      <AppStatusbar />
     </div>
   )
 }

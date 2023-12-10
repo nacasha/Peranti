@@ -8,7 +8,6 @@ export const ToolRunnerManual: FC = () => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.altKey && event.key === "Enter") {
-        console.log("run")
         event.preventDefault()
         toolStore.runActiveTool()
       }

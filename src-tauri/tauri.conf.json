@@ -47,9 +47,11 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "dev-pipe",
+        "title": "Dev Pipe",
         "width": 800,
+        "minWidth": 650,
         "height": 600,
+        "minHeight": 500,
         "decorations": false
       }
     ]

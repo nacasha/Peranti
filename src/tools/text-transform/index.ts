@@ -4,14 +4,15 @@ const textTransformTool = new Tool({
   toolId: "text-transform",
   name: "Text Transform",
   category: "Text",
-  layout: "top-bottom-auto",
+  layout: "top-bottom",
   inputs: [
     {
       key: "type",
       component: "Switch",
-      defaultValue: "pretty",
+      defaultValue: "original",
       props: {
         options: [
+          { value: "original", label: "Original Text" },
           { value: "lowercase", label: "lowercase" },
           { value: "uppercase", label: "UPPERCASE" },
           { value: "titlecase", label: "Title Case" },
@@ -24,7 +25,7 @@ const textTransformTool = new Tool({
     },
     {
       key: "input",
-      component: "Text",
+      component: "Textarea",
       defaultValue: ""
     }
   ],
