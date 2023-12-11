@@ -14,7 +14,7 @@ export const ToolHistoryList = observer(() => {
   }
 
   return (
-    <div className={"ToolView-left-panel".concat(toolStore.isHistoryPanelOpen ? " open" : "")}>
+    <div className={"ToolView-right-panel".concat(toolStore.isHistoryPanelOpen ? " open" : "")}>
       <div className="ToolHistoryList">
         {toolHistoryStore.getWithToolId(activeTool.toolId).map((toolHistory) => (
           <div

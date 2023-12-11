@@ -49,9 +49,9 @@
         "resizable": true,
         "title": "Dev Pipe",
         "width": 800,
-        "minWidth": 650,
+        "minWidth": 600,
         "height": 600,
-        "minHeight": 500,
+        "minHeight": 390,
         "decorations": false
       }
     ]

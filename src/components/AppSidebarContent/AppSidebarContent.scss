@@ -1,0 +1,23 @@
+.AppSidebarContent {
+  border-right: 1px solid var(--border-color);
+  width: 100%;
+  max-width: var(--sidebar-width);
+  padding-top: 5px;
+  overflow: auto;
+  background-color: var(--sidebar-background-color);
+  box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  transition: margin-left 0.2s;
+  z-index: 2;
+
+  &.hidden {
+    margin-left: calc(0px - var(--sidebar-width));
+    border-right: none;
+  }
+
+  &.float-unpinned {
+    position: absolute;
+    left: 40px;
+    top: 0;
+    bottom: 0;
+  }
+}

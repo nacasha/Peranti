@@ -1,3 +1,5 @@
+@import url("_fonts.scss");
+
 $padding: 10px;
 
 html, body {
@@ -25,14 +27,14 @@ html {
   --background-color-statusbar: #f6f6f6;
 
   // App Titlebar
-  --app-titlebar-height: 40px;
+  --app-titlebar-height: 35px;
   --app-titlebar-background-color: #f6f6f6;
 
   // Input component styles
-  --input-padding: 7px;
+  --input-padding: 6px;
 
   // Output component styles
-  --output-padding: 7px;
+  --output-padding: 6px;
 
   // Input and output component styles
   --input-output-label-spacing: 10px;
@@ -58,7 +60,7 @@ html {
 }
 
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter";
   font-size: var(--font-size);
   line-height: 24px;
   font-weight: 400;

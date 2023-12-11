@@ -1,39 +1,50 @@
 .AppSidebar {
   border-right: 1px solid var(--border-color);
   width: 100%;
-  max-width: var(--sidebar-width);
-  padding-top: 5px;
+  max-width: 40px;
   overflow: auto;
   background-color: var(--sidebar-background-color);
-  box-shadow: 0 0 3px rgba(0,0,0,0.1);
-  transition: margin-left 0.2s;
-  z-index: 2;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 3px;
+  padding-left: 1px;
 
-  &.hidden {
-    margin-left: calc(0px - var(--sidebar-width));
-  }
-
-  .AppSidebar-item {
-    border-radius: var(--border-radius);
-    margin: 2px 7px;
-    padding: 2px 6px;
-    transition: background 0.2s;
-    cursor: pointer;
-    user-select: none;
+  .icon {
+    margin: 0 4px;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    padding: 5px;
+    position: relative;
 
     &:hover {
-      background: var(--accent-color-light-2);
+      background-color: rgb(221, 221, 221);
+      cursor: pointer;
     }
 
-    &.active {
-      background: var(--accent-color);
-      color: white;
+    img {
+      display: flex;
+      align-items: center;
+      width: 20px;
+      margin: auto;
+      filter: invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%);
     }
-  }
 
-  .AppSidebar-history {
-    border-top: 1px solid rgb(218, 218, 218);
-    max-height: calc(100vh - 450px);
-    overflow: auto;
+    .tooltip-text {
+      display: none;
+      position: fixed;
+      margin-left: 35px;
+      padding: 2px 5px;
+      background-color: #333;
+      color: #fff;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    &:hover .tooltip-text {
+      display: block;
+    }
   }
 }

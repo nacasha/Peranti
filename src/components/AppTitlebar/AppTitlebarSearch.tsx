@@ -130,9 +130,11 @@ export const AppTitlebarSearch = observer(() => {
 
   return (
     <div className="AppTitlebarSearch">
+      <div className="left-padding"></div>
       <div className="ToolSearch" onClick={onClickSearch}>
         {toolStore.getActiveToolName()}
       </div>
+      <div className="right-padding"></div>
 
       {isOpen && <SearchCompoennt onClickOutside={handleClickOutside} />}
     </div>

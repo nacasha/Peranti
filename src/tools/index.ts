@@ -1,5 +1,3 @@
-import textToUppercase from "./text-to-uppercase"
-import textToLowercase from "./text-to-lowercase"
 import removeDuplicateList from "./remove-duplicate-lines"
 import sortList from "./sort-list"
 import compareList from "./compare-list"
@@ -14,8 +12,6 @@ import generateRandomStringTool from "./generate-random-string"
 import jsonFormatter from "./json-formatter"
 
 export const mapOfTools: Record<string, Tool> = {
-  [textToUppercase.instanceId]: textToUppercase,
-  [textToLowercase.instanceId]: textToLowercase,
   [removeDuplicateList.instanceId]: removeDuplicateList,
   [sortList.instanceId]: sortList,
   [compareList.instanceId]: compareList,
