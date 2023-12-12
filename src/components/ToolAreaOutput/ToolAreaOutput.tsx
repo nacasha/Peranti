@@ -1,6 +1,6 @@
 import { observer } from "mobx-react"
 import { ToolAdapterOutput } from "../ToolAdapterOutput"
-import { toolStore } from "src/store/toolStore"
+import { toolStore } from "src/stores/toolStore"
 
 export const ToolAreaOutput = observer(() => {
   const activeTool = toolStore.getActiveTool()

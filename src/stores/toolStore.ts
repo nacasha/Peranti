@@ -3,6 +3,7 @@ import { Tool } from "src/models/Tool"
 import { toolHistoryStore } from "./toolHistoryStore"
 import { type ToolHistory } from "src/types/ToolHistory"
 import { mapOfTools } from "src/tools"
+import { ToolRunModeEnum } from "src/enums/ToolRunTypeEnum"
 
 class ToolStore {
   /**
@@ -10,7 +11,7 @@ class ToolStore {
    */
   protected activeTool?: Tool = undefined
 
-  protected runMode: "auto" | "manual" = "auto"
+  protected runMode: ToolRunModeEnum = ToolRunModeEnum.OnChange
 
   isHistoryPanelOpen = false
 
@@ -107,7 +108,7 @@ class ToolStore {
   }
 
   get isRunModeAuto() {
-    return this.runMode === "auto"
+    return this.runMode === ToolRunModeEnum.OnChange
   }
 
   /**

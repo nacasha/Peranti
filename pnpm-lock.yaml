@@ -35,6 +35,9 @@ dependencies:
   uuid:
     specifier: ^9.0.1
     version: 9.0.1
+  wouter:
+    specifier: ^2.12.1
+    version: 2.12.1(react@18.2.0)
 
 devDependencies:
   '@tauri-apps/cli':
@@ -3122,6 +3125,15 @@ packages:
     dependencies:
       isexe: 2.0.0
     dev: true
+
+  /wouter@2.12.1(react@18.2.0):
+    resolution: {integrity: sha512-G7a6JMSLSNcu6o8gdOfIzqxuo8Qx1qs+9rpVnlurH69angsSFPZP5gESNuVNeJct/MGpQg191pDo4HUjTx7IIQ==}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
 
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}

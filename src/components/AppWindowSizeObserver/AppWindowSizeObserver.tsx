@@ -1,6 +1,6 @@
 import { observer } from "mobx-react"
 import { type FC, useEffect } from "react"
-import { interfaceStore } from "src/store/interfaceStore"
+import { interfaceStore } from "src/stores/interfaceStore"
 
 export const AppWindowSizeObserver: FC = observer(() => {
   useEffect(() => {

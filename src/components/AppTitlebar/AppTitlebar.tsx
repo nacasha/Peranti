@@ -1,7 +1,7 @@
 import { type FC } from "react"
 
 import { useWindowListener } from "src/hooks/useWindowListener"
-import { interfaceStore } from "src/store/interfaceStore"
+import { interfaceStore } from "src/stores/interfaceStore"
 import { assets } from "src/constants/assets"
 
 import "./AppTitlebar.scss"
@@ -18,11 +18,7 @@ export const AppTitlebar: FC = () => {
     <div className="AppTitlebar" data-tauri-drag-region>
       <div className="AppTitlebar-main">
         <div className="AppTitlebar-main-button" onClick={onClickToggleSidebar}>
-          <img src={assets.PanelLeftSVG} style={{ width: 17 }} alt="Sidebar" />
-        </div>
-
-        <div className="AppTitlebar-main-button">
-          <img src={assets.GearSVG} style={{ width: 17 }} alt="Settings" />
+          <img src={assets.ThreeLineHorizontalSVG} style={{ width: 20 }} alt="Sidebar" />
         </div>
       </div>
 

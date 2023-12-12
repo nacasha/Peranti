@@ -1,9 +1,9 @@
 import { observer } from "mobx-react"
 import "./AppSidebarContent.scss"
 
-import { toolStore } from "src/store/toolStore"
+import { toolStore } from "src/stores/toolStore"
 import { listOfTools } from "src/tools"
-import { interfaceStore } from "src/store/interfaceStore"
+import { interfaceStore } from "src/stores/interfaceStore"
 import { AppSidebarItem } from "../AppSidebarItem"
 import { type Tool } from "src/models/Tool"
 

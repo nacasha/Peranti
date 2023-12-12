@@ -1,8 +1,8 @@
 import { observer } from "mobx-react"
-import { toolHistoryStore } from "src/store/toolHistoryStore"
+import { toolHistoryStore } from "src/stores/toolHistoryStore"
 
 import "./ToolHistoryList.scss"
-import { toolStore } from "src/store/toolStore"
+import { toolStore } from "src/stores/toolStore"
 import { type ToolHistory } from "src/types/ToolHistory"
 import { prettyDateFormat } from "src/utils/prettyDateFormat"
 

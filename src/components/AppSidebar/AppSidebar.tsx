@@ -1,30 +1,35 @@
-import { observer } from "mobx-react"
 import "./AppSidebar.scss"
 import { assets } from "src/constants/assets"
+import { AppSidebarItem } from "./AppSidebarItem"
 
-export const AppSidebar = observer(() => {
+export const AppSidebar = () => {
   return (
     <div className={"AppSidebar"}>
-      <div className="icon">
-        <div className="tooltip-text">Home</div>
-        <img src={assets.HomeSVG} alt="Home" />
-      </div>
-      <div className="icon">
-        <div className="tooltip-text">Tools</div>
-        <img src={assets.ThunderSVG} alt="Tools" />
-      </div>
-      <div className="icon">
-        <div className="tooltip-text">Pipelines</div>
-        <img src={assets.ThreeLineVerticalSVG} alt="Pipelines" />
-      </div>
-      <div className="icon">
-        <div className="tooltip-text">History</div>
-        <img src={assets.HistorySVG} alt="History" />
-      </div>
-      <div className="icon">
-        <div className="tooltip-text">Settings</div>
-        <img src={assets.GearSVG} alt="Settings" />
-      </div>
+      <AppSidebarItem
+        icon={assets.HomeSVG}
+        label={"Home"}
+        path={"/"}
+      />
+      <AppSidebarItem
+        icon={assets.ThunderSVG}
+        label={"Tools"}
+        path={"/tools"}
+      />
+      <AppSidebarItem
+        icon={assets.ThreeLineVerticalSVG}
+        label={"Pipelines"}
+        path={"/pipelines"}
+      />
+      <AppSidebarItem
+        icon={assets.HistorySVG}
+        label={"History"}
+        path={"/history"}
+      />
+      <AppSidebarItem
+        icon={assets.GearSVG}
+        label={"Settings"}
+        path={"/settings"}
+      />
     </div>
   )
-})
+}

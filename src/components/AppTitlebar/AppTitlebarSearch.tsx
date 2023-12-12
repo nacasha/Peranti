@@ -2,7 +2,7 @@ import { observer } from "mobx-react"
 import { type FC, useRef, useState, useEffect } from "react"
 import useClickOutside from "src/hooks/useClickOutside"
 import { type Tool } from "src/models/Tool"
-import { toolStore } from "src/store/toolStore"
+import { toolStore } from "src/stores/toolStore"
 import { listOfTools } from "src/tools"
 
 interface SearchCompoenntProps {

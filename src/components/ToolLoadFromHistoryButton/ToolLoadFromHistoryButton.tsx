@@ -1,7 +1,7 @@
 import { observer } from "mobx-react"
 import { type FC } from "react"
 import { assets } from "src/constants/assets"
-import { toolStore } from "src/store/toolStore"
+import { toolStore } from "src/stores/toolStore"
 
 export const ToolLoadFromHistoryButton: FC = observer(() => {
   const activeTool = toolStore.getActiveTool()

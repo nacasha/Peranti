@@ -6,7 +6,6 @@ $padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--border-color);
   background-color: var(--app-titlebar-background-color);
 
   .AppTitlebar-main {
@@ -18,7 +17,7 @@ $padding: 10px;
     .AppTitlebar-main-button {
       display: flex;
       border-radius: var(--border-radius);
-      padding: 5px;
+      padding: 3px 6px;
 
       &:hover {
         background-color: rgb(224, 224, 224);
@@ -76,8 +75,8 @@ $padding: 10px;
       font-size: var(--font-size);
 
       &:hover {
-        background-color: var(--accent-color-light-2);
-        border-color: var(--accent-color-light);
+        background-color: var(--accent-color-light-80);
+        border-color: var(--accent-color-light-60);
         cursor: pointer;
       }
     }
@@ -101,8 +100,8 @@ $padding: 10px;
         margin: 5px;
         flex: 1;
         padding: 4px 7px;
-        background-color: var(--accent-color-light-2);
-        border: 1px solid var(--accent-color-light);
+        background-color: var(--accent-color-light-80);
+        border: 1px solid var(--accent-color-light-60);
         border-radius: 4px;
         outline: none;
       }
@@ -127,7 +126,7 @@ $padding: 10px;
         }
 
         &:focus {
-          background-color: var(--accent-color-light-2);
+          background-color: var(--accent-color-light-80);
         }
       }
     }

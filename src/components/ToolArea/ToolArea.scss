@@ -1,5 +1,4 @@
-$padding: 15px;
-$field-spacing: 15px;
+$padding: 10px;
 
 .ToolArea {
   flex: 1;
@@ -51,6 +50,6 @@ $field-spacing: 15px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: $field-spacing;
+    gap: $padding;
   }
 }

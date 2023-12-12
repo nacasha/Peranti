@@ -1,10 +1,12 @@
+import { Route } from "wouter"
+
 import { AppSidebar } from "src/components/AppSidebar"
 import { AppTitlebar } from "src/components/AppTitlebar"
-import { ToolView } from "src/components/ToolView"
 import { AppStatusbar } from "./components/AppStatusbar"
 import { AppWindowSizeListener } from "./components/AppWindowSizeListener"
 import { AppWindowSizeObserver } from "./components/AppWindowSizeObserver"
-import { AppSidebarContent } from "./components/AppSidebarContent"
+import { ToolPage } from "./pages/ToolPage"
+import { SettingsPage } from "./pages/SettingsPage"
 
 export const App = () => {
   return (
@@ -15,9 +17,10 @@ export const App = () => {
 
       <div className="AppContainer">
         <AppSidebar />
-        <AppSidebarContent />
+
         <div className="AppContent">
-          <ToolView />
+          <Route path="/tools/:toolId*" component={ToolPage} />
+          <Route path="/settings" component={SettingsPage} />
         </div>
       </div>
       <AppStatusbar />

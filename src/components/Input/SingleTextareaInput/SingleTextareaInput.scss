@@ -13,9 +13,10 @@
     text-wrap: nowrap;
     border: 1px solid var(--border-color);
     background-color: #f9f9f9;
+    resize: none;
 
     &:hover {
-      border: 1px solid var(--accent-color-light);
+      border: 1px solid var(--accent-color-light-60);
     }
 
     &:focus {

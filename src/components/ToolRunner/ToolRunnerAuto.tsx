@@ -1,6 +1,6 @@
 import { reaction } from "mobx"
 import { useEffect, type FC } from "react"
-import { toolStore } from "src/store/toolStore"
+import { toolStore } from "src/stores/toolStore"
 
 export const ToolRunnerAuto: FC = () => {
   /**

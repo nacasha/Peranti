@@ -3,7 +3,7 @@ import { ToolRunButton } from "src/components/ToolRunButton"
 import "./ToolHeader.scss"
 import { assets } from "src/constants/assets"
 import { ToolLoadFromHistoryButton } from "../ToolLoadFromHistoryButton"
-import { toolStore } from "src/store/toolStore"
+import { toolStore } from "src/stores/toolStore"
 
 export const ToolHeader = () => {
   const onClickHistory = () => {

@@ -1,9 +1,9 @@
 .ToolHeader {
   display: flex;
   gap: 0px;
-  padding: 0 15px;
+  padding: 5px 10px;
   align-items: center;
-  height: var(--tool-header-height);
+  min-height: var(--tool-header-height);
   border-bottom: 1px solid var(--border-color);
   justify-content: space-between;
   background-color: var(--tool-header-background-color);

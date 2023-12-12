@@ -1,0 +1,59 @@
+$sidebar-width: 150px;
+
+.ToolPage {
+  display: flex;
+  flex: 1;
+
+  .ToolPage-right-panel, .ToolPage-left-panel {
+    background-color: white;
+    width: $sidebar-width;
+    transition: all 0.2s;
+    overflow: hidden;
+
+    &.open {
+      margin-right: 0;
+    }
+  }
+
+  .ToolPage-left-panel {
+    border-right: 1px solid var(--border-color);
+    margin-left: -$sidebar-width;
+    &.open {
+      margin-left: 0;
+    }
+  }
+
+  .ToolPage-right-panel {
+    border-left: 1px solid var(--border-color);
+    margin-right: -$sidebar-width;
+    &.open {
+      margin-right: 0;
+    }
+  }
+
+  .ToolPage-panel-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 7px;
+
+    .item {
+      text-align: center;
+      padding: 3px 0;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      user-select: none;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #fcfcfc;
+      }
+    }
+  }
+
+  .ToolPage-main-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+  }
+}

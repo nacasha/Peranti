@@ -1,7 +1,7 @@
 import { observer } from "mobx-react"
 import { type FC } from "react"
 import { listOfOutputComponent } from "src/components/Output"
-import { toolStore } from "src/store/toolStore"
+import { toolStore } from "src/stores/toolStore"
 
 interface ToolAdapterOutputProps {
   component: string

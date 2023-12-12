@@ -10,8 +10,16 @@ html, body {
 html {
   // Colors
   --accent-color: #0163e1;
-  --accent-color-light: color-mix(in srgb, var(--accent-color), #ffffff 65%);
-  --accent-color-light-2: color-mix(in srgb, var(--accent-color), #ffffff 85%);
+  --accent-color-light-20: color-mix(in srgb, var(--accent-color), #ffffff 20%);
+  --accent-color-light-40: color-mix(in srgb, var(--accent-color), #ffffff 40%);
+  --accent-color-light-60: color-mix(in srgb, var(--accent-color), #ffffff 60%);
+  --accent-color-light-80: color-mix(in srgb, var(--accent-color), #ffffff 80%);
+
+  --accent-color-dark-20: color-mix(in srgb, var(--accent-color), #000000 20%);
+  --accent-color-dark-40: color-mix(in srgb, var(--accent-color), #000000 40%);
+  --accent-color-dark-60: color-mix(in srgb, var(--accent-color), #000000 60%);
+  --accent-color-dark-80: color-mix(in srgb, var(--accent-color), #000000 80%);
+
 
   --border-color: #DADADA;
 
@@ -21,7 +29,7 @@ html {
   --border-radius: 4px;
 
   // App Content
-  --background-color-content: #ffffff;
+  --background-color-content: #f6f6f6;
 
   // App Statusbar
   --background-color-statusbar: #f6f6f6;
@@ -97,6 +105,13 @@ html {
 .AppContent {
   width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-top-left-radius: 10px;
+  border: 1px solid var(--border-color);
+  border-right: 0;
+  border-bottom: 0;
+  background-color: #ffffff;
 }

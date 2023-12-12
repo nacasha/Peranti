@@ -10,6 +10,8 @@ import GearSVG from "src/assets/icons/gear.svg"
 import HomeSVG from "src/assets/icons/home.svg"
 import ThunderSVG from "src/assets/icons/thunder.svg"
 import ThreeLineVerticalSVG from "src/assets/icons/three-line-vertical.svg"
+import ThreeLineHorizontalSVG from "src/assets/icons/three-line-horizontal.svg"
+import RunFilledSVG from "src/assets/icons/run-filled.svg"
 
 export const assets = {
   PanelLeftSVG,
@@ -23,5 +25,7 @@ export const assets = {
   GearSVG,
   HomeSVG,
   ThunderSVG,
-  ThreeLineVerticalSVG
+  ThreeLineVerticalSVG,
+  RunFilledSVG,
+  ThreeLineHorizontalSVG
 }
