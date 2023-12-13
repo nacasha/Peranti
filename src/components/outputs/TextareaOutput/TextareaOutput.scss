@@ -1,0 +1,48 @@
+.TextareaOutput {
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  .box-container {
+    position: relative;
+    display: flex;
+    flex: 1;
+  }
+
+  .box {
+    white-space-collapse: preserve;
+    font-family: monospace;
+    font-size: var(--input-output-font-size);
+    line-height: 1;
+    background-color: #f9f9f9;
+
+    overflow: auto;
+    padding: var(--output-padding);
+    text-wrap: nowrap;
+    border: 1px solid #dadada;
+    border-radius: var(--border-radius);
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    resize: none;
+    outline: none !important;
+
+    &:hover {
+      border: 1px solid var(--accent-color-light-60);
+    }
+
+    &:focus {
+      border: 1px solid var(--accent-color);
+    }
+  }
+}
+
+.ToolArea.text-area-word-wrap {
+  .TextareaOutput .box {
+    text-wrap: wrap;
+  }
+}

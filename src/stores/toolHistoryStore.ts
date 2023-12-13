@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx"
+
 import { type ToolHistory } from "src/types/ToolHistory"
 
 class ToolHistoryStore {

@@ -1,4 +1,5 @@
 import { Tool } from "src/models/Tool"
+
 import { jsonFormatterAction } from "./json-formatter-action"
 
 const jsonFormatter = new Tool({

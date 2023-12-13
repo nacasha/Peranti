@@ -6,7 +6,7 @@ export function prettyDateFormat(date: Date) {
   ]
 
   // Get date components
-  const year = date.getFullYear().toString().substring(2)
+  const year = date.getFullYear().toString()
   const month = monthNames[date.getMonth()]
   const day = date.getDate().toString().padStart(2, "0")
   const hours = date.getHours().toString().padStart(2, "0")
@@ -14,7 +14,7 @@ export function prettyDateFormat(date: Date) {
   const seconds = date.getSeconds().toString().padStart(2, "0")
 
   // Construct the pretty date string
-  const prettyDate = `${year} ${month} ${day} - ${hours}:${minutes}:${seconds}`
+  const prettyDate = `${day} ${month} ${year}  - ${hours}:${minutes}:${seconds}`
 
   return prettyDate
 }

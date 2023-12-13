@@ -6,7 +6,7 @@ interface OutputMap {
   output: unknown
 }
 
-export function removeDuplicateLinesActions (inputParams: InputParams): OutputMap {
+export function removeDuplicateLinesActions(inputParams: InputParams): OutputMap {
   const { input } = inputParams
 
   // Split the input string into an array of lines

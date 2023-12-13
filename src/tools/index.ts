@@ -1,28 +1,33 @@
+import { type Tool } from "src/models/Tool"
+
+import compareList from "./compare-list"
+import generateRandomStringTool from "./generate-random-string"
+import generateUuid from "./generate-uuid"
+import hashTool from "./hash"
+import jsonFormatter from "./json-formatter"
+import millisecondsToDate from "./milliseconds-to-date"
+import prefixSuffixLines from "./prefix-suffix-lines"
 import removeDuplicateList from "./remove-duplicate-lines"
 import sortList from "./sort-list"
-import compareList from "./compare-list"
-import generateUuid from "./generate-uuid"
-import prefixSuffixLines from "./prefix-suffix-lines"
-import millisecondsToDate from "./milliseconds-to-date"
-import hashTool from "./hash"
 import testPipelines from "./test-pipelines"
 import textTransformTool from "./text-transform"
-import { type Tool } from "src/models/Tool"
-import generateRandomStringTool from "./generate-random-string"
-import jsonFormatter from "./json-formatter"
 
 export const mapOfTools: Record<string, Tool> = {
-  [removeDuplicateList.instanceId]: removeDuplicateList,
-  [sortList.instanceId]: sortList,
-  [compareList.instanceId]: compareList,
-  [generateUuid.instanceId]: generateUuid,
-  [prefixSuffixLines.instanceId]: prefixSuffixLines,
-  [millisecondsToDate.instanceId]: millisecondsToDate,
-  [hashTool.instanceId]: hashTool,
-  [testPipelines.instanceId]: testPipelines,
-  [textTransformTool.instanceId]: textTransformTool,
-  [generateRandomStringTool.instanceId]: generateRandomStringTool,
-  [jsonFormatter.instanceId]: jsonFormatter
+  [removeDuplicateList.toolId]: removeDuplicateList,
+  [sortList.toolId]: sortList,
+  [compareList.toolId]: compareList,
+  [generateUuid.toolId]: generateUuid,
+  [prefixSuffixLines.toolId]: prefixSuffixLines,
+  [millisecondsToDate.toolId]: millisecondsToDate,
+  [hashTool.toolId]: hashTool,
+  [testPipelines.toolId]: testPipelines,
+  [textTransformTool.toolId]: textTransformTool,
+  [generateRandomStringTool.toolId]: generateRandomStringTool,
+  [jsonFormatter.toolId]: jsonFormatter
 }
 
 export const listOfTools = Object.values(mapOfTools)
+
+export const mapOfToolsName: Record<string, string> = Object.fromEntries(
+  Object.entries(mapOfTools).map(([toolId, tool]) => [toolId, tool.name])
+)

@@ -2,7 +2,7 @@ export interface InputComponentProps<T = string> {
   /**
    * Label to put on top of input component
    */
-  label: string
+  label?: string
 
   /**
    * Initial value of input component

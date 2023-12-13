@@ -1,4 +1,4 @@
-import { type listOfOutputComponent } from "src/components/Output"
+import { type listOfOutputComponent } from "src/components/outputs"
 
 export interface ToolOutput {
   /**

@@ -1,4 +1,5 @@
 import { Tool } from "src/models/Tool"
+
 import { removeDuplicateLinesActions } from "./remove-duplicate-lines-action"
 
 const removeDuplicateList = new Tool({

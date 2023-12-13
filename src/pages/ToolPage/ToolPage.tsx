@@ -1,17 +1,16 @@
 import { type FC } from "react"
 
-import { ToolRunner } from "src/components/ToolRunner"
-import { ToolHeader } from "src/components/ToolHeader"
-import { ToolArea } from "src/components/ToolArea"
-import { ToolHistoryList } from "src/components/ToolHistoryList"
-import { AppSidebarContent } from "src/components/AppSidebarContent"
+import { ToolArea } from "src/components/tools/ToolArea"
+import { ToolHeader } from "src/components/tools/ToolHeader"
+import { ToolHistoryList } from "src/components/tools/ToolHistoryList"
+import { ToolRunner } from "src/components/tools/ToolRunner"
+
 import "./ToolPage.scss"
 
 export const ToolPage: FC = () => {
   return (
     <div className="ToolPage">
       <ToolRunner />
-      <AppSidebarContent />
 
       <div className="ToolPage-main-panel">
         <ToolHeader />

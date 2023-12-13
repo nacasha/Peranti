@@ -1,9 +1,11 @@
 import { makeAutoObservable } from "mobx"
-import { Tool } from "src/models/Tool"
-import { toolHistoryStore } from "./toolHistoryStore"
-import { type ToolHistory } from "src/types/ToolHistory"
-import { mapOfTools } from "src/tools"
+
 import { ToolRunModeEnum } from "src/enums/ToolRunTypeEnum"
+import { Tool } from "src/models/Tool"
+import { mapOfTools } from "src/tools"
+import { type ToolHistory } from "src/types/ToolHistory"
+
+import { toolHistoryStore } from "./toolHistoryStore"
 
 class ToolStore {
   /**

@@ -1,4 +1,5 @@
 import { Tool } from "src/models/Tool"
+
 import { hashAction } from "./hash-action"
 
 const hashTool = new Tool({

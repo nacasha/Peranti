@@ -1,10 +1,14 @@
 import { makeAutoObservable } from "mobx"
+
+import { SidebarMode } from "src/enums/SidebarMode"
 import { getWindowSize } from "src/utils/getWindowSize"
 
 class InterfaceStore {
-  isSidebarHidden = false
+  _isSidebarShow = true
 
-  sidebarMode: "dock-pinned" | "float-unpinned" = "dock-pinned"
+  sidebarMode: SidebarMode = SidebarMode.DOCK_PINNED
+
+  sidebarActiveMenuId = "tools"
 
   textAreaWordWrap = false
 
@@ -18,16 +22,28 @@ class InterfaceStore {
     makeAutoObservable(this)
   }
 
+  recalculateWindowSize() {
+    this.windowSize = getWindowSize()
+  }
+
+  get isSidebarShow() {
+    return this._isSidebarShow
+  }
+
   toggleSidebar() {
-    this.isSidebarHidden = !this.isSidebarHidden
+    this._isSidebarShow = !this._isSidebarShow
   }
 
   hideSidebar() {
-    this.isSidebarHidden = true
+    this._isSidebarShow = false
   }
 
-  recalculateWindowSize() {
-    this.windowSize = getWindowSize()
+  showSidebar() {
+    this._isSidebarShow = true
+  }
+
+  setSidebarMenuId(menuId: string) {
+    this.sidebarActiveMenuId = menuId
   }
 }
 

@@ -1,5 +1,6 @@
-import { compareListAction } from "./compare-lines-action"
 import { Tool } from "src/models/Tool"
+
+import { compareListAction } from "./compare-lines-action"
 
 const compareList = new Tool({
   toolId: "compare-lines",
