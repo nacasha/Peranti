@@ -1,6 +1,5 @@
 import { type FC } from "react"
 
-import { Switch } from "src/components/common/Switch"
 import { SelectInput } from "src/components/inputs/SelectInput"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 
@@ -14,7 +13,6 @@ export const SettingsSidebar: FC = () => {
         <div className="section-list">
           <div className="item">
             Theme
-            <Switch />
           </div>
           <div className="item">Font Size</div>
           <div className="item">Zoom</div>

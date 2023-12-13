@@ -1,8 +1,7 @@
-import { AppSidebar } from "src/components/app/AppSidebar"
-import { AppTitlebar } from "src/components/app/AppTitlebar"
-
+import { AppSidebar } from "./components/app/AppSidebar"
 import { AppSidebarContent } from "./components/app/AppSidebarContent"
 import { AppStatusbar } from "./components/app/AppStatusbar"
+import { AppTitlebar } from "./components/app/AppTitlebar"
 import { AppWindowSizeListener } from "./components/app/AppWindowSizeListener"
 import { AppWindowSizeObserver } from "./components/app/AppWindowSizeObserver"
 import { ToolPage } from "./pages/ToolPage"
