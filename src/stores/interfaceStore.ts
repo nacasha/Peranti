@@ -5,6 +5,8 @@ import { SidebarMode } from "src/enums/SidebarMode"
 import { getWindowSize } from "src/utils/getWindowSize"
 
 class InterfaceStore {
+  theme = "light"
+
   _isSidebarShow = true
 
   _sidebarMode: SidebarMode = SidebarMode.DOCK_PINNED
@@ -26,7 +28,7 @@ class InterfaceStore {
 
     void makePersistable(this, {
       name: "InterfaceStore",
-      properties: ["isSidebarAlwaysFloating", "_isSidebarShow", "_sidebarMode", "textAreaWordWrap"],
+      properties: ["isSidebarAlwaysFloating", "_isSidebarShow", "_sidebarMode", "textAreaWordWrap", "theme"],
       storage: window.localStorage
     })
   }

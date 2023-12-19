@@ -1,13 +1,13 @@
 .SwitchInput {
   .buttons {
-    border: 1px solid #d1d1d1;
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     grid-auto-flow: row dense;
     gap: 3px;
     padding: 4px;
-    background: #f9f9f9;
+    background-color: var(--input-background-color);
 
     .button {
       flex: 1;

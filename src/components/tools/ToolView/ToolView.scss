@@ -7,7 +7,7 @@ $sidebar-width: 150px;
   .ToolView-right-panel, .ToolView-left-panel {
     background-color: white;
     width: $sidebar-width;
-    transition: all 0.2s;
+    transition: all 0.15s;
     overflow: hidden;
 
     &.open {

@@ -7,7 +7,7 @@
   user-select: none;
 
   &:hover {
-    background: var(--accent-color-light-80);
+    background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 7%);
   }
 
   &.active {

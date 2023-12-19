@@ -27,22 +27,23 @@
     padding: 2px 8px;
     user-select: none;
     cursor: pointer;
-    font-family: "Inter";
+    font-family: var(--font-family);
     display: flex;
     align-items: center;
     font-size: var(--font-size);
 
     &:hover {
-      background: rgb(241, 241, 241);
+      background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%);
     }
 
     &:active {
-      background: rgb(224, 224, 224);
+      background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 7%);
     }
 
     img {
       width: 12px;
       margin-right: 5px;
+      filter: var(--icon-filter-color);
     }
   }
 }

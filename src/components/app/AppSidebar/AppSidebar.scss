@@ -2,7 +2,7 @@
   width: 100%;
   max-width: 45px;
   overflow: auto;
-  background-color: var(--sidebar-background-color);
+  background-color: var(--background-color-main);
   z-index: 3;
   display: flex;
   flex-direction: column;
@@ -28,16 +28,16 @@
       border-radius: 100px;
       position: absolute;
       opacity: 0;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
 
     &:hover {
-      background-color: rgb(221, 221, 221);
+      background-color: color-mix(in srgb, var(--sidebar-background-color), var(--opposite-color) 7%);
       cursor: pointer;
     }
 
     &.active {
-      background-color: #eaeaea;
+      background-color: color-mix(in srgb, var(--sidebar-background-color), var(--opposite-color) 7%);
 
       &::before {
         opacity: 1;
@@ -50,7 +50,7 @@
       align-items: center;
       width: 21px;
       margin: auto;
-      filter: invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%);
+      filter: var(--icon-filter-color);
     }
 
     .tooltip {

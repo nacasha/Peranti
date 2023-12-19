@@ -1,14 +1,5 @@
 .ToolHistoryList {
   .ToolHistoryList-item {
-    &:hover {
-      background: var(--accent-color-light-80);
-    }
-
-    &.active {
-      background: var(--accent-color);
-      color: white;
-    }
-
     .subtitle {
       font-size: 11px;
     }

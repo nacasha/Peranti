@@ -17,7 +17,7 @@ class ToolHistoryStore {
 
     void makePersistable(this, {
       name: "ToolHistoryStore",
-      properties: ["history", "numberOfMaximumHistory"],
+      properties: ["history", "numberOfMaximumHistory", "autoSaveDelayInSeconds"],
       storage: window.localStorage
     })
   }

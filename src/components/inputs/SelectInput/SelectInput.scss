@@ -6,12 +6,14 @@
     opacity: 1;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    background-color: #f9f9f9;
+    background-color: var(--input-background-color);
     padding: var(--input-padding);
     outline: none;
+    transition: all 0.15s;
 
     option {
       padding: 10px;
+      background-color: var(--input-background-color);
     }
   }
 }

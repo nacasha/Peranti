@@ -3,11 +3,11 @@ import { type FC } from "react"
 import { SelectInput } from "src/components/inputs/SelectInput"
 import { AutoSaveDelay } from "src/components/settings/AutoSaveDelay"
 import { MaxHistoryInput } from "src/components/settings/MaxHistoryInput"
+import { SidebarMode } from "src/components/settings/SidebarMode"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
+import { ThemeSelect } from "src/components/settings/ThemeSelect"
 
 import "./SettingsSidebar.scss"
-
-import { SidebarMode } from "src/components/settings/SidebarMode"
 
 export const SettingsSidebar: FC = () => {
   return (
@@ -17,23 +17,15 @@ export const SettingsSidebar: FC = () => {
         <div className="section-list">
           <div className="item">
             Theme
-            <SelectInput
-              options={[
-                { label: "Dark", value: "dark" },
-                { label: "Light", value: "light" }
-              ]}
-              onSubmit={() => {
-              }}
-              initialValue="on-change"
-            />
+            <ThemeSelect />
           </div>
           <div className="item">
             Sidebar Always Floating
-            <SidebarMode/>
+            <SidebarMode />
           </div>
           <div className="item">
             Text Area Word Wrap
-            <TextAreaWordWrapSwitch/>
+            <TextAreaWordWrapSwitch />
           </div>
         </div>
       </div>

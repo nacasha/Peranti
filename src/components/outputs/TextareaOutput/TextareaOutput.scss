@@ -12,15 +12,16 @@
 
   .box {
     white-space-collapse: preserve;
-    font-family: monospace;
+    font-family: var(--font-family-mono);
     font-size: var(--input-output-font-size);
     line-height: 1;
-    background-color: #f9f9f9;
+    background-color: var(--output-background-color);
+    transition: all 0.15s;
 
     overflow: auto;
     padding: var(--output-padding);
     text-wrap: nowrap;
-    border: 1px solid #dadada;
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
 
     position: absolute;

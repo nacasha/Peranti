@@ -12,8 +12,9 @@
     line-height: 1;
     text-wrap: nowrap;
     border: 1px solid var(--border-color);
-    background-color: #f9f9f9;
+    background-color: var(--input-background-color);
     resize: none;
+    transition: all 0.15s;
 
     &:hover {
       border: 1px solid var(--accent-color-light-60);

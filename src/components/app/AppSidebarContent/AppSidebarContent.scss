@@ -3,7 +3,7 @@
   width: 100%;
   max-width: var(--sidebar-width);
   overflow: auto;
-  background-color: #ffffff;
+  background-color: var(--sidebar-background-color);
   transition: margin-left 0.2s;
   z-index: 2;
 
@@ -30,6 +30,6 @@
     font-weight: 600;
     position: sticky;
     top: 0;
-    background-color: white;
+    background-color: var(--sidebar-background-color);
   }
 }

@@ -4,6 +4,7 @@ $padding: 10px;
   flex: 1;
   display: grid;
   padding: $padding;
+  background: var(--tool-area-background-color);
 
   &.side-by-side {
     grid-template-columns: 1fr 1fr;

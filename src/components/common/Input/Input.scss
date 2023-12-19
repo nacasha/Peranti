@@ -5,9 +5,10 @@
   font-size: 14px;
   line-height: 1;
   text-wrap: nowrap;
-  border: 1px solid #dadada;
-  background-color: #f9f9f9;
-  font-family: monospace;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-background-color);
+  font-family: var(--font-family-mono);
+  transition: all 0.15s;
 
   &:hover {
     border: 1px solid var(--accent-color-light-60);

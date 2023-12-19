@@ -6,7 +6,7 @@ $padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--app-titlebar-background-color);
+  background-color: var(--background-color-main);
 
   .AppTitlebar-main {
     padding: 0 7px;
@@ -36,11 +36,12 @@ $padding: 10px;
 
       img {
         width: 14px;
+        filter: var(--icon-filter-color);
       }
     }
 
     .titlebar-button:hover {
-      background: #bdbdbd;
+      background: color-mix(in srgb, var(--sidebar-background-color), var(--opposite-color) 7%);
     }
   }
 
@@ -67,7 +68,7 @@ $padding: 10px;
       border: 1px solid var(--border-color);
       border-radius: var(--border-radius);
       padding: 0 10px;
-      background-color: white;
+      background-color: var(--background-color-content);
       width: 40%;
       max-width: 320px;
       text-align: center;
@@ -75,22 +76,25 @@ $padding: 10px;
       font-size: var(--font-size);
 
       &:hover {
-        background-color: var(--accent-color-light-80);
-        border-color: var(--accent-color-light-60);
+        background-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 5%);
+        border-color: color-mix(in srgb, var(--border-color), var(--opposite-color) 5%);
         cursor: pointer;
       }
     }
 
     .ToolSearchResult {
       position: fixed;
-      left: calc(50% - 175px);
+      left: 50%;
+      top: 5px;
+      transform: translateX(-50%);
       z-index: 10;
-      width: 350px;
+      width: 100%;
+      max-width: 400px;
       max-height: 300px;
       overflow: auto;
       pointer-events: all;
-      background-color: white;
-      border: 1px solid rgb(228, 228, 228);
+      background-color: var(--background-color-content);
+      border: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
@@ -100,10 +104,11 @@ $padding: 10px;
         margin: 5px;
         flex: 1;
         padding: 4px 7px;
-        background-color: var(--accent-color-light-80);
+        background-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 5%);
         border: 1px solid var(--accent-color-light-60);
         border-radius: 4px;
         outline: none;
+        color: var(--text-color);
       }
 
       .list {
@@ -117,16 +122,12 @@ $padding: 10px;
         margin: 1px 3px;
         padding: 1px 6px;
         border-radius: 4px;
-        transition: all 0.2s;
+        transition: all 0.15s;
         cursor: pointer;
 
-        &:hover {
-          background: var(--accent-color);
+        &:hover, &.hover {
+          background-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%);
           color: white;
-        }
-
-        &:focus {
-          background-color: var(--accent-color-light-80);
         }
       }
     }

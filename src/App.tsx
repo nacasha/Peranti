@@ -1,3 +1,8 @@
+import { clsx } from "clsx"
+import { observer } from "mobx-react"
+
+import { interfaceStore } from "src/stores/interfaceStore.ts"
+
 import { AppSidebar } from "./components/app/AppSidebar"
 import { AppSidebarContent } from "./components/app/AppSidebarContent"
 import { AppStatusbar } from "./components/app/AppStatusbar"
@@ -6,9 +11,11 @@ import { AppWindowSizeListener } from "./components/app/AppWindowSizeListener"
 import { AppWindowSizeObserver } from "./components/app/AppWindowSizeObserver"
 import { ToolPage } from "./pages/ToolPage"
 
-export const App = () => {
+export const App = observer(() => {
+  const { theme } = interfaceStore
+
   return (
-    <div className="AppRoot">
+    <div className={clsx("AppRoot", theme)}>
       <AppWindowSizeListener />
       <AppWindowSizeObserver />
       <AppTitlebar />
@@ -24,4 +31,4 @@ export const App = () => {
       <AppStatusbar />
     </div>
   )
-}
+})

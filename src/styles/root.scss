@@ -7,7 +7,13 @@ html, body {
   padding: 0;
 }
 
-html {
+:root {
+  --font-family: "Inter", serif;
+  --font-family-mono: "Inter", serif;
+  --font-size: 13px;
+}
+
+.AppRoot {
   // Colors
   --accent-color: #0163e1;
   --accent-color-light-20: color-mix(in srgb, var(--accent-color), #ffffff 20%);
@@ -20,29 +26,35 @@ html {
   --accent-color-dark-60: color-mix(in srgb, var(--accent-color), #000000 60%);
   --accent-color-dark-80: color-mix(in srgb, var(--accent-color), #000000 80%);
 
-
-  --border-color: #DADADA;
-
-  --font-size: 13px;
-
   // General
   --border-radius: 4px;
 
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+}
+
+.AppRoot.light {
+  --border-color: #DADADA;
+  --text-color: #0f0f0f;
+
   // App Content
-  --background-color-content: #f6f6f6;
+  --background-color-main: #f6f6f6;
+  --background-color-content: #ffffff;
 
   // App Statusbar
-  --background-color-statusbar: #f6f6f6;
+  --statusbar-background-color: #f6f6f6;
 
   // App Titlebar
   --app-titlebar-height: 35px;
-  --app-titlebar-background-color: #f6f6f6;
 
   // Input component styles
   --input-padding: 6px;
+  --input-background-color: #f9f9f9;
 
   // Output component styles
   --output-padding: 6px;
+  --output-background-color: #f9f9f9;
 
   // Input and output component styles
   --input-output-label-spacing: 10px;
@@ -50,11 +62,95 @@ html {
 
   // Sidebar
   --sidebar-width: 250px;
-  --sidebar-background-color: #f6f6f6;
+  --sidebar-background-color: #ffffff;
 
   // Tool Header
   --tool-header-height: 40px;
   --tool-header-background-color: #ffffff;
+  --tool-area-background-color: #ffffff;
+
+  // Icon
+  --icon-filter-color: invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%);
+
+  // Theme color
+  --opposite-color: #9b9b9b;
+
+  color: #0f0f0f;
+
+  ::-webkit-scrollbar-track {
+    background: var(--background-color-main);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #8b8b8b;
+    border-radius: 4px;
+
+    &:hover {
+      background: #555;
+    }
+  }
+}
+
+.AppRoot.dark {
+  // General
+  --border-color: #30353d;
+  --text-color: #c5c7c9;
+
+  // App Content
+  --background-color-main: #1e1f22;
+  --background-color-content: #222429;
+
+  // App Statusbar
+  --statusbar-background-color: #1e1f22;
+
+  // App Titlebar
+  --app-titlebar-height: 35px;
+
+  // Input component styles
+  --input-padding: 6px;
+  --input-background-color: #2b2f36;
+
+  // Output component styles
+  --output-padding: 6px;
+  --output-background-color: #2b2f36;
+
+  // Input and output component styles
+  --input-output-label-spacing: 10px;
+  --input-output-font-size: 14px;
+
+  // Sidebar
+  --sidebar-width: 250px;
+  --sidebar-background-color: #222429;
+
+  // Tool
+  --tool-header-height: 40px;
+  --tool-header-background-color: #222429;
+  --tool-area-background-color: #222429;
+
+  // Icon
+  --icon-filter-color: invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%);
+
+  // Theme color
+  --opposite-color: #ffffff;
+
+  color: #c5c7c9;
+
+  input, textarea, select, option {
+    color: #c5c7c9;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--background-color-main);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+
+    &:hover {
+      background: #555;
+    }
+  }
 }
 
 .InputOutputLabel {
@@ -67,22 +163,6 @@ html {
   }
 }
 
-:root {
-  font-family: "Inter";
-  font-size: var(--font-size);
-  line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
 .AppRoot {
   margin: 0;
   padding: 0;
@@ -91,6 +171,18 @@ html {
   justify-content: center;
   width: 100vw;
   height: 100vh;
+
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  line-height: 24px;
+  font-weight: 400;
+  //background-color: #f6f6f6;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
 
 .AppContainer {
@@ -98,7 +190,7 @@ html {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: var(--background-color-content);
+  background-color: var(--background-color-main);
   position: relative;
 }
 
@@ -113,5 +205,5 @@ html {
   border: 1px solid var(--border-color);
   border-right: 0;
   border-bottom: 0;
-  background-color: #ffffff;
+  background-color: var(--background-color-content);
 }

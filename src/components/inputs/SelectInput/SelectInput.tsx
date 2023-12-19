@@ -1,4 +1,4 @@
-import { type FC, useId } from "react"
+import React, { type FC, useId } from "react"
 
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
