@@ -3,7 +3,7 @@ import { observable, action, makeObservable } from "mobx"
 import { type ToolHistory } from "src/types/ToolHistory"
 import { type ToolInput } from "src/types/ToolInput"
 import { type ToolOutput } from "src/types/ToolOutput"
-import { generateRandomString } from "src/utils/generateRandomString"
+import { generateSha256 } from "src/utils/generateSha256"
 
 interface ToolConstructor {
   toolId: string
@@ -13,6 +13,8 @@ interface ToolConstructor {
   category: string
   action: (input: any) => any
   layout?: "side-by-side" | "top-bottom" | "top-bottom-auto"
+  inputsLayoutDirection?: "horizontal" | "vertical"
+  outputsLayoutDirection?: "horizontal" | "vertical"
 }
 
 export class Tool implements ToolConstructor {
@@ -52,6 +54,16 @@ export class Tool implements ToolConstructor {
   layout?: "side-by-side" | "top-bottom" | "top-bottom-auto"
 
   /**
+   * Layout direction for input area
+   */
+  inputsLayoutDirection?: "horizontal" | "vertical"
+
+  /**
+   * Layout direction for output area
+   */
+  outputsLayoutDirection?: "horizontal" | "vertical"
+
+  /**
    * Action of tool.
    * Input always comes in form of Map as well as the returned value
    */
@@ -83,7 +95,18 @@ export class Tool implements ToolConstructor {
    */
 
   constructor(params: ToolConstructor) {
-    const { action, category, toolId, inputs, outputs, name: title, layout } = params
+    const {
+      action,
+      category,
+      toolId,
+      inputs,
+      outputs,
+      name: title,
+      layout,
+      inputsLayoutDirection = "vertical",
+      outputsLayoutDirection = "vertical"
+    } = params
+
     this.toolId = toolId
     this.instanceId = toolId
     this.action = action
@@ -92,12 +115,19 @@ export class Tool implements ToolConstructor {
     this.outputs = outputs
     this.name = title
     this.layout = layout
+    this.inputsLayoutDirection = inputsLayoutDirection
+    this.outputsLayoutDirection = outputsLayoutDirection
+
+    // Set default value from tool definitions into inputParams
+    this.inputParams = this.getInputParamsWithDefault()
   }
 
   /**
    * Load tool from history and make inputs read only
    *
+   * @param mainTool
    * @param toolHistory
+   * @param readOnly
    */
   static fromHistory(mainTool: Tool, toolHistory: ToolHistory, readOnly = true) {
     const tool = new Tool({ ...mainTool })
@@ -114,8 +144,8 @@ export class Tool implements ToolConstructor {
    * @returns
    */
   toHistory(): ToolHistory {
-    const { instanceId: originalInstanceId, toolId, inputParams, outputParams } = this
-    const instanceId = originalInstanceId.concat(generateRandomString(15))
+    const { toolId, inputParams, outputParams } = this
+    const instanceId = generateSha256(this.getInputAndOutputAsString())
     const createdAt = new Date().getTime()
     return { instanceId, toolId, inputParams, outputParams, createdAt }
   }
@@ -133,6 +163,7 @@ export class Tool implements ToolConstructor {
   /**
    * Load tool from history and make inputs read only
    *
+   * @param mainTool
    * @param toolHistory
    */
   static openFromHistory(mainTool: Tool, toolHistory: Tool) {
@@ -143,16 +174,7 @@ export class Tool implements ToolConstructor {
   }
 
   /**
-   * Get list of input keys
-   *
-   * @returns string[]
-   */
-  getInputKeys() {
-    return this.inputs.map((input) => input.key)
-  }
-
-  /**
-   * Get input params along with it's default value
+   * Get input params along with its default value
    *
    * @returns
    */
@@ -161,16 +183,14 @@ export class Tool implements ToolConstructor {
   }
 
   /**
-   * Get list of output keys
-   *
-   * @returns string[]
+   * Merge input params and output params and convert it to string
    */
-  getOutputKeys() {
-    return this.outputs.map((output) => output.key)
+  getInputAndOutputAsString() {
+    return Object.values(this.inputParams).concat(Object.values(this.outputParams)).toString().trim()
   }
 
   /**
-   * Indicates whether tool has input or output
+   * Indicates whether tool has input, output and running at least once
    *
    * @returns boolean
    */
@@ -199,8 +219,7 @@ export class Tool implements ToolConstructor {
   run() {
     if (this.isReadOnly) return
 
-    const fieldsWithDefaultValue = this.getInputParamsWithDefault()
-    this.outputParams = this.action({ ...fieldsWithDefaultValue, ...this.inputParams })
+    this.outputParams = this.action({ ...this.inputParams })
     this.hasRunning = true
   }
 }

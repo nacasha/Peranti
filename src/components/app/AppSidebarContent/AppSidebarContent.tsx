@@ -1,16 +1,32 @@
 import { clsx } from "clsx"
 import { observer } from "mobx-react"
+import useOnclickOutside from "react-cool-onclickoutside"
 
 import { HistorySidebar } from "src/components/sidebar/HistorySidebar"
 import { SettingsSidebar } from "src/components/sidebar/SettingsSidebar"
 import { ToolSidebar } from "src/components/sidebar/ToolSidebar"
+import { SidebarMode } from "src/enums/SidebarMode.ts"
 import { interfaceStore } from "src/stores/interfaceStore"
 
 import "./AppSidebarContent.scss"
 
 export const AppSidebarContent = observer(() => {
-  const { isSidebarShow, sidebarMode, sidebarActiveMenuId } = interfaceStore
+  const {
+    isSidebarShow,
+    sidebarMode: sidebarModeStore,
+    sidebarActiveMenuId,
+    isSidebarAlwaysFloating
+  } = interfaceStore
 
+  const ref = useOnclickOutside(() => {
+    if (isSidebarAlwaysFloating) {
+      interfaceStore.hideSidebar()
+    }
+  }, {
+    ignoreClass: "AppSidebar"
+  })
+
+  let sidebarMode = sidebarModeStore
   let component = null
   let title = ""
 
@@ -25,8 +41,12 @@ export const AppSidebarContent = observer(() => {
     component = <HistorySidebar />
   }
 
+  if (isSidebarAlwaysFloating) {
+    sidebarMode = SidebarMode.FLOAT_UNPINNED
+  }
+
   return (
-    <div className={clsx("AppSidebarContent", sidebarMode, !isSidebarShow && "hidden")}>
+    <div ref={ref} className={clsx("AppSidebarContent", sidebarMode, !isSidebarShow && "hidden")}>
       <div className="title">{title}</div>
       {component}
     </div>

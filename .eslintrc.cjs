@@ -36,7 +36,8 @@ module.exports = {
   },
   "plugins": [
     "react",
-    "import"
+    "import",
+    "n"
   ],
   "rules": {
     "react/react-in-jsx-scope": "off",
@@ -46,9 +47,9 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/indent": ["error", 2],
     "@typescript-eslint/quotes": ["error", "double"],
-    "import/no-unresolved": "error",
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/space-before-function-paren": ["error", "never"],
+    "import/no-unresolved": "error",
     "import/order": [
       "warn", {
         "alphabetize": {
@@ -72,6 +73,10 @@ module.exports = {
         "pathGroupsExcludedImportTypes": ["builtin"],
         "groups": ["builtin", "external", "internal", "parent", "sibling", "index"]
       }
+    ],
+    "n/file-extension-in-import": [
+      "error",
+      "always",
     ]
   }
 }

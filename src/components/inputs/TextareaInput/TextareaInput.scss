@@ -30,3 +30,9 @@
     text-wrap: wrap;
   }
 }
+
+.ToolAreaInput.horizontal {
+  .TextareaInput {
+    flex: 1;
+  }
+}

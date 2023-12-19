@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx"
+import { makePersistable } from "mobx-persist-store"
 
 import { SidebarMode } from "src/enums/SidebarMode"
 import { getWindowSize } from "src/utils/getWindowSize"
@@ -6,7 +7,9 @@ import { getWindowSize } from "src/utils/getWindowSize"
 class InterfaceStore {
   _isSidebarShow = true
 
-  sidebarMode: SidebarMode = SidebarMode.DOCK_PINNED
+  _sidebarMode: SidebarMode = SidebarMode.DOCK_PINNED
+
+  isSidebarAlwaysFloating = false
 
   sidebarActiveMenuId = "tools"
 
@@ -20,6 +23,12 @@ class InterfaceStore {
   constructor() {
     this.recalculateWindowSize()
     makeAutoObservable(this)
+
+    void makePersistable(this, {
+      name: "InterfaceStore",
+      properties: ["isSidebarAlwaysFloating", "_isSidebarShow", "_sidebarMode", "textAreaWordWrap"],
+      storage: window.localStorage
+    })
   }
 
   recalculateWindowSize() {
@@ -28,6 +37,15 @@ class InterfaceStore {
 
   get isSidebarShow() {
     return this._isSidebarShow
+  }
+
+  get sidebarMode() {
+    if (this.isSidebarAlwaysFloating) return SidebarMode.FLOAT_UNPINNED
+    return this._sidebarMode
+  }
+
+  set sidebarMode(mode: SidebarMode) {
+    this._sidebarMode = mode
   }
 
   toggleSidebar() {
@@ -40,6 +58,10 @@ class InterfaceStore {
 
   showSidebar() {
     this._isSidebarShow = true
+  }
+
+  toggleSidebarAlwaysFloating() {
+    this.isSidebarAlwaysFloating = !this.isSidebarAlwaysFloating
   }
 
   setSidebarMenuId(menuId: string) {

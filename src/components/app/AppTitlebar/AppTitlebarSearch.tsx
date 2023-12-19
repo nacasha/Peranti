@@ -1,7 +1,7 @@
 import { observer } from "mobx-react"
 import { type FC, useRef, useState, useEffect } from "react"
+import useOnclickOutside from "react-cool-onclickoutside"
 
-import useClickOutside from "src/hooks/useClickOutside"
 import { type Tool } from "src/models/Tool"
 import { toolStore } from "src/stores/toolStore"
 import { listOfTools } from "src/tools"
@@ -12,7 +12,6 @@ interface SearchCompoenntProps {
 
 const SearchCompoennt: FC<SearchCompoenntProps> = (props) => {
   const { onClickOutside } = props
-  const componentRef = useRef(null)
   const [tools, setTools] = useState(listOfTools)
 
   const onSearchChange: React.InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
@@ -21,7 +20,7 @@ const SearchCompoennt: FC<SearchCompoenntProps> = (props) => {
     setTools(filteredTools)
   }
 
-  useClickOutside(componentRef, onClickOutside)
+  const componentRef = useOnclickOutside(onClickOutside)
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

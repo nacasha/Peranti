@@ -46,3 +46,9 @@
     text-wrap: wrap;
   }
 }
+
+.ToolAreaOutput.horizontal {
+  .TextareaOutput {
+    flex: 1;
+  }
+}

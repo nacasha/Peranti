@@ -10,6 +10,8 @@ import { prettyDateFormat } from "src/utils/prettyDateFormat"
 
 import "./ToolHistoryList.scss"
 
+import { AppSidebarContentItem } from "src/components/app/AppSidebarContentItem"
+
 interface ToolHistoryListProps {
   showAllHistory?: boolean
 }
@@ -26,14 +28,14 @@ export const ToolHistoryList: FC<ToolHistoryListProps> = observer((props) => {
     <div className={clsx("ToolPage-right-panel", toolStore.isHistoryPanelOpen && "open")}>
       <div className="ToolHistoryList">
         {(showAllHistory ? toolHistoryStore.history : toolHistoryStore.getWithToolId(activeTool.toolId)).map((toolHistory) => (
-          <div
+          <AppSidebarContentItem
             key={toolHistory.instanceId}
-            className={clsx("ToolHistoryList-item", toolStore.isToolActive(toolHistory) && "active")}
+            active={toolStore.isToolActive(toolHistory)}
             onClick={onClickItem(toolHistory)}
           >
             <div>{mapOfToolsName[toolHistory.toolId]}</div>
             <div className="subtitle">{prettyDateFormat(new Date(toolHistory.createdAt))}</div>
-          </div>
+          </AppSidebarContentItem>
         ))}
       </div>
     </div>

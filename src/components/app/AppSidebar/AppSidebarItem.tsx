@@ -31,7 +31,7 @@ export const AppSidebarItem: FC<AppSidebarItemProps> = observer((props) => {
       <div className="tooltip">
         {label}
       </div>
-      <img src={icon} alt={label} />
+      <img src={icon} alt={label}/>
     </div>
   )
 })

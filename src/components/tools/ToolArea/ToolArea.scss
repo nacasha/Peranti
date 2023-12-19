@@ -43,13 +43,18 @@ $padding: 10px;
   }
 
   .ToolAreaInput, .ToolAreaOutput {
-    display: flex;
-    flex-direction: column;
     overflow: auto;
     position: relative;
     flex: 1;
     display: flex;
-    flex-direction: column;
     gap: $padding;
+
+    &.horizontal {
+      flex-direction: row;
+    }
+
+    &.vertical {
+      flex-direction: column;
+    }
   }
 }

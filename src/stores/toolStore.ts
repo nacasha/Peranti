@@ -1,19 +1,20 @@
 import { makeAutoObservable } from "mobx"
+import { makePersistable } from "mobx-persist-store"
 
 import { ToolRunModeEnum } from "src/enums/ToolRunTypeEnum"
-import { Tool } from "src/models/Tool"
+import { Tool } from "src/models/Tool.ts"
 import { mapOfTools } from "src/tools"
-import { type ToolHistory } from "src/types/ToolHistory"
+import { type ToolHistory } from "src/types/ToolHistory.ts"
 
-import { toolHistoryStore } from "./toolHistoryStore"
+import { toolHistoryStore } from "./toolHistoryStore.js"
 
 class ToolStore {
   /**
    * Store active tool that currently used
    */
-  protected activeTool?: Tool = undefined
+  _activeTool?: Tool = undefined
 
-  protected runMode: ToolRunModeEnum = ToolRunModeEnum.OnChange
+  _runMode: ToolRunModeEnum = ToolRunModeEnum.OnChange
 
   isHistoryPanelOpen = false
 
@@ -22,6 +23,12 @@ class ToolStore {
    */
   constructor() {
     makeAutoObservable(this)
+
+    void makePersistable(this, {
+      name: "ToolStore",
+      properties: ["_runMode"],
+      storage: window.localStorage
+    })
   }
 
   /**
@@ -32,7 +39,7 @@ class ToolStore {
   openTool(tool: Tool) {
     if (this.getActiveTool().instanceId !== tool.instanceId) {
       this.saveActiveToolStateToHistory()
-      this.activeTool = tool.openTool()
+      this._activeTool = tool.openTool()
     }
   }
 
@@ -40,7 +47,7 @@ class ToolStore {
     const toolHistory = this.getActiveTool()
     const mainTool = mapOfTools[toolHistory.toolId]
     if (toolHistory) {
-      this.activeTool = Tool.openFromHistory(mainTool, toolHistory)
+      this._activeTool = Tool.openFromHistory(mainTool, toolHistory)
     }
   }
 
@@ -53,42 +60,30 @@ class ToolStore {
     const mainTool = mapOfTools[toolHistory.toolId]
     if (mainTool) {
       this.saveActiveToolStateToHistory()
-      this.activeTool = Tool.fromHistory(mainTool, toolHistory)
+      this._activeTool = Tool.fromHistory(mainTool, toolHistory)
     }
   }
 
   /**
-   * Save previous tool to history if acceptable
+   * Save tool to history when tool has been running at least once and not a tool history instance
    */
   saveActiveToolStateToHistory() {
-    const activeTool = this.activeTool
+    const activeTool = this._activeTool
 
     if (activeTool && activeTool.getIsDirty() && !activeTool.isReadOnly) {
-      const lastToolHistory = toolHistoryStore.getWithToolId(activeTool.toolId)[0]
-      if (lastToolHistory) {
-        const activeToolState = this.getInputAndOutputState(activeTool)
-        const activeToolStateState = this.getInputAndOutputState(lastToolHistory)
-
-        if (activeToolState === activeToolStateState) return
-      }
-
       toolHistoryStore.add(activeTool.toHistory())
     }
   }
 
-  getInputAndOutputState(tool: Tool | ToolHistory) {
-    return Object.values(tool.inputParams).concat(Object.values(tool.outputParams)).toString().trim()
-  }
-
   /**
-   * Get current active tool, or return empty if there is not active tool
+   * Get current active tool, or return empty if there is no active tool
    *
    * @returns Tool
    */
   getActiveTool() {
-    const currentTool = this.activeTool
+    const currentTool = this._activeTool
     if (currentTool) return currentTool
-    const defaultTool = new Tool({
+    return new Tool({
       name: "",
       action: () => ({}),
       inputs: [],
@@ -96,8 +91,6 @@ class ToolStore {
       toolId: "",
       category: ""
     })
-
-    return defaultTool
   }
 
   /**
@@ -110,7 +103,7 @@ class ToolStore {
   }
 
   get isRunModeAuto() {
-    return this.runMode === ToolRunModeEnum.OnChange
+    return this._runMode === ToolRunModeEnum.OnChange
   }
 
   /**
@@ -123,11 +116,12 @@ class ToolStore {
     return this.getActiveTool().instanceId === tool.instanceId
   }
 
+  /**
+   * Run active tool and save to history based on run mode
+   */
   runActiveTool() {
     this.getActiveTool().run()
-    if (!this.isRunModeAuto) {
-      this.saveActiveToolStateToHistory()
-    }
+    this.saveActiveToolStateToHistory()
   }
 
   toggleHistoryPanel() {

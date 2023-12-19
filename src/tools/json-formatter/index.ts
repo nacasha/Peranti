@@ -14,6 +14,7 @@ const jsonFormatter = new Tool({
       component: "Switch",
       defaultValue: "pretty",
       props: {
+        label: "Mode",
         options: [
           { value: "minify", label: "Minify" },
           { value: "pretty", label: "Pretty" }

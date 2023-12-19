@@ -1,12 +1,15 @@
 import { Tool } from "src/models/Tool"
 
-import { compareListAction } from "./compare-lines-action"
+import { compareListAction } from "./compare-lines-action.ts"
 
 const compareList = new Tool({
   toolId: "compare-lines",
   name: "Compare List",
   category: "List",
+  layout: "top-bottom",
   action: compareListAction,
+  inputsLayoutDirection: "horizontal",
+  outputsLayoutDirection: "horizontal",
   inputs: [
     {
       key: "listA",

@@ -1,6 +1,6 @@
 import { assets } from "src/constants/assets"
 
-import { AppSidebarItem } from "./AppSidebarItem"
+import { AppSidebarItem } from "./AppSidebarItem.tsx"
 
 import "./AppSidebar.scss"
 

@@ -14,9 +14,9 @@ const generateUuid = new Tool({
     for (let i = 0; i < numberOfGenerated; i++) {
       generatedUuids.push(uuidGenerator())
     }
-    const uuidsLines = generatedUuids.join("\n")
+    const output = generatedUuids.join("\n")
 
-    return { output: uuidsLines }
+    return { output }
   },
   inputs: [
     {
