@@ -5,7 +5,7 @@ import { listOfInputComponent } from "src/components/inputs"
 import { toolStore } from "src/stores/toolStore"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
-interface ToolAdapterInputProps {
+interface ToolInputRendererProps {
   /**
    * Name of component to be rendered
    */
@@ -15,6 +15,11 @@ interface ToolAdapterInputProps {
    * Key of field
    */
   field: string
+
+  /**
+   * Label of field
+   */
+  label: string
 
   /**
    * Component properties to be passed
@@ -32,8 +37,8 @@ interface ToolAdapterInputProps {
   readOnly?: boolean
 }
 
-export const ToolAdapterInput: FC<ToolAdapterInputProps> = observer((props) => {
-  const { component, field, props: componentProps, initialValue } = props
+export const ToolInputRenderer: FC<ToolInputRendererProps> = observer((props) => {
+  const { component, field, props: componentProps, initialValue, label } = props
   const activeTool = toolStore.getActiveTool()
 
   const Component: FC<InputComponentProps> = (listOfInputComponent as any)[component]
@@ -46,6 +51,7 @@ export const ToolAdapterInput: FC<ToolAdapterInputProps> = observer((props) => {
   return (
     <Component
       {...componentProps}
+      label={label}
       key={field}
       initialValue={inputValue ?? initialValue}
       onSubmit={onSubmit}

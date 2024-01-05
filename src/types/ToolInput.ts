@@ -7,6 +7,11 @@ export interface ToolInput {
   key: string
 
   /**
+   * Label of field
+   */
+  label: string
+
+  /**
    * Component to render input
    */
   component: keyof typeof listOfInputComponent
@@ -20,4 +25,9 @@ export interface ToolInput {
    * Properties that will be passed into component
    */
   props?: Record<string, any>
+
+  /**
+   * Allow this field as batch operations
+   */
+  allowBatch?: boolean
 }

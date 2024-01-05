@@ -5,7 +5,6 @@ import { type FC } from "react"
 import { AppSidebarContentItem } from "src/components/app/AppSidebarContentItem"
 import { toolHistoryStore } from "src/stores/toolHistoryStore"
 import { toolStore } from "src/stores/toolStore"
-import { mapOfToolsName } from "src/tools"
 import { type ToolHistory } from "src/types/ToolHistory"
 import { prettyDateFormat } from "src/utils/prettyDateFormat"
 
@@ -32,7 +31,7 @@ export const ToolHistoryList: FC<ToolHistoryListProps> = observer((props) => {
             active={toolStore.isToolActive(toolHistory)}
             onClick={onClickItem(toolHistory)}
           >
-            <div>{mapOfToolsName[toolHistory.toolId]}</div>
+            <div>{toolStore.mapOfToolsName[toolHistory.toolId]}</div>
             <div className="subtitle">{prettyDateFormat(new Date(toolHistory.createdAt))}</div>
           </AppSidebarContentItem>
         ))}

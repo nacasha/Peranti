@@ -20,7 +20,7 @@ export const SettingsSidebar: FC = () => {
             <ThemeSelect />
           </div>
           <div className="item">
-            Sidebar Always Floating
+            Sidebar Floating
             <SidebarMode />
           </div>
           <div className="item">

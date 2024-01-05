@@ -13,32 +13,32 @@ const compareList = new Tool({
   inputs: [
     {
       key: "listA",
+      label: "List A",
       component: "Textarea",
-      defaultValue: "",
-      props: { label: "List A" }
+      defaultValue: ""
     },
     {
       key: "listB",
+      label: "List B",
       component: "Textarea",
-      defaultValue: "",
-      props: { label: "List B" }
+      defaultValue: ""
     }
   ],
   outputs: [
     {
       key: "onlyExistInputA",
-      component: "Textarea",
-      props: { label: "Only Exist In List A" }
+      label: "Only Exist In List A",
+      component: "Textarea"
     },
     {
       key: "output",
-      component: "Textarea",
-      props: { label: "Exist In Both List" }
+      label: "Exist In Both List",
+      component: "Textarea"
     },
     {
       key: "onlyExistInputB",
-      component: "Textarea",
-      props: { label: "Only Exist In List B" }
+      label: "Only Exist In List B",
+      component: "Textarea"
     }
   ]
 })

@@ -4,25 +4,10 @@ const testPipelines = new Tool({
   toolId: "test-pipelines",
   name: "Test Pipelines",
   category: "Pipelines",
-  action: (input: any) => {
-    try {
-      const { action, ...inputParams } = input
-
-      /* eslint-disable-next-line */
-      const dynamicFunction = new Function("inputParams", action)
-      const output = dynamicFunction(inputParams)
-
-      return { output }
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        return { output: e.message }
-      }
-      return { output: "Invalid" }
-    }
-  },
   inputs: [
     {
-      key: "action",
+      key: "input",
+      label: "Input",
       component: "Textarea",
       defaultValue: ""
     }
@@ -30,7 +15,42 @@ const testPipelines = new Tool({
   outputs: [
     {
       key: "output",
+      label: "Output",
       component: "Textarea"
+    }
+  ],
+  action: () => {},
+  pipelines: [
+    {
+      toolId: "generate-uuid",
+      fields: [
+        {
+          inputKey: "numberOfGenerated",
+          previousOutputKey: "input"
+        }
+      ]
+    },
+    {
+      toolId: "sort-list",
+      fields: [
+        {
+          inputKey: "input",
+          previousOutputKey: "output"
+        }
+      ]
+    },
+    {
+      toolId: "text-transform",
+      fields: [
+        {
+          inputKey: "input",
+          previousOutputKey: "output"
+        },
+        {
+          inputKey: "type",
+          value: "uppercase"
+        }
+      ]
     }
   ]
 })

@@ -8,6 +8,7 @@ const textTransformTool = new Tool({
   inputs: [
     {
       key: "type",
+      label: "Type",
       component: "Switch",
       defaultValue: "original",
       props: {
@@ -25,6 +26,7 @@ const textTransformTool = new Tool({
     },
     {
       key: "input",
+      label: "Input",
       component: "Textarea",
       defaultValue: ""
     }
@@ -32,6 +34,7 @@ const textTransformTool = new Tool({
   outputs: [
     {
       key: "output",
+      label: "Output",
       component: "Textarea"
     }
   ],

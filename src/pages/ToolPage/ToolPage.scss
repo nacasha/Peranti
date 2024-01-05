@@ -7,8 +7,8 @@ $sidebar-width: 180px;
   .ToolPage-right-panel, .ToolPage-left-panel {
     background-color: var(--background-color-main);
     width: $sidebar-width;
-    transition: all 0.15s;
-    overflow: hidden;
+    transition: all var(--transition-speed);
+    overflow: auto;
 
     &.open {
       margin-right: 0;

@@ -7,7 +7,7 @@ export interface InputComponentProps<T = string> {
   /**
    * Initial value of input component
    */
-  initialValue: string
+  initialValue?: any
 
   /**
    * Handle input value changes
@@ -17,5 +17,8 @@ export interface InputComponentProps<T = string> {
    */
   onSubmit: (value: T) => any
 
+  /**
+   * Indicates component is read only
+   */
   readOnly?: boolean
 }

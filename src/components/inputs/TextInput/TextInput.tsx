@@ -8,7 +8,7 @@ interface TextInputProps extends InputComponentProps { }
 
 export const TextInput: FC<TextInputProps> = (props) => {
   const id = useId()
-  const { onSubmit, initialValue, readOnly, label = "Input" } = props
+  const { onSubmit, initialValue, readOnly, label } = props
 
   const onInputChange: React.InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
     const value = event.target.value

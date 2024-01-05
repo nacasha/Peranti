@@ -9,7 +9,7 @@ html, body {
 
 :root {
   --font-family: "Inter", serif;
-  --font-family-mono: "Inter", serif;
+  --font-family-mono: monospace, serif;
   --font-size: 13px;
 }
 
@@ -27,16 +27,41 @@ html, body {
   --accent-color-dark-80: color-mix(in srgb, var(--accent-color), #000000 80%);
 
   // General
+  --input-padding: 7px;
+  --output-padding: 7px;
   --border-radius: 4px;
 
+  // App Titlebar
+  --app-titlebar-height: 35px;
+
+  // Toolbar
+  --tool-header-height: 45px;
+
+  // Animations
+  --transition-speed: 0.15s;
+
+  // Sidebar
+  --sidebar-width: 250px;
+
+  // Input and output component styles
+  --input-output-label-spacing: 10px;
+  --input-output-font-size: 14px;
+
   ::-webkit-scrollbar {
-    width: 10px;
+    width: 7px;
+    height: 7px;
   }
 }
 
 .AppRoot.light {
-  --border-color: #DADADA;
+  // General
+  --border-color: #dddddd;
   --text-color: #0f0f0f;
+
+  // Button
+  --button-color: linear-gradient(0deg, #f7f7f7 0%, #ffffff 100%);
+  --button-hover-color: #efefef;
+  --button-active-color: #ececec;
 
   // App Content
   --background-color-main: #f6f6f6;
@@ -45,40 +70,29 @@ html, body {
   // App Statusbar
   --statusbar-background-color: #f6f6f6;
 
-  // App Titlebar
-  --app-titlebar-height: 35px;
-
   // Input component styles
-  --input-padding: 6px;
-  --input-background-color: #f9f9f9;
+  --input-background-color: #ffffff;
 
   // Output component styles
-  --output-padding: 6px;
-  --output-background-color: #f9f9f9;
+  --output-background-color: #ffffff;
 
-  // Input and output component styles
-  --input-output-label-spacing: 10px;
-  --input-output-font-size: 14px;
-
-  // Sidebar
-  --sidebar-width: 250px;
   --sidebar-background-color: #ffffff;
 
   // Tool Header
-  --tool-header-height: 40px;
   --tool-header-background-color: #ffffff;
-  --tool-area-background-color: #ffffff;
+  --tool-area-background-color: #f9f9fc;
 
   // Icon
   --icon-filter-color: invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%);
 
   // Theme color
-  --opposite-color: #9b9b9b;
+  --opposite-color: #939393;
 
-  color: #0f0f0f;
+  // Main text color
+  color: var(--text-color);
 
   ::-webkit-scrollbar-track {
-    background: var(--background-color-main);
+    background: #ffffff;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -97,35 +111,24 @@ html, body {
   --text-color: #c5c7c9;
 
   // App Content
-  --background-color-main: #1e1f22;
+  --background-color-main: #1e2022;
   --background-color-content: #222429;
 
   // App Statusbar
   --statusbar-background-color: #1e1f22;
 
-  // App Titlebar
-  --app-titlebar-height: 35px;
-
   // Input component styles
-  --input-padding: 6px;
-  --input-background-color: #2b2f36;
+  --input-background-color: #0d1117;
 
   // Output component styles
-  --output-padding: 6px;
-  --output-background-color: #2b2f36;
-
-  // Input and output component styles
-  --input-output-label-spacing: 10px;
-  --input-output-font-size: 14px;
+  --output-background-color: #0d1117;
 
   // Sidebar
-  --sidebar-width: 250px;
   --sidebar-background-color: #222429;
 
   // Tool
-  --tool-header-height: 40px;
   --tool-header-background-color: #222429;
-  --tool-area-background-color: #222429;
+  --tool-area-background-color: #24262a;
 
   // Icon
   --icon-filter-color: invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%);
@@ -133,14 +136,15 @@ html, body {
   // Theme color
   --opposite-color: #ffffff;
 
-  color: #c5c7c9;
+  // Main text color
+  color: var(--text-color);
 
   input, textarea, select, option {
-    color: #c5c7c9;
+    color: var(--text-color);
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--background-color-main);
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -206,4 +210,34 @@ html, body {
   border-right: 0;
   border-bottom: 0;
   background-color: var(--background-color-content);
+}
+
+.CodeMirrorContainer {
+  position: relative;
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: all var(--transition-speed);
+
+  .cm-theme {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+
+    .cm-editor {
+      height: 100%;
+      max-height: 100%;
+    }
+  }
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 20%);
+  }
+
+  &:focus-within {
+    border: 1px solid var(--accent-color);
+  }
 }

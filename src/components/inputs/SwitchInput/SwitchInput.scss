@@ -6,19 +6,19 @@
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     grid-auto-flow: row dense;
     gap: 3px;
-    padding: 4px;
+    padding: 6px;
     background-color: var(--input-background-color);
 
     .button {
       flex: 1;
       text-align: center;
-      padding: 1px;
+      padding: 2px;
       border-radius: var(--border-radius);
       user-select: none;
 
       &:hover {
         cursor: pointer;
-        background-color: #ebebeb;
+        background-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 15%);
       }
 
       &.active {

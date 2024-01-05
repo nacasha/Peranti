@@ -1,6 +1,6 @@
 import { Tool } from "src/models/Tool"
 
-import { millisecondsToDateAction } from "./milliseconds-to-date-action"
+import { millisecondsToDateAction } from "./milliseconds-to-date-action.js"
 
 const millisecondsToDate = new Tool({
   toolId: "milliseconds-to-date",
@@ -10,6 +10,7 @@ const millisecondsToDate = new Tool({
   inputs: [
     {
       key: "input",
+      label: "Input",
       component: "Textarea",
       defaultValue: ""
     }
@@ -17,6 +18,7 @@ const millisecondsToDate = new Tool({
   outputs: [
     {
       key: "output",
+      label: "Output",
       component: "Textarea"
     }
   ]

@@ -3,8 +3,8 @@ import { type FC } from "react"
 
 import { toolStore } from "src/stores/toolStore"
 
-import { ToolRunnerAuto } from "./ToolRunnerAuto"
-import { ToolRunnerManual } from "./ToolRunnerManual"
+import { ToolRunnerAuto } from "./ToolRunnerAuto.js"
+import { ToolRunnerManual } from "./ToolRunnerManual.js"
 
 export const ToolRunner: FC = observer(() => {
   if (toolStore.isRunModeAuto) {

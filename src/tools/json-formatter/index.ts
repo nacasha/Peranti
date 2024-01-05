@@ -1,6 +1,6 @@
 import { Tool } from "src/models/Tool"
 
-import { jsonFormatterAction } from "./json-formatter-action"
+import { jsonFormatterAction } from "./json-formatter-action.js"
 
 const jsonFormatter = new Tool({
   toolId: "json-formatter",
@@ -11,10 +11,10 @@ const jsonFormatter = new Tool({
   inputs: [
     {
       key: "type",
+      label: "Mode",
       component: "Switch",
       defaultValue: "pretty",
       props: {
-        label: "Mode",
         options: [
           { value: "minify", label: "Minify" },
           { value: "pretty", label: "Pretty" }
@@ -23,6 +23,7 @@ const jsonFormatter = new Tool({
     },
     {
       key: "input",
+      label: "Input",
       component: "Textarea",
       defaultValue: ""
     }
@@ -30,6 +31,7 @@ const jsonFormatter = new Tool({
   outputs: [
     {
       key: "output",
+      label: "Output",
       component: "Textarea"
     }
   ]

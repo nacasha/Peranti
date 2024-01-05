@@ -2,7 +2,7 @@
   padding: 0 10px 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 
   .section {
     .section-title {
@@ -13,17 +13,16 @@
     .section-list {
       display: flex;
       flex-direction: column;
-      border: 1px solid var(--border-color);
       border-radius: 4px;
+      gap: 5px;
 
       .item {
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid var(--border-color);
-        padding: 4px 5px;
         font-size: 12px;
+        height: 30px;
       }
     }
   }

@@ -7,6 +7,11 @@ export interface ToolOutput {
   key: string
 
   /**
+   * Label of field
+   */
+  label: string
+
+  /**
    * Component to render output
    */
   component: keyof typeof listOfOutputComponent
@@ -15,4 +20,9 @@ export interface ToolOutput {
    * Properties that will be passed into component
    */
   props?: Record<string, string>
+
+  /**
+   * Allow this field as batch operations
+   */
+  allowBatch?: boolean
 }

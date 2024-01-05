@@ -9,7 +9,11 @@
     background-color: var(--input-background-color);
     padding: var(--input-padding);
     outline: none;
-    transition: all 0.15s;
+    transition: all var(--transition-speed);
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 20%);
+    }
 
     option {
       padding: 10px;

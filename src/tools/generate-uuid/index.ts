@@ -6,6 +6,33 @@ const generateUuid = new Tool({
   toolId: "generate-uuid",
   name: "Generate UUID",
   category: "Generator",
+  inputs: [
+    {
+      key: "type",
+      label: "UUID Version",
+      component: "Select",
+      defaultValue: "v4",
+      props: {
+        options: [
+          { value: "v1", label: "V1" },
+          { value: "v4", label: "V4" }
+        ]
+      }
+    },
+    {
+      key: "numberOfGenerated",
+      label: "Number of Generated UUID",
+      component: "Text",
+      defaultValue: 1
+    }
+  ],
+  outputs: [
+    {
+      key: "output",
+      label: "Output",
+      component: "Textarea"
+    }
+  ],
   action: ({ numberOfGenerated, type }: { numberOfGenerated: number, type: string }) => {
     const uuidGenerator = { v1, v4 }[type]
     if (uuidGenerator === undefined) return { output: "" }
@@ -17,35 +44,7 @@ const generateUuid = new Tool({
     const output = generatedUuids.join("\n")
 
     return { output }
-  },
-  inputs: [
-    {
-      key: "type",
-      component: "Select",
-      defaultValue: "v4",
-      props: {
-        label: "UUID Version",
-        options: [
-          { value: "v1", label: "V1" },
-          { value: "v4", label: "V4" }
-        ]
-      }
-    },
-    {
-      key: "numberOfGenerated",
-      component: "Text",
-      defaultValue: 1,
-      props: {
-        label: "Number of Generated UUID"
-      }
-    }
-  ],
-  outputs: [
-    {
-      key: "output",
-      component: "Textarea"
-    }
-  ]
+  }
 })
 
 export default generateUuid

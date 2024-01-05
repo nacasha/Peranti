@@ -1,6 +1,6 @@
 import { Tool } from "src/models/Tool"
 
-import { removeDuplicateLinesActions } from "./remove-duplicate-lines-action"
+import { removeDuplicateLinesActions } from "./remove-duplicate-lines-action.ts"
 
 const removeDuplicateList = new Tool({
   toolId: "remove-duplicate-list",
@@ -10,6 +10,7 @@ const removeDuplicateList = new Tool({
   inputs: [
     {
       key: "input",
+      label: "Input",
       component: "Textarea",
       defaultValue: ""
     }
@@ -17,6 +18,7 @@ const removeDuplicateList = new Tool({
   outputs: [
     {
       key: "output",
+      label: "Output",
       component: "Textarea"
     }
   ]

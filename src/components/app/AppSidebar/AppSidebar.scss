@@ -28,7 +28,7 @@
       border-radius: 100px;
       position: absolute;
       opacity: 0;
-      transition: all 0.15s;
+      transition: all var(--transition-speed);
     }
 
     &:hover {

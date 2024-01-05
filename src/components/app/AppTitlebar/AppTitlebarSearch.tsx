@@ -1,11 +1,10 @@
 import { clsx } from "clsx"
 import { observer } from "mobx-react"
-import React, { type FC, useRef, useState, useEffect } from "react"
+import React, { type FC, useState, useEffect } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
 
 import { type Tool } from "src/models/Tool"
 import { toolStore } from "src/stores/toolStore"
-import { listOfTools } from "src/tools"
 
 export const AppTitlebarSearch = observer(() => {
   const [isOpen, setIsOpen] = useState(false)
@@ -52,12 +51,14 @@ interface SearchComponentProps {
 
 const SearchComponent: FC<SearchComponentProps> = (props) => {
   const { onClickOutside } = props
-  const [tools, setTools] = useState(listOfTools)
+  const [tools, setTools] = useState(() => toolStore.listOfTools)
   const [selectedIndex, setSelectedIndex] = useState(0)
 
   const onSearchChange: React.InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
     const value = event.target.value
-    const filteredTools = listOfTools.filter((tool) => tool.name.toLocaleLowerCase().includes(value.toLocaleLowerCase()))
+    const filteredTools = toolStore.listOfTools
+      .filter((tool) => tool.name.toLocaleLowerCase().includes(value.toLocaleLowerCase()))
+
     setTools(filteredTools)
     setSelectedIndex(0)
   }

@@ -8,7 +8,7 @@
   border: 1px solid var(--border-color);
   background-color: var(--input-background-color);
   font-family: var(--font-family-mono);
-  transition: all 0.15s;
+  transition: all var(--transition-speed);
 
   &:hover {
     border: 1px solid var(--accent-color-light-60);

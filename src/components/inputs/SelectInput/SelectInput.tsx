@@ -18,11 +18,9 @@ export const SelectInput: FC<SelectInputProps> = (props) => {
 
   return (
     <div className="SelectInput">
-      {label && (
-        <label className="InputOutputLabel" htmlFor={id}>
-          {label}
-        </label>
-      )}
+      <label className="InputOutputLabel" htmlFor={id}>
+        {label}
+      </label>
       <select disabled={readOnly} id={id} onChange={onChange} defaultValue={initialValue}>
         {options.map((option) => (
           <option key={option.value} value={option.value}>{option.label}</option>

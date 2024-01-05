@@ -14,9 +14,9 @@
     white-space-collapse: preserve;
     font-family: var(--font-family-mono);
     font-size: var(--input-output-font-size);
-    line-height: 1;
+    line-height: 1.15;
     background-color: var(--output-background-color);
-    transition: all 0.15s;
+    transition: all var(--transition-speed);
 
     overflow: auto;
     padding: var(--output-padding);
@@ -33,7 +33,7 @@
     outline: none !important;
 
     &:hover {
-      border: 1px solid var(--accent-color-light-60);
+      border-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 20%);
     }
 
     &:focus {

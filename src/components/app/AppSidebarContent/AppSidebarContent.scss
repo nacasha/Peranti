@@ -4,7 +4,7 @@
   max-width: var(--sidebar-width);
   overflow: auto;
   background-color: var(--sidebar-background-color);
-  transition: margin-left 0.2s;
+  transition: margin-left var(--transition-speed);
   z-index: 2;
 
   &.hidden {

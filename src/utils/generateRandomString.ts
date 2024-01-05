@@ -1,5 +1,4 @@
-export function generateRandomString(length: number): string {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+export function generateRandomString(length: number, characters: string = ""): string {
   let result = ""
 
   for (let i = 0; i < length; i++) {

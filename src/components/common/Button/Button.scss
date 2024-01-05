@@ -1,0 +1,26 @@
+.Button {
+  border: 1px solid var(--border-color);
+  background: var(--button-color);
+  border-radius: var(--border-radius);
+  padding: 2px 8px;
+  user-select: none;
+  cursor: pointer;
+  font-family: var(--font-family);
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size);
+
+  &:hover {
+    background: var(--button-hover-color);
+  }
+
+  &:active {
+    background: var(--button-active-color);
+  }
+
+  img {
+    width: 12px;
+    margin-right: 5px;
+    filter: var(--icon-filter-color);
+  }
+}

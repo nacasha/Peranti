@@ -1,0 +1,16 @@
+.ToolSidebar {
+  &-section {
+    &-title {
+      padding-inline: 11px;
+      font-size: 14px;
+      font-weight: 600;
+      padding-bottom: 5px;
+      padding-top: 15px;
+      display: none;
+
+      &.show {
+        display: block;
+      }
+    }
+  }
+}

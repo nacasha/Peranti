@@ -1,4 +1,14 @@
 .CheckboxInput {
+  transition: all var(--transition-speed);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
   display: flex;
-  transition: all 0.15s;
+  justify-content: space-between;
+  gap: 3px;
+  padding: 4px var(--input-padding);
+  background-color: var(--input-background-color);
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 20%);
+  }
 }

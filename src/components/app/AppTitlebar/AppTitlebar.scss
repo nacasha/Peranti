@@ -41,7 +41,7 @@ $padding: 10px;
     }
 
     .titlebar-button:hover {
-      background: color-mix(in srgb, var(--sidebar-background-color), var(--opposite-color) 7%);
+      background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%);
     }
   }
 
@@ -122,12 +122,11 @@ $padding: 10px;
         margin: 1px 3px;
         padding: 1px 6px;
         border-radius: 4px;
-        transition: all 0.15s;
+        transition: all var(--transition-speed);
         cursor: pointer;
 
         &:hover, &.hover {
           background-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%);
-          color: white;
         }
       }
     }

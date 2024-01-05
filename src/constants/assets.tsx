@@ -4,6 +4,8 @@ import DownloadSVG from "src/assets/icons/download.svg"
 import GearSVG from "src/assets/icons/gear.svg"
 import HistorySVG from "src/assets/icons/history.svg"
 import HomeSVG from "src/assets/icons/home.svg"
+import Layers2SVG from "src/assets/icons/layers-2.svg"
+import LayersSVG from "src/assets/icons/layers.svg"
 import MinimizeSVG from "src/assets/icons/minimize.svg"
 import PanelLeftSVG from "src/assets/icons/panel-left.svg"
 import RunFilledSVG from "src/assets/icons/run-filled.svg"
@@ -27,5 +29,7 @@ export const assets = {
   ThunderSVG,
   ThreeLineVerticalSVG,
   RunFilledSVG,
-  ThreeLineHorizontalSVG
+  ThreeLineHorizontalSVG,
+  LayersSVG,
+  Layers2SVG
 }

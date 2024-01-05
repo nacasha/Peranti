@@ -6,10 +6,11 @@ interface SwitchProps {
   label?: string
   defaultChecked?: boolean
   onChange?: (checked: boolean) => any
+  readOnly?: boolean
 }
 
 export const Switch: FC<SwitchProps> = (props) => {
-  const { label, onChange: onChangeProps, defaultChecked = false } = props
+  const { label, onChange: onChangeProps, defaultChecked = false, readOnly } = props
   const [checked, setChecked] = useState(defaultChecked)
   const id = useId()
 
@@ -29,6 +30,7 @@ export const Switch: FC<SwitchProps> = (props) => {
         type="checkbox"
         className="switch"
         onChange={onChange}
+        readOnly={readOnly}
       />
       {label && <label htmlFor={id}>Switch</label>}
     </div>

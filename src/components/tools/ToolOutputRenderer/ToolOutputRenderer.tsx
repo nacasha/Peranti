@@ -4,14 +4,15 @@ import { type FC } from "react"
 import { listOfOutputComponent } from "src/components/outputs"
 import { toolStore } from "src/stores/toolStore"
 
-interface ToolAdapterOutputProps {
+interface ToolOutputRendererProps {
   component: string
   field: string
+  label: string
   props: any
 }
 
-export const ToolAdapterOutput: FC<ToolAdapterOutputProps> = observer((props) => {
-  const { component, field, props: componentProps } = props
+export const ToolOutputRenderer: FC<ToolOutputRendererProps> = observer((props) => {
+  const { component, field, props: componentProps, label } = props
 
   const Component = (listOfOutputComponent as any)[component]
   const outputValue = toolStore.getActiveTool().outputParams[field]
@@ -20,6 +21,7 @@ export const ToolAdapterOutput: FC<ToolAdapterOutputProps> = observer((props) =>
     <Component
       {...componentProps}
       key={field}
+      label={label}
       output={outputValue ?? ""}
     />
   )
