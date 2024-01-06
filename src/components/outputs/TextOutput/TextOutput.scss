@@ -8,11 +8,11 @@
     font-family: var(--font-family-mono);
     font-size: var(--input-output-font-size);
     line-height: 1;
-    background-color: var(--output-background-color);
+    background-color: var(--input-output-background-color);
     transition: all var(--transition-speed);
 
     overflow: auto;
-    padding: var(--output-padding);
+    padding: var(--input-output-padding);
     text-wrap: nowrap;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);

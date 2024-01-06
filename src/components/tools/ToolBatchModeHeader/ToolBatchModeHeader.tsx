@@ -8,7 +8,10 @@ import "./ToolBatchModeHeader.scss"
 
 export const ToolBatchModeHeader = observer(() => {
   const activeTool = toolStore.getActiveTool()
-  const { isBatchEnabled, inputs, outputs, batchOutputKey, batchInputKey, isReadOnly } = activeTool
+  const { isBatchEnabled, batchOutputKey, batchInputKey, isReadOnly } = activeTool
+
+  const inputs = activeTool.getInputs()
+  const outputs = activeTool.getOutputs()
 
   const allowedBatchInputFields = inputs.filter((input) => input.allowBatch)
   const allowedBatchOutputFields = outputs.filter((output) => output.allowBatch)

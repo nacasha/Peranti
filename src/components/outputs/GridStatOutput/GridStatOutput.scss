@@ -1,0 +1,16 @@
+.GridStatOutput {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+
+  display: flex;
+  background-color: var(--input-output-background-color);
+
+  &-item {
+    padding: 10px;
+    border-right: 1px solid var(--border-color);
+
+    &-value {
+      font-size: 16px;
+    }
+  }
+}

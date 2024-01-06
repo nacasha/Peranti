@@ -9,7 +9,7 @@ export const ToolLoadFromHistoryButton: FC = observer(() => {
   const activeTool = toolStore.getActiveTool()
 
   const onClick = () => {
-    toolStore.openToolFromHistory()
+    toolStore.openHistoryEditable()
   }
 
   if (!activeTool.isReadOnly) {

@@ -3,8 +3,9 @@ export interface ToolHistory {
   toolId: string
   inputParams: any
   outputParams: any
+  inputOutputHash: string
   isBatchEnabled: boolean
-  batchInputKey: string
-  batchOutputKey: string
+  batchInputKey: string | number | symbol
+  batchOutputKey: string | number | symbol
   createdAt: number
 }

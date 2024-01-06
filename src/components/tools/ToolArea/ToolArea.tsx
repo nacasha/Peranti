@@ -2,16 +2,16 @@ import { clsx } from "clsx"
 import { observer } from "mobx-react"
 import { type FC } from "react"
 
+import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { interfaceStore } from "src/stores/interfaceStore"
 import { toolStore } from "src/stores/toolStore"
+import { type ToolInput } from "src/types/ToolInput.ts"
+import { type ToolOutput } from "src/types/ToolOutput.ts"
 
 import { ToolAreaInput } from "./ToolAreaInput.js"
 import { ToolAreaOutput } from "./ToolAreaOutput.js"
 
 import "./ToolArea.scss"
-
-import { type ToolInput } from "src/types/ToolInput.ts"
-import { type ToolOutput } from "src/types/ToolOutput.ts"
 
 export const ToolArea: FC = observer(() => {
   const textAreaWordWrap = interfaceStore.textAreaWordWrap
@@ -19,14 +19,16 @@ export const ToolArea: FC = observer(() => {
   const { batchInputKey, batchOutputKey, isBatchEnabled } = activeTool
 
   const {
-    layout = "side-by-side",
-    inputs,
+    layout,
+    layoutReversed,
     inputsLayoutDirection,
-    outputs,
     outputsLayoutDirection
   } = activeTool
 
-  const computedLayout = isBatchEnabled ? "side-by-side" : layout
+  const inputs = activeTool.getInputs()
+  const outputs = activeTool.getOutputs()
+
+  const computedLayout = isBatchEnabled ? ToolLayoutEnum.SideBySide : layout
 
   const batchInput = inputs.find((input) => input.key === batchInputKey)
   const batchOutput = outputs.find((output) => output.key === batchOutputKey)
@@ -55,8 +57,13 @@ export const ToolArea: FC = observer(() => {
   const computedInputs = isBatchEnabled ? batchInputs : inputs
   const computedOutputs = isBatchEnabled ? batchOutputs : outputs
 
+  const classNames = {
+    "text-area-word-wrap": textAreaWordWrap,
+    reversed: layoutReversed
+  }
+
   return (
-    <div className={clsx("ToolArea", computedLayout, textAreaWordWrap && "text-area-word-wrap")}>
+    <div className={clsx("ToolArea", computedLayout, classNames)}>
       <ToolAreaInput
         toolInstanceId={activeTool.instanceId}
         inputs={computedInputs}

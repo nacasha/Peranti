@@ -4,13 +4,13 @@
 
   input {
     border-radius: var(--border-radius);
-    padding: var(--input-padding);
+    padding: var(--input-output-padding);
     outline: none !important;
-    font-size: 14px;
+    font-size: var(--input-output-font-size);
     line-height: 1;
     text-wrap: nowrap;
     border: 1px solid var(--border-color);
-    background-color: var(--input-background-color);
+    background-color: var(--input-output-background-color);
     font-family: var(--font-family-mono);
     transition: all var(--transition-speed);
 

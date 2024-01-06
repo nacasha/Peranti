@@ -8,6 +8,7 @@ import Layers2SVG from "src/assets/icons/layers-2.svg"
 import LayersSVG from "src/assets/icons/layers.svg"
 import MinimizeSVG from "src/assets/icons/minimize.svg"
 import PanelLeftSVG from "src/assets/icons/panel-left.svg"
+import RefreshSVG from "src/assets/icons/refresh.svg"
 import RunFilledSVG from "src/assets/icons/run-filled.svg"
 import RunSVG from "src/assets/icons/run.svg"
 import SettingsSVG from "src/assets/icons/settings.svg"
@@ -31,5 +32,6 @@ export const assets = {
   RunFilledSVG,
   ThreeLineHorizontalSVG,
   LayersSVG,
-  Layers2SVG
+  Layers2SVG,
+  RefreshSVG
 }

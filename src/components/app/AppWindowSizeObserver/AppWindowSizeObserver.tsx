@@ -8,13 +8,13 @@ export const AppWindowSizeObserver: FC = observer(() => {
   const { windowSize, sidebarMode, isSidebarAlwaysFloating } = interfaceStore
 
   useEffect(() => {
-    if (windowSize.width > 870 && sidebarMode !== SidebarMode.DOCK_PINNED) {
+    if (windowSize.width > 870 && sidebarMode !== SidebarMode.DockPinned) {
       if (!isSidebarAlwaysFloating) {
-        interfaceStore.sidebarMode = SidebarMode.DOCK_PINNED
+        interfaceStore.sidebarMode = SidebarMode.DockPinned
         interfaceStore.showSidebar()
       }
-    } else if (windowSize.width <= 870 && sidebarMode !== SidebarMode.FLOAT_UNPINNED) {
-      interfaceStore.sidebarMode = SidebarMode.FLOAT_UNPINNED
+    } else if (windowSize.width <= 870 && sidebarMode !== SidebarMode.FloatUnpinned) {
+      interfaceStore.sidebarMode = SidebarMode.FloatUnpinned
       interfaceStore.hideSidebar()
     }
   }, [windowSize])

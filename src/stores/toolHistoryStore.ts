@@ -34,9 +34,10 @@ class ToolHistoryStore {
 
   private addDebounced(toolHistory: ToolHistory) {
     /**
-     * Save tool state to history only if there is no matching instanceID (SHA256 hash)
+     * Save tool state to history only if last saved history instanceID has different SHA256 hash
      */
-    if (this.history.findIndex((tool) => tool.instanceId === toolHistory.instanceId) === -1) {
+    const lastSavedHistory = this.history[0]
+    if (!lastSavedHistory || lastSavedHistory.inputOutputHash !== toolHistory.inputOutputHash) {
       this.history.unshift(toolHistory)
     }
 

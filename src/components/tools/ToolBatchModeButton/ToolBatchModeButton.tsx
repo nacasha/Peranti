@@ -18,7 +18,7 @@ export const ToolBatchModeButton: FC = observer(() => {
 
   return (
     <Button icon={assets.Layers2SVG} onClick={onClickButton}>
-      Batch Mode
+      Batch
     </Button>
   )
 })

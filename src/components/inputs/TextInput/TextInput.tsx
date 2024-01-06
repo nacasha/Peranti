@@ -1,4 +1,4 @@
-import { type FC, useId } from "react"
+import { type FC, type InputHTMLAttributes, useId } from "react"
 
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
@@ -10,7 +10,7 @@ export const TextInput: FC<TextInputProps> = (props) => {
   const id = useId()
   const { onSubmit, initialValue, readOnly, label } = props
 
-  const onInputChange: React.InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
+  const onInputChange: InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
     const value = event.target.value
     onSubmit(value.trim())
   }

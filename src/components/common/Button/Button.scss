@@ -2,13 +2,14 @@
   border: 1px solid var(--border-color);
   background: var(--button-color);
   border-radius: var(--border-radius);
-  padding: 2px 8px;
+  padding: 0 10px;
   user-select: none;
   cursor: pointer;
   font-family: var(--font-family);
   display: flex;
   align-items: center;
   font-size: var(--font-size);
+  height: 30px;
 
   &:hover {
     background: var(--button-hover-color);
@@ -20,7 +21,7 @@
 
   img {
     width: 12px;
-    margin-right: 5px;
-    filter: var(--icon-filter-color);
+    margin-right: 7px;
+    filter: var(--icon-color);
   }
 }

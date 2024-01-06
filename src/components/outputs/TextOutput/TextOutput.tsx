@@ -1,13 +1,10 @@
 import { type FC, useId } from "react"
 
+import type { OutputComponentProps } from "src/types/OutputComponentProps.ts"
+
 import "./TextOutput.scss"
 
-interface TextOutputProps {
-  output: string
-  label: string
-}
-
-export const TextOutput: FC<TextOutputProps> = (props) => {
+export const TextOutput: FC<OutputComponentProps> = (props) => {
   const id = useId()
   const { output, label = "Output" } = props
 

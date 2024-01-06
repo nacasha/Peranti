@@ -1,25 +1,82 @@
+import fastDeepEqual from "fast-deep-equal"
 import { observable, action, makeObservable } from "mobx"
 
+import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { toolStore } from "src/stores/toolStore.ts"
 import { type ToolHistory } from "src/types/ToolHistory"
 import { type ToolInput } from "src/types/ToolInput"
 import { type ToolOutput } from "src/types/ToolOutput"
 import { generateSha256 } from "src/utils/generateSha256"
 
-interface ToolConstructor {
+interface ToolConstructor<InputFields extends Record<string, any> = any,
+  OutputFields extends Record<string, any> = any> {
+  /**
+   * Tool ID
+   */
   toolId: string
+
+  /**
+   * Name of tool
+   */
   name: string
-  inputs: ToolInput[]
-  outputs: ToolOutput[]
+
+  /**
+   * List of input fields for tool
+   */
+  inputs: Array<ToolInput<InputFields>>
+  | ((inputParams: any) => Array<ToolInput<InputFields>>)
+
+  /**
+   * List of output fields for tool
+   */
+  outputs: Array<ToolOutput<OutputFields>>
+  | ((outputParams: any) => Array<ToolOutput<OutputFields>>)
+
+  /**
+   * Category of tool
+   */
   category: string
-  action: (input: any) => any
-  layout?: "side-by-side" | "top-bottom" | "top-bottom-auto"
+
+  /**
+   * Action of tool.
+   * Input always comes in form of Map as well as the returned value
+   */
+  action: (input: InputFields) => OutputFields | undefined | Promise<OutputFields>
+
+  /**
+   * Layout used to show the input and output area, default is "side-by-side"
+   */
+  layout?: ToolLayoutEnum
+
+  /**
+   * Swap input and output position in tool area, default is "false"
+   */
+  layoutReversed?: boolean
+
+  /**
+   * Layout direction for input area, default is "vertical"
+   */
   inputsLayoutDirection?: "horizontal" | "vertical"
+
+  /**
+   * Layout direction for output area, default is "vertical"
+   */
   outputsLayoutDirection?: "horizontal" | "vertical"
+
+  /**
+   * Pipelines
+   */
   pipelines?: any[]
+
+  /**
+   * Should tools is auto run when user made changes on inputs, default is true
+   */
+  autoRun?: boolean
 }
 
-export class Tool implements ToolConstructor {
+export class Tool<InputFields extends Record<string, any> = any,
+  OutputFields extends Record<string, any> = any
+> implements ToolConstructor {
   /**
    * Tool ID
    */
@@ -31,19 +88,21 @@ export class Tool implements ToolConstructor {
   readonly name: string
 
   /**
-   * Unique ID of created instance with this tool.
+   * Unique ID of each created instance with this tool.
    */
   instanceId: string
 
   /**
    * List of input fields for tool
    */
-  readonly inputs: ToolInput[]
+  readonly inputs: Array<ToolInput<InputFields>>
+  | ((inputParams: any) => Array<ToolInput<InputFields>>)
 
   /**
    * List of output fields for tool
    */
-  readonly outputs: ToolOutput[]
+  readonly outputs: Array<ToolOutput<OutputFields>>
+  | ((outputParams: any) => Array<ToolOutput<OutputFields>>)
 
   /**
    * Category of tool
@@ -53,22 +112,27 @@ export class Tool implements ToolConstructor {
   /**
    * Layout used to show the input and output area, default is "side-by-side"
    */
-  readonly layout?: "side-by-side" | "top-bottom" | "top-bottom-auto"
+  readonly layout: ToolLayoutEnum
 
   /**
-   * Layout direction for input area
+   * Swap input and output position in tool area, default is "false"
+   */
+  readonly layoutReversed: boolean = false
+
+  /**
+   * Layout direction for input area, default is "vertical"
    */
   readonly inputsLayoutDirection?: "horizontal" | "vertical"
 
   /**
-   * Layout direction for output area
+   * Layout direction for output area, default is "vertical"
    */
   readonly outputsLayoutDirection?: "horizontal" | "vertical"
 
   /**
    * Pipelines
    */
-  readonly pipelines?: any[]
+  readonly pipelines: any[] = []
 
   /**
    * Indicates whether run the pipeline or no
@@ -99,12 +163,12 @@ export class Tool implements ToolConstructor {
   /**
    * Key input of batch mode
    */
-  @observable batchInputKey: string = ""
+  @observable batchInputKey: string | number | symbol = ""
 
   /**
    * Key output of batch mode
    */
-  @observable batchOutputKey: string = ""
+  @observable batchOutputKey: string | number | symbol = ""
 
   /**
    * Indicates tool input is read only
@@ -117,37 +181,52 @@ export class Tool implements ToolConstructor {
   protected _hasRunning: boolean = false
 
   /**
+   * Should tools is auto run when user made changes on inputs, default is true
+   */
+  readonly autoRun: boolean = false
+
+  /**
    * Action of tool.
    * Input always comes in form of Map as well as the returned value
    */
-
-  constructor(params: ToolConstructor) {
+  constructor(params: ToolConstructor<InputFields, OutputFields>) {
     const {
       action,
       category,
       toolId,
       inputs,
       outputs,
-      name: title,
-      layout,
+      name,
+      layout = ToolLayoutEnum.SideBySide,
+      layoutReversed = false,
       inputsLayoutDirection = "vertical",
       outputsLayoutDirection = "vertical",
-      pipelines
+      pipelines = [],
+      autoRun = true
     } = params
 
     this.toolId = toolId
-    this.instanceId = toolId
     this.action = action
     this.category = category
     this.inputs = inputs
     this.outputs = outputs
-    this.name = title
+    this.name = name
     this.layout = layout
+    this.layoutReversed = layoutReversed
     this.pipelines = pipelines
     this.inputsLayoutDirection = inputsLayoutDirection
     this.outputsLayoutDirection = outputsLayoutDirection
+    this.autoRun = autoRun
 
-    // Set default value from tool definitions into inputParams
+    /**
+     * Instance ID of initial tool is the toolId itself,
+     * and will be generated when creating new instance of tool (opening tool from sidebar)
+     */
+    this.instanceId = toolId
+
+    /**
+     * Set inputParams for default value fields from tool definitions
+     */
     this.inputParams = this.getInputParamsWithDefault()
   }
 
@@ -175,7 +254,7 @@ export class Tool implements ToolConstructor {
    * @param mainTool
    * @param toolHistory
    */
-  static openHistory(mainTool: Tool, toolHistory: Tool) {
+  static openHistory(mainTool: Tool, toolHistory: ToolHistory) {
     const tool = new Tool({ ...mainTool })
     tool.inputParams = toolHistory.inputParams
     tool.outputParams = toolHistory.outputParams
@@ -206,7 +285,7 @@ export class Tool implements ToolConstructor {
    * @param preset
    */
   static cloneToolBasedOnPreset(mainTool: Tool, preset: any) {
-    const presetInputs = [...mainTool.inputs].map((input) => {
+    const presetInputs = [...mainTool.getInputs()].map((input) => {
       /** Assign input to new object because it still refers to original variable, which is main tool */
       const newInput = { ...input }
       newInput.defaultValue = preset.inputParams[input.key] ?? input.defaultValue
@@ -217,13 +296,18 @@ export class Tool implements ToolConstructor {
       ...mainTool,
       name: preset.name,
       toolId: preset.presetId,
-      inputs: presetInputs
+      inputs: presetInputs as any
     })
   }
 
+  generateInstanceId() {
+    return generateSha256(new Date().getTime().toString())
+  }
+
   /**
-   * Open tool by cloning instance of created tool that shown on sidebar
-   * As well as make it observable to the UI can react to variable changes
+   * Open tool by cloning instance of initial tool that shown on sidebar
+   * This is done to avoid modifying the initial state of tool
+   * Make it observable, generating new instanceId and disable readOnly
    *
    * @returns
    */
@@ -238,9 +322,41 @@ export class Tool implements ToolConstructor {
    */
   toHistory(): ToolHistory {
     const { toolId, inputParams, outputParams, batchInputKey, batchOutputKey, isBatchEnabled } = this
-    const instanceId = generateSha256(this.getInputAndOutputAsString())
+
     const createdAt = new Date().getTime()
-    return { instanceId, toolId, inputParams, outputParams, createdAt, batchInputKey, batchOutputKey, isBatchEnabled }
+    const inputOutputHash = generateSha256(this.getInputAndOutputAsString())
+
+    /**
+     * Generate new instanceId for history
+     * This is done to avoid same instanceId for tool that currently shown in the App
+     */
+    const instanceId = this.generateInstanceId()
+
+    return {
+      instanceId,
+      toolId,
+      inputParams,
+      outputParams,
+      inputOutputHash,
+      createdAt,
+      isBatchEnabled,
+      batchInputKey,
+      batchOutputKey
+    }
+  }
+
+  getInputs() {
+    if (typeof this.inputs === "function") {
+      return this.inputs(this.inputParams)
+    }
+    return this.inputs
+  }
+
+  getOutputs() {
+    if (typeof this.outputs === "function") {
+      return this.outputs(this.inputParams)
+    }
+    return this.outputs
   }
 
   /**
@@ -249,7 +365,7 @@ export class Tool implements ToolConstructor {
    * @returns
    */
   getInputParamsWithDefault() {
-    return Object.fromEntries(this.inputs.map((i) => [i.key, i.defaultValue]))
+    return Object.fromEntries(this.getInputs().map((i) => [i.key, i.defaultValue]))
   }
 
   /**
@@ -275,58 +391,47 @@ export class Tool implements ToolConstructor {
    * Set input params value
    *
    * @param key key of input
-   * @param value value ofinput
+   * @param value value of input
    */
   @action
   setInputParamsValue(key: string, value: any) {
-    this.inputParams = { ...this.inputParams, [key]: value }
+    const newInputParams = { ...this.inputParams, [key]: value }
+    const inputParamsHasChanged = !fastDeepEqual(this.inputParams, newInputParams)
+
+    if (inputParamsHasChanged) {
+      this.inputParams = { ...this.inputParams, [key]: value }
+    }
+  }
+
+  @action
+  setOutputParams(outputParams: any) {
+    this.outputParams = outputParams
   }
 
   @action
   setBatchMode(isEnabled: boolean) {
-    const { inputs, outputs } = this
-
     this.isBatchEnabled = isEnabled
-    this.batchInputKey = inputs.filter((input) => input.allowBatch)[0].key
-    this.batchOutputKey = outputs.filter((output) => output.allowBatch)[0].key
+    this.batchInputKey = this.getInputs().filter((input) => input.allowBatch)[0].key
+    this.batchOutputKey = this.getOutputs().filter((output) => output.allowBatch)[0].key
   }
 
   /**
    * Evaluate this tool action with input
    */
   @action
-  run() {
+  async run() {
     if (this.isReadOnly) return
 
     const { pipelines } = this
-    if (this.shouldRunPipeline && pipelines) {
-      this.runPipeline()
+    if (this.shouldRunPipeline && pipelines.length > 0) {
+      await this.runPipeline()
       this._hasRunning = true
     } else if (this.isBatchEnabled) {
-      const { inputParams, batchInputKey } = this
-      const batchInputParams = inputParams[batchInputKey]
-      const inputLines = batchInputParams.split("\n")
-
-      const outputs = []
-      for (const inputLine of inputLines) {
-        outputs.push(this.action({ ...inputParams, [batchInputKey]: inputLine }))
-      }
-
-      const listOfOutputParams: Record<string, string[]> = outputs.reduce((sum, a) => {
-        Object.entries(a).forEach(([key, value]) => {
-          if (!sum[key]) sum[key] = []
-          sum[key].push(value)
-        })
-
-        return sum
-      }, {})
-
-      this.outputParams = Object.fromEntries(
-        Object.entries(listOfOutputParams).map(([key, value]) => [key, value.join("\n")])
-      )
+      this.runBatch()
       this._hasRunning = true
     } else {
-      this.outputParams = this.action({ ...this.inputParams })
+      const runResult = await this.action({ ...this.inputParams })
+      this.setOutputParams(runResult)
       this._hasRunning = true
     }
   }
@@ -336,7 +441,7 @@ export class Tool implements ToolConstructor {
    *
    * @private
    */
-  private runPipeline() {
+  private async runPipeline() {
     const { pipelines = [] } = this
     const pipelineResults = []
     const pipelineTools = [this, ...pipelines, this]
@@ -347,7 +452,7 @@ export class Tool implements ToolConstructor {
       if (i === 0) {
         pipelineResults.push(pipeline.inputParams)
       } else if (i === pipelineTools.length - 1) {
-        this.outputParams = pipelineResults[i - 1]
+        this.setOutputParams(pipelineResults[i - 1])
       } else {
         const tool = toolStore.mapOfTools[pipeline.toolId]
         const toolInstance = tool.openTool()
@@ -362,9 +467,40 @@ export class Tool implements ToolConstructor {
           }
         })
 
-        toolInstance.run()
+        await toolInstance.run()
         pipelineResults.push(toolInstance.outputParams)
       }
     }
+  }
+
+  /**
+   * Run tool in batch mode
+   *
+   * @private
+   */
+  private runBatch() {
+    const { inputParams, batchInputKey } = this
+    const batchInputParams = inputParams[batchInputKey]
+    const inputLines = batchInputParams.split("\n")
+
+    const outputs = []
+    for (const inputLine of inputLines) {
+      outputs.push(this.action({ ...inputParams, [batchInputKey]: inputLine }))
+    }
+
+    const listOfOutputParams: Record<string, string[]> = outputs.reduce((sum, a) => {
+      Object.entries(a).forEach(([key, value]) => {
+        if (!sum[key]) sum[key] = []
+        sum[key].push(value)
+      })
+
+      return sum
+    }, {})
+
+    this.setOutputParams(
+      Object.fromEntries(
+        Object.entries(listOfOutputParams).map(([key, value]) => [key, value.join("\n")])
+      )
+    )
   }
 }

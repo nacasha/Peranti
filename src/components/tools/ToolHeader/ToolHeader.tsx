@@ -1,13 +1,11 @@
+import { Button } from "src/components/common/Button"
 import { assets } from "src/constants/assets"
 import { toolStore } from "src/stores/toolStore"
 
 import { ToolBatchModeButton } from "../ToolBatchModeButton"
 import { ToolLoadFromHistoryButton } from "../ToolLoadFromHistoryButton"
-import { ToolRunButton } from "../ToolRunButton"
 
 import "./ToolHeader.scss"
-
-import { Button } from "src/components/common/Button"
 
 export const ToolHeader = () => {
   const onClickHistory = () => {
@@ -18,7 +16,6 @@ export const ToolHeader = () => {
     <div className="ToolHeader">
       <div className="ToolHeader-button-list">
         <ToolLoadFromHistoryButton/>
-        <ToolRunButton/>
         <ToolBatchModeButton />
       </div>
 

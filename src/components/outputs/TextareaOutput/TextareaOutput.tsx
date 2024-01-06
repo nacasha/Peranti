@@ -4,19 +4,15 @@ import { observer } from "mobx-react"
 import { useId, type FC } from "react"
 
 import { interfaceStore } from "src/stores/interfaceStore.ts"
+import type { OutputComponentProps } from "src/types/OutputComponentProps.ts"
 
 import "./TextareaOutput.scss"
 
-interface TextareaOutputProps {
-  output: string
-  label: string
-}
-
-export const TextareaOutput: FC<TextareaOutputProps> = observer((props) => {
+export const TextareaOutput: FC<OutputComponentProps> = observer((props) => {
   const id = useId()
   const { output, label = "Output" } = props
   const textAreaWordWrapEnabled = interfaceStore.textAreaWordWrap
-  const isDarkMode = interfaceStore.theme === "dark"
+  const isDarkMode = interfaceStore.isThemeDarkMode
 
   return (
     <div className="TextareaOutput">

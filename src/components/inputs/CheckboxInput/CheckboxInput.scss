@@ -5,8 +5,8 @@
   display: flex;
   justify-content: space-between;
   gap: 3px;
-  padding: 4px var(--input-padding);
-  background-color: var(--input-background-color);
+  padding: 4px var(--input-output-padding);
+  background-color: var(--input-output-background-color);
 
   &:hover {
     border-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 20%);

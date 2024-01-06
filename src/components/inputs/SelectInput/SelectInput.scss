@@ -6,8 +6,8 @@
     opacity: 1;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    background-color: var(--input-background-color);
-    padding: var(--input-padding);
+    background-color: var(--input-output-background-color);
+    padding: var(--input-output-padding);
     outline: none;
     transition: all var(--transition-speed);
 
@@ -17,7 +17,7 @@
 
     option {
       padding: 10px;
-      background-color: var(--input-background-color);
+      background-color: var(--input-output-background-color);
     }
   }
 }

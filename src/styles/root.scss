@@ -9,7 +9,7 @@ html, body {
 
 :root {
   --font-family: "Inter", serif;
-  --font-family-mono: monospace, serif;
+  --font-family-mono: "Consolas", monospace, serif;
   --font-size: 13px;
 }
 
@@ -27,12 +27,10 @@ html, body {
   --accent-color-dark-80: color-mix(in srgb, var(--accent-color), #000000 80%);
 
   // General
-  --input-padding: 7px;
-  --output-padding: 7px;
   --border-radius: 4px;
 
   // App Titlebar
-  --app-titlebar-height: 35px;
+  --app-titlebar-height: 37px;
 
   // Toolbar
   --tool-header-height: 45px;
@@ -41,10 +39,14 @@ html, body {
   --transition-speed: 0.15s;
 
   // Sidebar
-  --sidebar-width: 250px;
+  --sidebar-width: 50px;
+  --sidebar-item-height: 30px;
+  --sidebar-content-width: 250px;
 
   // Input and output component styles
+  --input-output-fields-spacing: 15px;
   --input-output-label-spacing: 10px;
+  --input-output-padding: 7px;
   --input-output-font-size: 14px;
 
   ::-webkit-scrollbar {
@@ -57,6 +59,7 @@ html, body {
   // General
   --border-color: #dddddd;
   --text-color: #0f0f0f;
+  --icon-color: invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%);
 
   // Button
   --button-color: linear-gradient(0deg, #f7f7f7 0%, #ffffff 100%);
@@ -67,23 +70,20 @@ html, body {
   --background-color-main: #f6f6f6;
   --background-color-content: #ffffff;
 
+  // App Sidebar
+  --sidebar-item-background-color-hover: #dfdddd;
+  --sidebar-item-background-color-active: #d6d6d6;
+  --sidebar-content-background-color: #ffffff;
+
   // App Statusbar
   --statusbar-background-color: #f6f6f6;
 
   // Input component styles
-  --input-background-color: #ffffff;
-
-  // Output component styles
-  --output-background-color: #ffffff;
-
-  --sidebar-background-color: #ffffff;
+  --input-output-background-color: #ffffff;
 
   // Tool Header
   --tool-header-background-color: #ffffff;
   --tool-area-background-color: #f9f9fc;
-
-  // Icon
-  --icon-filter-color: invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%);
 
   // Theme color
   --opposite-color: #939393;
@@ -107,31 +107,33 @@ html, body {
 
 .AppRoot.dark {
   // General
-  --border-color: #30353d;
-  --text-color: #c5c7c9;
+  --border-color: #2a2a2f;
+  --text-color: #e0e0e0;
+  --icon-color: invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%);
+
+  // Button
+  --button-color: #1a1b1d;
+  --button-hover-color: #26282a;
+  --button-active-color: #1a1c1e;
 
   // App Content
-  --background-color-main: #1e2022;
+  --background-color-main: #1a1b1d;
   --background-color-content: #222429;
+
+  // App Sidebar
+  --sidebar-item-background-color-hover: #5a5b5e;
+  --sidebar-item-background-color-active: #434549;
+  --sidebar-content-background-color: #222429;
 
   // App Statusbar
   --statusbar-background-color: #1e1f22;
 
   // Input component styles
-  --input-background-color: #0d1117;
-
-  // Output component styles
-  --output-background-color: #0d1117;
-
-  // Sidebar
-  --sidebar-background-color: #222429;
+  --input-output-background-color: #0d1117;
 
   // Tool
   --tool-header-background-color: #222429;
-  --tool-area-background-color: #24262a;
-
-  // Icon
-  --icon-filter-color: invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%);
+  --tool-area-background-color: #1a1b21;
 
   // Theme color
   --opposite-color: #ffffff;
@@ -230,6 +232,13 @@ html, body {
     .cm-editor {
       height: 100%;
       max-height: 100%;
+    }
+
+    .cm-editor.cm-focused { outline: 2px solid cyan }
+    .cm-editor .cm-content {
+      font-family: var(--input-output-font-size);
+      font-size: calc(1px + var(--font-size));
+      font-weight: 500;
     }
   }
 

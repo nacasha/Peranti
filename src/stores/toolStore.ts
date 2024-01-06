@@ -3,19 +3,26 @@ import { makePersistable } from "mobx-persist-store"
 
 import { ToolRunModeEnum } from "src/enums/ToolRunTypeEnum"
 import { Tool } from "src/models/Tool.ts"
-import compareList from "src/tools/compare-list"
-import cronReadableTool from "src/tools/cron-readable"
-import generateRandomStringTool from "src/tools/generate-random-string"
-import generateUuid from "src/tools/generate-uuid"
-import hashTool from "src/tools/hash"
-import jsonFormatter from "src/tools/json-formatter"
-import millisecondsToDate from "src/tools/milliseconds-to-date"
-import prefixSuffixLines from "src/tools/prefix-suffix-lines"
-import removeDuplicateList from "src/tools/remove-duplicate-lines"
-import sortList from "src/tools/sort-list"
-import testPipelines from "src/tools/test-pipelines"
-import textTransformTool from "src/tools/text-transform"
+import base64EncodeDecodeTool from "src/tools/base64-encode-decode-tool.js"
+import characterCounterTool from "src/tools/character-counter-tool.ts"
+import compareList from "src/tools/compare-list-tool.js"
+import cronReadableTool from "src/tools/cron-readable-tool.js"
+import faviconGrabberTool from "src/tools/favicon-grabber-tool.js"
+import generateRandomStringTool from "src/tools/generate-random-string.js"
+import generateUuid from "src/tools/generate-uuid-tool.js"
+import hashTool from "src/tools/hash-tool.js"
+import jsonFormatter from "src/tools/json-formatter-tool.js"
+import loremIpsumGeneratorTool from "src/tools/lorem-ipsum-generator-tool.js"
+import mathEvaluatorTool from "src/tools/math-evaluator-tool.ts"
+import millisecondsToDate from "src/tools/milliseconds-to-date-tool.js"
+import prefixSuffixLines from "src/tools/prefix-suffix-lines-tool.js"
+import removeDuplicateList from "src/tools/remove-duplicate-lines-tool.js"
+import sortList from "src/tools/sort-list-tool.js"
+import testPipelines from "src/tools/test-pipelines-tool.js"
+import textTransformTool from "src/tools/text-transform-tool.js"
+import urlEncodeDecodeTool from "src/tools/url-encode-decode-tool.ts"
 import { type ToolHistory } from "src/types/ToolHistory.ts"
+import { type ToolPreset } from "src/types/ToolPreset.ts"
 
 import { toolHistoryStore } from "./toolHistoryStore.js"
 
@@ -31,9 +38,14 @@ class ToolStore {
   _runMode: ToolRunModeEnum = ToolRunModeEnum.OnChange
 
   /**
+   * Save last state of tool when change to another tool
+   */
+  _keepLastStateOfTool: boolean = false
+
+  /**
    * List of tool presets
    */
-  private readonly _toolPresets: any[] = [
+  private readonly _toolPresets: ToolPreset[] = [
     {
       toolId: "prefix-suffix-lines",
       presetId: "sql-where-query",
@@ -61,7 +73,13 @@ class ToolStore {
     [generateUuid.toolId]: generateUuid,
     [generateRandomStringTool.toolId]: generateRandomStringTool,
     [jsonFormatter.toolId]: jsonFormatter,
-    [cronReadableTool.toolId]: cronReadableTool
+    [cronReadableTool.toolId]: cronReadableTool,
+    [mathEvaluatorTool.toolId]: mathEvaluatorTool,
+    [characterCounterTool.toolId]: characterCounterTool,
+    [urlEncodeDecodeTool.toolId]: urlEncodeDecodeTool,
+    [base64EncodeDecodeTool.toolId]: base64EncodeDecodeTool,
+    [loremIpsumGeneratorTool.toolId]: loremIpsumGeneratorTool,
+    [faviconGrabberTool.toolId]: faviconGrabberTool
   }
 
   /**
@@ -103,8 +121,11 @@ class ToolStore {
     return this._runMode === ToolRunModeEnum.OnChange
   }
 
+  /**
+   * Determine whether current active tool has batch operations
+   */
   get toolHasBatchOutput() {
-    return this.getActiveTool().outputs.some((output) => output.allowBatch)
+    return this.getActiveTool().getInputs().some((output) => output.allowBatch)
   }
 
   /**
@@ -137,7 +158,7 @@ class ToolStore {
    *
    * @param toolHistory
    */
-  openHistory(toolHistory: ToolHistory) {
+  openHistoryReadOnly(toolHistory: ToolHistory) {
     const mainTool = this.mapOfTools[toolHistory.toolId]
     if (mainTool) {
       this.saveActiveToolStateToHistory()
@@ -148,16 +169,17 @@ class ToolStore {
   /**
    * Make current active tool history editable
    */
-  openToolFromHistory() {
-    const toolHistory = this.getActiveTool()
-    const mainTool = this.mapOfTools[toolHistory.toolId]
-    if (toolHistory) {
-      this._activeTool = Tool.openHistory(mainTool, toolHistory)
+  openHistoryEditable() {
+    const tool = this.getActiveTool()
+    const mainTool = this.mapOfTools[tool.toolId]
+    if (tool) {
+      this._activeTool = Tool.openHistory(mainTool, tool.toHistory())
     }
   }
 
   /**
-   * Save tool to history when tool has been running at least once and not a tool history instance
+   * Save tool to history when tool has been running at least once
+   * and not an instance of tool history
    */
   saveActiveToolStateToHistory() {
     const activeTool = this._activeTool
@@ -198,6 +220,16 @@ class ToolStore {
    * @returns
    */
   isToolActive(tool: Tool | ToolHistory) {
+    return this.getActiveTool().toolId === tool.toolId
+  }
+
+  /**
+   * Check whether passed tool in arguments is currently active
+   *
+   * @param tool
+   * @returns
+   */
+  isToolActiveByInstanceId(tool: Tool | ToolHistory) {
     return this.getActiveTool().instanceId === tool.instanceId
   }
 

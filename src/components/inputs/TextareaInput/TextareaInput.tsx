@@ -15,11 +15,11 @@ export const TextareaInput: FC<TextareaInputProps> = observer((props) => {
   const { onSubmit, initialValue, readOnly, label } = props
   const [value, setValue] = useState<string>(() => initialValue ?? "")
   const textAreaWordWrapEnabled = interfaceStore.textAreaWordWrap
-  const isDarkMode = interfaceStore.theme === "dark"
+  const isDarkMode = interfaceStore.isThemeDarkMode
 
   const onInputChange = (newValue: string) => {
-    setValue(newValue.trim())
-    onSubmit(newValue.trim())
+    setValue(newValue)
+    onSubmit(newValue)
   }
 
   return (

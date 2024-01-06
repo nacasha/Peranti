@@ -1,6 +1,6 @@
 .AppSidebar {
   width: 100%;
-  max-width: 45px;
+  max-width: var(--sidebar-width);
   overflow: auto;
   background-color: var(--background-color-main);
   z-index: 3;
@@ -16,13 +16,13 @@
     align-items: center;
     border-radius: 4px;
     padding: 5px;
-    height: 25px;
+    height: var(--sidebar-item-height);
     position: relative;
 
     &::before {
       content: "";
       width: 4px;
-      height: 70%;
+      height: 50%;
       left: -1px;
       background-color: var(--accent-color);
       border-radius: 100px;
@@ -32,12 +32,12 @@
     }
 
     &:hover {
-      background-color: color-mix(in srgb, var(--sidebar-background-color), var(--opposite-color) 7%);
+      background-color: var(--sidebar-item-background-color-hover);
       cursor: pointer;
     }
 
     &.active {
-      background-color: color-mix(in srgb, var(--sidebar-background-color), var(--opposite-color) 7%);
+      background-color: var(--sidebar-item-background-color-active);
 
       &::before {
         opacity: 1;
@@ -50,13 +50,13 @@
       align-items: center;
       width: 21px;
       margin: auto;
-      filter: var(--icon-filter-color);
+      filter: var(--icon-color);
     }
 
     .tooltip {
       display: none;
       position: fixed;
-      margin-left: 40px;
+      margin-left: calc(var(--sidebar-width) - 5px);
       padding: 2px 5px;
       background-color: #333;
       color: #fff;

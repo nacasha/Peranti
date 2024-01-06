@@ -7,12 +7,12 @@ import { type InputComponentProps } from "src/types/InputComponentProps"
 
 interface ToolInputRendererProps {
   /**
-   * Name of component to be rendered
+   * Name of input component to be rendered
    */
   component: string
 
   /**
-   * Key of field
+   * Unique key of field
    */
   field: string
 
@@ -32,7 +32,7 @@ interface ToolInputRendererProps {
   initialValue: any
 
   /**
-   * Indicates the field is read only, usually used when viewing a history
+   * Indicates the field is read only, used when viewing a history
    */
   readOnly?: boolean
 }

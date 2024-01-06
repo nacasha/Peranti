@@ -1,10 +1,10 @@
 import { type listOfOutputComponent } from "src/components/outputs"
 
-export interface ToolOutput {
+export interface ToolOutput<K extends Record<string, any> = any> {
   /**
    * Field name that will be used as key in output map to show the value
    */
-  key: string
+  key: keyof K
 
   /**
    * Label of field

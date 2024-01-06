@@ -42,7 +42,7 @@ export const AppSidebarContent = observer(() => {
   }
 
   if (isSidebarAlwaysFloating) {
-    sidebarMode = SidebarMode.FLOAT_UNPINNED
+    sidebarMode = SidebarMode.FloatUnpinned
   }
 
   return (

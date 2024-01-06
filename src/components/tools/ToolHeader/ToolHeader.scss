@@ -18,6 +18,7 @@
   .ToolHeader-button-list {
     display: flex;
     gap: 5px;
+    align-items: center;
   }
 
   .toolbar-button {
@@ -43,7 +44,7 @@
     img {
       width: 12px;
       margin-right: 5px;
-      filter: var(--icon-filter-color);
+      filter: var(--icon-color);
     }
   }
 }

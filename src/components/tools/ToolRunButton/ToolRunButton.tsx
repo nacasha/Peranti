@@ -1,5 +1,6 @@
 import { observer } from "mobx-react"
 
+import { Button } from "src/components/common/Button"
 import { assets } from "src/constants/assets"
 import { toolStore } from "src/stores/toolStore"
 
@@ -17,9 +18,8 @@ export const ToolRunButton = observer(() => {
   }
 
   return (
-    <div className="ToolRunButton toolbar-button" onClick={onClickRun}>
-      <img src={assets.RunFilledSVG} alt="Run" />
+    <Button icon={assets.RunFilledSVG} onClick={onClickRun}>
       Run Tool
-    </div>
+    </Button>
   )
 })

@@ -2,14 +2,15 @@ import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { SidebarMode } from "src/enums/SidebarMode"
+import { ThemeEnum } from "src/enums/ThemeEnum.ts"
 import { getWindowSize } from "src/utils/getWindowSize"
 
 class InterfaceStore {
-  theme = "light"
+  theme: ThemeEnum = ThemeEnum.Dark
 
   _isSidebarShow = true
 
-  _sidebarMode: SidebarMode = SidebarMode.DOCK_PINNED
+  _sidebarMode: SidebarMode = SidebarMode.DockPinned
 
   isSidebarAlwaysFloating = false
 
@@ -41,8 +42,12 @@ class InterfaceStore {
     return this._isSidebarShow
   }
 
+  get isThemeDarkMode() {
+    return this.theme === ThemeEnum.Dark
+  }
+
   get sidebarMode() {
-    if (this.isSidebarAlwaysFloating) return SidebarMode.FLOAT_UNPINNED
+    if (this.isSidebarAlwaysFloating) return SidebarMode.FloatUnpinned
     return this._sidebarMode
   }
 

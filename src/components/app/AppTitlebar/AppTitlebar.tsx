@@ -1,9 +1,8 @@
 import { type FC } from "react"
 
+import { ToolSearchBar } from "src/components/tools/ToolSearchBar/ToolSearchBar"
 import { assets } from "src/constants/assets"
 import { useWindowListener } from "src/hooks/useWindowListener"
-
-import { AppTitlebarSearch } from "./AppTitlebarSearch"
 
 import "./AppTitlebar.scss"
 
@@ -14,7 +13,7 @@ export const AppTitlebar: FC = () => {
     <div className="AppTitlebar" data-tauri-drag-region>
       <div className="AppTitlebar-main"></div>
 
-      <AppTitlebarSearch />
+      <ToolSearchBar />
 
       <div className="AppTitlebar-control">
         <div className="titlebar-button" id="titlebar-minimize">

@@ -1,3 +1,4 @@
+import { ButtonInput } from "./ButtonInput"
 import { CheckboxInput } from "./CheckboxInput"
 import { SelectInput } from "./SelectInput"
 import { SwitchInput } from "./SwitchInput"
@@ -9,5 +10,6 @@ export const listOfInputComponent = {
   Textarea: TextareaInput,
   Text: TextInput,
   Select: SelectInput,
-  Switch: SwitchInput
+  Switch: SwitchInput,
+  Button: ButtonInput
 }

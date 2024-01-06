@@ -1,4 +1,7 @@
 .SwitchInput {
+  display: flex;
+  flex-direction: column;
+
   .buttons {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
@@ -7,7 +10,7 @@
     grid-auto-flow: row dense;
     gap: 3px;
     padding: 6px;
-    background-color: var(--input-background-color);
+    background-color: var(--input-output-background-color);
 
     .button {
       flex: 1;

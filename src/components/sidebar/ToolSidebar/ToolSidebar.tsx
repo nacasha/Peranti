@@ -12,19 +12,31 @@ import "./ToolSidebar.scss"
 
 export const ToolSidebar: FC = observer(() => {
   // TODO: Configurable
-  const showToolCategoryTitle = true
+  const groupToolsByCategory = true
   const sortToolAZ = true
 
-  const onClickSidebarItem = (tool: Tool) => () => {
-    toolStore.openTool(tool)
-    if (interfaceStore.sidebarMode === SidebarMode.FLOAT_UNPINNED) {
-      interfaceStore.hideSidebar()
-    }
+  /**
+   * All tools will be categorized as General by default
+   */
+  let listOfCategoriesAndTools: Record<string, Tool[]> = { General: [] }
+  if (groupToolsByCategory) {
+    listOfCategoriesAndTools = Object.fromEntries(toolStore.listOfTools.map((tool) => [tool.category, [] as Tool[]]))
   }
 
-  let listOfCategoriesAndTools = Object.fromEntries(toolStore.listOfTools.map((tool) => [tool.category, [] as Tool[]]))
-  toolStore.listOfTools.forEach((tool) => listOfCategoriesAndTools[tool.category].push(tool))
+  /**
+   * Put each tools on its category
+   */
+  toolStore.listOfTools.forEach((tool) => {
+    if (groupToolsByCategory) {
+      listOfCategoriesAndTools[tool.category].push(tool)
+    } else {
+      listOfCategoriesAndTools.General.push(tool)
+    }
+  })
 
+  /**
+   * Sort all tools by name
+   */
   if (sortToolAZ) {
     listOfCategoriesAndTools = Object.fromEntries(
       Object.entries(listOfCategoriesAndTools).map(([category, tools]) => {
@@ -33,14 +45,21 @@ export const ToolSidebar: FC = observer(() => {
     )
   }
 
+  const onClickSidebarItem = (tool: Tool) => () => {
+    toolStore.openTool(tool)
+    if (interfaceStore.sidebarMode === SidebarMode.FloatUnpinned) {
+      interfaceStore.hideSidebar()
+    }
+  }
+
   return (
     <div className="ToolSidebar">
       {Object.entries(listOfCategoriesAndTools).map(([category, tools]) => (
         <div className="ToolSidebar-section" key={category}>
-          <div className={clsx("ToolSidebar-section-title", showToolCategoryTitle && "show")}>{category}</div>
+          <div className={clsx("ToolSidebar-section-title", groupToolsByCategory && "show")}>{category}</div>
           {tools.map((tool) => (
             <AppSidebarContentItem
-              key={tool.instanceId}
+              key={tool.toolId}
               active={toolStore.isToolActive(tool)}
               onClick={onClickSidebarItem(tool)}
             >

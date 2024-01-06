@@ -1,19 +1,19 @@
-import React, { type FC, useId } from "react"
+import React, { type JSX, useId } from "react"
 
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./SelectInput.scss"
 
-interface SelectInputProps extends InputComponentProps {
-  options: Array<{ value: string, label: string }>
+interface SelectInputProps<T extends string> extends InputComponentProps<T> {
+  options: Array<{ value: T, label: string }>
 }
 
-export const SelectInput: FC<SelectInputProps> = (props) => {
+export const SelectInput: <T extends string>(props: SelectInputProps<T>) => JSX.Element = (props) => {
   const id = useId()
   const { label, options = [], onSubmit, readOnly, initialValue } = props
 
-  const onChange: React.SelectHTMLAttributes<HTMLSelectElement>["onChange"] = (event) => {
-    onSubmit(event.target.value)
+  const onChange: React.SelectHTMLAttributes<HTMLSelectElement>["onChange"] = function(event) {
+    onSubmit(event.target.value as any)
   }
 
   return (
