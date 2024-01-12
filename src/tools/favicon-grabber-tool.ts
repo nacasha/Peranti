@@ -1,5 +1,5 @@
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
   websiteUrl: string
@@ -37,13 +37,13 @@ function getFavicon(url: any, callback: any) {
     })
 }
 
-const faviconGrabberTool = new Tool<InputFields, OutputFields>({
+const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "favicon-grabber-tool",
   name: "Favicon Grabber",
   category: "Image",
   layout: ToolLayoutEnum.SideBySide,
   autoRun: false,
-  inputs: [
+  inputFields: [
     {
       key: "websiteUrl",
       label: "Website URL",
@@ -57,7 +57,7 @@ const faviconGrabberTool = new Tool<InputFields, OutputFields>({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
@@ -79,6 +79,6 @@ const faviconGrabberTool = new Tool<InputFields, OutputFields>({
 
     return { output: result }
   }
-})
+}
 
 export default faviconGrabberTool

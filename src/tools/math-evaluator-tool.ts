@@ -1,14 +1,22 @@
 import Mexp from "math-expression-evaluator"
 
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
-const mathEvaluatorTool = new Tool({
+interface InputFields {
+  input: string
+}
+
+interface OutputFields {
+  output: unknown
+}
+
+const mathEvaluatorTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "math-evaluator",
   name: "Math Evaluator",
   category: "Math",
   layout: ToolLayoutEnum.SideBySide,
-  inputs: [
+  inputFields: [
     {
       key: "input",
       label: "Input",
@@ -16,14 +24,14 @@ const mathEvaluatorTool = new Tool({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
       component: "Textarea"
     }
   ],
-  action({ input }: { input: string }) {
+  action({ input }) {
     const mexp = new Mexp()
 
     const inputLines = input.split("\n")
@@ -41,6 +49,6 @@ const mathEvaluatorTool = new Tool({
 
     return { output }
   }
-})
+}
 
 export default mathEvaluatorTool

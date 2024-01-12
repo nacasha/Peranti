@@ -1,7 +1,7 @@
 import { loremIpsum, type ILoremIpsumParams } from "lorem-ipsum"
 
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
   count: string
@@ -12,12 +12,12 @@ interface OutputFields {
   output: string
 }
 
-const loremIpsumGeneratorTool = new Tool<InputFields, OutputFields>({
+const loremIpsumGeneratorTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "lorem-ipsum-generator",
   name: "Lorem Ipsum Generator",
   category: "Generator",
   layout: ToolLayoutEnum.TopBottomAndPushToTop,
-  inputs: (inputParams: any) => {
+  inputFields: (inputParams: any) => {
     const { type } = inputParams
     const typeOptions = [
       { value: "words", label: "Words" },
@@ -48,7 +48,7 @@ const loremIpsumGeneratorTool = new Tool<InputFields, OutputFields>({
       }
     ]
   },
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
@@ -70,6 +70,6 @@ const loremIpsumGeneratorTool = new Tool<InputFields, OutputFields>({
 
     return { output }
   }
-})
+}
 
 export default loremIpsumGeneratorTool

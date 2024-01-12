@@ -1,12 +1,21 @@
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
-const urlEncodeDecodeTool = new Tool({
-  toolId: "url-encode-decode",
+interface InputFields {
+  input: string
+  type: string
+}
+
+interface OutputFields {
+  output: unknown
+}
+
+const uriEncodeDecodeTool: ToolConstructor<InputFields, OutputFields> = {
+  toolId: "uri-encode-decode",
   name: "URL Encode Decode",
   category: "Encode / Decode",
   layout: ToolLayoutEnum.SideBySide,
-  inputs: [
+  inputFields: [
     {
       key: "type",
       label: "Mode",
@@ -26,20 +35,20 @@ const urlEncodeDecodeTool = new Tool({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
       component: "Textarea"
     }
   ],
-  action({ input, type }: { input: string, type: string }) {
+  action({ input, type }) {
     if (type === "encode") {
       return { output: encodeURIComponent(input) }
     }
 
     return { output: decodeURIComponent(input) }
   }
-})
+}
 
-export default urlEncodeDecodeTool
+export default uriEncodeDecodeTool

@@ -1,10 +1,12 @@
-import { makeAutoObservable } from "mobx"
+import { makeAutoObservable, toJS } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { type ToolHistory } from "src/types/ToolHistory"
 
 class ToolHistoryStore {
   history: ToolHistory[] = []
+
+  lastState: Record<string, ToolHistory> = {}
 
   numberOfMaximumHistory = 100
 
@@ -17,27 +19,35 @@ class ToolHistoryStore {
 
     void makePersistable(this, {
       name: "ToolHistoryStore",
-      properties: ["history", "numberOfMaximumHistory", "autoSaveDelayInSeconds"],
+      properties: ["history", "numberOfMaximumHistory", "autoSaveDelayInSeconds", "lastState"],
       storage: window.localStorage
     })
   }
 
-  add(toolHistory: ToolHistory) {
+  add(toolHistory: ToolHistory, immediately?: boolean) {
     if (this.addDebounceState) {
       clearTimeout(this.addDebounceState)
     }
 
     this.addDebounceState = setTimeout(() => {
       this.addDebounced(toolHistory)
-    }, this.autoSaveDelayInSeconds * 1000)
+    }, this.autoSaveDelayInSeconds * (immediately ? 0 : 1000))
+  }
+
+  setLastState(toolHistory: ToolHistory) {
+    this.lastState[toolHistory.toolId] = toolHistory
+  }
+
+  getLastStateOfToolId(toolId: string) {
+    return toJS(this.lastState[toolId])
   }
 
   private addDebounced(toolHistory: ToolHistory) {
     /**
      * Save tool state to history only if last saved history instanceID has different SHA256 hash
      */
-    const lastSavedHistory = this.history[0]
-    if (!lastSavedHistory || lastSavedHistory.inputOutputHash !== toolHistory.inputOutputHash) {
+    const lastSavedHistoryOfTool = this.getHistoryOfToolId(toolHistory.toolId)[0]
+    if (!lastSavedHistoryOfTool || lastSavedHistoryOfTool.inputOutputHash !== toolHistory.inputOutputHash) {
       this.history.unshift(toolHistory)
     }
 
@@ -54,7 +64,7 @@ class ToolHistoryStore {
    *
    * @param toolId
    */
-  getWithToolId(toolId: string) {
+  getHistoryOfToolId(toolId: string) {
     return this.history.filter((history) => history.toolId === toolId)
   }
 }

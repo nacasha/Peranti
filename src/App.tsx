@@ -5,6 +5,7 @@ import { interfaceStore } from "src/stores/interfaceStore.ts"
 
 import { AppSidebar } from "./components/app/AppSidebar"
 import { AppSidebarContent } from "./components/app/AppSidebarContent"
+import { AppStatusbar } from "./components/app/AppStatusbar"
 import { AppTitlebar } from "./components/app/AppTitlebar"
 import { AppWindowSizeListener } from "./components/app/AppWindowSizeListener"
 import { AppWindowSizeObserver } from "./components/app/AppWindowSizeObserver"
@@ -28,7 +29,7 @@ export const App = observer(() => {
         </div>
       </div>
 
-      {/* <AppStatusbar /> */}
+      <AppStatusbar />
     </div>
   )
 })

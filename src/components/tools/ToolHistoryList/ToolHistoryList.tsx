@@ -19,13 +19,13 @@ export const ToolHistoryList: FC<ToolHistoryListProps> = observer((props) => {
   const activeTool = toolStore.getActiveTool()
 
   const onClickItem = (toolHistory: ToolHistory) => () => {
-    toolStore.openHistoryReadOnly(toolHistory)
+    toolStore.openToolHistory(toolHistory)
   }
 
   return (
     <div className={clsx("ToolPage-right-panel", toolStore.isHistoryPanelOpen && "open")}>
       <div className="ToolHistoryList">
-        {(showAllHistory ? toolHistoryStore.history : toolHistoryStore.getWithToolId(activeTool.toolId)).map((toolHistory) => (
+        {(showAllHistory ? toolHistoryStore.history : toolHistoryStore.getHistoryOfToolId(activeTool.toolId)).map((toolHistory) => (
           <AppSidebarContentItem
             key={toolHistory.instanceId}
             active={toolStore.isToolActiveByInstanceId(toolHistory)}

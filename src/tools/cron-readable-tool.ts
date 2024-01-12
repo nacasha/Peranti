@@ -2,7 +2,7 @@ import cronstrue from "cronstrue"
 import "cronstrue/locales/id"
 
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
   input: string
@@ -12,12 +12,12 @@ interface OutputFields {
   output: string
 }
 
-const cronReadableTool = new Tool<InputFields, OutputFields>({
+const cronReadableTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "cron-parser",
   name: "CRON Parser",
   category: "Date Time",
   layout: ToolLayoutEnum.SideBySide,
-  inputs: [
+  inputFields: [
     {
       key: "input",
       label: "Input",
@@ -25,7 +25,7 @@ const cronReadableTool = new Tool<InputFields, OutputFields>({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
@@ -51,6 +51,6 @@ const cronReadableTool = new Tool<InputFields, OutputFields>({
 
     return { output }
   }
-})
+}
 
 export default cronReadableTool

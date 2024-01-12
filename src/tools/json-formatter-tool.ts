@@ -1,5 +1,5 @@
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
   input: string
@@ -10,12 +10,12 @@ interface OutputFields {
   output: unknown
 }
 
-const jsonFormatter = new Tool<InputFields, OutputFields>({
+const jsonFormatter: ToolConstructor<InputFields, OutputFields> = {
   toolId: "json-formatter",
   name: "JSON Formatter",
   category: "JSON",
   layout: ToolLayoutEnum.SideBySide,
-  inputs: [
+  inputFields: [
     {
       key: "type",
       label: "Mode",
@@ -35,7 +35,7 @@ const jsonFormatter = new Tool<InputFields, OutputFields>({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
@@ -60,6 +60,6 @@ const jsonFormatter = new Tool<InputFields, OutputFields>({
       }
     }
   }
-})
+}
 
 export default jsonFormatter

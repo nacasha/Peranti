@@ -18,8 +18,8 @@ export const ToolAreaOutput: FC<ToolAreaOutputProps> = (props) => {
     <div className={clsx("ToolAreaOutput", direction)}>
       {outputs.map((output) => (
         <ToolOutputRenderer
-          key={toolInstanceId + output.key}
-          field={output.key}
+          key={toolInstanceId.concat(output.key as any)}
+          field={output.key as any}
           label={output.label}
           component={output.component}
           props={output.props}

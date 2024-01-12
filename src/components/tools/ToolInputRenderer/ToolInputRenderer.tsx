@@ -42,10 +42,10 @@ export const ToolInputRenderer: FC<ToolInputRendererProps> = observer((props) =>
   const activeTool = toolStore.getActiveTool()
 
   const Component: FC<InputComponentProps> = (listOfInputComponent as any)[component]
-  const inputValue = toolStore.getActiveTool().inputParams[field]
+  const inputValue = toolStore.getActiveTool().inputValues[field]
 
   const onSubmit = (val: any) => {
-    activeTool.setInputParamsValue(field, val)
+    activeTool.setInputValue(field, val)
   }
 
   return (

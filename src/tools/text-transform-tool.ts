@@ -1,12 +1,21 @@
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
-const textTransformTool = new Tool({
+interface InputFields {
+  input: string
+  type: string
+}
+
+interface OutputFields {
+  output: unknown
+}
+
+const textTransformTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "text-transform",
   name: "Text Transform",
   category: "Text",
   layout: ToolLayoutEnum.TopBottom,
-  inputs: [
+  inputFields: [
     {
       key: "type",
       label: "Type",
@@ -32,14 +41,14 @@ const textTransformTool = new Tool({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
       component: "Textarea"
     }
   ],
-  action({ input, type }: { input: string, type: string }) {
+  action({ input, type }) {
     let output = input
     switch (type.toLowerCase()) {
       case "lowercase":
@@ -82,6 +91,6 @@ const textTransformTool = new Tool({
 
     return { output }
   }
-})
+}
 
 export default textTransformTool

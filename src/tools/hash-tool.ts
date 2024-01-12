@@ -2,7 +2,7 @@ import hash from "hash.js"
 import hashMd5 from "md5"
 
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
   input: string
@@ -15,12 +15,12 @@ interface OutputFields {
   sha512: unknown
 }
 
-const hashTool = new Tool<InputFields, OutputFields>({
+const hashTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "hash",
   name: "Generate Hash",
   category: "Generator",
   layout: ToolLayoutEnum.TopBottomAndPushToTop,
-  inputs: [
+  inputFields: [
     {
       key: "input",
       label: "Input",
@@ -29,7 +29,7 @@ const hashTool = new Tool<InputFields, OutputFields>({
       allowBatch: true
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "md5",
       label: "MD5",
@@ -69,6 +69,6 @@ const hashTool = new Tool<InputFields, OutputFields>({
 
     return { md5, sha1, sha256, sha512 }
   }
-})
+}
 
 export default hashTool

@@ -9,7 +9,7 @@ export const ToolLoadFromHistoryButton: FC = observer(() => {
   const activeTool = toolStore.getActiveTool()
 
   const onClick = () => {
-    toolStore.openHistoryEditable()
+    toolStore.makeCurrentToolHistoryEditable()
   }
 
   if (!activeTool.isReadOnly) {
@@ -18,7 +18,7 @@ export const ToolLoadFromHistoryButton: FC = observer(() => {
 
   return (
     <Button icon={assets.DownloadSVG} onClick={onClick}>
-      Load From History
+      Edit This History
     </Button>
   )
 })

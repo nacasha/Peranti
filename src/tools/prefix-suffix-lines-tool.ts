@@ -1,4 +1,4 @@
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
   prefix: string
@@ -10,11 +10,11 @@ interface OutputFields {
   output: unknown
 }
 
-const prefixSuffixLines = new Tool<InputFields, OutputFields>({
+const prefixSuffixLines: ToolConstructor<InputFields, OutputFields> = {
   toolId: "prefix-suffix-lines",
   name: "Prefix Suffix Lines",
   category: "List",
-  inputs: [
+  inputFields: [
     {
       key: "prefix",
       label: "Prefix",
@@ -34,7 +34,7 @@ const prefixSuffixLines = new Tool<InputFields, OutputFields>({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
@@ -49,6 +49,6 @@ const prefixSuffixLines = new Tool<InputFields, OutputFields>({
 
     return { output: resultString }
   }
-})
+}
 
 export default prefixSuffixLines

@@ -1,9 +1,15 @@
+import { observer } from "mobx-react"
+
+import { toolStore } from "src/stores/toolStore"
+
 import "./AppStatusbar.scss"
 
-export const AppStatusbar = () => {
+export const AppStatusbar = observer(() => {
+  const activeTool = toolStore.getActiveTool()
+
   return (
     <div className="AppStatusbar">
-      Dev Pipe v.0.0.1
+      {activeTool.instanceId}
     </div>
   )
-}
+})

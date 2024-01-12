@@ -12,6 +12,8 @@ class InterfaceStore {
 
   _sidebarMode: SidebarMode = SidebarMode.DockPinned
 
+  _restoreLastToolInputAndOutput = false
+
   isSidebarAlwaysFloating = false
 
   sidebarActiveMenuId = "tools"
@@ -29,7 +31,14 @@ class InterfaceStore {
 
     void makePersistable(this, {
       name: "InterfaceStore",
-      properties: ["isSidebarAlwaysFloating", "_isSidebarShow", "_sidebarMode", "textAreaWordWrap", "theme"],
+      properties: [
+        "isSidebarAlwaysFloating",
+        "_isSidebarShow",
+        "_sidebarMode",
+        "textAreaWordWrap",
+        "theme",
+        "_restoreLastToolInputAndOutput"
+      ],
       storage: window.localStorage
     })
   }
@@ -40,6 +49,10 @@ class InterfaceStore {
 
   get isSidebarShow() {
     return this._isSidebarShow
+  }
+
+  get restoreLastToolInputAndOutput() {
+    return this._restoreLastToolInputAndOutput
   }
 
   get isThemeDarkMode() {
@@ -73,6 +86,10 @@ class InterfaceStore {
 
   setSidebarMenuId(menuId: string) {
     this.sidebarActiveMenuId = menuId
+  }
+
+  setRestoreLastToolInputAndOutput(value: boolean) {
+    this._restoreLastToolInputAndOutput = value
   }
 }
 

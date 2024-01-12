@@ -1,8 +1,8 @@
 export interface ToolHistory {
   instanceId: string
   toolId: string
-  inputParams: any
-  outputParams: any
+  inputValues: any
+  outputValues: any
   inputOutputHash: string
   isBatchEnabled: boolean
   batchInputKey: string | number | symbol

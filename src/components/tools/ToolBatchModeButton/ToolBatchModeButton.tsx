@@ -6,13 +6,13 @@ import { assets } from "src/constants/assets.tsx"
 import { toolStore } from "src/stores/toolStore.ts"
 
 export const ToolBatchModeButton: FC = observer(() => {
-  const { isReadOnly } = toolStore.getActiveTool()
+  const activeTool = toolStore.getActiveTool()
 
   const onClickButton = () => {
     toolStore.toggleBatchMode()
   }
 
-  if (!toolStore.toolHasBatchOutput || isReadOnly) {
+  if (!toolStore.toolHasBatchOutput || activeTool.isReadOnly) {
     return null
   }
 

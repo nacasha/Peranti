@@ -8,9 +8,14 @@ export const ToolRunner: FC = observer(() => {
 
   useEffect(() => {
     if (activeTool.autoRun) {
-      toolStore.runActiveTool()
+      const { isInputValuesModified, runCount, runOnFirstTimeOpen } = activeTool
+      const allowToRunFirstTime = runCount === 0 && runOnFirstTimeOpen
+
+      if (allowToRunFirstTime || isInputValuesModified) {
+        toolStore.runActiveTool()
+      }
     }
-  }, [activeTool.inputParams])
+  }, [activeTool.inputValues])
 
   return null
 })

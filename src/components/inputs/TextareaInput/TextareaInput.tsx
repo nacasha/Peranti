@@ -1,7 +1,7 @@
 import { githubLight, githubDark } from "@uiw/codemirror-theme-github"
 import CodeMirror, { EditorView } from "@uiw/react-codemirror"
 import { observer } from "mobx-react"
-import { type FC, useId, useState } from "react"
+import { type FC, useState } from "react"
 
 import { interfaceStore } from "src/stores/interfaceStore.ts"
 import { type InputComponentProps } from "src/types/InputComponentProps"
@@ -11,7 +11,6 @@ import "./TextareaInput.scss"
 interface TextareaInputProps extends InputComponentProps {}
 
 export const TextareaInput: FC<TextareaInputProps> = observer((props) => {
-  const id = useId()
   const { onSubmit, initialValue, readOnly, label } = props
   const [value, setValue] = useState<string>(() => initialValue ?? "")
   const textAreaWordWrapEnabled = interfaceStore.textAreaWordWrap
@@ -24,12 +23,11 @@ export const TextareaInput: FC<TextareaInputProps> = observer((props) => {
 
   return (
     <div className="TextareaInput">
-      <label className="InputOutputLabel" htmlFor={id}>
+      <label className="InputOutputLabel">
         {label}
       </label>
       <div className="CodeMirrorContainer">
         <CodeMirror
-          id={id}
           value={value}
           theme={isDarkMode ? githubDark : githubLight}
           onChange={(newValue) => { onInputChange(newValue) }}

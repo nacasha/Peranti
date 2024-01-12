@@ -1,11 +1,10 @@
 import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
-import { ToolRunModeEnum } from "src/enums/ToolRunTypeEnum"
 import { Tool } from "src/models/Tool.ts"
 import base64EncodeDecodeTool from "src/tools/base64-encode-decode-tool.js"
 import characterCounterTool from "src/tools/character-counter-tool.ts"
-import compareList from "src/tools/compare-list-tool.js"
+import compareListTool from "src/tools/compare-list-tool.js"
 import cronReadableTool from "src/tools/cron-readable-tool.js"
 import faviconGrabberTool from "src/tools/favicon-grabber-tool.js"
 import generateRandomStringTool from "src/tools/generate-random-string.js"
@@ -19,8 +18,10 @@ import prefixSuffixLines from "src/tools/prefix-suffix-lines-tool.js"
 import removeDuplicateList from "src/tools/remove-duplicate-lines-tool.js"
 import sortList from "src/tools/sort-list-tool.js"
 import testPipelines from "src/tools/test-pipelines-tool.js"
+import textEditorTool from "src/tools/text-editor-tool.js"
 import textTransformTool from "src/tools/text-transform-tool.js"
-import urlEncodeDecodeTool from "src/tools/url-encode-decode-tool.ts"
+import uriEncodeDecodeTool from "src/tools/uri-encode-decode-tool.js"
+import { type ToolConstructor } from "src/types/ToolConstructor.js"
 import { type ToolHistory } from "src/types/ToolHistory.ts"
 import { type ToolPreset } from "src/types/ToolPreset.ts"
 
@@ -28,19 +29,19 @@ import { toolHistoryStore } from "./toolHistoryStore.js"
 
 class ToolStore {
   /**
+   * Save last state of tool when change to another tool
+   */
+  private _restoreLastToolInputAndOutput: boolean = true
+
+  /**
+   * Indicates history panel is opened or closed
+   */
+  private _isHistoryPanelOpen = false
+
+  /**
    * Store active tool that currently used
    */
   private _activeTool?: Tool = undefined
-
-  /**
-   * Tool run mode
-   */
-  _runMode: ToolRunModeEnum = ToolRunModeEnum.OnChange
-
-  /**
-   * Save last state of tool when change to another tool
-   */
-  _keepLastStateOfTool: boolean = false
 
   /**
    * List of tool presets
@@ -50,7 +51,7 @@ class ToolStore {
       toolId: "prefix-suffix-lines",
       presetId: "sql-where-query",
       name: "SQL Where Query",
-      inputParams: {
+      inputValues: {
         prefix: "'",
         suffix: "',",
         input: ""
@@ -61,10 +62,10 @@ class ToolStore {
   /**
    * Map of built-in tools
    */
-  private readonly _mapOfTools: Record<string, Tool> = {
+  private readonly _mapOfTools: Record<string, ToolConstructor> = {
     [removeDuplicateList.toolId]: removeDuplicateList,
     [sortList.toolId]: sortList,
-    [compareList.toolId]: compareList,
+    [compareListTool.toolId]: compareListTool,
     [prefixSuffixLines.toolId]: prefixSuffixLines,
     [millisecondsToDate.toolId]: millisecondsToDate,
     [testPipelines.toolId]: testPipelines,
@@ -76,24 +77,22 @@ class ToolStore {
     [cronReadableTool.toolId]: cronReadableTool,
     [mathEvaluatorTool.toolId]: mathEvaluatorTool,
     [characterCounterTool.toolId]: characterCounterTool,
-    [urlEncodeDecodeTool.toolId]: urlEncodeDecodeTool,
+    [uriEncodeDecodeTool.toolId]: uriEncodeDecodeTool,
     [base64EncodeDecodeTool.toolId]: base64EncodeDecodeTool,
     [loremIpsumGeneratorTool.toolId]: loremIpsumGeneratorTool,
-    [faviconGrabberTool.toolId]: faviconGrabberTool
+    [faviconGrabberTool.toolId]: faviconGrabberTool,
+    [textEditorTool.toolId]: textEditorTool
   }
 
-  /**
-   * Indicates history panel is opened or closed
-   */
-  isHistoryPanelOpen = false
-
   get mapOfTools() {
-    const presets = Object.fromEntries(this._toolPresets.map((preset) => {
-      const mainTool = this._mapOfTools[preset.toolId]
-      const tool = Tool.cloneToolBasedOnPreset(mainTool, preset)
+    // const presets = Object.fromEntries(this._toolPresets.map((preset) => {
+    //   const mainTool = this._mapOfTools[preset.toolId]
+    //   const tool = mainTool.mergeWithPreset(preset)
 
-      return [tool.toolId, tool]
-    }))
+    //   return [tool.toolId, tool]
+    // }))
+
+    const presets: Record<string, ToolConstructor> = {}
 
     return { ...this._mapOfTools, ...presets }
   }
@@ -115,17 +114,14 @@ class ToolStore {
   }
 
   /**
-   * Get current run mode for tool
-   */
-  get isRunModeAuto() {
-    return this._runMode === ToolRunModeEnum.OnChange
-  }
-
-  /**
    * Determine whether current active tool has batch operations
    */
   get toolHasBatchOutput() {
-    return this.getActiveTool().getInputs().some((output) => output.allowBatch)
+    return this.getActiveTool().getInputFields().some((output) => output.allowBatch)
+  }
+
+  get isHistoryPanelOpen() {
+    return this._isHistoryPanelOpen
   }
 
   /**
@@ -136,7 +132,7 @@ class ToolStore {
 
     void makePersistable(this, {
       name: "ToolStore",
-      properties: ["_runMode"],
+      properties: [],
       storage: window.localStorage
     })
   }
@@ -144,12 +140,36 @@ class ToolStore {
   /**
    * Open tool and set it as active tool while save the previous tool as history
    *
-   * @param tool
+   * @param toolConstructor
    */
-  openTool(tool: Tool) {
-    if (this.getActiveTool().instanceId !== tool.instanceId) {
-      this.saveActiveToolStateToHistory()
-      this._activeTool = tool.openTool()
+  openTool(toolConstructor: ToolConstructor) {
+    const activeTool = this.getActiveTool()
+
+    if (activeTool.toolId !== toolConstructor.toolId) {
+      /**
+       * Save current active tool state to history
+       */
+      this.saveActiveToolToHistory(true)
+
+      /**
+       * Save current active tool state to last state history
+       */
+      this.saveActiveToolLastState()
+
+      /**
+       * Restore current active tool with previous state if allowed
+       */
+      if (this._restoreLastToolInputAndOutput && toolConstructor.type !== "Preset") {
+        const toolLastState = toolHistoryStore.getLastStateOfToolId(toolConstructor.toolId)
+        if (toolLastState) {
+          toolLastState.instanceId = Tool.generateInstanceId()
+          this._activeTool = new Tool(toolConstructor, { toolHistory: toolLastState })
+        } else {
+          this._activeTool = new Tool(toolConstructor)
+        }
+      } else {
+        this._activeTool = new Tool(toolConstructor)
+      }
     }
   }
 
@@ -158,34 +178,42 @@ class ToolStore {
    *
    * @param toolHistory
    */
-  openHistoryReadOnly(toolHistory: ToolHistory) {
-    const mainTool = this.mapOfTools[toolHistory.toolId]
-    if (mainTool) {
-      this.saveActiveToolStateToHistory()
-      this._activeTool = Tool.openHistoryReadOnly(mainTool, toolHistory)
+  openToolHistory(toolHistory: ToolHistory) {
+    const activeTool = this.getActiveTool()
+    const toolConstructor = this.mapOfTools[toolHistory.toolId]
+
+    if (activeTool.instanceId !== toolHistory.instanceId) {
+      this.saveActiveToolToHistory(true)
+      this._activeTool = new Tool(toolConstructor, { toolHistory, isReadOnly: true })
     }
   }
 
   /**
-   * Make current active tool history editable
+   * Make current tool history editable
    */
-  openHistoryEditable() {
-    const tool = this.getActiveTool()
-    const mainTool = this.mapOfTools[tool.toolId]
-    if (tool) {
-      this._activeTool = Tool.openHistory(mainTool, tool.toHistory())
-    }
+  makeCurrentToolHistoryEditable() {
+    const activeToolHistory = this.getActiveTool()
+    const toolConstructor = this.mapOfTools[activeToolHistory.toolId]
+
+    this._activeTool = new Tool(toolConstructor, { toolHistory: activeToolHistory.toHistory() })
   }
 
   /**
    * Save tool to history when tool has been running at least once
    * and not an instance of tool history
    */
-  saveActiveToolStateToHistory() {
+  private saveActiveToolToHistory(immediately = false) {
     const activeTool = this._activeTool
 
-    if (activeTool && activeTool.getIsDirty() && !activeTool.isReadOnly) {
-      toolHistoryStore.add(activeTool.toHistory())
+    if (activeTool && activeTool.getIsInputAndOutputHasValues() && !activeTool.isReadOnly) {
+      toolHistoryStore.add(activeTool.toHistory(), immediately)
+    }
+  }
+
+  private saveActiveToolLastState() {
+    const activeTool = this._activeTool
+    if (activeTool && this._restoreLastToolInputAndOutput && !activeTool.isReadOnly) {
+      toolHistoryStore.setLastState(activeTool.toHistory())
     }
   }
 
@@ -201,7 +229,14 @@ class ToolStore {
       return currentTool
     }
 
-    return Tool.empty()
+    return new Tool({
+      name: "",
+      toolId: "",
+      category: "",
+      action: () => ({}),
+      inputFields: [],
+      outputFields: []
+    })
   }
 
   /**
@@ -234,18 +269,17 @@ class ToolStore {
   }
 
   /**
-   * Run active tool and save to history based on run mode
+   * Run active tool and save to history
    */
   runActiveTool() {
-    this.getActiveTool().run()
-    this.saveActiveToolStateToHistory()
+    void this.getActiveTool().run()
   }
 
   /**
    * Toggle open and close history panel
    */
   toggleHistoryPanel() {
-    this.isHistoryPanelOpen = !this.isHistoryPanelOpen
+    this._isHistoryPanelOpen = !this._isHistoryPanelOpen
   }
 
   /**
@@ -254,6 +288,16 @@ class ToolStore {
   toggleBatchMode() {
     const enabled = !this.getActiveTool().isBatchEnabled
     this.getActiveTool().setBatchMode(enabled)
+  }
+
+  setRestoreLastToolInputAndOutput(value: boolean) {
+    this._restoreLastToolInputAndOutput = value
+  }
+
+  resetTool() {
+    const activeTool = this.getActiveTool()
+
+    this._activeTool = new Tool({ ...activeTool })
   }
 }
 

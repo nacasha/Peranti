@@ -8,33 +8,34 @@ import "./ToolBatchModeHeader.scss"
 
 export const ToolBatchModeHeader = observer(() => {
   const activeTool = toolStore.getActiveTool()
-  const { isBatchEnabled, batchOutputKey, batchInputKey, isReadOnly } = activeTool
+  const { isBatchEnabled, batchOutputKey, batchInputKey } = activeTool
 
-  const inputs = activeTool.getInputs()
-  const outputs = activeTool.getOutputs()
+  const isToolReadOnly = activeTool.isReadOnly
+  const inputFields = activeTool.getInputFields()
+  const outputFields = activeTool.getOutputFields()
 
-  const allowedBatchInputFields = inputs.filter((input) => input.allowBatch)
-  const allowedBatchOutputFields = outputs.filter((output) => output.allowBatch)
+  const allowedBatchInputFields = inputFields.filter((input) => input.allowBatch)
+  const allowedBatchOutputFields = outputFields.filter((output) => output.allowBatch)
 
   const onChangeInputKey = (inputKey: string) => {
-    activeTool.batchInputKey = inputKey
+    activeTool.setBatchInputKey(inputKey)
   }
 
   const onChangeOutputKey = (outputKey: string) => {
-    activeTool.batchOutputKey = outputKey
+    activeTool.setBatchOutputKey(outputKey)
   }
 
   return (
     <div className={clsx("ToolBatchModeHeader", isBatchEnabled && "show")}>
       <div className="ToolHeader-button-list">
-        <SelectInput
+        <SelectInput<any>
           options={allowedBatchInputFields.map((input) => ({
             label: input.label,
             value: input.key
           }))}
           initialValue={batchInputKey}
           onSubmit={onChangeInputKey}
-          readOnly={isReadOnly}
+          readOnly={isToolReadOnly}
         />
         <SelectInput
           options={allowedBatchOutputFields.map((output) => ({
@@ -43,7 +44,7 @@ export const ToolBatchModeHeader = observer(() => {
           }))}
           initialValue={batchOutputKey}
           onSubmit={onChangeOutputKey}
-          readOnly={isReadOnly}
+          readOnly={isToolReadOnly}
         />
       </div>
     </div>

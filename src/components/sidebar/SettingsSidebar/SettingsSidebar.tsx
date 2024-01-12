@@ -1,6 +1,5 @@
 import { type FC } from "react"
 
-import { SelectInput } from "src/components/inputs/SelectInput"
 import { AutoSaveDelay } from "src/components/settings/AutoSaveDelay"
 import { MaxHistoryInput } from "src/components/settings/MaxHistoryInput"
 import { SidebarMode } from "src/components/settings/SidebarMode"
@@ -34,16 +33,8 @@ export const SettingsSidebar: FC = () => {
         <div className="section-title">Tool</div>
         <div className="section-list">
           <div className="item">
-            Run Mode
-            <SelectInput
-              options={[
-                { label: "Manual", value: "manual" },
-                { label: "On Blur", value: "on blur" },
-                { label: "On Change", value: "on-change" }
-              ]}
-              onSubmit={() => {}}
-              initialValue="on-change"
-            />
+            Restore Last Tool State
+            <TextAreaWordWrapSwitch />
           </div>
         </div>
       </div>

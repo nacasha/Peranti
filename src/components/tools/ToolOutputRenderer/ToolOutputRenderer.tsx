@@ -31,7 +31,7 @@ export const ToolOutputRenderer: FC<ToolOutputRendererProps> = observer((props) 
   const { component, field, props: componentProps, label } = props
 
   const Component: FC<OutputComponentProps> = (listOfOutputComponent as any)[component]
-  const outputValue = toolStore.getActiveTool().outputParams[field]
+  const outputValue = toolStore.getActiveTool().outputValues[field]
 
   return (
     <Component

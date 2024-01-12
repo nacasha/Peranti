@@ -1,7 +1,7 @@
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 import { generateRandomString } from "src/utils/generateRandomString"
 
-interface InputParams {
+interface InputFields {
   count: number
   stringLength: number
   smallAz: boolean
@@ -11,14 +11,18 @@ interface InputParams {
   runner: unknown
 }
 
-const generateRandomStringTool = new Tool<InputParams>({
+interface OutputFields {
+  output: unknown
+}
+
+const generateRandomStringTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "generate-random-string",
   name: "Generate Random String",
   category: "Generator",
-  inputs: [
+  inputFields: [
     {
       key: "count",
-      label: "Number of Generated",
+      label: "Number of Generated String",
       component: "Text",
       defaultValue: 5
     },
@@ -54,19 +58,19 @@ const generateRandomStringTool = new Tool<InputParams>({
     },
     {
       key: "runner",
-      label: "Refresh Result",
+      label: "Regenerate",
       component: "Button",
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
       component: "Textarea"
     }
   ],
-  action: ({ count, stringLength, smallAz, capitalAz, number, symbol }: InputParams) => {
+  action: ({ count, stringLength, smallAz, capitalAz, number, symbol }: InputFields) => {
     let characters = ""
     if (smallAz) characters = characters.concat("abcdefghijklmnopqrstuvwxyz")
     if (capitalAz) characters = characters.concat("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -81,6 +85,6 @@ const generateRandomStringTool = new Tool<InputParams>({
 
     return { output: outputLines.join("\n") }
   }
-})
+}
 
 export default generateRandomStringTool

@@ -1,4 +1,7 @@
+import BackSVG from "src/assets/icons/back.svg"
+import BackspaceFillSVG from "src/assets/icons/backspace-fill.svg"
 import BoxSVG from "src/assets/icons/box.svg"
+import CleanSVG from "src/assets/icons/clean.svg"
 import CloseSVG from "src/assets/icons/close.svg"
 import DownloadSVG from "src/assets/icons/download.svg"
 import GearSVG from "src/assets/icons/gear.svg"
@@ -7,6 +10,7 @@ import HomeSVG from "src/assets/icons/home.svg"
 import Layers2SVG from "src/assets/icons/layers-2.svg"
 import LayersSVG from "src/assets/icons/layers.svg"
 import MinimizeSVG from "src/assets/icons/minimize.svg"
+import NewspaperSVG from "src/assets/icons/newspaper.svg"
 import PanelLeftSVG from "src/assets/icons/panel-left.svg"
 import RefreshSVG from "src/assets/icons/refresh.svg"
 import RunFilledSVG from "src/assets/icons/run-filled.svg"
@@ -33,5 +37,9 @@ export const assets = {
   ThreeLineHorizontalSVG,
   LayersSVG,
   Layers2SVG,
-  RefreshSVG
+  RefreshSVG,
+  BackSVG,
+  BackspaceFillSVG,
+  CleanSVG,
+  NewspaperSVG
 }

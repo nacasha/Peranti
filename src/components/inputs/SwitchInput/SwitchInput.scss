@@ -6,10 +6,10 @@
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(100px, 100px));
     grid-auto-flow: row dense;
     gap: 3px;
-    padding: 6px;
+    padding: 4px;
     background-color: var(--input-output-background-color);
 
     .button {
@@ -18,6 +18,8 @@
       padding: 2px;
       border-radius: var(--border-radius);
       user-select: none;
+      transition: background-color var(--transition-speed);
+      background-color: transparent;
 
       &:hover {
         cursor: pointer;

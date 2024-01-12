@@ -1,5 +1,5 @@
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
   listA: string
@@ -12,14 +12,14 @@ interface OutputFields {
   onlyExistInputB: unknown
 }
 
-const compareList = new Tool<InputFields, OutputFields>({
+const compareListTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "compare-lines",
   name: "Compare List",
   category: "List",
   layout: ToolLayoutEnum.TopBottom,
   inputsLayoutDirection: "horizontal",
   outputsLayoutDirection: "horizontal",
-  inputs: [
+  inputFields: [
     {
       key: "listA",
       label: "List A",
@@ -33,7 +33,7 @@ const compareList = new Tool<InputFields, OutputFields>({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "onlyExistInputA",
       label: "Only Exist In List A",
@@ -62,6 +62,6 @@ const compareList = new Tool<InputFields, OutputFields>({
 
     return { output: bothExist, onlyExistInputA, onlyExistInputB }
   }
-})
+}
 
-export default compareList
+export default compareListTool

@@ -18,8 +18,8 @@ export const ToolAreaInput: FC<ToolAreaInputProps> = (props) => {
     <div className={clsx("ToolAreaInput", direction)}>
       {inputs.map((input) => (
         <ToolInputRenderer
-          key={toolInstanceId + input.key}
-          field={input.key}
+          key={toolInstanceId.concat(input.key as any)}
+          field={input.key as any}
           label={input.label}
           component={input.component}
           props={input.props}

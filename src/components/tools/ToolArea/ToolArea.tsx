@@ -25,8 +25,8 @@ export const ToolArea: FC = observer(() => {
     outputsLayoutDirection
   } = activeTool
 
-  const inputs = activeTool.getInputs()
-  const outputs = activeTool.getOutputs()
+  const inputs = activeTool.getInputFields()
+  const outputs = activeTool.getOutputFields()
 
   const computedLayout = isBatchEnabled ? ToolLayoutEnum.SideBySide : layout
 

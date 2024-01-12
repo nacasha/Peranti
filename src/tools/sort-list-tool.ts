@@ -1,4 +1,4 @@
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
   input: string
@@ -8,11 +8,11 @@ interface OutputFields {
   output: unknown
 }
 
-const sortList = new Tool<InputFields, OutputFields>({
+const sortList: ToolConstructor<InputFields, OutputFields> = {
   toolId: "sort-list",
   name: "Sort List",
   category: "List",
-  inputs: [
+  inputFields: [
     {
       key: "input",
       label: "Input",
@@ -20,7 +20,7 @@ const sortList = new Tool<InputFields, OutputFields>({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
@@ -34,6 +34,6 @@ const sortList = new Tool<InputFields, OutputFields>({
 
     return { output: sortedString }
   }
-})
+}
 
 export default sortList

@@ -1,12 +1,21 @@
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
-const base64EncodeDecodeTool = new Tool({
+interface InputFields {
+  input: string
+  type: string
+}
+
+interface OutputFields {
+  output: unknown
+}
+
+const base64EncodeDecodeTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "base64-encode-decode",
   name: "Base64 Encode Decode",
   category: "Encode / Decode",
   layout: ToolLayoutEnum.SideBySide,
-  inputs: [
+  inputFields: [
     {
       key: "type",
       label: "Mode",
@@ -26,7 +35,7 @@ const base64EncodeDecodeTool = new Tool({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
@@ -40,6 +49,6 @@ const base64EncodeDecodeTool = new Tool({
 
     return { output: atob(input) }
   }
-})
+}
 
 export default base64EncodeDecodeTool

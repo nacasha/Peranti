@@ -1,12 +1,22 @@
 import { v1, v4 } from "uuid"
 
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
-const generateUuid = new Tool({
+interface InputFields {
+  numberOfGenerated: number
+  type: string
+  runner: unknown
+}
+
+interface OutputFields {
+  output: unknown
+}
+
+const generateUuid: ToolConstructor<InputFields, OutputFields> = {
   toolId: "generate-uuid",
   name: "Generate UUID",
   category: "Generator",
-  inputs: [
+  inputFields: [
     {
       key: "type",
       label: "UUID Version",
@@ -24,16 +34,22 @@ const generateUuid = new Tool({
       label: "Number of Generated UUID",
       component: "Text",
       defaultValue: 1
+    },
+    {
+      key: "runner",
+      label: "Regenerate",
+      component: "Button",
+      defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
       component: "Textarea"
     }
   ],
-  action: ({ numberOfGenerated, type }: { numberOfGenerated: number, type: string }) => {
+  action: ({ numberOfGenerated, type }) => {
     const uuidGenerator = { v1, v4 }[type]
     if (uuidGenerator === undefined) return { output: "" }
 
@@ -45,6 +61,6 @@ const generateUuid = new Tool({
 
     return { output }
   }
-})
+}
 
 export default generateUuid

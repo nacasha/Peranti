@@ -1,6 +1,6 @@
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
-interface InputParams {
+interface InputFields {
   input: string
 }
 
@@ -8,11 +8,11 @@ interface OutputFields {
   output: unknown
 }
 
-const removeDuplicateList = new Tool<InputParams, OutputFields>({
+const removeDuplicateList: ToolConstructor<InputFields, OutputFields> = {
   toolId: "remove-duplicate-list",
   name: "Remove Duplicate List",
   category: "List",
-  inputs: [
+  inputFields: [
     {
       key: "input",
       label: "Input",
@@ -20,14 +20,14 @@ const removeDuplicateList = new Tool<InputParams, OutputFields>({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
       component: "Textarea"
     }
   ],
-  action: (inputParams: InputParams) => {
+  action: (inputParams: InputFields) => {
     const { input } = inputParams
 
     // Split the input string into an array of lines
@@ -41,6 +41,6 @@ const removeDuplicateList = new Tool<InputParams, OutputFields>({
 
     return { output }
   }
-})
+}
 
 export default removeDuplicateList

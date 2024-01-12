@@ -1,13 +1,21 @@
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
-const characterCounterTool = new Tool({
+interface InputFields {
+  input: string
+}
+
+interface OutputFields {
+  output: unknown
+}
+
+const characterCounterTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "character-counter",
-  name: "Character Counter",
+  name: "Word Counter",
   category: "Text",
   layout: ToolLayoutEnum.TopBottomAndPushToTop,
   layoutReversed: true,
-  inputs: [
+  inputFields: [
     {
       key: "input",
       label: "Input",
@@ -15,20 +23,20 @@ const characterCounterTool = new Tool({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
       component: "GridStat"
     }
   ],
-  action({ input }: { input: string }) {
+  action({ input }) {
     const emptyInput = input.length === 0
 
     const charactersCount = emptyInput ? 0 : input.length
     const charactersWithoutSpacesCount = emptyInput ? 0 : input.replace(/\s/g, "").length
     const wordsCount = emptyInput ? 0 : input.split(/\s+/).length
-    const paragraphsCount = emptyInput ? 0 : input.split(/\n\s*\n/).length
+    const paragraphsCount = emptyInput ? 0 : input.split(/\n\s*/).length
 
     const output = [
       {
@@ -51,6 +59,6 @@ const characterCounterTool = new Tool({
 
     return { output }
   }
-})
+}
 
 export default characterCounterTool

@@ -2,11 +2,11 @@ import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
 dayjs.extend(utc)
 
-interface InputParams {
+interface InputFields {
   milliseconds: string
 }
 
@@ -15,12 +15,12 @@ interface OutputFields {
   utcDateTime: unknown
 }
 
-const millisecondsToDate = new Tool<InputParams, OutputFields>({
+const millisecondsToDate: ToolConstructor<InputFields, OutputFields> = {
   toolId: "milliseconds-to-date",
   name: "Milliseconds To Date",
   category: "Date Time",
   layout: ToolLayoutEnum.TopBottomAndPushToTop,
-  inputs: [
+  inputFields: [
     {
       key: "milliseconds",
       label: "Milliseconds",
@@ -29,7 +29,7 @@ const millisecondsToDate = new Tool<InputParams, OutputFields>({
       allowBatch: true
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "utcDateTime",
       label: "UTC Date Time",
@@ -56,6 +56,6 @@ const millisecondsToDate = new Tool<InputParams, OutputFields>({
 
     return { utcDateTime, localDateTime }
   }
-})
+}
 
 export default millisecondsToDate

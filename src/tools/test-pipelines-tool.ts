@@ -1,10 +1,10 @@
-import { Tool } from "src/models/Tool"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
-const testPipelines = new Tool({
+const testPipelines: ToolConstructor = {
   toolId: "test-pipelines",
   name: "Test Pipelines",
   category: "Pipelines",
-  inputs: [
+  inputFields: [
     {
       key: "input",
       label: "Input",
@@ -12,7 +12,7 @@ const testPipelines = new Tool({
       defaultValue: ""
     }
   ],
-  outputs: [
+  outputFields: [
     {
       key: "output",
       label: "Output",
@@ -53,6 +53,6 @@ const testPipelines = new Tool({
     }
   ],
   action: () => undefined
-})
+}
 
 export default testPipelines

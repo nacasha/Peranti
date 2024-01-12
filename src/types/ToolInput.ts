@@ -1,6 +1,6 @@
 import { type listOfInputComponent } from "src/components/inputs"
 
-export interface ToolInput<K extends Record<string, unknown> = any> {
+export interface ToolInput<K extends Record<string, string> = any> {
   /**
    * Field name that will be used as key in map of input
    */
