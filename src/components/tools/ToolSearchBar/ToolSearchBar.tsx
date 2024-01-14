@@ -40,7 +40,7 @@ export const ToolSearchBar = observer(() => {
     <div className="ToolSearchBar">
       <div className="left-padding"></div>
       <div className="ToolSearch" onClick={onClickSearch}>
-        {toolRunnerStore.getActiveToolName()}
+        {toolRunnerStore.getActiveTool().name}
       </div>
       <div className="right-padding"></div>
 

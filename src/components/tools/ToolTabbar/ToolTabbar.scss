@@ -14,6 +14,7 @@
 
 .ToolTabbar-item {
   padding: 5px 10px;
+  padding-right: 5px;
   border-right: 1px solid var(--border-color);
   user-select: none;
   color: var(--text-color);
@@ -30,13 +31,29 @@
     color: var(--text-color);
     background-color: var(--tool-header-background-color);
   }
+
+  &.new {
+    padding-inline: 5px;
+
+    .ToolTabbar-icon {
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
 }
 
-.ToolTabbar-close {
+.ToolTabbar-icon {
   display: flex;
+  border-radius: var(--border-radius);
+  padding: 3px;
 
   img {
-    width: 10px;
+    width: 12px;
     filter: var(--icon-color);
+  }
+
+  &:hover {
+    background-color: var(--button-active-color);
   }
 }

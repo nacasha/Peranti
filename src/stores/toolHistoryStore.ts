@@ -1,12 +1,14 @@
-import { makeAutoObservable, toJS } from "mobx"
+import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
+import { Tool } from "src/models/Tool"
 import { type ToolHistory } from "src/types/ToolHistory"
+
+import { toolRunnerStore } from "./toolRunnerStore.js"
+import { toolStore } from "./toolStore.js"
 
 class ToolHistoryStore {
   history: ToolHistory[] = []
-
-  lastState: Record<string, ToolHistory> = {}
 
   numberOfMaximumHistory = 100
 
@@ -19,30 +21,12 @@ class ToolHistoryStore {
 
     void makePersistable(this, {
       name: "ToolHistoryStore",
-      properties: ["history", "numberOfMaximumHistory", "autoSaveDelayInSeconds", "lastState"],
+      properties: ["history", "numberOfMaximumHistory", "autoSaveDelayInSeconds"],
       storage: window.localStorage
     })
   }
 
-  add(toolHistory: ToolHistory, immediately: boolean = true) {
-    if (this.addDebounceState) {
-      clearTimeout(this.addDebounceState)
-    }
-
-    this.addDebounceState = setTimeout(() => {
-      this.addDebounced(toolHistory)
-    }, this.autoSaveDelayInSeconds * (immediately ? 0 : 1000))
-  }
-
-  setLastState(toolHistory: ToolHistory) {
-    this.lastState[toolHistory.toolId] = toolHistory
-  }
-
-  getLastStateOfToolId(toolId: string) {
-    return toJS(this.lastState[toolId])
-  }
-
-  private addDebounced(toolHistory: ToolHistory) {
+  addHistory(toolHistory: ToolHistory) {
     /**
      * Save tool state to history only if last saved history has different SHA256 hash
      */
@@ -57,6 +41,12 @@ class ToolHistoryStore {
     if (this.history.length > this.numberOfMaximumHistory) {
       this.history = this.history.slice(0, this.numberOfMaximumHistory)
     }
+  }
+
+  openHistory(toolHistory: ToolHistory) {
+    const toolConstructor = toolStore.mapOfTools[toolHistory.toolId]
+
+    toolRunnerStore.setActiveTool(new Tool(toolConstructor, { toolHistory, isReadOnly: true }))
   }
 
   /**

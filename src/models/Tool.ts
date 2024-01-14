@@ -29,6 +29,8 @@ export class Tool<
    */
   readonly sessionId: string
 
+  sessionName: string
+
   /**
    * List of input fields for tool
    */
@@ -194,7 +196,7 @@ export class Tool<
    */
   constructor(
     params: ToolConstructor<InputFields, OutputFields>,
-    options: { toolHistory?: ToolHistory, isReadOnly?: boolean } = {}
+    options: { toolHistory?: ToolHistory, isReadOnly?: boolean, sessionName?: string } = {}
   ) {
     const {
       action,
@@ -248,6 +250,7 @@ export class Tool<
       this.runOnFirstTimeOpen = false
     }
 
+    this.sessionName = this.sessionId.substring(0, 5)
     this.isReadOnly = isReadOnly
 
     makeObservable(this)

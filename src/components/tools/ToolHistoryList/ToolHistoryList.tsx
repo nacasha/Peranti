@@ -20,7 +20,7 @@ export const ToolHistoryList: FC<ToolHistoryListProps> = observer((props) => {
   const activeTool = toolRunnerStore.getActiveTool()
 
   const onClickItem = (toolHistory: ToolHistory) => () => {
-    toolRunnerStore.openToolHistory(toolHistory)
+    toolHistoryStore.openHistory(toolHistory)
   }
 
   return (

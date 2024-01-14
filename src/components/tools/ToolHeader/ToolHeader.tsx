@@ -18,10 +18,6 @@ export const ToolHeader = observer(() => {
     toolRunnerStore.toggleHistoryPanel()
   }
 
-  const onClickBackToTool = () => {
-    toolRunnerStore.backToTool()
-  }
-
   const onClickClean = () => {
     toolRunnerStore.cleanActiveToolState()
   }
@@ -29,16 +25,6 @@ export const ToolHeader = observer(() => {
   return (
     <div className="ToolHeader">
       <div className="ToolHeader-button-list">
-        {isToolReadOnly && (
-          <Button icon={assets.BackSVG} onClick={onClickBackToTool}>
-            Back To Tool Editor
-          </Button>
-        )}
-        {!isToolReadOnly && (
-          <Button icon={assets.NewspaperSVG} onClick={onClickBackToTool}>
-            Sample
-          </Button>
-        )}
         {!isToolReadOnly && (
           <Button icon={assets.CleanSVG} onClick={onClickClean}>
             Clear
