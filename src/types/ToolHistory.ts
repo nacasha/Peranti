@@ -1,5 +1,5 @@
 export interface ToolHistory {
-  instanceId: string
+  sessionId: string
   toolId: string
   inputValues: any
   outputValues: any

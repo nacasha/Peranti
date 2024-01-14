@@ -1,0 +1,42 @@
+.ToolTabbar {
+  position: relative;
+  background-color: var(--background-color-main);
+  height: 30px;
+}
+
+.ToolTabbar-inner {
+  display: flex;
+  position: absolute;
+  inset: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.ToolTabbar-item {
+  padding: 5px 10px;
+  border-right: 1px solid var(--border-color);
+  user-select: none;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  &:hover {
+    background: var(--button-hover-color);
+    cursor: pointer;
+  }
+
+  &.active {
+    color: var(--text-color);
+    background-color: var(--tool-header-background-color);
+  }
+}
+
+.ToolTabbar-close {
+  display: flex;
+
+  img {
+    width: 10px;
+    filter: var(--icon-color);
+  }
+}

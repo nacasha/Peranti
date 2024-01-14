@@ -1,10 +1,10 @@
 import { observer } from "mobx-react"
 import { useEffect, type FC } from "react"
 
-import { toolStore } from "src/stores/toolStore"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
 export const ToolRunner: FC = observer(() => {
-  const activeTool = toolStore.getActiveTool()
+  const activeTool = toolRunnerStore.getActiveTool()
 
   useEffect(() => {
     if (activeTool.autoRun) {
@@ -12,7 +12,7 @@ export const ToolRunner: FC = observer(() => {
       const allowToRunFirstTime = runCount === 0 && runOnFirstTimeOpen
 
       if (allowToRunFirstTime || isInputValuesModified) {
-        toolStore.runActiveTool()
+        toolRunnerStore.runActiveTool()
       }
     }
   }, [activeTool.inputValues])

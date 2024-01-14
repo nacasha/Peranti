@@ -1,15 +1,15 @@
 import { observer } from "mobx-react"
 
-import { toolStore } from "src/stores/toolStore"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
 import "./AppStatusbar.scss"
 
 export const AppStatusbar = observer(() => {
-  const activeTool = toolStore.getActiveTool()
+  const activeTool = toolRunnerStore.getActiveTool()
 
   return (
     <div className="AppStatusbar">
-      {activeTool.instanceId}
+      {activeTool.sessionId}
     </div>
   )
 })

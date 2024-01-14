@@ -2,7 +2,7 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 
 import { listOfInputComponent } from "src/components/inputs"
-import { toolStore } from "src/stores/toolStore"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 interface ToolInputRendererProps {
@@ -39,10 +39,10 @@ interface ToolInputRendererProps {
 
 export const ToolInputRenderer: FC<ToolInputRendererProps> = observer((props) => {
   const { component, field, props: componentProps, initialValue, label } = props
-  const activeTool = toolStore.getActiveTool()
+  const activeTool = toolRunnerStore.getActiveTool()
 
   const Component: FC<InputComponentProps> = (listOfInputComponent as any)[component]
-  const inputValue = toolStore.getActiveTool().inputValues[field]
+  const inputValue = toolRunnerStore.getActiveTool().inputValues[field]
 
   const onSubmit = (val: any) => {
     activeTool.setInputValue(field, val)

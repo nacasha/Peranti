@@ -2,7 +2,7 @@ import fastDeepEqual from "fast-deep-equal"
 import { observable, action, makeObservable, toJS } from "mobx"
 
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { toolStore } from "src/stores/toolStore.ts"
+import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolHistory } from "src/types/ToolHistory"
 import { type ToolInput } from "src/types/ToolInput"
@@ -27,7 +27,7 @@ export class Tool<
   /**
    * Unique ID of each created instance with this tool.
    */
-  readonly instanceId: string
+  readonly sessionId: string
 
   /**
    * List of input fields for tool
@@ -131,11 +131,66 @@ export class Tool<
    */
   readonly type: "Tool" | "Pipeline" | "Preset" | undefined = "Tool"
 
+  /**
+   * Number of tool has been running
+   */
   @observable runCount: number = 0
 
   /**
-   * Action of tool.
-   * Input always comes in form of Map as well as the returned value
+   * Tool sessionId generator
+   *
+   * @returns
+   */
+  static generateSessionId() {
+    return generateSha256(new Date().getTime().toString())
+  }
+
+  /**
+   * Merge tool constructor with preset
+   *
+   * @param toolConstructor
+   * @param preset
+   * @returns
+   */
+  static mergeWithPresets(toolConstructor: ToolConstructor, preset: ToolPreset) {
+    let presetInputs = []
+
+    if (Array.isArray(toolConstructor.inputFields)) {
+      presetInputs = [...toolConstructor.inputFields].map((input) => {
+        /**
+         * Assign input to new object because it still refers
+         * to original variable, which is owned by main tool
+         */
+        const newInput = { ...input }
+        newInput.defaultValue = preset.inputValues[input.key] ?? input.defaultValue
+        return newInput
+      })
+    } else {
+      const computedInputFields = toolConstructor.inputFields({})
+      presetInputs = [...computedInputFields].map((input) => {
+        /**
+         * Assign input to new object because it still refers
+         * to original variable, which is owned by main tool
+         */
+        const newInput = { ...input }
+        newInput.defaultValue = preset.inputValues[input.key] ?? input.defaultValue
+        return newInput
+      })
+    }
+
+    const tool: ToolConstructor = {
+      ...toolConstructor,
+      name: preset.name,
+      toolId: preset.presetId,
+      inputFields: presetInputs as any,
+      type: "Preset"
+    }
+
+    return tool
+  }
+
+  /**
+   * Tool Constructor
    */
   constructor(
     params: ToolConstructor<InputFields, OutputFields>,
@@ -158,7 +213,7 @@ export class Tool<
     } = params
 
     this.toolId = toolId
-    this.instanceId = Tool.generateInstanceId()
+    this.sessionId = Tool.generateSessionId()
     this.name = name
     this.action = action
     this.category = category
@@ -179,7 +234,7 @@ export class Tool<
 
     const { isReadOnly = false, toolHistory } = options
     if (toolHistory) {
-      this.instanceId = toolHistory.instanceId
+      this.sessionId = toolHistory.sessionId
       this.isBatchEnabled = toolHistory.isBatchEnabled
       this.batchInputKey = toolHistory.batchInputKey
       this.batchOutputKey = toolHistory.batchOutputKey
@@ -198,51 +253,21 @@ export class Tool<
     makeObservable(this)
   }
 
-  mergeWithPreset(preset: ToolPreset) {
-    const presetInputs = [...this.getInputFields()].map((input) => {
-      /**
-       * Assign input to new object because it still refers
-       * to original variable, which is owned by main tool
-       */
-      const newInput = { ...input }
-      newInput.defaultValue = preset.inputValues[input.key] ?? input.defaultValue
-      return newInput
-    })
-
-    const tool: ToolConstructor = {
-      ...this,
-      name: preset.name,
-      toolId: preset.presetId,
-      inputFields: presetInputs as any,
-      type: "Preset"
-    }
-
-    return tool
-  }
-
-  static generateInstanceId() {
-    return generateSha256(new Date().getTime().toString())
-  }
-
   /**
    * Generate object of current tool state to save into history
    *
    * @returns
    */
-  toHistory(): ToolHistory {
+  toHistory(options: { randomizeSessionId?: boolean } = {}): ToolHistory {
+    const { randomizeSessionId = false } = options
     const { toolId, inputValues, outputValues, batchInputKey, batchOutputKey, isBatchEnabled } = this
 
     const createdAt = new Date().getTime()
     const inputOutputHash = generateSha256(this.getInputAndOutputAsString())
-
-    /**
-     * Generate new instanceId for history
-     * This is done to avoid same instanceId for tool that currently shown in the App
-     */
-    const instanceId = Tool.generateInstanceId()
+    const randomizedSessionId = Tool.generateSessionId()
 
     return {
-      instanceId,
+      sessionId: randomizeSessionId ? randomizedSessionId : this.sessionId,
       toolId,
       inputValues: toJS(inputValues),
       outputValues: toJS(outputValues),
@@ -254,11 +279,21 @@ export class Tool<
     }
   }
 
+  /**
+   * Set value of batchOutputKey
+   *
+   * @param batchOutputKey
+   */
   @action
   setBatchOutputKey(batchOutputKey: string) {
     this.batchOutputKey = batchOutputKey
   }
 
+  /**
+   * Set value of batchInputKey
+   *
+   * @param batchInputKey
+   */
   @action
   setBatchInputKey(batchInputKey: string) {
     this.batchInputKey = batchInputKey
@@ -379,6 +414,9 @@ export class Tool<
     this.batchOutputKey = this.getOutputFields().filter((output) => output.allowBatch)[0].key
   }
 
+  /**
+   * Increment the number of runCount
+   */
   @action
   private incrementRunCount() {
     this.runCount = this.runCount + 1

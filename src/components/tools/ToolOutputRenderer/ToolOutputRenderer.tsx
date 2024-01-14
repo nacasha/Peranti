@@ -2,7 +2,7 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 
 import { listOfOutputComponent } from "src/components/outputs"
-import { toolStore } from "src/stores/toolStore"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
 
 interface ToolOutputRendererProps {
@@ -31,7 +31,7 @@ export const ToolOutputRenderer: FC<ToolOutputRendererProps> = observer((props) 
   const { component, field, props: componentProps, label } = props
 
   const Component: FC<OutputComponentProps> = (listOfOutputComponent as any)[component]
-  const outputValue = toolStore.getActiveTool().outputValues[field]
+  const outputValue = toolRunnerStore.getActiveTool().outputValues[field]
 
   return (
     <Component

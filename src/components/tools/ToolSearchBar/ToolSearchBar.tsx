@@ -3,8 +3,10 @@ import { observer } from "mobx-react"
 import React, { type FC, useState, useEffect } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
 
-import { type Tool } from "src/models/Tool"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
 import "./ToolSearchBar.scss"
 
@@ -38,7 +40,7 @@ export const ToolSearchBar = observer(() => {
     <div className="ToolSearchBar">
       <div className="left-padding"></div>
       <div className="ToolSearch" onClick={onClickSearch}>
-        {toolStore.getActiveToolName()}
+        {toolRunnerStore.getActiveToolName()}
       </div>
       <div className="right-padding"></div>
 
@@ -95,8 +97,8 @@ const SearchComponent: FC<SearchComponentProps> = (props) => {
     }
   }
 
-  const onClickItem = (tool: Tool) => () => {
-    toolStore.openTool(tool)
+  const onClickItem = (tool: ToolConstructor) => () => {
+    toolSessionStore.findOrCreateSession(tool)
     onClickOutside()
   }
 

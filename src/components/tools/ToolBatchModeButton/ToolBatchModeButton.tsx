@@ -3,16 +3,16 @@ import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
 import { assets } from "src/constants/assets.tsx"
-import { toolStore } from "src/stores/toolStore.ts"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
 export const ToolBatchModeButton: FC = observer(() => {
-  const activeTool = toolStore.getActiveTool()
+  const activeTool = toolRunnerStore.getActiveTool()
 
   const onClickButton = () => {
-    toolStore.toggleBatchMode()
+    toolRunnerStore.toggleBatchMode()
   }
 
-  if (!toolStore.toolHasBatchOutput || activeTool.isReadOnly) {
+  if (!toolRunnerStore.toolHasBatchOutput || activeTool.isReadOnly) {
     return null
   }
 

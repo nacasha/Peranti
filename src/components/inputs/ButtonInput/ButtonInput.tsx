@@ -2,7 +2,7 @@ import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
 import { assets } from "src/constants/assets"
-import { toolStore } from "src/stores/toolStore"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./ButtonInput.scss"
@@ -13,7 +13,7 @@ export const ButtonInput: FC<ButtonInputProps> = (props) => {
   const { label } = props
 
   const onClickButton = () => {
-    toolStore.runActiveTool()
+    toolRunnerStore.runActiveTool()
   }
 
   return (

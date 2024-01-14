@@ -4,7 +4,7 @@ import { type FC } from "react"
 
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { interfaceStore } from "src/stores/interfaceStore"
-import { toolStore } from "src/stores/toolStore"
+import { toolRunnerStore } from "src/stores/toolRunnerStore.js"
 import { type ToolInput } from "src/types/ToolInput.ts"
 import { type ToolOutput } from "src/types/ToolOutput.ts"
 
@@ -15,7 +15,7 @@ import "./ToolArea.scss"
 
 export const ToolArea: FC = observer(() => {
   const textAreaWordWrap = interfaceStore.textAreaWordWrap
-  const activeTool = toolStore.getActiveTool()
+  const activeTool = toolRunnerStore.getActiveTool()
   const { batchInputKey, batchOutputKey, isBatchEnabled } = activeTool
 
   const {
@@ -65,12 +65,12 @@ export const ToolArea: FC = observer(() => {
   return (
     <div className={clsx("ToolArea", computedLayout, classNames)}>
       <ToolAreaInput
-        toolInstanceId={activeTool.instanceId}
+        toolSessionId={activeTool.sessionId}
         inputs={computedInputs}
         direction={inputsLayoutDirection}
       />
       <ToolAreaOutput
-        toolInstanceId={activeTool.instanceId}
+        toolSessionId={activeTool.sessionId}
         outputs={computedOutputs}
         direction={outputsLayoutDirection}
       />

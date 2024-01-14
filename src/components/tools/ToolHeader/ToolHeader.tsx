@@ -2,7 +2,7 @@ import { observer } from "mobx-react"
 
 import { Button } from "src/components/common/Button"
 import { assets } from "src/constants/assets"
-import { toolStore } from "src/stores/toolStore"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
 import { ToolBatchModeButton } from "../ToolBatchModeButton"
 import { ToolLoadFromHistoryButton } from "../ToolLoadFromHistoryButton"
@@ -10,20 +10,20 @@ import { ToolLoadFromHistoryButton } from "../ToolLoadFromHistoryButton"
 import "./ToolHeader.scss"
 
 export const ToolHeader = observer(() => {
-  const activeTool = toolStore.getActiveTool()
+  const activeTool = toolRunnerStore.getActiveTool()
 
   const isToolReadOnly = activeTool.isReadOnly
 
   const onClickHistory = () => {
-    toolStore.toggleHistoryPanel()
+    toolRunnerStore.toggleHistoryPanel()
   }
 
   const onClickBackToTool = () => {
-    toolStore.openTool(activeTool)
+    toolRunnerStore.backToTool()
   }
 
   const onClickClean = () => {
-    toolStore.resetTool()
+    toolRunnerStore.cleanActiveToolState()
   }
 
   return (
@@ -31,15 +31,19 @@ export const ToolHeader = observer(() => {
       <div className="ToolHeader-button-list">
         {isToolReadOnly && (
           <Button icon={assets.BackSVG} onClick={onClickBackToTool}>
-          Back To Tool Editor
+            Back To Tool Editor
           </Button>
         )}
-        <Button icon={assets.NewspaperSVG} onClick={onClickBackToTool}>
-          Sample
-        </Button>
-        <Button icon={assets.CleanSVG} onClick={onClickClean}>
-          Clear
-        </Button>
+        {!isToolReadOnly && (
+          <Button icon={assets.NewspaperSVG} onClick={onClickBackToTool}>
+            Sample
+          </Button>
+        )}
+        {!isToolReadOnly && (
+          <Button icon={assets.CleanSVG} onClick={onClickClean}>
+            Clear
+          </Button>
+        )}
         <ToolLoadFromHistoryButton/>
         <ToolBatchModeButton />
       </div>

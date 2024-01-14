@@ -12,6 +12,7 @@ import LayersSVG from "src/assets/icons/layers.svg"
 import MinimizeSVG from "src/assets/icons/minimize.svg"
 import NewspaperSVG from "src/assets/icons/newspaper.svg"
 import PanelLeftSVG from "src/assets/icons/panel-left.svg"
+import PlusSVG from "src/assets/icons/plus.svg"
 import RefreshSVG from "src/assets/icons/refresh.svg"
 import RunFilledSVG from "src/assets/icons/run-filled.svg"
 import RunSVG from "src/assets/icons/run.svg"
@@ -41,5 +42,6 @@ export const assets = {
   BackSVG,
   BackspaceFillSVG,
   CleanSVG,
-  NewspaperSVG
+  NewspaperSVG,
+  PlusSVG
 }

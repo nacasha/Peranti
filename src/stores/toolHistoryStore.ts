@@ -24,7 +24,7 @@ class ToolHistoryStore {
     })
   }
 
-  add(toolHistory: ToolHistory, immediately?: boolean) {
+  add(toolHistory: ToolHistory, immediately: boolean = true) {
     if (this.addDebounceState) {
       clearTimeout(this.addDebounceState)
     }
@@ -44,7 +44,7 @@ class ToolHistoryStore {
 
   private addDebounced(toolHistory: ToolHistory) {
     /**
-     * Save tool state to history only if last saved history instanceID has different SHA256 hash
+     * Save tool state to history only if last saved history has different SHA256 hash
      */
     const lastSavedHistoryOfTool = this.getHistoryOfToolId(toolHistory.toolId)[0]
     if (!lastSavedHistoryOfTool || lastSavedHistoryOfTool.inputOutputHash !== toolHistory.inputOutputHash) {

@@ -4,6 +4,7 @@ import { type FC } from "react"
 
 import { AppSidebarContentItem } from "src/components/app/AppSidebarContentItem"
 import { toolHistoryStore } from "src/stores/toolHistoryStore"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolHistory } from "src/types/ToolHistory"
 import { prettyDateFormat } from "src/utils/prettyDateFormat"
@@ -16,19 +17,19 @@ interface ToolHistoryListProps {
 
 export const ToolHistoryList: FC<ToolHistoryListProps> = observer((props) => {
   const { showAllHistory } = props
-  const activeTool = toolStore.getActiveTool()
+  const activeTool = toolRunnerStore.getActiveTool()
 
   const onClickItem = (toolHistory: ToolHistory) => () => {
-    toolStore.openToolHistory(toolHistory)
+    toolRunnerStore.openToolHistory(toolHistory)
   }
 
   return (
-    <div className={clsx("ToolPage-right-panel", toolStore.isHistoryPanelOpen && "open")}>
+    <div className={clsx("ToolPage-right-panel", toolRunnerStore.isHistoryPanelOpen && "open")}>
       <div className="ToolHistoryList">
         {(showAllHistory ? toolHistoryStore.history : toolHistoryStore.getHistoryOfToolId(activeTool.toolId)).map((toolHistory) => (
           <AppSidebarContentItem
-            key={toolHistory.instanceId}
-            active={toolStore.isToolActiveByInstanceId(toolHistory)}
+            key={toolHistory.sessionId}
+            active={toolRunnerStore.isToolActiveBySessionId(toolHistory)}
             onClick={onClickItem(toolHistory)}
           >
             <div>{toolStore.mapOfToolsName[toolHistory.toolId]}</div>

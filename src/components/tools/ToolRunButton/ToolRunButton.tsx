@@ -2,15 +2,15 @@ import { observer } from "mobx-react"
 
 import { Button } from "src/components/common/Button"
 import { assets } from "src/constants/assets"
-import { toolStore } from "src/stores/toolStore"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
 import "./ToolRunButton.scss"
 
 export const ToolRunButton = observer(() => {
-  const activeTool = toolStore.getActiveTool()
+  const activeTool = toolRunnerStore.getActiveTool()
 
   const onClickRun = () => {
-    toolStore.runActiveTool()
+    toolRunnerStore.runActiveTool()
   }
 
   if (activeTool.isReadOnly) {

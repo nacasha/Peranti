@@ -3,13 +3,13 @@ import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
 import { assets } from "src/constants/assets"
-import { toolStore } from "src/stores/toolStore"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
 export const ToolLoadFromHistoryButton: FC = observer(() => {
-  const activeTool = toolStore.getActiveTool()
+  const activeTool = toolRunnerStore.getActiveTool()
 
   const onClick = () => {
-    toolStore.makeCurrentToolHistoryEditable()
+    toolRunnerStore.makeCurrentToolHistoryEditable()
   }
 
   if (!activeTool.isReadOnly) {
