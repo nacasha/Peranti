@@ -1,5 +1,6 @@
 import { v1, v4 } from "uuid"
 
+import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
@@ -9,10 +10,10 @@ interface InputFields {
 }
 
 interface OutputFields {
-  output: unknown
+  output: OutputFieldsType.Textarea
 }
 
-const generateUuid: ToolConstructor<InputFields, OutputFields> = {
+const generateUuidTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "generate-uuid",
   name: "Generate UUID",
   category: "Generator",
@@ -63,4 +64,4 @@ const generateUuid: ToolConstructor<InputFields, OutputFields> = {
   }
 }
 
-export default generateUuid
+export default generateUuidTool

@@ -43,10 +43,15 @@ class ToolHistoryStore {
     }
   }
 
+  /**
+   * Open tool history entry and set as readonly active tool
+   *
+   * @param toolHistory
+   */
   openHistory(toolHistory: ToolHistory) {
     const toolConstructor = toolStore.mapOfTools[toolHistory.toolId]
-
-    toolRunnerStore.setActiveTool(new Tool(toolConstructor, { toolHistory, isReadOnly: true }))
+    const toolSession = new Tool(toolConstructor, { toolHistory, isReadOnly: true })
+    toolRunnerStore.setActiveTool(toolSession)
   }
 
   /**

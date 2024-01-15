@@ -2,6 +2,7 @@ import hash from "hash.js"
 import hashMd5 from "md5"
 
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
+import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
@@ -9,10 +10,10 @@ interface InputFields {
 }
 
 interface OutputFields {
-  md5: unknown
-  sha1: unknown
-  sha256: unknown
-  sha512: unknown
+  md5: OutputFieldsType.Text
+  sha1: OutputFieldsType.Text
+  sha256: OutputFieldsType.Text
+  sha512: OutputFieldsType.Text
 }
 
 const hashTool: ToolConstructor<InputFields, OutputFields> = {

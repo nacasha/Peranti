@@ -5,6 +5,7 @@ import { type FC } from "react"
 import { AppSidebarContentItem } from "src/components/app/AppSidebarContentItem"
 import { toolHistoryStore } from "src/stores/toolHistoryStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolHistory } from "src/types/ToolHistory"
 import { prettyDateFormat } from "src/utils/prettyDateFormat"
@@ -23,6 +24,10 @@ export const ToolHistoryList: FC<ToolHistoryListProps> = observer((props) => {
     toolHistoryStore.openHistory(toolHistory)
   }
 
+  const onDoubleClickItem = (toolHistory: ToolHistory) => () => {
+    toolSessionStore.createSessionFromHistory(toolHistory)
+  }
+
   return (
     <div className={clsx("ToolPage-right-panel", toolRunnerStore.isHistoryPanelOpen && "open")}>
       <div className="ToolHistoryList">
@@ -31,6 +36,7 @@ export const ToolHistoryList: FC<ToolHistoryListProps> = observer((props) => {
             key={toolHistory.sessionId}
             active={toolRunnerStore.isToolActiveBySessionId(toolHistory)}
             onClick={onClickItem(toolHistory)}
+            onDoubleClick={onDoubleClickItem(toolHistory)}
           >
             <div>{toolStore.mapOfToolsName[toolHistory.toolId]}</div>
             <div className="subtitle">{prettyDateFormat(new Date(toolHistory.createdAt))}</div>

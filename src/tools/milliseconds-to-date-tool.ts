@@ -2,6 +2,7 @@ import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
+import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 dayjs.extend(utc)
@@ -11,8 +12,8 @@ interface InputFields {
 }
 
 interface OutputFields {
-  localDateTime: unknown
-  utcDateTime: unknown
+  localDateTime: OutputFieldsType.Text
+  utcDateTime: OutputFieldsType.Text
 }
 
 const millisecondsToDate: ToolConstructor<InputFields, OutputFields> = {

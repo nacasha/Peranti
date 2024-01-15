@@ -1,4 +1,5 @@
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
+import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
@@ -6,7 +7,7 @@ interface InputFields {
 }
 
 interface OutputFields {
-  output: unknown
+  output: OutputFieldsType.GridStat
 }
 
 const characterCounterTool: ToolConstructor<InputFields, OutputFields> = {

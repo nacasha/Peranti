@@ -1,3 +1,4 @@
+import { DiffOutput } from "./DiffOutput"
 import { GridStatOutput } from "./GridStatOutput"
 import { TextOutput } from "./TextOutput"
 import { TextareaOutput } from "./TextareaOutput"
@@ -5,5 +6,6 @@ import { TextareaOutput } from "./TextareaOutput"
 export const listOfOutputComponent = {
   Textarea: TextareaOutput,
   Text: TextOutput,
-  GridStat: GridStatOutput
+  GridStat: GridStatOutput,
+  Diff: DiffOutput
 }

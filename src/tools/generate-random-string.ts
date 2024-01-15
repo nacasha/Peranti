@@ -1,3 +1,4 @@
+import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { generateRandomString } from "src/utils/generateRandomString"
 
@@ -12,7 +13,7 @@ interface InputFields {
 }
 
 interface OutputFields {
-  output: unknown
+  output: OutputFieldsType.Textarea
 }
 
 const generateRandomStringTool: ToolConstructor<InputFields, OutputFields> = {

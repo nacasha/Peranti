@@ -10,6 +10,9 @@ export const ToolLoadFromHistoryButton: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
 
   const onClick = () => {
+    /**
+     * Transform active tool to history
+     */
     toolSessionStore.createSessionFromHistory(activeTool.toHistory())
   }
 

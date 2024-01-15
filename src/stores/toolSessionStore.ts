@@ -72,6 +72,9 @@ class ToolSessionStore {
         {
           key: "sessions",
           serialize: (sessions: this["sessions"]) => {
+            /**
+             * Map all running sessions to history
+             */
             const serializedSessions = sessions.map((session) => session.toHistory())
             return serializedSessions
           },
@@ -93,16 +96,22 @@ class ToolSessionStore {
    *
    * @param toolConstructor
    */
-  createSession(...toolArgs: ConstructorParameters<typeof Tool>) {
+  createSession(
+    toolConstructor: ToolConstructor,
+    options: ConstructorParameters<typeof Tool>["1"] = {}
+  ) {
+    /**
+     * Create sessionName for tool
+     */
+    const newOptions: typeof options = {
+      ...options,
+      sessionName: this.generateSessionName(toolConstructor)
+    }
+
     /**
      * Initialize new tool based on arguments
      */
-    toolArgs[1] = {
-      ...toolArgs[1],
-      sessionName: this.generateSessionName(toolArgs[0])
-    }
-
-    const tool = new Tool(...toolArgs)
+    const tool = new Tool(toolConstructor, newOptions)
 
     /**
      * Push new tool into session
@@ -118,9 +127,25 @@ class ToolSessionStore {
    */
   createSessionFromHistory(toolHistory: ToolHistory) {
     const mainTool = toolStore.mapOfTools[toolHistory.toolId]
-    toolHistory.sessionId = Tool.generateSessionId()
 
-    this.createSession(mainTool, { toolHistory })
+    /**
+     * Deep copy toolHistory to new variable to avoid modifying original data
+     */
+    const clonedToolHistory = {
+      ...toolHistory,
+
+      /**
+       * Generate new sessionId to avoid using sessionId from toolHistory
+       */
+      sessionId: Tool.generateSessionId(),
+
+      /**
+       * Remove existing sessionName from toolHistory in order to create new sessionName
+       */
+      sessionName: undefined
+    }
+
+    this.createSession(mainTool, { toolHistory: clonedToolHistory })
   }
 
   /**
@@ -144,9 +169,9 @@ class ToolSessionStore {
       const lastToolSessionId = this.activeSessionIds[toolConstructor.toolId]
       const lastToolSession = runningSessions.find(
         (toolSession) => toolSession.sessionId === lastToolSessionId
-      ) ?? runningSessions[0]
+      )
 
-      this.openSession(lastToolSession)
+      this.openSession(lastToolSession ?? runningSessions[0])
     }
   }
 
@@ -209,11 +234,12 @@ class ToolSessionStore {
    * @param tool
    */
   private saveToolToHistory(tool: Tool) {
-    if (tool && tool.getIsInputAndOutputHasValues() && !tool.isReadOnly) {
-      /**
-       * Always randomize current active tool sessionId when saving to history
-       */
-      toolHistoryStore.addHistory(tool.toHistory({ randomizeSessionId: true }))
+    if (
+      tool.getIsInputAndOutputHasValues() &&
+      (tool.isInputValuesModified || tool.isOutputValuesModified) &&
+      tool.runCount > 0
+    ) {
+      toolHistoryStore.addHistory(tool.toHistory())
     }
   }
 

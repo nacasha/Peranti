@@ -5,8 +5,9 @@ import compareListTool from "src/tools/compare-list-tool.js"
 import cronReadableTool from "src/tools/cron-readable-tool.js"
 import faviconGrabberTool from "src/tools/favicon-grabber-tool.js"
 import generateRandomStringTool from "src/tools/generate-random-string.js"
-import generateUuid from "src/tools/generate-uuid-tool.js"
+import generateUuidTool from "src/tools/generate-uuid-tool.js"
 import hashTool from "src/tools/hash-tool.js"
+import jsonDiffTool from "src/tools/json-diff-tool"
 import jsonFormatter from "src/tools/json-formatter-tool.js"
 import loremIpsumGeneratorTool from "src/tools/lorem-ipsum-generator-tool.js"
 import mathEvaluatorTool from "src/tools/math-evaluator-tool.ts"
@@ -50,7 +51,7 @@ class ToolStore {
     [testPipelines.toolId]: testPipelines,
     [textTransformTool.toolId]: textTransformTool,
     [hashTool.toolId]: hashTool,
-    [generateUuid.toolId]: generateUuid,
+    [generateUuidTool.toolId]: generateUuidTool,
     [generateRandomStringTool.toolId]: generateRandomStringTool,
     [jsonFormatter.toolId]: jsonFormatter,
     [cronReadableTool.toolId]: cronReadableTool,
@@ -60,7 +61,8 @@ class ToolStore {
     [base64EncodeDecodeTool.toolId]: base64EncodeDecodeTool,
     [loremIpsumGeneratorTool.toolId]: loremIpsumGeneratorTool,
     [faviconGrabberTool.toolId]: faviconGrabberTool,
-    [textEditorTool.toolId]: textEditorTool
+    [textEditorTool.toolId]: textEditorTool,
+    [jsonDiffTool.toolId]: jsonDiffTool
   }
 
   get mapOfTools() {

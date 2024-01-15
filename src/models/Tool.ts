@@ -275,16 +275,24 @@ export class Tool<
    *
    * @returns
    */
-  toHistory(options: { randomizeSessionId?: boolean } = {}): ToolHistory {
-    const { randomizeSessionId = false } = options
-    const { toolId, runCount, inputValues, outputValues, batchInputKey, batchOutputKey, isBatchEnabled, sessionName } = this
+  toHistory(): ToolHistory {
+    const {
+      batchInputKey,
+      batchOutputKey,
+      inputValues,
+      isBatchEnabled,
+      outputValues,
+      runCount,
+      sessionId,
+      sessionName,
+      toolId
+    } = this
 
     const createdAt = new Date().getTime()
     const inputOutputHash = generateSha256(this.getInputAndOutputAsString())
-    const randomizedSessionId = Tool.generateSessionId()
 
     return {
-      sessionId: randomizeSessionId ? randomizedSessionId : this.sessionId,
+      sessionId,
       sessionName,
       toolId,
       inputValues: toJS(inputValues),
@@ -368,7 +376,7 @@ export class Tool<
     const hasInputValues = Object.values(this.inputValues).filter((value) => Boolean(value)).length > 0
     const hasOutputValues = Object.values(this.outputValues).filter((value) => Boolean(value)).length > 0
 
-    return hasInputValues && hasOutputValues
+    return hasInputValues || hasOutputValues
   }
 
   /**
