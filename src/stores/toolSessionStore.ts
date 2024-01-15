@@ -21,9 +21,41 @@ class ToolSessionStore {
   sessions: Tool[] = []
 
   /**
+   * Pair of toolId and list of running session name(s)
+   */
+  sessionNames: Record<string, Array<string | undefined>> = {}
+
+  /**
    * Pair of toolId and sessionId
    */
   activeSessionIds: Record<string, string> = {}
+
+  /**
+   * Generate session name for tool
+   *
+   * @param tool
+   * @returns
+   */
+  generateSessionName(tool: ToolConstructor) {
+    if (!this.sessionNames[tool.toolId]) {
+      this.sessionNames[tool.toolId] = ["reserved"]
+    }
+
+    let nextIndex
+    const sessionCounters = this.sessionNames[tool.toolId]
+    const smallestIndex = this.sessionNames[tool.toolId].findIndex((e) => !e)
+
+    if (smallestIndex === -1) {
+      nextIndex = sessionCounters.length
+    } else {
+      nextIndex = smallestIndex
+    }
+
+    const sessionName = "Editor ".concat(nextIndex.toString())
+    this.sessionNames[tool.toolId][nextIndex] = sessionName
+
+    return sessionName
+  }
 
   /**
    * ToolSessionStore constructor
@@ -34,8 +66,9 @@ class ToolSessionStore {
     void makePersistable(this, {
       name: "ToolSessionStore",
       properties: [
-        "keepToolSession",
-        "lastToolSessionIds",
+        "sessionNames",
+        "enableMultipleSession",
+        "activeSessionIds",
         {
           key: "sessions",
           serialize: (sessions: this["sessions"]) => {
@@ -64,6 +97,11 @@ class ToolSessionStore {
     /**
      * Initialize new tool based on arguments
      */
+    toolArgs[1] = {
+      ...toolArgs[1],
+      sessionName: this.generateSessionName(toolArgs[0])
+    }
+
     const tool = new Tool(...toolArgs)
 
     /**
@@ -91,24 +129,22 @@ class ToolSessionStore {
    * @param toolConstructor
    */
   findOrCreateSession(toolConstructor: ToolConstructor) {
-    const tool = new Tool(toolConstructor)
-    const existingToolSessions = this.getSessionListFromTool(tool)
+    const runningSessions = this.getRunningSessionsFromTool(toolConstructor.toolId)
 
     /**
      * Create new if there is no existing sessions
      */
-    if (existingToolSessions.length === 0) {
-      this.pushIntoSessionList(tool)
-      this.openSession(tool)
+    if (runningSessions.length === 0) {
+      this.createSession(toolConstructor)
 
     /**
      * Restore active session(s) of tool
      */
     } else {
-      const lastToolSessionId = this.activeSessionIds[tool.toolId]
-      const lastToolSession = existingToolSessions.find(
+      const lastToolSessionId = this.activeSessionIds[toolConstructor.toolId]
+      const lastToolSession = runningSessions.find(
         (toolSession) => toolSession.sessionId === lastToolSessionId
-      ) ?? existingToolSessions[0]
+      ) ?? runningSessions[0]
 
       this.openSession(lastToolSession)
     }
@@ -150,6 +186,12 @@ class ToolSessionStore {
         this.openSession(existingSessions[0])
       }
     }
+
+    const deletedIndex = this.sessionNames[tool.toolId].findIndex((e) => e === tool.sessionName)
+
+    if (deletedIndex >= 0) {
+      this.sessionNames[tool.toolId][deletedIndex] = undefined
+    }
   }
 
   /**
@@ -187,11 +229,11 @@ class ToolSessionStore {
   /**
    * Get all sessions of tool
    *
-   * @param tool
+   * @param toolId
    * @returns
    */
-  getSessionListFromTool(tool: Tool) {
-    return this.sessions.filter((session) => session.toolId === tool.toolId)
+  getRunningSessionsFromTool(toolId: string) {
+    return this.sessions.filter((session) => session.toolId === toolId)
   }
 }
 

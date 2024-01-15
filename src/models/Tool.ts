@@ -1,4 +1,5 @@
 import fastDeepEqual from "fast-deep-equal"
+import hashMd5 from "md5"
 import { observable, action, makeObservable, toJS } from "mobx"
 
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
@@ -29,6 +30,9 @@ export class Tool<
    */
   readonly sessionId: string
 
+  /**
+   * Session name to be showed on tabbar
+   */
   sessionName: string
 
   /**
@@ -119,8 +123,14 @@ export class Tool<
    */
   @observable readonly isReadOnly: boolean = false
 
+  /**
+   * Indicates input values has been changed
+   */
   isInputValuesModified: boolean = false
 
+  /**
+   * Indicates output values has been changed
+   */
   isOutputValuesModified: boolean = false
 
   /**
@@ -144,7 +154,7 @@ export class Tool<
    * @returns
    */
   static generateSessionId() {
-    return generateSha256(new Date().getTime().toString())
+    return hashMd5(new Date().getTime().toString())
   }
 
   /**
@@ -234,24 +244,28 @@ export class Tool<
      */
     this.fillInputValuesWithDefault()
 
-    const { isReadOnly = false, toolHistory } = options
+    let assignedSessionName
+    const { isReadOnly = false, toolHistory, sessionName } = options
+
     if (toolHistory) {
       this.sessionId = toolHistory.sessionId
       this.isBatchEnabled = toolHistory.isBatchEnabled
       this.batchInputKey = toolHistory.batchInputKey
       this.batchOutputKey = toolHistory.batchOutputKey
+      this.runCount = toolHistory.runCount
 
       this.setInputValues(toolHistory.inputValues, { markAsModified: false })
       this.setOutputValues(toolHistory.outputValues, { markAsModified: false })
 
-      /**
-       * Disable run on first time open because input values already filled from history state
-       */
-      this.runOnFirstTimeOpen = false
+      assignedSessionName = toolHistory.sessionName
     }
 
-    this.sessionName = this.sessionId.substring(0, 5)
+    if (!assignedSessionName) {
+      assignedSessionName = sessionName ?? this.sessionId.substring(0, 5)
+    }
+
     this.isReadOnly = isReadOnly
+    this.sessionName = assignedSessionName
 
     makeObservable(this)
   }
@@ -263,7 +277,7 @@ export class Tool<
    */
   toHistory(options: { randomizeSessionId?: boolean } = {}): ToolHistory {
     const { randomizeSessionId = false } = options
-    const { toolId, inputValues, outputValues, batchInputKey, batchOutputKey, isBatchEnabled } = this
+    const { toolId, runCount, inputValues, outputValues, batchInputKey, batchOutputKey, isBatchEnabled, sessionName } = this
 
     const createdAt = new Date().getTime()
     const inputOutputHash = generateSha256(this.getInputAndOutputAsString())
@@ -271,6 +285,7 @@ export class Tool<
 
     return {
       sessionId: randomizeSessionId ? randomizedSessionId : this.sessionId,
+      sessionName,
       toolId,
       inputValues: toJS(inputValues),
       outputValues: toJS(outputValues),
@@ -278,7 +293,8 @@ export class Tool<
       createdAt,
       isBatchEnabled,
       batchInputKey,
-      batchOutputKey
+      batchOutputKey,
+      runCount
     }
   }
 

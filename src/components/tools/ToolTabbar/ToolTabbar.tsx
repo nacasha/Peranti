@@ -11,7 +11,7 @@ import "./ToolTabbar.scss"
 
 export const ToolTabbar: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
-  const tabs = toolSessionStore.getSessionListFromTool(activeTool)
+  const tabs = toolSessionStore.getRunningSessionsFromTool(activeTool.toolId)
 
   const isToolActive = (tool: Tool) => tool.sessionId === activeTool.sessionId
 
@@ -39,13 +39,13 @@ export const ToolTabbar: FC = observer(() => {
           >
             {tool.sessionName}
             <div className="ToolTabbar-icon" onClick={onClickCloseTab(tool)}>
-              <img src={assets.CloseSVG} />
+              <img src={assets.CloseSVG} alt="Close Tab" />
             </div>
           </div>
         ))}
 
         <div onClick={onClickAddTab} className="ToolTabbar-item new">
-          <div className="ToolTabbar-icon"><img src={assets.PlusSVG} /></div>
+          <div className="ToolTabbar-icon"><img src={assets.PlusSVG} alt="Add Tab" /></div>
         </div>
       </div>
     </div>
