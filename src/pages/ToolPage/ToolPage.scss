@@ -3,6 +3,7 @@ $sidebar-width: 180px;
 .ToolPage {
   display: flex;
   flex: 1;
+  flex-direction: column;
 
   .ToolPage-right-panel, .ToolPage-left-panel {
     background-color: var(--background-color-main);
@@ -55,5 +56,12 @@ $sidebar-width: 180px;
     display: flex;
     flex-direction: column;
     overflow: auto;
+    width: 0;
+    min-width: 100%;
+
+    .simplebar-content {
+      min-height: 100%;
+      display: flex;
+    }
   }
 }

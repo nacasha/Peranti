@@ -1,5 +1,6 @@
 import { clsx } from "clsx"
 import { observer } from "mobx-react"
+import "simplebar-react/dist/simplebar.min.css"
 
 import { interfaceStore } from "src/stores/interfaceStore.ts"
 

@@ -1,6 +1,7 @@
 import { clsx } from "clsx"
 import { observer } from "mobx-react"
 import useOnclickOutside from "react-cool-onclickoutside"
+import SimpleBar from "simplebar-react"
 
 import { HistorySidebar } from "src/components/sidebar/HistorySidebar"
 import { SettingsSidebar } from "src/components/sidebar/SettingsSidebar"
@@ -19,7 +20,7 @@ export const AppSidebarContent = observer(() => {
   } = interfaceStore
 
   const ref = useOnclickOutside(() => {
-    if (isFloatingSidebar) {
+    if (isFloatingSidebar || sidebarModeStore === SidebarMode.FloatUnpinned) {
       interfaceStore.hideSidebar()
     }
   }, {
@@ -46,9 +47,12 @@ export const AppSidebarContent = observer(() => {
   }
 
   return (
-    <div ref={ref} className={clsx("AppSidebarContent", sidebarMode, !isSidebarShow && "hidden")}>
+    <SimpleBar
+      className={clsx("AppSidebarContent", sidebarMode, !isSidebarShow && "hidden")}
+      scrollableNodeProps={{ ref }}
+    >
       <div className="title">{title}</div>
       {component}
-    </div>
+    </SimpleBar>
   )
 })

@@ -29,7 +29,7 @@ export const ToolHistoryList: FC<ToolHistoryListProps> = observer((props) => {
   }
 
   return (
-    <div className={clsx("ToolPage-right-panel", toolRunnerStore.isHistoryPanelOpen && "open")}>
+    <div className={clsx(toolRunnerStore.isHistoryPanelOpen && "open")}>
       <div className="ToolHistoryList">
         {(showAllHistory ? toolHistoryStore.history : toolHistoryStore.getHistoryOfToolId(activeTool.toolId)).map((toolHistory) => (
           <AppSidebarContentItem
