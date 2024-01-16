@@ -43,7 +43,10 @@ class ToolSessionStore {
 
     let nextIndex
     const sessionCounters = this.sessionNames[tool.toolId]
-    const smallestIndex = this.sessionNames[tool.toolId].findIndex((e) => !e)
+    const smallestIndex = sessionCounters.findIndex((e) => e === undefined || e === null)
+
+    console.log(sessionCounters)
+    console.log(smallestIndex)
 
     if (smallestIndex === -1) {
       nextIndex = sessionCounters.length
@@ -202,7 +205,16 @@ class ToolSessionStore {
        * Create empty session if it's last session of the tool
        */
       if (existingSessions.length === 0) {
-        this.createSession(tool)
+        /**
+         * I have no idea but this code makes the method `createSession`
+         * using the commited variable of `this.sessionNames`
+         *
+         * This is done to avoid creating new session with session name "Editor 2"
+         * when closing the "Editor 1"
+         */
+        setTimeout(() => {
+          this.createSession(tool)
+        }, 0)
 
       /**
        * Open any session is there are more than one session(s) running
@@ -212,6 +224,15 @@ class ToolSessionStore {
       }
     }
 
+    this.detachToolWithSessionNames(tool)
+  }
+
+  /**
+   * Detach tool with default session names
+   *
+   * @param tool
+   */
+  detachToolWithSessionNames(tool: Tool) {
     const deletedIndex = this.sessionNames[tool.toolId].findIndex((e) => e === tool.sessionName)
 
     if (deletedIndex >= 0) {

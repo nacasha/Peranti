@@ -15,11 +15,11 @@ export const AppSidebarContent = observer(() => {
     isSidebarShow,
     sidebarMode: sidebarModeStore,
     sidebarActiveMenuId,
-    isSidebarAlwaysFloating
+    isFloatingSidebar
   } = interfaceStore
 
   const ref = useOnclickOutside(() => {
-    if (isSidebarAlwaysFloating) {
+    if (isFloatingSidebar) {
       interfaceStore.hideSidebar()
     }
   }, {
@@ -41,7 +41,7 @@ export const AppSidebarContent = observer(() => {
     component = <HistorySidebar />
   }
 
-  if (isSidebarAlwaysFloating) {
+  if (isFloatingSidebar) {
     sidebarMode = SidebarMode.FloatUnpinned
   }
 

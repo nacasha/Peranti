@@ -5,6 +5,7 @@ $padding: 10px;
 html, body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 :root {
@@ -81,9 +82,12 @@ html, body {
   // Input component styles
   --input-output-background-color: #ffffff;
 
-  // Tool Header
+  // Tool component styles
   --tool-header-background-color: #ffffff;
   --tool-area-background-color: #f9f9fc;
+
+  --tool-tabbar-text-color: #818181;
+  --tool-tabbar-text-color-active: #000000;
 
   // Theme color
   --opposite-color: #939393;
@@ -131,9 +135,12 @@ html, body {
   // Input component styles
   --input-output-background-color: #0d1117;
 
-  // Tool
+  // Tool component styles
   --tool-header-background-color: #222429;
   --tool-area-background-color: #1a1b21;
+
+  --tool-tabbar-text-color: rgb(147, 147, 147);
+  --tool-tabbar-text-color-active: white;
 
   // Theme color
   --opposite-color: #ffffff;

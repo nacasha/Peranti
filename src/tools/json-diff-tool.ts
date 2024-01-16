@@ -1,3 +1,5 @@
+import { DiffMethod } from "react-diff-viewer"
+
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
@@ -19,29 +21,37 @@ const jsonDiffTool: ToolConstructor<InputFields, OutputFields> = {
   inputFields: [
     {
       key: "inputA",
-      label: "Input A",
+      label: "JSON A",
       component: "Textarea",
       defaultValue: ""
     },
     {
       key: "inputB",
-      label: "Input B",
+      label: "JSON B",
       component: "Textarea",
-      defaultValue: ""
+      defaultValue: "",
+      props: {
+
+      }
     }
   ],
   outputFields: [
     {
       key: "output",
-      label: "Diff",
-      component: "Diff"
+      label: "JSON Diff",
+      component: "Diff",
+      props: {
+        leftTitle: "JSON A",
+        rightTitle: "JSON B",
+        compareMethod: DiffMethod.CSS
+      }
     }
   ],
   action: (inputParams) => {
     const { inputA, inputB } = inputParams
 
     return {
-      output: { newCode: inputA, oldCode: inputB }
+      output: { newCode: inputB, oldCode: inputA }
     }
   }
 }

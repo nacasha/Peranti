@@ -1,6 +1,8 @@
+import { observer } from "mobx-react"
 import { type FC } from "react"
-import ReactDiffViewer, { DiffMethod } from "react-diff-viewer"
+import ReactDiffViewer, { type DiffMethod } from "react-diff-viewer"
 
+import { interfaceStore } from "src/stores/interfaceStore"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import "./DiffOutput.scss"
@@ -10,8 +12,15 @@ interface Output {
   newCode: string
 }
 
-export const DiffOutput: FC<OutputComponentProps<Output>> = (props) => {
-  const { label, output = { newCode: "", oldCode: "" } } = props
+interface Props extends OutputComponentProps<Output> {
+  splitView?: boolean
+  leftTitle?: string
+  rightTitle?: string
+  compareMethod?: DiffMethod
+}
+
+export const DiffOutput: FC<Props> = observer((props) => {
+  const { label, output = { newCode: "", oldCode: "" }, compareMethod, leftTitle, rightTitle, splitView } = props
 
   return (
     <div className="DiffOutput">
@@ -20,12 +29,14 @@ export const DiffOutput: FC<OutputComponentProps<Output>> = (props) => {
         <ReactDiffViewer
           oldValue={output.oldCode}
           newValue={output.newCode}
-          compareMethod={DiffMethod.CSS}
-          splitView={true}
+          compareMethod={compareMethod}
+          leftTitle={leftTitle}
+          rightTitle={rightTitle}
+          splitView={splitView}
           showDiffOnly={false}
-          useDarkTheme
+          useDarkTheme={interfaceStore.isThemeDarkMode}
         />
       </div>
     </div>
   )
-}
+})

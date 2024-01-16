@@ -39,6 +39,8 @@ const mathEvaluatorTool: ToolConstructor<InputFields, OutputFields> = {
     const outputLines = inputLines.map((input) => {
       if (input.trim().length === 0) return ""
 
+      if (input.includes("//")) return ""
+
       try {
         const result = mexp.eval(input, [], {}).toString()
         return result.replace(/\B(?=(\d{3})+(?!\d))/g, ".")

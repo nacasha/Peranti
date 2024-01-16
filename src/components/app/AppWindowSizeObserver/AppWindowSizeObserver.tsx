@@ -5,11 +5,11 @@ import { SidebarMode } from "src/enums/SidebarMode"
 import { interfaceStore } from "src/stores/interfaceStore"
 
 export const AppWindowSizeObserver: FC = observer(() => {
-  const { windowSize, sidebarMode, isSidebarAlwaysFloating } = interfaceStore
+  const { windowSize, sidebarMode, isFloatingSidebar } = interfaceStore
 
   useEffect(() => {
     if (windowSize.width > 870 && sidebarMode !== SidebarMode.DockPinned) {
-      if (!isSidebarAlwaysFloating) {
+      if (!isFloatingSidebar) {
         interfaceStore.sidebarMode = SidebarMode.DockPinned
         interfaceStore.showSidebar()
       }

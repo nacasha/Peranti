@@ -14,7 +14,7 @@ class InterfaceStore {
 
   _restoreLastToolInputAndOutput = false
 
-  isSidebarAlwaysFloating = false
+  isFloatingSidebar = false
 
   sidebarActiveMenuId = "tools"
 
@@ -32,7 +32,7 @@ class InterfaceStore {
     void makePersistable(this, {
       name: "InterfaceStore",
       properties: [
-        "isSidebarAlwaysFloating",
+        "isFloatingSidebar",
         "_isSidebarShow",
         "_sidebarMode",
         "textAreaWordWrap",
@@ -60,7 +60,7 @@ class InterfaceStore {
   }
 
   get sidebarMode() {
-    if (this.isSidebarAlwaysFloating) return SidebarMode.FloatUnpinned
+    if (this.isFloatingSidebar) return SidebarMode.FloatUnpinned
     return this._sidebarMode
   }
 
@@ -81,7 +81,7 @@ class InterfaceStore {
   }
 
   toggleSidebarAlwaysFloating() {
-    this.isSidebarAlwaysFloating = !this.isSidebarAlwaysFloating
+    this.isFloatingSidebar = !this.isFloatingSidebar
   }
 
   setSidebarMenuId(menuId: string) {

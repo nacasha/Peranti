@@ -11,7 +11,7 @@ export const SidebarMode: FC = observer(() => {
 
   return (
     <Switch
-      defaultChecked={interfaceStore.isSidebarAlwaysFloating}
+      defaultChecked={interfaceStore.isFloatingSidebar}
       onChange={onToggleSwitch}
     />
   )

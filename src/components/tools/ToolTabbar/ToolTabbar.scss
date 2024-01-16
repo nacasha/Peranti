@@ -2,6 +2,15 @@
   position: relative;
   background-color: var(--background-color-main);
   height: 30px;
+
+  &::after {
+    content: " ";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-bottom: 1px solid var(--border-color);
+  }
 }
 
 .ToolTabbar-inner {
@@ -17,7 +26,7 @@
   padding-right: 5px;
   border-right: 1px solid var(--border-color);
   user-select: none;
-  color: var(--text-color);
+  color: var(--tool-tabbar-text-color);
   display: flex;
   align-items: center;
   gap: 5px;
@@ -28,8 +37,10 @@
   }
 
   &.active {
-    color: var(--text-color);
+    color: var(--tool-tabbar-text-color-active);
     background-color: var(--tool-header-background-color);
+    z-index: 1;
+    border-bottom: 1px solid var(--tool-header-background-color);
   }
 
   &.new {
