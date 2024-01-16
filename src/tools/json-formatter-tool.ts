@@ -33,14 +33,20 @@ const jsonFormatter: ToolConstructor<InputFields, OutputFields> = {
       key: "input",
       label: "Input",
       component: "Textarea",
-      defaultValue: ""
+      defaultValue: "",
+      props: {
+        language: "json"
+      }
     }
   ],
   outputFields: [
     {
       key: "output",
       label: "Output",
-      component: "Textarea"
+      component: "Textarea",
+      props: {
+        language: "json"
+      }
     }
   ],
   action: (inputParams) => {

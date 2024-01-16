@@ -18,7 +18,7 @@ export const ThemeSelect: FC = () => {
         { label: "Light", value: ThemeEnum.Light }
       ]}
       onSubmit={onChange}
-      initialValue={theme}
+      defaultValue={theme}
     />
   )
 }

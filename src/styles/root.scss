@@ -33,8 +33,9 @@ html, body {
   // App Titlebar
   --app-titlebar-height: 37px;
 
-  // Toolbar
+  // Tool
   --tool-header-height: 45px;
+  --tool-tabbar-height: 35px;
 
   // Animations
   --transition-speed: 0.15s;
@@ -111,12 +112,12 @@ html, body {
 
 .AppRoot.dark {
   // General
-  --border-color: #2a2a2f;
+  --border-color: #313131;
   --text-color: #e0e0e0;
   --icon-color: invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%);
 
   // Button
-  --button-color: #1a1b1d;
+  --button-color: #3c3c3c;
   --button-hover-color: #26282a;
   --button-active-color: #1a1c1e;
 
@@ -133,11 +134,11 @@ html, body {
   --statusbar-background-color: #1e1f22;
 
   // Input component styles
-  --input-output-background-color: #0d1117;
+  --input-output-background-color: #1e1e1e;
 
   // Tool component styles
-  --tool-header-background-color: #222429;
-  --tool-area-background-color: #1a1b21;
+  --tool-header-background-color: #212121;
+  --tool-area-background-color: #272727;
 
   --tool-tabbar-text-color: rgb(147, 147, 147);
   --tool-tabbar-text-color-active: white;

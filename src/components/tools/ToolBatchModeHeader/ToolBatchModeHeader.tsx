@@ -33,7 +33,7 @@ export const ToolBatchModeHeader = observer(() => {
             label: input.label,
             value: input.key
           }))}
-          initialValue={batchInputKey}
+          defaultValue={batchInputKey}
           onSubmit={onChangeInputKey}
           readOnly={isToolReadOnly}
         />
@@ -42,7 +42,7 @@ export const ToolBatchModeHeader = observer(() => {
             label: output.label,
             value: output.key
           }))}
-          initialValue={batchOutputKey}
+          defaultValue={batchOutputKey}
           onSubmit={onChangeOutputKey}
           readOnly={isToolReadOnly}
         />

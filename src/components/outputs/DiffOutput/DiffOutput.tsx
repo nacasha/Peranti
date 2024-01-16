@@ -12,14 +12,14 @@ interface Output {
   newCode: string
 }
 
-interface Props extends OutputComponentProps<Output> {
+interface DiffOutputProps extends OutputComponentProps<Output> {
   splitView?: boolean
   leftTitle?: string
   rightTitle?: string
   compareMethod?: DiffMethod
 }
 
-export const DiffOutput: FC<Props> = observer((props) => {
+export const DiffOutput: FC<DiffOutputProps> = observer((props) => {
   const { label, output = { newCode: "", oldCode: "" }, compareMethod, leftTitle, rightTitle, splitView } = props
 
   return (

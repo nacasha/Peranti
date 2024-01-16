@@ -10,7 +10,7 @@
   overflow: auto;
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
-  background-color: #2c2f3a;
+  background-color: var(--input-output-background-color);
 }
 
 .DiffOutput-body table {

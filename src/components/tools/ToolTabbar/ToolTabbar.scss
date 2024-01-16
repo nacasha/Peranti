@@ -1,7 +1,7 @@
 .ToolTabbar {
   position: relative;
   background-color: var(--background-color-main);
-  height: 30px;
+  height: var(--tool-tabbar-height);
 
   &::after {
     content: " ";
@@ -30,6 +30,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  border-bottom: 1px solid transparent;
 
   &:hover {
     background: var(--button-hover-color);

@@ -1,20 +1,16 @@
-import { githubLight, githubDark } from "@uiw/codemirror-theme-github"
-import CodeMirror, { EditorView } from "@uiw/react-codemirror"
 import { observer } from "mobx-react"
 import { type FC, useState } from "react"
 
-import { interfaceStore } from "src/stores/interfaceStore.ts"
+import { BaseCodeMirror, type BaseCodeMirrorProps } from "src/components/common/BaseCodeMirror"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./TextareaInput.scss"
 
-interface TextareaInputProps extends InputComponentProps {}
+interface TextareaInputProps extends InputComponentProps, BaseCodeMirrorProps {}
 
 export const TextareaInput: FC<TextareaInputProps> = observer((props) => {
-  const { onSubmit, initialValue, readOnly, label } = props
-  const [value, setValue] = useState<string>(() => initialValue ?? "")
-  const textAreaWordWrapEnabled = interfaceStore.textAreaWordWrap
-  const isDarkMode = interfaceStore.isThemeDarkMode
+  const { onSubmit, defaultValue, readOnly, label, ...restProps } = props
+  const [value, setValue] = useState<string>(() => defaultValue ?? "")
 
   const onInputChange = (newValue: string) => {
     setValue(newValue)
@@ -27,11 +23,10 @@ export const TextareaInput: FC<TextareaInputProps> = observer((props) => {
         {label}
       </label>
       <div className="CodeMirrorContainer">
-        <CodeMirror
+        <BaseCodeMirror
+          {...restProps}
           value={value}
-          theme={isDarkMode ? githubDark : githubLight}
           onChange={(newValue) => { onInputChange(newValue) }}
-          extensions={textAreaWordWrapEnabled ? [EditorView.lineWrapping] : []}
           readOnly={readOnly}
         />
       </div>

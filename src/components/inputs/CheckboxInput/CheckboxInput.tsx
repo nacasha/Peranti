@@ -9,7 +9,7 @@ interface CheckboxInputProps extends InputComponentProps<boolean> {}
 
 export const CheckboxInput: FC<CheckboxInputProps> = (props) => {
   const id = useId()
-  const { label, onSubmit, readOnly, initialValue } = props
+  const { label, onSubmit, readOnly, defaultValue } = props
 
   const onChange = (checked: boolean) => {
     onSubmit(checked)
@@ -18,7 +18,7 @@ export const CheckboxInput: FC<CheckboxInputProps> = (props) => {
   return (
     <div className="CheckboxInput">
       <label htmlFor={id}>{label}</label>
-      <Switch defaultChecked={Boolean(initialValue)} onChange={onChange} readOnly={readOnly} />
+      <Switch defaultChecked={Boolean(defaultValue)} onChange={onChange} readOnly={readOnly} />
     </div>
   )
 }

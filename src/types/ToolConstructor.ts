@@ -74,9 +74,4 @@ export interface ToolConstructor<
    * Type of tool
    */
   type?: "Tool" | "Pipeline" | "Preset"
-
-  /**
-   * Name of session that will be created
-   */
-  sessionName?: string
 }

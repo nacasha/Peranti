@@ -7,7 +7,7 @@ export interface InputComponentProps<T = string> {
   /**
    * Initial value of input component
    */
-  initialValue?: any
+  defaultValue?: any
 
   /**
    * Handle input value changes

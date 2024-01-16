@@ -23,7 +23,10 @@ const jsonDiffTool: ToolConstructor<InputFields, OutputFields> = {
       key: "inputA",
       label: "JSON A",
       component: "Textarea",
-      defaultValue: ""
+      defaultValue: "",
+      props: {
+        language: "json"
+      }
     },
     {
       key: "inputB",
@@ -31,7 +34,7 @@ const jsonDiffTool: ToolConstructor<InputFields, OutputFields> = {
       component: "Textarea",
       defaultValue: "",
       props: {
-
+        language: "json"
       }
     }
   ],

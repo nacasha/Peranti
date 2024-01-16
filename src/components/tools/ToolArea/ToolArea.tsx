@@ -3,7 +3,6 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 
 import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
-import { interfaceStore } from "src/stores/interfaceStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore.js"
 import { type ToolInput } from "src/types/ToolInput.ts"
 import { type ToolOutput } from "src/types/ToolOutput.ts"
@@ -14,7 +13,6 @@ import { ToolAreaOutput } from "./ToolAreaOutput.js"
 import "./ToolArea.scss"
 
 export const ToolArea: FC = observer(() => {
-  const textAreaWordWrap = interfaceStore.textAreaWordWrap
   const activeTool = toolRunnerStore.getActiveTool()
   const { batchInputKey, batchOutputKey, isBatchEnabled } = activeTool
 
@@ -58,7 +56,6 @@ export const ToolArea: FC = observer(() => {
   const computedOutputs = isBatchEnabled ? batchOutputs : outputs
 
   const classNames = {
-    "text-area-word-wrap": textAreaWordWrap,
     reversed: layoutReversed
   }
 

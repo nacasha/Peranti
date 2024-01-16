@@ -23,7 +23,7 @@ export const ToolAreaInput: FC<ToolAreaInputProps> = (props) => {
           label={input.label}
           component={input.component}
           props={input.props}
-          initialValue={input.defaultValue}
+          defaultValue={input.defaultValue}
         />
       ))}
     </div>

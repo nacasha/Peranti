@@ -9,6 +9,7 @@ import generateUuidTool from "src/tools/generate-uuid-tool.js"
 import hashTool from "src/tools/hash-tool.js"
 import jsonDiffTool from "src/tools/json-diff-tool"
 import jsonFormatter from "src/tools/json-formatter-tool.js"
+import jsonataTool from "src/tools/jsonata-tool"
 import loremIpsumGeneratorTool from "src/tools/lorem-ipsum-generator-tool.js"
 import mathEvaluatorTool from "src/tools/math-evaluator-tool.ts"
 import millisecondsToDate from "src/tools/milliseconds-to-date-tool.js"
@@ -62,7 +63,8 @@ class ToolStore {
     [loremIpsumGeneratorTool.toolId]: loremIpsumGeneratorTool,
     [faviconGrabberTool.toolId]: faviconGrabberTool,
     [textEditorTool.toolId]: textEditorTool,
-    [jsonDiffTool.toolId]: jsonDiffTool
+    [jsonDiffTool.toolId]: jsonDiffTool,
+    [jsonataTool.toolId]: jsonataTool
   }
 
   get mapOfTools() {

@@ -27,9 +27,9 @@ interface ToolInputRendererProps {
   props: any
 
   /**
-   * Initial value of input
+   * Default value of input
    */
-  initialValue: any
+  defaultValue: any
 
   /**
    * Indicates the field is read only, used when viewing a history
@@ -38,7 +38,7 @@ interface ToolInputRendererProps {
 }
 
 export const ToolInputRenderer: FC<ToolInputRendererProps> = observer((props) => {
-  const { component, field, props: componentProps, initialValue, label } = props
+  const { component, field, props: componentProps, defaultValue, label } = props
   const activeTool = toolRunnerStore.getActiveTool()
 
   const Component: FC<InputComponentProps> = (listOfInputComponent as any)[component]
@@ -53,7 +53,7 @@ export const ToolInputRenderer: FC<ToolInputRendererProps> = observer((props) =>
       {...componentProps}
       label={label}
       key={field}
-      initialValue={inputValue ?? initialValue}
+      defaultValue={inputValue ?? defaultValue}
       onSubmit={onSubmit}
       readOnly={activeTool.isReadOnly}
     />
