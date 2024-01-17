@@ -41,9 +41,9 @@ interface ToolOutputDiff<K extends Record<string, string> = any> extends BaseOut
   props?: ExtractOutputComponentProps<typeof listOfOutputComponent.Diff>
 }
 
-interface ToolOutputImageBinary<K extends Record<string, string> = any> extends BaseOutput<K> {
-  component: "ImageBinary"
-  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.ImageBinary>
+interface ToolOutputImage<K extends Record<string, string> = any> extends BaseOutput<K> {
+  component: "Image"
+  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.Image>
 }
 
 export type ToolOutput<K extends Record<string, string> = any> =
@@ -51,4 +51,4 @@ export type ToolOutput<K extends Record<string, string> = any> =
   | ToolOutputTextarea<K>
   | ToolOutputGridStat<K>
   | ToolOutputDiff<K>
-  | ToolOutputImageBinary<K>
+  | ToolOutputImage<K>

@@ -1,5 +1,6 @@
 import { ResponseType, fetch } from "@tauri-apps/api/http"
 
+import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
@@ -8,7 +9,7 @@ interface InputFields {
 }
 
 interface OutputFields {
-  output: unknown
+  output: OutputFieldsType.Image
 }
 
 async function getFavicon(url: any) {
@@ -16,7 +17,7 @@ async function getFavicon(url: any) {
   const response = await fetch(`https://www.google.com/s2/favicons?domain=${url}&sz=128`, {
     method: "GET",
     timeout: 30,
-    responseType: ResponseType.Text
+    responseType: ResponseType.Binary
   })
 
   return response
@@ -45,7 +46,10 @@ const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "Output",
-      component: "ImageBinary"
+      component: "Image",
+      props: {
+        width: 150
+      }
     }
   ],
   action: async(inputParams) => {
@@ -53,7 +57,11 @@ const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
     const result = await getFavicon(websiteUrl)
     console.log(result)
 
-    return { output: result?.data }
+    const binaryArray = (result?.data ?? []) as number[]
+    const base64String = btoa(String.fromCharCode.apply(null, binaryArray))
+    const dataUrl = `data:image/png;base64,${base64String}`
+
+    return { output: dataUrl }
   }
 }
 
