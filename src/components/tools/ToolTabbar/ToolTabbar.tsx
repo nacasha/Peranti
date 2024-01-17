@@ -16,7 +16,9 @@ export const ToolTabbar: FC = observer(() => {
   const isToolActive = (tool: Tool) => tool.sessionId === activeTool.sessionId
 
   const onClickAddTab = () => {
-    toolSessionStore.createSession(activeTool)
+    for (let index = 0; index < 10; index++) {
+      toolSessionStore.createSession(activeTool)
+    }
   }
 
   const onClickTab = (tool: Tool) => () => {
@@ -38,6 +40,7 @@ export const ToolTabbar: FC = observer(() => {
             onClick={onClickTab(tool)}
           >
             {tool.sessionName}
+            {tool.isActionRunning ? " ..." : ""}
             <div className="ToolTabbar-icon" onClick={onClickCloseTab(tool)}>
               <img src={assets.CloseSVG} alt="Close Tab" />
             </div>

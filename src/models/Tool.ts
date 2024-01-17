@@ -2,13 +2,14 @@ import fastDeepEqual from "fast-deep-equal"
 import hashMd5 from "md5"
 import { observable, action, makeObservable, toJS } from "mobx"
 
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolHistory } from "src/types/ToolHistory"
 import { type ToolInput } from "src/types/ToolInput"
+import { type ToolLayoutSetting } from "src/types/ToolLayoutSetting"
 import { type ToolOutput } from "src/types/ToolOutput"
 import { type ToolPreset } from "src/types/ToolPreset"
+import { generateRandomString } from "src/utils/generateRandomString"
 import { generateSha256 } from "src/utils/generateSha256"
 
 export class Tool<
@@ -52,25 +53,10 @@ export class Tool<
    */
   readonly category: string
 
-  /**
-   * Layout used to show the input and output area, default is "side-by-side"
+  /***
+   * Tool layout setting
    */
-  readonly layout: ToolLayoutEnum
-
-  /**
-   * Swap input and output position in tool area, default is "false"
-   */
-  readonly layoutReversed: boolean = false
-
-  /**
-   * Layout direction for input area, default is "vertical"
-   */
-  readonly inputsLayoutDirection?: "horizontal" | "vertical"
-
-  /**
-   * Layout direction for output area, default is "vertical"
-   */
-  readonly outputsLayoutDirection?: "horizontal" | "vertical"
+  readonly layoutSetting: ToolLayoutSetting
 
   /**
    * Pipelines
@@ -134,6 +120,11 @@ export class Tool<
   isOutputValuesModified: boolean = false
 
   /**
+   * Indicates action is running asynchronous
+   */
+  @observable isActionRunning: boolean = false
+
+  /**
    * Should tools is auto run when user made changes on inputs, default is true
    */
   readonly autoRun: boolean = false
@@ -154,7 +145,8 @@ export class Tool<
    * @returns
    */
   static generateSessionId() {
-    return hashMd5(new Date().getTime().toString())
+    const randomString = generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm")
+    return hashMd5(new Date().getTime().toString().concat(randomString))
   }
 
   /**
@@ -215,13 +207,10 @@ export class Tool<
       inputFields,
       outputFields,
       name,
-      layout = ToolLayoutEnum.SideBySide,
-      layoutReversed = false,
-      inputsLayoutDirection = "vertical",
-      outputsLayoutDirection = "vertical",
       pipelines = [],
       autoRun = true,
-      type = "Tool"
+      type = "Tool",
+      layoutSetting = {}
     } = params
 
     this.toolId = toolId
@@ -231,13 +220,22 @@ export class Tool<
     this.category = category
     this.inputFields = inputFields
     this.outputFields = outputFields
-    this.layout = layout
-    this.layoutReversed = layoutReversed
     this.pipelines = pipelines
-    this.inputsLayoutDirection = inputsLayoutDirection
-    this.outputsLayoutDirection = outputsLayoutDirection
     this.autoRun = autoRun
     this.type = type
+
+    /**
+     * Set default layout setting and merge with setting from tool definition
+     */
+    this.layoutSetting = {
+      direction: "horizontal",
+      reversed: false,
+      inputAreaSize: "1fr",
+      inputAreaDirection: "vertical",
+      outputAreaSize: "1fr",
+      outputAreaDirection: "vertical",
+      ...layoutSetting
+    }
 
     /**
      * Fill inputValues with value from tool input fields
@@ -364,7 +362,7 @@ export class Tool<
    * Merge input params and output params and convert it to string
    */
   getInputAndOutputAsString() {
-    return Object.values(this.inputValues).concat(Object.values(this.outputValues)).toString().trim()
+    return Object.values(this.inputValues ?? {}).concat(Object.values(this.outputValues ?? {})).toString().trim()
   }
 
   /**
@@ -441,6 +439,11 @@ export class Tool<
     this.batchOutputKey = this.getOutputFields().filter((output) => output.allowBatch)[0].key
   }
 
+  @action
+  private setIsActionRunning(value: boolean) {
+    this.isActionRunning = value
+  }
+
   /**
    * Increment the number of runCount
    */
@@ -466,13 +469,35 @@ export class Tool<
     this.incrementRunCount()
   }
 
+  private get isActionAsync() {
+    return this.action.constructor.name === "AsyncFunction"
+  }
+
+  private async runAction(actionInput: any) {
+    if (this.isActionAsync) {
+      if (this.isActionRunning) {
+        return
+      }
+
+      this.setIsActionRunning(true)
+    }
+
+    const runResult = await this.action(actionInput)
+
+    if (this.isActionAsync) {
+      this.setIsActionRunning(false)
+    }
+
+    return runResult
+  }
+
   /**
    * Run tool in normal behaviour
    *
    * @private
    */
   private async runNormal() {
-    const runResult = await this.action({ ...this.inputValues })
+    const runResult = await this.runAction({ ...this.inputValues })
     this.setOutputValues(runResult)
   }
 
@@ -525,7 +550,7 @@ export class Tool<
 
     const outputs = []
     for (const inputLine of inputLines) {
-      const runResult = await this.action({ ...inputValues, [batchInputKey]: inputLine })
+      const runResult = await this.runAction({ ...inputValues, [batchInputKey]: inputLine })
       outputs.push(runResult)
     }
 

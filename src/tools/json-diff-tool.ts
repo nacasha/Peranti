@@ -1,6 +1,5 @@
 import { DiffMethod } from "react-diff-viewer"
 
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
@@ -17,7 +16,9 @@ const jsonDiffTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "json-diff",
   name: "JSON Diff",
   category: "JSON",
-  layout: ToolLayoutEnum.SideBySide,
+  layoutSetting: {
+    outputAreaSize: "1.5fr"
+  },
   inputFields: [
     {
       key: "inputA",

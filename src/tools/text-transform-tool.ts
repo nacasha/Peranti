@@ -1,4 +1,3 @@
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
@@ -15,7 +14,9 @@ const textTransformTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "text-transform",
   name: "Text Transform",
   category: "Text",
-  layout: ToolLayoutEnum.TopBottom,
+  layoutSetting: {
+    direction: "vertical"
+  },
   inputFields: [
     {
       key: "type",

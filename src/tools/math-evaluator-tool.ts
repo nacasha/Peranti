@@ -1,6 +1,5 @@
 import Mexp from "math-expression-evaluator"
 
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
@@ -16,7 +15,6 @@ const mathEvaluatorTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "math-evaluator",
   name: "Math Evaluator",
   category: "Math",
-  layout: ToolLayoutEnum.SideBySide,
   inputFields: [
     {
       key: "input",

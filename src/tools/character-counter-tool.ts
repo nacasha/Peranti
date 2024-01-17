@@ -1,4 +1,3 @@
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
@@ -14,8 +13,11 @@ const characterCounterTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "character-counter",
   name: "Word Counter",
   category: "Text",
-  layout: ToolLayoutEnum.TopBottomAndPushToTop,
-  layoutReversed: true,
+  layoutSetting: {
+    direction: "vertical",
+    inputAreaSize: "auto",
+    reversed: true
+  },
   inputFields: [
     {
       key: "input",

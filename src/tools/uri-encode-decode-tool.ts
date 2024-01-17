@@ -1,4 +1,3 @@
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
@@ -15,7 +14,6 @@ const uriEncodeDecodeTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "uri-encode-decode",
   name: "URL Encode Decode",
   category: "Encode / Decode",
-  layout: ToolLayoutEnum.SideBySide,
   inputFields: [
     {
       key: "type",

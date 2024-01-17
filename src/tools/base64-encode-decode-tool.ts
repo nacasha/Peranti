@@ -1,4 +1,3 @@
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
@@ -15,7 +14,6 @@ const base64EncodeDecodeTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "base64-encode-decode",
   name: "Base64 Encode Decode",
   category: "Encode / Decode",
-  layout: ToolLayoutEnum.SideBySide,
   inputFields: [
     {
       key: "type",

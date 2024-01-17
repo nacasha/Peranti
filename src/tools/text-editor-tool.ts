@@ -1,4 +1,3 @@
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
@@ -9,7 +8,9 @@ const textEditorTool: ToolConstructor<InputFields> = {
   toolId: "text-editor",
   name: "Text Editor",
   category: "Editor",
-  layout: ToolLayoutEnum.TopBottomAndPushToBottom,
+  layoutSetting: {
+    outputAreaSize: "0"
+  },
   inputFields: [
     {
       key: "input",

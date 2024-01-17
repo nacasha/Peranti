@@ -1,3 +1,4 @@
+import { BinaryOutput } from "./BinaryOutput"
 import { DiffOutput } from "./DiffOutput"
 import { GridStatOutput } from "./GridStatOutput"
 import { TextOutput } from "./TextOutput"
@@ -7,5 +8,6 @@ export const listOfOutputComponent = {
   Textarea: TextareaOutput,
   Text: TextOutput,
   GridStat: GridStatOutput,
-  Diff: DiffOutput
+  Diff: DiffOutput,
+  ImageBinary: BinaryOutput
 }

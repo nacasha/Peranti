@@ -1,4 +1,5 @@
 import { type FC } from "react"
+import { ErrorBoundary } from "react-error-boundary"
 import SimpleBar from "simplebar-react"
 
 import { ToolArea } from "src/components/tools/ToolArea"
@@ -18,7 +19,9 @@ export const ToolPage: FC = () => {
       <ToolBatchModeHeader />
 
       <SimpleBar className="ToolPage-main-panel">
-        <ToolArea />
+        <ErrorBoundary fallback={<div style={{ padding: 10 }}>Something went wrong</div>}>
+          <ToolArea />
+        </ErrorBoundary>
       </SimpleBar>
     </div>
   )

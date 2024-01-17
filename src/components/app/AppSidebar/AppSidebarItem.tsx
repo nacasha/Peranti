@@ -23,7 +23,7 @@ export const AppSidebarItem: FC<AppSidebarItemProps> = observer((props) => {
       interfaceStore.showSidebar()
     } else if (interfaceStore.sidebarActiveMenuId === menuId && interfaceStore.isFloatingSidebar) {
       interfaceStore.toggleSidebar()
-    } else if (!interfaceStore.isSidebarShow) {
+    } else {
       interfaceStore.toggleSidebar()
     }
   }

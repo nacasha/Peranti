@@ -6,24 +6,20 @@ $padding: var(--input-output-fields-spacing);
   padding: $padding;
   background: var(--tool-area-background-color);
 
-  &.side-by-side {
+  &.horizontal {
     grid-template-columns: 1fr 1fr;
     column-gap: $padding;
   }
 
-  &.top-bottom {
+  &.vertical {
     grid-template-rows: 1fr 1fr;
     row-gap: $padding;
   }
 
-  &.top-bottom-push-top {
-    grid-template-rows: auto 1fr;
-    row-gap: $padding;
-  }
-
-  &.top-bottom-push-bottom {
-    grid-template-rows: 1fr auto;
-    row-gap: $padding;
+  &.horizontal-batch {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: none !important;
+    column-gap: $padding;
   }
 
   &.separated-input-output {
@@ -35,13 +31,13 @@ $padding: var(--input-output-fields-spacing);
       padding: $padding;
     }
 
-    &.side-by-side {
+    &.horizontal {
       .ToolAreaInput {
         border-right: 1px solid var(--border-color);
       }
     }
 
-    &.top-bottom, &.top-bottom-push-top, &.top-bottom-push-bottom {
+    &.vertical {
       .ToolAreaInput {
         border-bottom: 1px solid var(--border-color);
       }

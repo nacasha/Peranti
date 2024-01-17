@@ -1,3 +1,5 @@
+$border-radius: 20px;
+
 @supports (-webkit-appearance: none) or (-moz-appearance: none) {
   .Switch {
     transform: scale(0.8);
@@ -74,7 +76,7 @@
   }
 
   .Switch input[type=checkbox]:not(.switch) {
-    border-radius: 7px;
+    border-radius: $border-radius;
   }
   .Switch input[type=checkbox]:not(.switch):after {
     width: 5px;
@@ -91,12 +93,12 @@
   }
   .Switch input[type=checkbox].switch {
     width: 38px;
-    border-radius: 11px;
+    border-radius: $border-radius;
   }
   .Switch input[type=checkbox].switch:after {
     left: 2px;
     top: 2px;
-    border-radius: 50%;
+    border-radius: $border-radius;
     width: 17px;
     height: 17px;
     background: var(--ab, var(--border));
@@ -117,4 +119,10 @@
 .Switch *:before,
 .Switch *:after {
   box-sizing: inherit;
+}
+
+.AppRoot.dark {
+  .Switch .switch:not(:checked) {
+    background-color: var(--button-color);
+  }
 }

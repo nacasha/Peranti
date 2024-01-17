@@ -1,6 +1,5 @@
-import { type ToolLayoutEnum } from "src/enums/ToolLayoutEnum"
-
 import { type ToolInput } from "./ToolInput.js"
+import { type ToolLayoutSetting } from "./ToolLayoutSetting.js"
 import { type ToolOutput } from "./ToolOutput.js"
 
 export interface ToolConstructor<
@@ -41,24 +40,9 @@ export interface ToolConstructor<
   action: (input: InputFields) => OutputFields | undefined | Promise<OutputFields>
 
   /**
-   * Layout used to show the input and output area, default is "side-by-side"
+   * Tool layout setting
    */
-  layout?: ToolLayoutEnum
-
-  /**
-   * Swap input and output position in tool area, default is "false"
-   */
-  layoutReversed?: boolean
-
-  /**
-   * Layout direction for input area, default is "vertical"
-   */
-  inputsLayoutDirection?: "horizontal" | "vertical"
-
-  /**
-   * Layout direction for output area, default is "vertical"
-   */
-  outputsLayoutDirection?: "horizontal" | "vertical"
+  layoutSetting?: ToolLayoutSetting
 
   /**
    * Pipelines

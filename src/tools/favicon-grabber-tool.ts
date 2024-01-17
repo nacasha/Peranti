@@ -1,4 +1,5 @@
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
+import { ResponseType, fetch } from "@tauri-apps/api/http"
+
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
@@ -10,38 +11,21 @@ interface OutputFields {
   output: unknown
 }
 
-function getFavicon(url: any, callback: any) {
+async function getFavicon(url: any) {
   // Make a request to the website's root
-  fetch(url)
-    .then(async response => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok")
-      }
-      return await response.text()
-    })
-    .then(html => {
-      // Parse the HTML to find the favicon link
-      const regex = /<link.*?rel=["']icon["'].*?href=["'](.*?)["'].*?>/i
-      const match = html.match(regex)
+  const response = await fetch(`https://www.google.com/s2/favicons?domain=${url}&sz=128`, {
+    method: "GET",
+    timeout: 30,
+    responseType: ResponseType.Text
+  })
 
-      if (match?.[1]) {
-        // If a match is found, pass the favicon URL to the callback
-        callback(null, match[1])
-      } else {
-        callback(new Error("Favicon not found"))
-      }
-    })
-    .catch(error => {
-      // Handle any errors that occurred during the fetch
-      callback(error)
-    })
+  return response
 }
 
 const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "favicon-grabber-tool",
   name: "Favicon Grabber",
   category: "Image",
-  layout: ToolLayoutEnum.SideBySide,
   autoRun: false,
   inputFields: [
     {
@@ -61,23 +45,15 @@ const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "Output",
-      component: "Textarea"
+      component: "ImageBinary"
     }
   ],
   action: async(inputParams) => {
     const { websiteUrl } = inputParams
+    const result = await getFavicon(websiteUrl)
+    console.log(result)
 
-    const result = await new Promise((resolve) => {
-      getFavicon(websiteUrl, (error: any, faviconURL: any) => {
-        if (error) {
-          resolve(error.message)
-        } else {
-          resolve(faviconURL)
-        }
-      })
-    })
-
-    return { output: result }
+    return { output: result?.data }
   }
 }
 

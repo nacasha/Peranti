@@ -2,7 +2,6 @@ import { clsx } from "clsx"
 import { observer } from "mobx-react"
 import { type FC } from "react"
 
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { toolRunnerStore } from "src/stores/toolRunnerStore.js"
 import { type ToolInput } from "src/types/ToolInput.ts"
 import { type ToolOutput } from "src/types/ToolOutput.ts"
@@ -14,19 +13,11 @@ import "./ToolArea.scss"
 
 export const ToolArea: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
-  const { batchInputKey, batchOutputKey, isBatchEnabled } = activeTool
-
-  const {
-    layout,
-    layoutReversed,
-    inputsLayoutDirection,
-    outputsLayoutDirection
-  } = activeTool
+  const { batchInputKey, batchOutputKey, isBatchEnabled, layoutSetting } = activeTool
+  const { direction, reversed, inputAreaDirection, inputAreaSize, outputAreaDirection, outputAreaSize } = layoutSetting
 
   const inputs = activeTool.getInputFields()
   const outputs = activeTool.getOutputFields()
-
-  const computedLayout = isBatchEnabled ? ToolLayoutEnum.SideBySide : layout
 
   const batchInput = inputs.find((input) => input.key === batchInputKey)
   const batchOutput = outputs.find((output) => output.key === batchOutputKey)
@@ -52,25 +43,39 @@ export const ToolArea: FC = observer(() => {
     ]
     : []
 
+  const computedLayoutDirection = isBatchEnabled ? "horizontal-batch" : direction
+  const isLayoutHorizontal = computedLayoutDirection === "horizontal"
+
   const computedInputs = isBatchEnabled ? batchInputs : inputs
   const computedOutputs = isBatchEnabled ? batchOutputs : outputs
+  const computedStyles = isLayoutHorizontal
+    ? {
+      gridTemplateColumns: `${inputAreaSize} ${outputAreaSize}`
+    }
+    : {
+      gridTemplateRows: `${inputAreaSize} ${outputAreaSize}`
+    }
 
   const classNames = {
-    reversed: layoutReversed
+    reversed
   }
 
   return (
-    <div className={clsx("ToolArea", computedLayout, classNames)}>
-      <ToolAreaInput
-        toolSessionId={activeTool.sessionId}
-        inputs={computedInputs}
-        direction={inputsLayoutDirection}
-      />
-      <ToolAreaOutput
-        toolSessionId={activeTool.sessionId}
-        outputs={computedOutputs}
-        direction={outputsLayoutDirection}
-      />
+    <div className={clsx("ToolArea", computedLayoutDirection, classNames)} style={computedStyles}>
+      {computedInputs.length > 0 && (
+        <ToolAreaInput
+          toolSessionId={activeTool.sessionId}
+          inputs={computedInputs}
+          direction={inputAreaDirection}
+        />
+      )}
+      {computedOutputs.length > 0 && (
+        <ToolAreaOutput
+          toolSessionId={activeTool.sessionId}
+          outputs={computedOutputs}
+          direction={outputAreaDirection}
+        />
+      )}
     </div>
   )
 })

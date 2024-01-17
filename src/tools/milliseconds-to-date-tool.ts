@@ -1,7 +1,6 @@
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
@@ -20,7 +19,10 @@ const millisecondsToDate: ToolConstructor<InputFields, OutputFields> = {
   toolId: "milliseconds-to-date",
   name: "Milliseconds To Date",
   category: "Date Time",
-  layout: ToolLayoutEnum.TopBottomAndPushToTop,
+  layoutSetting: {
+    direction: "vertical",
+    inputAreaSize: "auto"
+  },
   inputFields: [
     {
       key: "milliseconds",

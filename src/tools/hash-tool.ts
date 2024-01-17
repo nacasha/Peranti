@@ -1,7 +1,6 @@
 import hash from "hash.js"
 import hashMd5 from "md5"
 
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
@@ -20,7 +19,10 @@ const hashTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "hash",
   name: "Generate Hash",
   category: "Generator",
-  layout: ToolLayoutEnum.TopBottomAndPushToTop,
+  layoutSetting: {
+    direction: "vertical",
+    inputAreaSize: "auto"
+  },
   inputFields: [
     {
       key: "input",

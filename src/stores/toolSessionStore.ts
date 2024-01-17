@@ -45,9 +45,6 @@ class ToolSessionStore {
     const sessionCounters = this.sessionNames[tool.toolId]
     const smallestIndex = sessionCounters.findIndex((e) => e === undefined || e === null)
 
-    console.log(sessionCounters)
-    console.log(smallestIndex)
-
     if (smallestIndex === -1) {
       nextIndex = sessionCounters.length
     } else {
@@ -140,12 +137,7 @@ class ToolSessionStore {
       /**
        * Generate new sessionId to avoid using sessionId from toolHistory
        */
-      sessionId: Tool.generateSessionId(),
-
-      /**
-       * Remove existing sessionName from toolHistory in order to create new sessionName
-       */
-      sessionName: undefined
+      sessionId: Tool.generateSessionId()
     }
 
     this.createSession(mainTool, { toolHistory: clonedToolHistory })

@@ -1,4 +1,3 @@
-import { ToolLayoutEnum } from "src/enums/ToolLayoutEnum.ts"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
@@ -15,7 +14,6 @@ const jsonFormatter: ToolConstructor<InputFields, OutputFields> = {
   toolId: "json-formatter",
   name: "JSON Formatter",
   category: "JSON",
-  layout: ToolLayoutEnum.SideBySide,
   inputFields: [
     {
       key: "type",
