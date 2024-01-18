@@ -62,20 +62,16 @@ export const ToolArea: FC = observer(() => {
 
   return (
     <div className={clsx("ToolArea", computedLayoutDirection, classNames)} style={computedStyles}>
-      {computedInputs.length > 0 && (
-        <ToolAreaInput
-          toolSessionId={activeTool.sessionId}
-          inputs={computedInputs}
-          direction={inputAreaDirection}
-        />
-      )}
-      {computedOutputs.length > 0 && (
-        <ToolAreaOutput
-          toolSessionId={activeTool.sessionId}
-          outputs={computedOutputs}
-          direction={outputAreaDirection}
-        />
-      )}
+      <ToolAreaInput
+        toolSessionId={activeTool.sessionId}
+        inputs={computedInputs}
+        direction={inputAreaDirection}
+      />
+      <ToolAreaOutput
+        toolSessionId={activeTool.sessionId}
+        outputs={computedOutputs}
+        direction={outputAreaDirection}
+      />
     </div>
   )
 })

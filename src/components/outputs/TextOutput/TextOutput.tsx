@@ -15,6 +15,5 @@ export const TextOutput: FC<OutputComponentProps> = memo((props) => {
     </div>
   )
 }, (prevProps, nextProps) => {
-  console.log({ prevProps, nextProps })
   return prevProps.output !== nextProps.output
 })

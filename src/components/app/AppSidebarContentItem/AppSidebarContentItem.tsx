@@ -1,5 +1,5 @@
 import { clsx } from "clsx"
-import { type FC, type ReactNode } from "react"
+import { memo, type FC, type ReactNode } from "react"
 
 import "./AppSidebarContentItem.scss"
 
@@ -10,7 +10,7 @@ interface AppSidebarContentItemProps {
   onDoubleClick?: () => any
 }
 
-export const AppSidebarContentItem: FC<AppSidebarContentItemProps> = (props) => {
+export const AppSidebarContentItem: FC<AppSidebarContentItemProps> = memo((props) => {
   const { children, onClick, onDoubleClick, active } = props
 
   return (
@@ -22,4 +22,6 @@ export const AppSidebarContentItem: FC<AppSidebarContentItemProps> = (props) => 
       {children}
     </div>
   )
-}
+}, (prevProps, nextProps) => {
+  return prevProps.active === nextProps.active
+})

@@ -14,8 +14,10 @@
     "lint-fix": "eslint --fix src/**"
   },
   "dependencies": {
+    "@app-elements/use-mount": "^0.1.1",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/language": "^6.10.0",
+    "@cyntler/react-doc-viewer": "^1.14.1",
     "@tauri-apps/api": "^1.5.1",
     "@types/md5": "^2.3.5",
     "@types/uuid": "^9.0.7",
@@ -34,12 +36,14 @@
     "mobx": "^6.12.0",
     "mobx-persist-store": "^1.1.3",
     "mobx-react": "^9.1.0",
+    "mobx-utils": "^6.0.8",
     "react": "^18.2.0",
     "react-cool-onclickoutside": "^1.7.0",
     "react-diff-viewer": "^3.1.1",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.12",
     "simplebar-react": "^3.2.4",
+    "tauri-plugin-context-menu": "^0.7.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
@@ -48,6 +52,7 @@
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@vitejs/plugin-react": "^4.0.3",
+    "@welldone-software/why-did-you-render": "^8.0.1",
     "eslint": "^8.0.1",
     "eslint-config-standard-with-typescript": "^40.0.0",
     "eslint-import-resolver-typescript": "^3.6.1",

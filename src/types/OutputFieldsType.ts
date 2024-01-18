@@ -11,4 +11,5 @@ export namespace OutputFieldsType {
   export type Textarea = ExtractType<typeof listOfOutputComponent.Textarea>
   export type GridStat = ExtractType<typeof listOfOutputComponent.GridStat>
   export type Image = ExtractType<typeof listOfOutputComponent.Image>
+  export type File = ExtractType<typeof listOfOutputComponent.File>
 }

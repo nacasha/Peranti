@@ -1,4 +1,5 @@
 import { DiffOutput } from "./DiffOutput"
+import { FileOutput } from "./FileOutput"
 import { GridStatOutput } from "./GridStatOutput"
 import { ImageOutput } from "./ImageOutput"
 import { TextOutput } from "./TextOutput"
@@ -9,5 +10,6 @@ export const listOfOutputComponent = {
   Text: TextOutput,
   GridStat: GridStatOutput,
   Diff: DiffOutput,
-  Image: ImageOutput
+  Image: ImageOutput,
+  File: FileOutput
 }

@@ -20,8 +20,6 @@ export const SwitchInput: FC<SwitchInputProps> = memo((props) => {
     onSubmit(option.value)
   }
 
-  console.log("render, label")
-
   return (
     <div className={clsx("SwitchInput", readOnly && "read-only")}>
       <label className="InputOutputLabel" htmlFor={id}>
@@ -41,8 +39,6 @@ export const SwitchInput: FC<SwitchInputProps> = memo((props) => {
     </div>
   )
 }, (prevProps, nextProps) => {
-  console.log({ prevProps, nextProps })
-
-  return prevProps.label !== nextProps.label ||
-  prevProps.readOnly !== nextProps.readOnly
+  return prevProps.label === nextProps.label &&
+  prevProps.readOnly === nextProps.readOnly
 })

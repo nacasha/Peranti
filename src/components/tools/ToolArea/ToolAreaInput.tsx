@@ -1,5 +1,5 @@
 import { clsx } from "clsx"
-import { type FC } from "react"
+import { memo, type FC } from "react"
 
 import { type ToolInput } from "src/types/ToolInput.ts"
 
@@ -11,7 +11,7 @@ interface ToolAreaInputProps {
   direction?: "horizontal" | "vertical"
 }
 
-export const ToolAreaInput: FC<ToolAreaInputProps> = (props) => {
+export const ToolAreaInput: FC<ToolAreaInputProps> = memo((props) => {
   const { toolSessionId, inputs, direction } = props
 
   return (
@@ -28,4 +28,6 @@ export const ToolAreaInput: FC<ToolAreaInputProps> = (props) => {
       ))}
     </div>
   )
-}
+}, (prevProps, nextprops) => {
+  return prevProps.toolSessionId === nextprops.toolSessionId
+})

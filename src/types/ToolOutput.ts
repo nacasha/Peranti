@@ -46,9 +46,15 @@ interface ToolOutputImage<K extends Record<string, string> = any> extends BaseOu
   props?: ExtractOutputComponentProps<typeof listOfOutputComponent.Image>
 }
 
+interface ToolOutputFile<K extends Record<string, string> = any> extends BaseOutput<K> {
+  component: "File"
+  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.File>
+}
+
 export type ToolOutput<K extends Record<string, string> = any> =
   ToolOutputText<K>
   | ToolOutputTextarea<K>
   | ToolOutputGridStat<K>
   | ToolOutputDiff<K>
   | ToolOutputImage<K>
+  | ToolOutputFile<K>

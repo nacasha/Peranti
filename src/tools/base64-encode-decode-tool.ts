@@ -42,11 +42,17 @@ const base64EncodeDecodeTool: ToolConstructor<InputFields, OutputFields> = {
     }
   ],
   action({ input, type }) {
-    if (type === "encode") {
-      return { output: btoa(input) }
+    try {
+      if (type === "encode") {
+        return { output: btoa(input) }
+      }
+      return { output: atob(input) }
+    } catch (error) {
+      if (type === "encode") {
+        return { output: "Unable to encode text" }
+      }
+      return { output: "Unable to decode text" }
     }
-
-    return { output: atob(input) }
   }
 }
 

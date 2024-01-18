@@ -10,6 +10,10 @@ import { toolRunnerStore } from "./toolRunnerStore.js"
 import { toolStore } from "./toolStore.js"
 
 class ToolSessionStore {
+  isPersisted: boolean = false
+
+  isInitialized: boolean = false
+
   /**
    * Allow editor to have multiple sessions at once
    */
@@ -62,7 +66,14 @@ class ToolSessionStore {
    */
   constructor() {
     makeAutoObservable(this)
+  }
 
+  loadPersistence() {
+    if (this.isPersisted) {
+      return
+    }
+
+    this.isPersisted = true
     void makePersistable(this, {
       name: "ToolSessionStore",
       properties: [
@@ -88,7 +99,16 @@ class ToolSessionStore {
         }
       ] as any,
       storage: window.localStorage
+    }, {
+      delay: 500,
+      fireImmediately: false
+    }).then(() => {
+      this.setIsInitialized(true)
     })
+  }
+
+  private setIsInitialized(value: boolean) {
+    this.isInitialized = value
   }
 
   /**

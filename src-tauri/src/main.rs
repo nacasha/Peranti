@@ -12,6 +12,7 @@ fn greet(name: &str) -> String {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_context_menu::init())
         .invoke_handler(tauri::generate_handler![greet])
         .setup(|app| {
             let window = app.get_window("main").unwrap();
