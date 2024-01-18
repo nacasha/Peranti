@@ -156,7 +156,7 @@ export class Tool<
    * @param preset
    * @returns
    */
-  static mergeWithPresets(toolConstructor: ToolConstructor, preset: ToolPreset) {
+  static mergeWithPreset(toolConstructor: ToolConstructor, preset: ToolPreset) {
     let presetInputs = []
 
     if (Array.isArray(toolConstructor.inputFields)) {
@@ -187,6 +187,7 @@ export class Tool<
       name: preset.name,
       toolId: preset.presetId,
       inputFields: presetInputs as any,
+      category: preset.category ?? toolConstructor.category,
       type: "Preset"
     }
 

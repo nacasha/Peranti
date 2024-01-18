@@ -16,9 +16,7 @@ export const ToolTabbar: FC = observer(() => {
   const isToolActive = (tool: Tool) => tool.sessionId === activeTool.sessionId
 
   const onClickAddTab = () => {
-    for (let index = 0; index < 10; index++) {
-      toolSessionStore.createSession(activeTool)
-    }
+    toolSessionStore.createSession(activeTool)
   }
 
   const onClickTab = (tool: Tool) => () => {

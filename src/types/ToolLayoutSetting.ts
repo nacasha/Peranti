@@ -1,7 +1,7 @@
 export interface ToolLayoutSetting {
   /**
-     * Switch position between input area and output area, default is false
-     */
+   * Switch position between input area and output area, default is false
+   */
   reversed?: boolean
 
   /**

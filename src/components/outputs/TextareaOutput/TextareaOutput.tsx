@@ -1,5 +1,5 @@
 import { observer } from "mobx-react"
-import { type FC } from "react"
+import { memo, type FC } from "react"
 
 import { BaseCodeMirror, type BaseCodeMirrorProps } from "src/components/common/BaseCodeMirror"
 import type { OutputComponentProps } from "src/types/OutputComponentProps.ts"

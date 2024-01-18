@@ -56,6 +56,11 @@ interface ToolInputSelect<K extends Record<string, string> = any> extends BaseIn
   props?: ExtractInputComponentProps<typeof listOfInputComponent.Select>
 }
 
+interface ToolInputFile<K extends Record<string, string> = any> extends BaseInput<K> {
+  component: "File"
+  props?: ExtractInputComponentProps<typeof listOfInputComponent.File>
+}
+
 export type ToolInput<K extends Record<string, string> = any> =
   ToolInputText<K>
   | ToolInputTextarea<K>
@@ -63,3 +68,4 @@ export type ToolInput<K extends Record<string, string> = any> =
   | ToolInputButton<K>
   | ToolInputCheckbox<K>
   | ToolInputSelect<K>
+  | ToolInputFile<K>

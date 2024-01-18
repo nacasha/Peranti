@@ -1,5 +1,5 @@
 import { clsx } from "clsx"
-import { type FC, useId, useState } from "react"
+import { type FC, useId, useState, memo } from "react"
 
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
@@ -9,7 +9,7 @@ interface SwitchInputProps extends InputComponentProps {
   options: Array<{ value: string, label: string }>
 }
 
-export const SwitchInput: FC<SwitchInputProps> = (props) => {
+export const SwitchInput: FC<SwitchInputProps> = memo((props) => {
   const id = useId()
   const { label, options = [], onSubmit, defaultValue, readOnly } = props
   const [selectedOption, setSelectedOption] = useState<any>(defaultValue)
@@ -19,6 +19,8 @@ export const SwitchInput: FC<SwitchInputProps> = (props) => {
     setSelectedOption(option.value)
     onSubmit(option.value)
   }
+
+  console.log("render, label")
 
   return (
     <div className={clsx("SwitchInput", readOnly && "read-only")}>
@@ -38,4 +40,9 @@ export const SwitchInput: FC<SwitchInputProps> = (props) => {
       </div>
     </div>
   )
-}
+}, (prevProps, nextProps) => {
+  console.log({ prevProps, nextProps })
+
+  return prevProps.label !== nextProps.label ||
+  prevProps.readOnly !== nextProps.readOnly
+})

@@ -44,6 +44,8 @@ module.exports = {
     "react/jsx-curly-brace-presence": ["warn", { props: "never", children: "never" }],
     "react/jsx-closing-tag-location": "warn",
     "react/jsx-closing-bracket-location": ["warn", "tag-aligned"],
+    "react/display-name": "off",
+    "react/prop-types": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/indent": ["error", 2],
     "@typescript-eslint/quotes": ["error", "double"],

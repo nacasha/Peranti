@@ -4,6 +4,7 @@ import characterCounterTool from "src/tools/character-counter-tool.ts"
 import compareListTool from "src/tools/compare-list-tool.js"
 import cronReadableTool from "src/tools/cron-readable-tool.js"
 import faviconGrabberTool from "src/tools/favicon-grabber-tool.js"
+import fileToBase64Tool from "src/tools/file-to-base-64-tool"
 import generateRandomStringTool from "src/tools/generate-random-string.js"
 import generateUuidTool from "src/tools/generate-uuid-tool.js"
 import hashTool from "src/tools/hash-tool.js"
@@ -34,8 +35,16 @@ class ToolStore {
       name: "SQL Where Query",
       inputValues: {
         prefix: "'",
-        suffix: "',",
-        input: ""
+        suffix: "',"
+      }
+    },
+    {
+      toolId: "jsonata",
+      presetId: "jsonata-get-rs-outstanding",
+      name: "Get RS Outstanding",
+      category: "JFS",
+      inputValues: {
+        expression: "$.data.{\n\t\"loanApplicationId\": loanApplicationId,\n\t\"outstanding\": $sum(repaymentSchedule.amountDetail.(expected - paid))\n}"
       }
     }
   ]
@@ -64,13 +73,14 @@ class ToolStore {
     [faviconGrabberTool.toolId]: faviconGrabberTool,
     [textEditorTool.toolId]: textEditorTool,
     [jsonDiffTool.toolId]: jsonDiffTool,
-    [jsonataTool.toolId]: jsonataTool
+    [jsonataTool.toolId]: jsonataTool,
+    [fileToBase64Tool.toolId]: fileToBase64Tool
   }
 
   get mapOfTools() {
     const presets = Object.fromEntries(this._toolPresets.map((preset) => {
       const toolConstructor = this._mapOfTools[preset.toolId]
-      const tool = Tool.mergeWithPresets(toolConstructor, preset)
+      const tool = Tool.mergeWithPreset(toolConstructor, preset)
 
       return [tool.toolId, tool]
     }))

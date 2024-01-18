@@ -41,7 +41,7 @@ const base64EncodeDecodeTool: ToolConstructor<InputFields, OutputFields> = {
       component: "Textarea"
     }
   ],
-  action({ input, type }: { input: string, type: string }) {
+  action({ input, type }) {
     if (type === "encode") {
       return { output: btoa(input) }
     }

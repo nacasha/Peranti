@@ -1,6 +1,6 @@
 import { clsx } from "clsx"
 import { observer } from "mobx-react"
-import { type FC } from "react"
+import { useMemo, type FC } from "react"
 
 import { AppSidebarContentItem } from "src/components/app/AppSidebarContentItem"
 import { SidebarMode } from "src/enums/SidebarMode"
@@ -17,6 +17,7 @@ export const ToolSidebar: FC = observer(() => {
   // TODO: Configurable
   const groupToolsByCategory = true
   const sortToolAZ = true
+  const sortCategoryAZ = true
 
   /**
    * All tools will be categorized as General by default
@@ -46,6 +47,17 @@ export const ToolSidebar: FC = observer(() => {
         return [category, tools.sort((a, b) => a.name < b.name ? -1 : 0)]
       })
     )
+  }
+
+  /**
+   * Sort categories name
+   */
+  if (sortCategoryAZ) {
+    listOfCategoriesAndTools = useMemo(() => Object.fromEntries(
+      Object.entries(listOfCategoriesAndTools).sort(([categoryA], [categoryB]) => {
+        return categoryA < categoryB ? -1 : 0
+      })
+    ), [])
   }
 
   const onClickSidebarItem = (tool: ToolConstructor) => () => {

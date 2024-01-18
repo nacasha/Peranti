@@ -18,6 +18,12 @@ const jsonataTool: ToolConstructor<InputFields, OutputFields> = {
   category: "JSON",
   inputFields: [
     {
+      key: "expression",
+      label: "Expression",
+      component: "Textarea",
+      defaultValue: ""
+    },
+    {
       key: "jsonString",
       label: "JSON",
       component: "Textarea",
@@ -25,12 +31,6 @@ const jsonataTool: ToolConstructor<InputFields, OutputFields> = {
       props: {
         language: "json"
       }
-    },
-    {
-      key: "expression",
-      label: "Expression",
-      component: "Textarea",
-      defaultValue: ""
     }
   ],
   outputFields: [

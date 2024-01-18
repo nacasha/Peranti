@@ -3,4 +3,5 @@ export interface ToolPreset {
   presetId: string
   name: string
   inputValues: any
+  category?: string
 }

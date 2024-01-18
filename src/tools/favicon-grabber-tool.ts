@@ -14,7 +14,7 @@ interface OutputFields {
 
 async function getFavicon(url: any) {
   // Make a request to the website's root
-  const response = await fetch(`https://www.google.com/s2/favicons?domain=${url}&sz=128`, {
+  const response = await fetch(`https://www.google.com/s2/favicons?domain=${url}&sz=180`, {
     method: "GET",
     timeout: 30,
     responseType: ResponseType.Binary
