@@ -12,7 +12,7 @@ interface OutputFields {
 
 const uriEncodeDecodeTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "uri-encode-decode",
-  name: "URL Encode Decode",
+  name: "URI Encode Decode",
   category: "Encode / Decode",
   inputFields: [
     {

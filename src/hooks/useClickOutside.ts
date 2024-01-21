@@ -7,7 +7,7 @@ const useClickOutside = <T extends HTMLElement>(
   const isMounted = useRef(false)
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const onClickOutside = (event: MouseEvent) => {
       if (isMounted.current && ref.current && !ref.current.contains(event.target as Node)) {
         callback()
       } else {
@@ -15,11 +15,11 @@ const useClickOutside = <T extends HTMLElement>(
       }
     }
 
-    document.addEventListener("click", handleClickOutside)
+    document.addEventListener("click", onClickOutside)
 
     return () => {
       isMounted.current = false
-      document.removeEventListener("click", handleClickOutside)
+      document.removeEventListener("click", onClickOutside)
     }
   }, [ref, callback])
 }

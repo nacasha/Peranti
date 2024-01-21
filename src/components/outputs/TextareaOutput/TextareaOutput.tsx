@@ -1,5 +1,4 @@
-import { observer } from "mobx-react"
-import { memo, type FC } from "react"
+import { type FC } from "react"
 
 import { BaseCodeMirror, type BaseCodeMirrorProps } from "src/components/common/BaseCodeMirror"
 import type { OutputComponentProps } from "src/types/OutputComponentProps.ts"
@@ -8,7 +7,7 @@ import "./TextareaOutput.scss"
 
 interface TextareaOutputProps extends OutputComponentProps, BaseCodeMirrorProps {}
 
-export const TextareaOutput: FC<TextareaOutputProps> = observer((props) => {
+export const TextareaOutput: FC<TextareaOutputProps> = (props) => {
   const { output, label = "Output", ...restprops } = props
 
   return (
@@ -23,4 +22,4 @@ export const TextareaOutput: FC<TextareaOutputProps> = observer((props) => {
       </div>
     </div>
   )
-})
+}

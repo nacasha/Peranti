@@ -1,7 +1,5 @@
 import { clsx } from "clsx"
-import { observer } from "mobx-react"
-import { useEffect } from "react"
-import { showMenu } from "tauri-plugin-context-menu"
+import { type ReactNode, useEffect } from "react"
 import "simplebar-react/dist/simplebar.min.css"
 
 import { interfaceStore } from "src/stores/interfaceStore.ts"
@@ -12,52 +10,16 @@ import { AppStatusbar } from "./components/app/AppStatusbar"
 import { AppTitlebar } from "./components/app/AppTitlebar"
 import { AppWindowSizeListener } from "./components/app/AppWindowSizeListener"
 import { AppWindowSizeObserver } from "./components/app/AppWindowSizeObserver"
+import { useSelector } from "./hooks/useSelector.js"
 import { ToolPage } from "./pages/ToolPage"
 import { toolStore } from "./stores/toolStore.js"
 
-const AppRoot = observer(({ children }: any) => {
-  const { theme } = interfaceStore
-
-  return (
-    <div className={clsx("AppRoot", theme)}>
-      {children}
-    </div>
-  )
-})
-
+/**
+ * App
+ *
+ * @returns ReactNode
+ */
 export const App = () => {
-  useEffect(() => {
-    toolStore.initTools()
-
-    void showMenu({
-      items: [
-        {
-          label: "Item 1",
-          disabled: false,
-          event: "item1clicked",
-          payload: "Hello World!",
-          shortcut: "ctrl+M",
-          subitems: [
-            {
-              label: "Subitem 1",
-              disabled: true,
-              event: "subitem1clicked"
-            },
-            {
-              is_separator: true
-            },
-            {
-              label: "Subitem 2",
-              disabled: false,
-              checked: true,
-              event: "subitem2clicked"
-            }
-          ]
-        }
-      ]
-    })
-  }, [])
-
   return (
     <AppRoot>
       <AppWindowSizeListener />
@@ -75,5 +37,25 @@ export const App = () => {
 
       <AppStatusbar />
     </AppRoot>
+  )
+}
+
+/**
+ * AppRoot
+ *
+ * @param param0 ReactNode
+ * @returns
+ */
+const AppRoot = ({ children }: { children: ReactNode }) => {
+  const theme = useSelector(() => interfaceStore.theme)
+
+  useEffect(() => {
+    toolStore.setupTools()
+  }, [])
+
+  return (
+    <div className={clsx("AppRoot", theme)}>
+      {children}
+    </div>
   )
 }

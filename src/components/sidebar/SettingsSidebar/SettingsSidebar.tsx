@@ -11,6 +11,7 @@ import "./SettingsSidebar.scss"
 export const SettingsSidebar: FC = () => {
   return (
     <div className="SettingsSidebar">
+      <div className="AppSidebarContent-title">Tools</div>
       <div className="section">
         <div className="section-title">Appearance</div>
         <div className="section-list">

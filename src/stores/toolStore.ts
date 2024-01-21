@@ -99,7 +99,7 @@ class ToolStore {
 
   @observable isToolsInitialized: boolean = false
 
-  initTools() {
+  setupTools() {
     const mapOfTools = () => {
       const presets = Object.fromEntries(this._toolPresets.map((preset) => {
         const toolConstructor = this._mapOfTools[preset.toolId]
@@ -131,11 +131,11 @@ class ToolStore {
     this.listOfTools = listOfTools()
     this.mapOfToolsName = mapOfToolsName()
 
-    this.generateToolsForSidebar()
-    toolSessionStore.loadPersistence()
+    this.setupToolsForSidebar()
+    toolSessionStore.setupPersistence()
   }
 
-  generateToolsForSidebar() {
+  private setupToolsForSidebar() {
     let listOfCategoriesAndTools: Record<string, ToolConstructor[]> = { General: [] }
     if (this.groupToolsByCategory) {
       listOfCategoriesAndTools = Object.fromEntries(toolStore.listOfTools.map((tool) => [tool.category, [] as Tool[]]))

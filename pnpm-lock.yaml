@@ -89,6 +89,9 @@ dependencies:
   react-error-boundary:
     specifier: ^4.0.12
     version: 4.0.12(react@18.2.0)
+  react-hotkeys-hook:
+    specifier: ^4.4.4
+    version: 4.4.4(react-dom@18.2.0)(react@18.2.0)
   simplebar-react:
     specifier: ^3.2.4
     version: 3.2.4(react@18.2.0)
@@ -3516,6 +3519,16 @@ packages:
     dependencies:
       '@babel/runtime': 7.23.6
       react: 18.2.0
+    dev: false
+
+  /react-hotkeys-hook@4.4.4(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-wzZmqb/Obr0ds9Myc1sIFPJ52GA/Eeg/vXBWV0HA1LvHlVAW5Va3KB0q6EZNlNSHQWscWZ2K8+6w0GYSie2o7A==}
+    peerDependencies:
+      react: '>=16.8.1'
+      react-dom: '>=16.8.1'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /react-is@16.13.1:

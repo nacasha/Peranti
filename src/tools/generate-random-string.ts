@@ -31,7 +31,7 @@ const generateRandomStringTool: ToolConstructor<InputFields, OutputFields> = {
       key: "stringLength",
       label: "String Length",
       component: "Text",
-      defaultValue: 25
+      defaultValue: 40
     },
     {
       key: "smallAz",

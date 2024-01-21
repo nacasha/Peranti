@@ -30,7 +30,11 @@ const base64ToFileTool: ToolConstructor<InputFields, OutputFields> = {
     }
   ],
   async action({ input }) {
-    return { output: input }
+    if (input.trim().length === 0) {
+      return { output: [] }
+    }
+
+    return { output: [input] }
   }
 }
 

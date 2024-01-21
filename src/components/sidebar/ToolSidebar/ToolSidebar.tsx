@@ -1,9 +1,9 @@
 import { clsx } from "clsx"
-import { observer } from "mobx-react"
-import { type FC } from "react"
+import { type ReactNode, type FC } from "react"
 
 import { AppSidebarContentItem } from "src/components/app/AppSidebarContentItem"
 import { SidebarMode } from "src/enums/SidebarMode"
+import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/stores/interfaceStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { toolSessionStore } from "src/stores/toolSessionStore"
@@ -12,8 +12,36 @@ import { type ToolConstructor } from "src/types/ToolConstructor"
 
 import "./ToolSidebar.scss"
 
-export const ToolSidebar: FC = observer(() => {
-  const { listOfCategoriesAndTools, groupToolsByCategory } = toolStore
+export const ToolSidebar: FC = () => {
+  const listOfCategoriesAndTools = useSelector(() => toolStore.listOfCategoriesAndTools)
+  const groupToolsByCategory = useSelector(() => toolStore.groupToolsByCategory)
+
+  return (
+    <div className="ToolSidebar">
+      <div className="AppSidebarContent-title">Tools</div>
+      {Object.entries(listOfCategoriesAndTools).map(([category, tools]) => (
+        <div className="ToolSidebar-section" key={category}>
+          <div className={clsx("ToolSidebar-section-title", groupToolsByCategory && "show")}>
+            {category}
+          </div>
+          {tools.map((tool) => (
+            <ToolSidebarItem
+              key={tool.toolId}
+              tool={tool}
+            >
+              {tool.name}
+            </ToolSidebarItem>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const ToolSidebarItem: FC<{ tool: ToolConstructor, children: ReactNode }> = ({ tool }) => {
+  const isActive = useSelector(() => (
+    toolRunnerStore.getActiveTool().toolId === tool.toolId
+  ))
 
   const onClickSidebarItem = (tool: ToolConstructor) => () => {
     toolSessionStore.findOrCreateSession(tool)
@@ -23,21 +51,11 @@ export const ToolSidebar: FC = observer(() => {
   }
 
   return (
-    <div className="ToolSidebar">
-      {Object.entries(listOfCategoriesAndTools).map(([category, tools]) => (
-        <div className="ToolSidebar-section" key={category}>
-          <div className={clsx("ToolSidebar-section-title", groupToolsByCategory && "show")}>{category}</div>
-          {tools.map((tool) => (
-            <AppSidebarContentItem
-              key={tool.toolId}
-              active={toolRunnerStore.isToolActive(tool)}
-              onClick={onClickSidebarItem(tool)}
-            >
-              {tool.name}
-            </AppSidebarContentItem>
-          ))}
-        </div>
-      ))}
-    </div>
+    <AppSidebarContentItem
+      active={isActive}
+      onClick={onClickSidebarItem(tool)}
+    >
+      {tool.name}
+    </AppSidebarContentItem>
   )
-})
+}

@@ -1,8 +1,9 @@
 import { clsx } from "clsx"
-import { observer } from "mobx-react"
-import React, { type FC, useState, useEffect } from "react"
+import React, { type FC, useState } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
+import { useHotkeys } from "react-hotkeys-hook"
 
+import { useSelector } from "src/hooks/useSelector"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
@@ -10,44 +11,39 @@ import { type ToolConstructor } from "src/types/ToolConstructor"
 
 import "./ToolSearchBar.scss"
 
-export const ToolSearchBar = observer(() => {
+export const ToolSearchBar = () => {
+  const activeToolName = useSelector(() => toolRunnerStore.getActiveTool().name)
+
   const [isOpen, setIsOpen] = useState(false)
 
   const onClickSearch = () => {
     setIsOpen(!isOpen)
   }
 
-  const handleClickOutside = () => {
+  const onClickOutsideSearch = () => {
     setIsOpen(false)
   }
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === "k") {
-        setIsOpen(true)
-        event.preventDefault()
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [])
+  useHotkeys("ctrl+p, ctrl+k", (event) => {
+    event.preventDefault()
+    setIsOpen(true)
+  }, {
+    enableOnFormTags: ["input", "textarea"],
+    enableOnContentEditable: true
+  })
 
   return (
     <div className="ToolSearchBar">
       <div className="left-padding"></div>
       <div className="ToolSearch" onClick={onClickSearch}>
-        {toolRunnerStore.getActiveTool().name}
+        {activeToolName}
       </div>
       <div className="right-padding"></div>
 
-      {isOpen && <SearchComponent onClickOutside={handleClickOutside} />}
+      {isOpen && <SearchComponent onClickOutside={onClickOutsideSearch} />}
     </div>
   )
-})
+}
 
 interface SearchComponentProps {
   onClickOutside: () => any
@@ -69,7 +65,7 @@ const SearchComponent: FC<SearchComponentProps> = (props) => {
 
   const componentRef = useOnclickOutside(onClickOutside)
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const onKeyDownArrow = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowUp") {
       event.preventDefault()
       setSelectedIndex((oldIndex) => {
@@ -102,23 +98,15 @@ const SearchComponent: FC<SearchComponentProps> = (props) => {
     onClickOutside()
   }
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClickOutside()
-        event.preventDefault()
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [])
+  useHotkeys("escape", (event) => {
+    event.preventDefault()
+    onClickOutside()
+  }, {
+    enableOnFormTags: ["input"]
+  })
 
   return (
-    <div ref={componentRef} className="ToolSearchResult" onKeyDown={handleKeyDown}>
+    <div ref={componentRef} className="ToolSearchResult" onKeyDown={onKeyDownArrow}>
       <input tabIndex={0} className="search" autoFocus onChange={onSearchChange} />
       <div className="list">
         {tools.map((tool, index) => (

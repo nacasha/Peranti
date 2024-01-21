@@ -1,7 +1,7 @@
-import { observer } from "mobx-react"
 import { type FC } from "react"
 
 import { listOfOutputComponent } from "src/components/outputs"
+import { useSelector } from "src/hooks/useSelector"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
 
@@ -27,11 +27,11 @@ interface ToolOutputRendererProps {
   props: any
 }
 
-export const ToolOutputRenderer: FC<ToolOutputRendererProps> = observer((props) => {
+export const ToolOutputRenderer: FC<ToolOutputRendererProps> = (props) => {
   const { component, field, props: componentProps, label } = props
 
   const Component: FC<OutputComponentProps> = (listOfOutputComponent as any)[component]
-  const outputValue = toolRunnerStore.getActiveTool()?.outputValues?.[field]
+  const outputValue = useSelector(() => toolRunnerStore.getActiveTool()?.outputValues?.[field])
 
   return (
     <Component
@@ -41,4 +41,4 @@ export const ToolOutputRenderer: FC<ToolOutputRendererProps> = observer((props) 
       output={outputValue ?? ""}
     />
   )
-})
+}

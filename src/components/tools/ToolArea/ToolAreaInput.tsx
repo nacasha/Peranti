@@ -1,4 +1,5 @@
 import { clsx } from "clsx"
+import fastDeepEqual from "fast-deep-equal"
 import { memo, type FC } from "react"
 
 import { type ToolInput } from "src/types/ToolInput.ts"
@@ -7,27 +8,27 @@ import { ToolInputRenderer } from "../ToolInputRenderer"
 
 interface ToolAreaInputProps {
   toolSessionId: string
-  inputs: ToolInput[]
+  components: ToolInput[]
   direction?: "horizontal" | "vertical"
+  readOnly?: boolean
 }
 
 export const ToolAreaInput: FC<ToolAreaInputProps> = memo((props) => {
-  const { toolSessionId, inputs, direction } = props
+  const { toolSessionId, components, direction, readOnly } = props
 
   return (
     <div className={clsx("ToolAreaInput", direction)}>
-      {inputs.map((input) => (
+      {components.map((component) => (
         <ToolInputRenderer
-          key={toolSessionId.concat(input.key as any)}
-          field={input.key as any}
-          label={input.label}
-          component={input.component}
-          props={input.props}
-          defaultValue={input.defaultValue}
+          key={toolSessionId.concat(component.key as any)}
+          field={component.key as any}
+          label={component.label}
+          component={component.component}
+          props={component.props}
+          defaultValue={component.defaultValue}
+          readOnly={readOnly}
         />
       ))}
     </div>
   )
-}, (prevProps, nextprops) => {
-  return prevProps.toolSessionId === nextprops.toolSessionId
-})
+}, fastDeepEqual)

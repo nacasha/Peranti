@@ -1,7 +1,7 @@
 import { clsx } from "clsx"
-import { observer } from "mobx-react"
 import { type FC } from "react"
 
+import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/stores/interfaceStore"
 
 interface AppSidebarItemProps {
@@ -10,12 +10,9 @@ interface AppSidebarItemProps {
   icon: string
 }
 
-export const AppSidebarItem: FC<AppSidebarItemProps> = observer((props) => {
+export const AppSidebarItem: FC<AppSidebarItemProps> = (props) => {
   const { icon, label, menuId } = props
-
-  const isActive = (
-    interfaceStore.sidebarActiveMenuId === menuId
-  )
+  const isActive = useSelector(() => interfaceStore.sidebarActiveMenuId === menuId)
 
   const onClickItem = () => () => {
     if (interfaceStore.sidebarActiveMenuId !== menuId) {
@@ -36,4 +33,4 @@ export const AppSidebarItem: FC<AppSidebarItemProps> = observer((props) => {
       <img src={icon} alt={label}/>
     </div>
   )
-})
+}

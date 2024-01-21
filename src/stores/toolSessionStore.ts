@@ -10,8 +10,14 @@ import { toolRunnerStore } from "./toolRunnerStore.js"
 import { toolStore } from "./toolStore.js"
 
 class ToolSessionStore {
+  /**
+   * The store has been persisted
+   */
   isPersisted: boolean = false
 
+  /**
+   * The store has been initialized
+   */
   isInitialized: boolean = false
 
   /**
@@ -68,12 +74,13 @@ class ToolSessionStore {
     makeAutoObservable(this)
   }
 
-  loadPersistence() {
+  setupPersistence() {
     if (this.isPersisted) {
       return
     }
 
-    this.isPersisted = true
+    this.setIsPersisted(true)
+
     void makePersistable(this, {
       name: "ToolSessionStore",
       properties: [
@@ -109,6 +116,10 @@ class ToolSessionStore {
 
   private setIsInitialized(value: boolean) {
     this.isInitialized = value
+  }
+
+  private setIsPersisted(value: boolean) {
+    this.isPersisted = value
   }
 
   /**

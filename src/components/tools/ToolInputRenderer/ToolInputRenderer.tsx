@@ -1,4 +1,3 @@
-import { observer } from "mobx-react"
 import { type FC } from "react"
 
 import { listOfInputComponent } from "src/components/inputs"
@@ -37,12 +36,12 @@ interface ToolInputRendererProps {
   readOnly?: boolean
 }
 
-export const ToolInputRenderer: FC<ToolInputRendererProps> = observer((props) => {
-  const { component, field, props: componentProps, defaultValue, label } = props
+export const ToolInputRenderer: FC<ToolInputRendererProps> = (props) => {
+  const { component, field, props: componentProps, defaultValue, label, readOnly } = props
   const activeTool = toolRunnerStore.getActiveTool()
 
   const Component: FC<InputComponentProps> = (listOfInputComponent as any)[component]
-  const inputValue = toolRunnerStore.getActiveTool().inputValues[field]
+  const defaultValueFromTool = activeTool.inputValues[field]
 
   const onSubmit = (val: any) => {
     activeTool.setInputValue(field, val)
@@ -53,9 +52,9 @@ export const ToolInputRenderer: FC<ToolInputRendererProps> = observer((props) =>
       {...componentProps}
       label={label}
       key={field}
-      defaultValue={inputValue ?? defaultValue}
+      defaultValue={defaultValueFromTool ?? defaultValue}
       onSubmit={onSubmit}
-      readOnly={activeTool.isReadOnly}
+      readOnly={readOnly}
     />
   )
-})
+}

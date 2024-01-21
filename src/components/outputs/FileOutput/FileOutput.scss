@@ -1,0 +1,31 @@
+.FileOutput {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+
+  #react-doc-viewer {
+    #proxy-renderer {
+      border: 1px solid var(--border-color) !important;
+      background: var(--input-output-background-color) !important;
+
+      #no-renderer {
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+    }
+  }
+}
+
+.FileOutput-viewer-container {
+  position: relative;
+  flex: 1;
+}
+
+.FileOutput-viewer-body {
+  position: absolute;
+  inset: 0;
+}

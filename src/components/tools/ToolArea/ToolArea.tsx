@@ -1,6 +1,8 @@
 import { clsx } from "clsx"
+import fastDeepEqual from "fast-deep-equal"
 import { observer } from "mobx-react"
-import { type FC } from "react"
+import { memo, type FC } from "react"
+import { ErrorBoundary } from "react-error-boundary"
 
 import { toolRunnerStore } from "src/stores/toolRunnerStore.js"
 import { type ToolInput } from "src/types/ToolInput.ts"
@@ -13,7 +15,7 @@ import "./ToolArea.scss"
 
 export const ToolArea: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
-  const { batchInputKey, batchOutputKey, isBatchEnabled, layoutSetting } = activeTool
+  const { batchInputKey, batchOutputKey, isBatchEnabled, layoutSetting, isReadOnly } = activeTool
   const { direction, reversed, inputAreaDirection, inputAreaSize, outputAreaDirection, outputAreaSize } = layoutSetting
 
   const inputs = activeTool.getInputFields()
@@ -62,16 +64,50 @@ export const ToolArea: FC = observer(() => {
 
   return (
     <div className={clsx("ToolArea", computedLayoutDirection, classNames)} style={computedStyles}>
-      <ToolAreaInput
+      <ToolAreaBody
         toolSessionId={activeTool.sessionId}
         inputs={computedInputs}
-        direction={inputAreaDirection}
-      />
-      <ToolAreaOutput
-        toolSessionId={activeTool.sessionId}
         outputs={computedOutputs}
-        direction={outputAreaDirection}
+        inputLayoutDirection={inputAreaDirection}
+        outputLayoutDirection={outputAreaDirection}
+        readOnly={isReadOnly}
       />
     </div>
   )
 })
+
+interface ToolAreaBodyProps {
+  toolSessionId: string
+  inputs: ToolInput[]
+  inputLayoutDirection?: "horizontal" | "vertical"
+  outputs: ToolOutput[]
+  outputLayoutDirection?: "horizontal" | "vertical"
+  readOnly?: boolean
+}
+
+const ToolAreaBody: FC<ToolAreaBodyProps> = memo((props) => {
+  const {
+    inputLayoutDirection,
+    inputs,
+    outputLayoutDirection,
+    outputs,
+    toolSessionId,
+    readOnly
+  } = props
+
+  return (
+    <ErrorBoundary fallback={<div>Something went wrong</div>}>
+      <ToolAreaInput
+        toolSessionId={toolSessionId}
+        components={inputs}
+        direction={inputLayoutDirection}
+        readOnly={readOnly}
+      />
+      <ToolAreaOutput
+        toolSessionId={toolSessionId}
+        components={outputs}
+        direction={outputLayoutDirection}
+      />
+    </ErrorBoundary>
+  )
+}, fastDeepEqual)

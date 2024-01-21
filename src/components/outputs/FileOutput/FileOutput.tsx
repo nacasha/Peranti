@@ -3,15 +3,15 @@ import { useState, type FC, useEffect } from "react"
 
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
-interface FileOutputProps extends OutputComponentProps<string> {}
+import "./FileOutput.scss"
+
+interface FileOutputProps extends OutputComponentProps<string[]> {}
 
 export const FileOutput: FC<FileOutputProps> = (props) => {
-  const { output = "" } = props
+  const { label, output = [] } = props
   const [initialized, setInitialized] = useState(() => false)
 
-  const documents = [
-    { uri: output } // Remote file
-  ]
+  const documents = output.map((output) => ({ uri: output }))
 
   useEffect(() => {
     setTimeout(() => {
@@ -19,22 +19,27 @@ export const FileOutput: FC<FileOutputProps> = (props) => {
     }, 300)
   }, [])
 
-  if (!initialized) {
-    return null
-  }
-
   return (
-    <DocViewer
-      documents={documents}
-      initialActiveDocument={documents[0]}
-      pluginRenderers={DocViewerRenderers}
-      config={{
-        header: {
-          disableHeader: true,
-          disableFileName: true,
-          retainURLParams: false
-        }
-      }}
-    />
+    <div className="FileOutput">
+      <label className="InputOutputLabel">{label}</label>
+      {initialized && (
+        <div className="FileOutput-viewer-container">
+          <div className="FileOutput-viewer-body">
+            <DocViewer
+              documents={documents}
+              initialActiveDocument={documents[0]}
+              pluginRenderers={DocViewerRenderers}
+              config={{
+                header: {
+                  disableHeader: true,
+                  disableFileName: true,
+                  retainURLParams: false
+                }
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
