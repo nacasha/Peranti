@@ -3,30 +3,65 @@ import { observer } from "mobx-react"
 import { type MouseEventHandler, type FC } from "react"
 
 import { assets } from "src/constants/assets"
-import { type Tool } from "src/models/Tool"
+import { useHotkeysModified } from "src/hooks/useHotkeysModified"
+import { hotkeysStore } from "src/stores/hotkeysStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { toolSessionStore } from "src/stores/toolSessionStore"
+import { type ToolSession } from "src/types/ToolIdle"
 
 import "./ToolTabbar.scss"
 
 export const ToolTabbar: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
   const tabs = toolSessionStore.getRunningSessionsFromTool(activeTool.toolId)
+  const activeIndex = tabs.findIndex((tab) => tab.sessionId === activeTool.sessionId)
 
-  const isToolActive = (tool: Tool) => tool.sessionId === activeTool.sessionId
+  const isToolActive = (toolSession: ToolSession) => (
+    toolSession.sessionId === activeTool.sessionId
+  )
+
+  const onClickTab = (toolSession: ToolSession) => () => {
+    toolSessionStore.openSession(toolSession)
+  }
 
   const onClickAddTab = () => {
     toolSessionStore.createSession(activeTool)
   }
 
-  const onClickTab = (tool: Tool) => () => {
-    toolSessionStore.openSession(tool)
+  const onClickCloseTab = (toolSession: ToolSession): MouseEventHandler => (event) => {
+    event.stopPropagation()
+    toolSessionStore.closeSession(toolSession)
   }
 
-  const onClickCloseTab = (tool: Tool): MouseEventHandler => (event) => {
-    event.stopPropagation()
-    toolSessionStore.closeSession(tool)
-  }
+  useHotkeysModified(hotkeysStore.keys.TAB_NEW_EDITOR, (event) => {
+    event.preventDefault()
+    onClickAddTab()
+  })
+
+  useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_NEXT, (event) => {
+    event.preventDefault()
+    const nextActiveIndex = activeIndex + 1
+    if (nextActiveIndex > tabs.length - 1) {
+      toolSessionStore.openSession(tabs[0])
+    } else {
+      toolSessionStore.openSession(tabs[nextActiveIndex])
+    }
+  })
+
+  useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_NEXT, (event) => {
+    event.preventDefault()
+    const nextActiveIndex = activeIndex + 1
+    if (nextActiveIndex > tabs.length - 1) {
+      toolSessionStore.openSession(tabs[0])
+    } else {
+      toolSessionStore.openSession(tabs[nextActiveIndex])
+    }
+  })
+
+  useHotkeysModified(hotkeysStore.keys.TAB_CLOSE, (event) => {
+    event.preventDefault()
+    toolSessionStore.closeSession(activeTool.toSession())
+  })
 
   return (
     <div className="ToolTabbar">

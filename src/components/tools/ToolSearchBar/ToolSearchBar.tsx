@@ -1,9 +1,10 @@
 import { clsx } from "clsx"
 import React, { type FC, useState } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
-import { useHotkeys } from "react-hotkeys-hook"
 
+import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { useSelector } from "src/hooks/useSelector"
+import { hotkeysStore } from "src/stores/hotkeysStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
@@ -24,12 +25,9 @@ export const ToolSearchBar = () => {
     setIsOpen(false)
   }
 
-  useHotkeys("ctrl+p, ctrl+k", (event) => {
+  useHotkeysModified(hotkeysStore.keys.OPEN_SEARCH, (event) => {
     event.preventDefault()
     setIsOpen(true)
-  }, {
-    enableOnFormTags: ["input", "textarea"],
-    enableOnContentEditable: true
   })
 
   return (
@@ -98,11 +96,9 @@ const SearchComponent: FC<SearchComponentProps> = (props) => {
     onClickOutside()
   }
 
-  useHotkeys("escape", (event) => {
+  useHotkeysModified(hotkeysStore.keys.ESCAPE, (event) => {
     event.preventDefault()
     onClickOutside()
-  }, {
-    enableOnFormTags: ["input"]
   })
 
   return (

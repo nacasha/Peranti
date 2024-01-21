@@ -1,10 +1,12 @@
 import fastDeepEqual from "fast-deep-equal"
 import hashMd5 from "md5"
 import { observable, action, makeObservable, toJS } from "mobx"
+import { makePersistable, stopPersisting } from "mobx-persist-store"
 
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolHistory } from "src/types/ToolHistory"
+import { type ToolSession } from "src/types/ToolIdle"
 import { type ToolInput } from "src/types/ToolInput"
 import { type ToolLayoutSetting } from "src/types/ToolLayoutSetting"
 import { type ToolOutput } from "src/types/ToolOutput"
@@ -139,6 +141,8 @@ export class Tool<
    */
   @observable runCount: number = 0
 
+  toolHistory?: ToolHistory = undefined
+
   /**
    * Tool sessionId generator
    *
@@ -267,6 +271,51 @@ export class Tool<
     this.sessionName = assignedSessionName
 
     makeObservable(this)
+    this.setupPersistence()
+  }
+
+  static empty() {
+    return new Tool({
+      name: "",
+      toolId: "",
+      category: "",
+      action: () => ({}),
+      inputFields: [],
+      outputFields: []
+    })
+  }
+
+  private setupPersistence() {
+    /**
+     * Skip if it's an empty tool
+     */
+    if (!this.toolId) {
+      return
+    }
+
+    void makePersistable(this, {
+      name: "Tool".concat(this.sessionId),
+      properties: [
+        {
+          key: "toolHistory",
+          serialize: () => {
+            return this.toHistory()
+          },
+          deserialize: () => {
+            /**
+             * Do nothing when deserialize, as it is already handled
+             * by ToolSessionStore.getToolFromLocalStorage
+             */
+            return this
+          }
+        }
+      ] as any,
+      storage: window.localStorage
+    })
+  }
+
+  stopStore() {
+    stopPersisting(this)
   }
 
   /**
@@ -303,6 +352,12 @@ export class Tool<
       batchOutputKey,
       runCount
     }
+  }
+
+  toSession(): ToolSession {
+    const { sessionId, sessionName, toolId } = this
+
+    return { sessionId, sessionName, toolId }
   }
 
   /**

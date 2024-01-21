@@ -4,6 +4,7 @@ import { makePersistable } from "mobx-persist-store"
 import { Tool } from "src/models/Tool"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolHistory } from "src/types/ToolHistory.js"
+import { type ToolSession } from "src/types/ToolIdle.js"
 
 import { toolHistoryStore } from "./toolHistoryStore.js"
 import { toolRunnerStore } from "./toolRunnerStore.js"
@@ -26,19 +27,32 @@ class ToolSessionStore {
   enableMultipleSession = true
 
   /**
-   * List of running sessions
+   * List of tool sessions
    */
-  sessions: Tool[] = []
+  sessions: ToolSession[] = []
 
   /**
-   * Pair of toolId and list of running session name(s)
+   * Pair of toolId and list of created session names
    */
   sessionNames: Record<string, Array<string | undefined>> = {}
 
   /**
-   * Pair of toolId and sessionId
+   * Pair of toolId and last active sessionId
    */
   activeSessionIds: Record<string, string> = {}
+
+  getToolFromLocalStorage(toolSession: ToolSession) {
+    const toolData = localStorage.getItem("Tool".concat(toolSession.sessionId))
+
+    if (toolData) {
+      const { toolHistory }: { toolHistory: ToolHistory } = JSON.parse(toolData)
+      const toolConstructor = toolStore.mapOfTools[toolHistory.toolId]
+
+      return new Tool(toolConstructor, { toolHistory })
+    }
+
+    return Tool.empty()
+  }
 
   /**
    * Generate session name for tool
@@ -87,28 +101,9 @@ class ToolSessionStore {
         "sessionNames",
         "enableMultipleSession",
         "activeSessionIds",
-        {
-          key: "sessions",
-          serialize: (sessions: this["sessions"]) => {
-            /**
-             * Map all running sessions to history
-             */
-            const serializedSessions = sessions.map((session) => session.toHistory())
-            return serializedSessions
-          },
-          deserialize: (sessions: ToolHistory[]) => {
-            const toolSessions = sessions.map((session) => {
-              const mainTool = toolStore.mapOfTools[session.toolId]
-              return new Tool(mainTool, { toolHistory: session })
-            })
-            return toolSessions
-          }
-        }
-      ] as any,
+        "sessions"
+      ],
       storage: window.localStorage
-    }, {
-      delay: 500,
-      fireImmediately: false
     }).then(() => {
       this.setIsInitialized(true)
     })
@@ -147,8 +142,8 @@ class ToolSessionStore {
     /**
      * Push new tool into session
      */
-    this.pushIntoSessionList(tool)
-    this.openSession(tool)
+    this.pushIntoSessionList(tool.toSession())
+    this.openTool(tool)
   }
 
   /**
@@ -192,7 +187,16 @@ class ToolSessionStore {
      * Restore active session(s) of tool
      */
     } else {
+      const activeTool = toolRunnerStore.getActiveTool()
       const lastToolSessionId = this.activeSessionIds[toolConstructor.toolId]
+
+      /**
+       * Skip action if the session is already opened
+       */
+      if (activeTool.sessionId === lastToolSessionId) {
+        return
+      }
+
       const lastToolSession = runningSessions.find(
         (toolSession) => toolSession.sessionId === lastToolSessionId
       )
@@ -206,7 +210,22 @@ class ToolSessionStore {
    *
    * @param tool
    */
-  openSession(tool: Tool) {
+  openSession(toolSession: ToolSession) {
+    const tool = this.getToolFromLocalStorage(toolSession)
+    this.openTool(tool)
+  }
+
+  /**
+   * Open initizlied tool session
+   *
+   * @param tool
+   */
+  openTool(tool: Tool) {
+    const activeTool = toolRunnerStore.getActiveTool()
+    if (activeTool) {
+      activeTool.stopStore()
+    }
+
     toolRunnerStore.setActiveTool(tool)
     this.setActiveToolSessionId(tool)
   }
@@ -216,18 +235,24 @@ class ToolSessionStore {
    *
    * @param tool
    */
-  closeSession(tool: Tool) {
+  closeSession(toolSession: ToolSession) {
     const activeTool = toolRunnerStore.getActiveTool()
-    this.sessions = this.sessions.filter((session) => session.sessionId !== tool.sessionId)
-    this.saveToolToHistory(tool)
+    this.sessions = this.sessions.filter((session) => session.sessionId !== toolSession.sessionId)
 
-    if (activeTool.sessionId === tool.sessionId) {
-      const existingSessions = this.sessions.filter((session) => session.toolId === tool.toolId)
+    /**
+     * Save to history
+     */
+    this.saveClosedToolToHistory(toolSession)
+
+    if (activeTool.sessionId === toolSession.sessionId) {
+      const existingSessions = this.sessions.filter((session) => session.toolId === toolSession.toolId)
 
       /**
        * Create empty session if it's last session of the tool
        */
       if (existingSessions.length === 0) {
+        const toolConstructor = toolStore.mapOfTools[toolSession.toolId]
+
         /**
          * I have no idea but this code makes the method `createSession`
          * using the commited variable of `this.sessionNames`
@@ -236,7 +261,7 @@ class ToolSessionStore {
          * when closing the "Editor 1"
          */
         setTimeout(() => {
-          this.createSession(tool)
+          this.createSession(toolConstructor)
         }, 0)
 
       /**
@@ -247,19 +272,19 @@ class ToolSessionStore {
       }
     }
 
-    this.detachToolWithSessionNames(tool)
+    this.detachToolWithSessionNames(toolSession)
   }
 
   /**
    * Detach tool with default session names
    *
-   * @param tool
+   * @param toolSession
    */
-  detachToolWithSessionNames(tool: Tool) {
-    const deletedIndex = this.sessionNames[tool.toolId].findIndex((e) => e === tool.sessionName)
+  detachToolWithSessionNames(toolSession: ToolSession) {
+    const deletedIndex = this.sessionNames[toolSession.toolId].findIndex((e) => e === toolSession.sessionName)
 
     if (deletedIndex >= 0) {
-      this.sessionNames[tool.toolId][deletedIndex] = undefined
+      this.sessionNames[toolSession.toolId][deletedIndex] = undefined
     }
   }
 
@@ -268,7 +293,7 @@ class ToolSessionStore {
    *
    * @param tool
    */
-  setActiveToolSessionId(tool: Tool) {
+  setActiveToolSessionId(tool: ToolSession) {
     this.activeSessionIds[tool.toolId] = tool.sessionId
   }
 
@@ -277,7 +302,9 @@ class ToolSessionStore {
    *
    * @param tool
    */
-  private saveToolToHistory(tool: Tool) {
+  private saveClosedToolToHistory(toolSession: ToolSession) {
+    const tool = this.getToolFromLocalStorage(toolSession)
+
     if (
       tool.getIsInputAndOutputHasValues() &&
       (tool.isInputValuesModified || tool.isOutputValuesModified) &&
@@ -292,7 +319,7 @@ class ToolSessionStore {
    *
    * @param tool
    */
-  pushIntoSessionList(tool: Tool) {
+  pushIntoSessionList(tool: ToolSession) {
     this.sessions.push(tool)
   }
 
