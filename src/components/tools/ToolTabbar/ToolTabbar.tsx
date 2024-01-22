@@ -1,6 +1,7 @@
 import clsx from "clsx"
 import { observer } from "mobx-react"
-import { type MouseEventHandler, type FC } from "react"
+import { type MouseEventHandler, type FC, useEffect } from "react"
+import SimpleBar from "simplebar-react"
 
 import { assets } from "src/constants/assets"
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
@@ -20,17 +21,16 @@ export const ToolTabbar: FC = observer(() => {
     toolSession.sessionId === activeTool.sessionId
   )
 
-  const onClickTab = (toolSession: ToolSession) => () => {
-    toolSessionStore.openSession(toolSession)
-  }
-
   const onClickAddTab = () => {
-    toolSessionStore.createSession(activeTool)
+    const createdSession = toolSessionStore.createSession(activeTool)
+    focusActiveTab(createdSession.sessionId)
   }
 
-  const onClickCloseTab = (toolSession: ToolSession): MouseEventHandler => (event) => {
-    event.stopPropagation()
-    toolSessionStore.closeSession(toolSession)
+  const focusActiveTab = (sessionId: string) => {
+    const activeTab: HTMLDivElement | null = document.querySelector(`[data-session-id="${sessionId}"]`)
+    if (activeTab) {
+      activeTab.scrollIntoView()
+    }
   }
 
   useHotkeysModified(hotkeysStore.keys.TAB_NEW_EDITOR, (event) => {
@@ -41,21 +41,29 @@ export const ToolTabbar: FC = observer(() => {
   useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_NEXT, (event) => {
     event.preventDefault()
     const nextActiveIndex = activeIndex + 1
+    let toolSession
     if (nextActiveIndex > tabs.length - 1) {
-      toolSessionStore.openSession(tabs[0])
+      toolSession = tabs[0]
     } else {
-      toolSessionStore.openSession(tabs[nextActiveIndex])
+      toolSession = tabs[nextActiveIndex]
     }
+
+    toolSessionStore.openSession(toolSession)
+    focusActiveTab(toolSession.sessionId)
   })
 
-  useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_NEXT, (event) => {
+  useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_PREV, (event) => {
     event.preventDefault()
-    const nextActiveIndex = activeIndex + 1
-    if (nextActiveIndex > tabs.length - 1) {
-      toolSessionStore.openSession(tabs[0])
+    const nextActiveIndex = activeIndex - 1
+    let toolSession
+    if (nextActiveIndex < 0) {
+      toolSession = tabs[tabs.length - 1]
     } else {
-      toolSessionStore.openSession(tabs[nextActiveIndex])
+      toolSession = tabs[nextActiveIndex]
     }
+
+    toolSessionStore.openSession(toolSession)
+    focusActiveTab(toolSession.sessionId)
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CLOSE, (event) => {
@@ -66,24 +74,62 @@ export const ToolTabbar: FC = observer(() => {
   return (
     <div className="ToolTabbar">
       <div className="ToolTabbar-inner">
-        {tabs.map((tool) => (
-          <div
-            key={tool.sessionId}
-            className={clsx("ToolTabbar-item", { active: isToolActive(tool) })}
-            onClick={onClickTab(tool)}
-          >
-            {tool.sessionName}
-            {tool.isActionRunning ? " ..." : ""}
-            <div className="ToolTabbar-icon" onClick={onClickCloseTab(tool)}>
-              <img src={assets.CloseSVG} alt="Close Tab" />
-            </div>
-          </div>
-        ))}
+        <SimpleBar className="ToolTabbar-inner-simplebar">
+          {tabs.map((toolSession) => (
+            <TabItem
+              key={toolSession.sessionId}
+              toolSession={toolSession}
+              active={isToolActive(toolSession)}
+            />
+          ))}
 
-        <div onClick={onClickAddTab} className="ToolTabbar-item new">
-          <div className="ToolTabbar-icon"><img src={assets.PlusSVG} alt="Add Tab" /></div>
-        </div>
+          <div onClick={onClickAddTab} className="ToolTabbar-item new">
+            <div className="ToolTabbar-icon"><img src={assets.PlusSVG} alt="Add Tab" /></div>
+          </div>
+        </SimpleBar>
       </div>
     </div>
   )
 })
+
+interface TabItemProps {
+  toolSession: ToolSession
+  active: boolean
+}
+
+const TabItem: FC<TabItemProps> = (props) => {
+  const { toolSession, active } = props
+
+  const onClickTab = () => {
+    toolSessionStore.openSession(toolSession)
+  }
+
+  const onClickCloseTab: MouseEventHandler = (event) => {
+    event.stopPropagation()
+    toolSessionStore.closeSession(toolSession)
+  }
+
+  useEffect(() => {
+    if (active) {
+      const activeTab: HTMLDivElement | null = document.querySelector(`[data-session-id="${toolSession.sessionId}"]`)
+      if (activeTab) {
+        activeTab.scrollIntoView()
+      }
+    }
+  }, [])
+
+  return (
+    <div
+      key={toolSession.sessionId}
+      className={clsx("ToolTabbar-item", { active })}
+      onClick={onClickTab}
+      data-session-id={toolSession.sessionId}
+    >
+      {toolSession.sessionName}
+      {toolSession.isActionRunning ? " ..." : ""}
+      <div className="ToolTabbar-icon" onClick={onClickCloseTab}>
+        <img src={assets.CloseSVG} alt="Close Tab" />
+      </div>
+    </div>
+  )
+}

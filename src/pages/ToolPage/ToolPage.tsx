@@ -7,12 +7,13 @@ import { ToolBatchModeHeader } from "src/components/tools/ToolBatchModeHeader"
 import { ToolHeader } from "src/components/tools/ToolHeader"
 import { ToolRunner } from "src/components/tools/ToolRunner"
 import { ToolTabbar } from "src/components/tools/ToolTabbar"
+import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 
 import "./ToolPage.scss"
 
 export const ToolPage: FC = observer(() => {
-  if (!toolSessionStore.isInitialized) {
+  if (!toolSessionStore.isInitialized || toolRunnerStore.getActiveTool().toolId === "") {
     return
   }
 

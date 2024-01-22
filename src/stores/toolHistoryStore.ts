@@ -49,7 +49,7 @@ class ToolHistoryStore {
    * @param toolHistory
    */
   openHistory(toolHistory: ToolHistory) {
-    const toolConstructor = toolStore.mapOfTools[toolHistory.toolId]
+    const toolConstructor = toolStore.mapOfToolsAndPresets[toolHistory.toolId]
     const toolSession = new Tool(toolConstructor, { toolHistory, isReadOnly: true })
     toolRunnerStore.setActiveTool(toolSession)
   }

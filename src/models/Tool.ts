@@ -143,6 +143,8 @@ export class Tool<
 
   toolHistory?: ToolHistory = undefined
 
+  readonly disablePersistence: boolean = false
+
   /**
    * Tool sessionId generator
    *
@@ -203,7 +205,12 @@ export class Tool<
    */
   constructor(
     params: ToolConstructor<InputFields, OutputFields>,
-    options: { toolHistory?: ToolHistory, isReadOnly?: boolean, sessionName?: string } = {}
+    options: {
+      toolHistory?: ToolHistory
+      isReadOnly?: boolean
+      sessionName?: string
+      disablePersistence?: boolean
+    } = {}
   ) {
     const {
       action,
@@ -248,7 +255,7 @@ export class Tool<
     this.fillInputValuesWithDefault()
 
     let assignedSessionName
-    const { isReadOnly = false, toolHistory, sessionName } = options
+    const { isReadOnly = false, toolHistory, sessionName, disablePersistence = false } = options
 
     if (toolHistory) {
       this.sessionId = toolHistory.sessionId
@@ -269,6 +276,7 @@ export class Tool<
 
     this.isReadOnly = isReadOnly
     this.sessionName = assignedSessionName
+    this.disablePersistence = disablePersistence
 
     makeObservable(this)
     this.setupPersistence()
@@ -289,7 +297,7 @@ export class Tool<
     /**
      * Skip if it's an empty tool
      */
-    if (!this.toolId) {
+    if (!this.toolId || this.disablePersistence) {
       return
     }
 
@@ -575,7 +583,7 @@ export class Tool<
       } else if (i === pipelineTools.length - 1) {
         this.setOutputValues(pipelineResults[i - 1])
       } else {
-        const toolConstructor = toolStore.mapOfTools[pipeline.toolId]
+        const toolConstructor = toolStore.mapOfToolsAndPresets[pipeline.toolId]
         const tool = new Tool(toolConstructor)
         tool.canRunPipeline = false
 

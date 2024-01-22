@@ -41,14 +41,15 @@ class ToolSessionStore {
    */
   activeSessionIds: Record<string, string> = {}
 
-  getToolFromLocalStorage(toolSession: ToolSession) {
+  getToolFromLocalStorage(toolSession: ToolSession, options: { disablePersistence?: boolean } = {}) {
     const toolData = localStorage.getItem("Tool".concat(toolSession.sessionId))
 
     if (toolData) {
+      const { disablePersistence = false } = options
       const { toolHistory }: { toolHistory: ToolHistory } = JSON.parse(toolData)
-      const toolConstructor = toolStore.mapOfTools[toolHistory.toolId]
+      const toolConstructor = toolStore.mapOfToolsAndPresets[toolHistory.toolId]
 
-      return new Tool(toolConstructor, { toolHistory })
+      return new Tool(toolConstructor, { toolHistory, disablePersistence })
     }
 
     return Tool.empty()
@@ -88,6 +89,11 @@ class ToolSessionStore {
     makeAutoObservable(this)
   }
 
+  /**
+   * Setup persistence to load previous
+   *
+   * @returns
+   */
   setupPersistence() {
     if (this.isPersisted) {
       return
@@ -144,6 +150,8 @@ class ToolSessionStore {
      */
     this.pushIntoSessionList(tool.toSession())
     this.openTool(tool)
+
+    return tool.toSession()
   }
 
   /**
@@ -152,7 +160,7 @@ class ToolSessionStore {
    * @param toolHistory
    */
   createSessionFromHistory(toolHistory: ToolHistory) {
-    const mainTool = toolStore.mapOfTools[toolHistory.toolId]
+    const mainTool = toolStore.mapOfToolsAndPresets[toolHistory.toolId]
 
     /**
      * Deep copy toolHistory to new variable to avoid modifying original data
@@ -237,6 +245,8 @@ class ToolSessionStore {
    */
   closeSession(toolSession: ToolSession) {
     const activeTool = toolRunnerStore.getActiveTool()
+    const oldSessionsOfTool = this.sessions.filter((session) => session.toolId === toolSession.toolId)
+
     this.sessions = this.sessions.filter((session) => session.sessionId !== toolSession.sessionId)
 
     /**
@@ -245,13 +255,18 @@ class ToolSessionStore {
     this.saveClosedToolToHistory(toolSession)
 
     if (activeTool.sessionId === toolSession.sessionId) {
-      const existingSessions = this.sessions.filter((session) => session.toolId === toolSession.toolId)
+      const newSessionsOfTool = this.sessions.filter((session) => session.toolId === toolSession.toolId)
 
       /**
        * Create empty session if it's last session of the tool
        */
-      if (existingSessions.length === 0) {
-        const toolConstructor = toolStore.mapOfTools[toolSession.toolId]
+      if (newSessionsOfTool.length === 0) {
+        /**
+         * Reset name of session because list is already empty
+         */
+        this.sessionNames[toolSession.toolId] = ["reserved"]
+
+        const toolConstructor = toolStore.mapOfToolsAndPresets[toolSession.toolId]
 
         /**
          * I have no idea but this code makes the method `createSession`
@@ -265,10 +280,25 @@ class ToolSessionStore {
         }, 0)
 
       /**
-       * Open any session is there are more than one session(s) running
+       * Open existing sessions from tool
        */
       } else {
-        this.openSession(existingSessions[0])
+        let newSessionToBeOpened
+        const closedSessionIndex = oldSessionsOfTool.findIndex(
+          (session) => session.sessionId === toolSession.sessionId
+        )
+
+        if (closedSessionIndex >= 0) {
+          if (closedSessionIndex <= newSessionsOfTool.length - 1) {
+            newSessionToBeOpened = newSessionsOfTool[closedSessionIndex]
+          } else {
+            newSessionToBeOpened = newSessionsOfTool[closedSessionIndex - 1]
+          }
+        } else {
+          newSessionToBeOpened = newSessionsOfTool[0]
+        }
+
+        this.openSession(newSessionToBeOpened)
       }
     }
 
@@ -303,14 +333,16 @@ class ToolSessionStore {
    * @param tool
    */
   private saveClosedToolToHistory(toolSession: ToolSession) {
-    const tool = this.getToolFromLocalStorage(toolSession)
+    const toolHistory = this.getToolFromLocalStorage(toolSession, { disablePersistence: true })
 
-    if (
-      tool.getIsInputAndOutputHasValues() &&
-      (tool.isInputValuesModified || tool.isOutputValuesModified) &&
-      tool.runCount > 0
-    ) {
-      toolHistoryStore.addHistory(tool.toHistory())
+    if (toolHistory) {
+      if (
+        toolHistory.getIsInputAndOutputHasValues() &&
+      (toolHistory.isInputValuesModified || toolHistory.isOutputValuesModified) &&
+      toolHistory.runCount > 0
+      ) {
+        toolHistoryStore.addHistory(toolHistory.toHistory())
+      }
     }
   }
 

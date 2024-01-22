@@ -24,6 +24,8 @@
     "@uiw/codemirror-theme-github": "^4.21.21",
     "@uiw/codemirror-theme-monokai-dimmed": "^4.21.21",
     "@uiw/react-codemirror": "^4.21.21",
+    "axios": "^1.6.5",
+    "axios-tauri-api-adapter": "^0.2.1",
     "clsx": "^2.0.0",
     "cronstrue": "^2.47.0",
     "dayjs": "^1.11.10",

@@ -1,5 +1,3 @@
-import { observable } from "mobx"
-
 import { Tool } from "src/models/Tool"
 import base64EncodeDecodeTool from "src/tools/base64-encode-decode-tool.js"
 import base64ToFileTool from "src/tools/base64-to-file-tool.js"
@@ -11,6 +9,7 @@ import fileToBase64Tool from "src/tools/file-to-base-64-tool"
 import generateRandomStringTool from "src/tools/generate-random-string.js"
 import generateUuidTool from "src/tools/generate-uuid-tool.js"
 import hashTool from "src/tools/hash-tool.js"
+import jfsGetThTool from "src/tools/jfs-get-th-tool.js"
 import jsonDiffTool from "src/tools/json-diff-tool"
 import jsonFormatter from "src/tools/json-formatter-tool.js"
 import jsonataTool from "src/tools/jsonata-tool"
@@ -30,13 +29,64 @@ import { type ToolPreset } from "src/types/ToolPreset"
 import { toolSessionStore } from "./toolSessionStore.js"
 
 class ToolStore {
-  groupToolsByCategory: boolean = true
+  /**
+   * Groups the toos by it's categories
+   *
+   * @configurable
+   */
+  groupToolsByCategory: boolean = false
 
+  /**
+   * Sort tools by name A-Z
+   *
+   * @configurable
+   */
   sortToolAZ: boolean = true
 
+  /**
+   * Sort tool categories by name A-Z
+   *
+   * @configurable
+   */
   sortCategoryAZ: boolean = true
 
+  /**
+   * Pair of category name and list of tools
+   *
+   * Example:
+   * {
+   *    List: [compare-list, sort-list, remove-duplicate-list],
+   *    Text: [word-counter, text-transform]
+   * }
+   */
   listOfCategoriesAndTools: Record<string, ToolConstructor[]> = {}
+
+  /**
+   * List of all tools without categorized
+   */
+  listOfTools: Array<ToolConstructor<any, any>> = []
+
+  /**
+   * Pair of toolId and tool name
+   *
+   * Example:
+   * {
+   *     "text-transform": "Text Transform",
+   *     "math-evaluator": "Math Evaluator",
+   *     "compare-list": "Compare List",
+   * }
+   */
+  mapOfToolsName: Record<string, string> = {}
+
+  /**
+   * Pair of toolId and tool constructor
+   */
+  mapOfToolsAndPresets: Record<string, ToolConstructor> = {}
+
+  /**
+   * Indicates tools has been initialized
+   */
+  isToolsInitialized: boolean = false
 
   /**
    * List of tool presets
@@ -88,53 +138,52 @@ class ToolStore {
     [jsonDiffTool.toolId]: jsonDiffTool,
     [jsonataTool.toolId]: jsonataTool,
     [fileToBase64Tool.toolId]: fileToBase64Tool,
-    [base64ToFileTool.toolId]: base64ToFileTool
+    [base64ToFileTool.toolId]: base64ToFileTool,
+    [jfsGetThTool.toolId]: jfsGetThTool
   }
 
-  @observable listOfTools: Array<ToolConstructor<any, any>> = []
-
-  @observable mapOfToolsName: Record<string, string> = {}
-
-  @observable mapOfTools: Record<string, ToolConstructor> = {}
-
-  @observable isToolsInitialized: boolean = false
-
+  /**
+   * Setup built-in tools and preset
+   */
   setupTools() {
-    const mapOfTools = () => {
-      const presets = Object.fromEntries(this._toolPresets.map((preset) => {
-        const toolConstructor = this._mapOfTools[preset.toolId]
-        const tool = Tool.mergeWithPreset(toolConstructor, preset)
+    /**
+     * Prepare tool presets
+     */
+    const presets = Object.fromEntries(this._toolPresets.map((preset) => {
+      const toolConstructor = this._mapOfTools[preset.toolId]
+      const tool = Tool.mergeWithPreset(toolConstructor, preset)
 
-        return [tool.toolId, tool]
-      }))
-
-      return { ...this._mapOfTools, ...presets }
-    }
+      return [tool.toolId, tool]
+    }))
 
     /**
-     * List of built-in tools
+     * Combine tools and presets into one variable
      */
-    const listOfTools = () => {
-      return Object.values(this.mapOfTools)
-    }
+    this.mapOfToolsAndPresets = { ...this._mapOfTools, ...presets }
 
     /**
-     * List of built-in tools name
+     * Get values only of mapOfTools (without categorized)
      */
-    const mapOfToolsName = () => {
-      return Object.fromEntries(
-        Object.entries(this.mapOfTools).map(([toolId, tool]) => [toolId, tool.name])
-      )
-    }
+    this.listOfTools = Object.values(this.mapOfToolsAndPresets)
 
-    this.mapOfTools = mapOfTools()
-    this.listOfTools = listOfTools()
-    this.mapOfToolsName = mapOfToolsName()
+    /**
+     * Map tools with its name
+     */
+    this.mapOfToolsName = Object.fromEntries(
+      Object.entries(this.mapOfToolsAndPresets).map(([toolId, tool]) => [toolId, tool.name])
+    )
 
     this.setupToolsForSidebar()
+
+    /**
+     * Call setup persistence of tool session to load previous session(s)
+     */
     toolSessionStore.setupPersistence()
   }
 
+  /**
+   * Prepare tools for categorized
+   */
   private setupToolsForSidebar() {
     let listOfCategoriesAndTools: Record<string, ToolConstructor[]> = { General: [] }
     if (this.groupToolsByCategory) {
