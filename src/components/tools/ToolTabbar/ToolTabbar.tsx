@@ -47,7 +47,7 @@ export const ToolTabbar: FC = observer(() => {
       toolSession = tabs[nextActiveIndex]
     }
 
-    toolSessionStore.openSession(toolSession)
+    void toolSessionStore.openSession(toolSession)
     focusActiveTab(toolSession.sessionId)
   })
 
@@ -61,7 +61,7 @@ export const ToolTabbar: FC = observer(() => {
       toolSession = tabs[nextActiveIndex]
     }
 
-    toolSessionStore.openSession(toolSession)
+    void toolSessionStore.openSession(toolSession)
     focusActiveTab(toolSession.sessionId)
   })
 
@@ -100,7 +100,7 @@ const TabItem: FC<TabItemProps> = (props) => {
   const { toolSession, active } = props
 
   const onClickTab = () => {
-    toolSessionStore.openSession(toolSession)
+    void toolSessionStore.openSession(toolSession)
   }
 
   const onClickCloseTab: MouseEventHandler = (event) => {

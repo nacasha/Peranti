@@ -1,4 +1,5 @@
 import fastDeepEqual from "fast-deep-equal"
+import localForage from "localforage"
 import hashMd5 from "md5"
 import { observable, action, makeObservable, toJS } from "mobx"
 import { makePersistable, stopPersisting } from "mobx-persist-store"
@@ -220,7 +221,7 @@ export class Tool<
       /**
        * Data will be merged into tool as initial state
        */
-      initialState?: ToolHistory
+      initialState?: Partial<ToolHistory>
 
       /**
        * Make tool as read only
@@ -284,13 +285,13 @@ export class Tool<
     const { isReadOnly = false, initialState, sessionName, disablePersistence = false } = options
 
     if (initialState) {
-      this.sessionId = initialState.sessionId
-      this.isBatchEnabled = initialState.isBatchEnabled
-      this.batchInputKey = initialState.batchInputKey
-      this.batchOutputKey = initialState.batchOutputKey
-      this.runCount = initialState.runCount
-      this.inputValues = initialState.inputValues
-      this.outputValues = initialState.outputValues
+      this.sessionId = initialState.sessionId ?? this.sessionId
+      this.isBatchEnabled = initialState.isBatchEnabled ?? this.isBatchEnabled
+      this.batchInputKey = initialState.batchInputKey ?? this.batchInputKey
+      this.batchOutputKey = initialState.batchOutputKey ?? this.batchOutputKey
+      this.runCount = initialState.runCount ?? this.runCount
+      this.inputValues = initialState.inputValues ?? this.inputValues
+      this.outputValues = initialState.outputValues ?? this.outputValues
 
       assignedSessionName = initialState.sessionName
     }
@@ -338,6 +339,8 @@ export class Tool<
 
     void makePersistable(this, {
       name: this.localStorageKey,
+      storage: localForage,
+      stringify: false,
       properties: [
         {
           key: "toolHistory",
@@ -352,8 +355,7 @@ export class Tool<
             return this
           }
         }
-      ] as any,
-      storage: window.localStorage
+      ] as any
     })
   }
 
@@ -362,7 +364,7 @@ export class Tool<
   }
 
   destroyLocalStorage() {
-    localStorage.removeItem(this.localStorageKey)
+    void localForage.removeItem(this.localStorageKey)
   }
 
   /**

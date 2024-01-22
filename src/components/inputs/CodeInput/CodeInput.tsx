@@ -27,6 +27,7 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
           value={value}
           onChange={(newValue) => { onInputChange(newValue) }}
           readOnly={readOnly}
+          autoFocus
         />
       </div>
     </div>
