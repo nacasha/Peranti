@@ -2,7 +2,7 @@ import fastDeepEqual from "fast-deep-equal"
 import localForage from "localforage"
 import hashMd5 from "md5"
 import { observable, action, makeObservable, toJS } from "mobx"
-import { makePersistable, stopPersisting } from "mobx-persist-store"
+import { PersistStoreMap, isPersisting, makePersistable, stopPersisting } from "mobx-persist-store"
 
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
@@ -331,9 +331,18 @@ export class Tool<
    */
   private setupPersistence() {
     /**
-     * Skip if it's an empty tool
+     * Delete previous stale persist store with same key of tool to avoid memory leaks
      */
-    if (!this.toolId || this.disablePersistence) {
+    Array.from(PersistStoreMap.keys()).forEach((sessionKey) => {
+      if (sessionKey?.sessionId === this.sessionId) {
+        PersistStoreMap.delete(sessionKey)
+      }
+    })
+
+    /**
+     * Skip if it's an empty tool, disable persistence or already persisting
+     */
+    if (!this.toolId || this.disablePersistence || isPersisting(this)) {
       return
     }
 
