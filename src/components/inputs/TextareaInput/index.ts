@@ -1,1 +1,1 @@
-export { TextareaInput } from "./TextareaInput"
+export { TextAreaInput } from "./TextAreaInput.tsx"

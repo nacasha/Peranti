@@ -1,12 +1,13 @@
+import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
-  input: string
+  input: InputFieldsType.Code
 }
 
 interface OutputFields {
-  output: OutputFieldsType.Textarea
+  output: OutputFieldsType.Code
 }
 
 const sortList: ToolConstructor<InputFields, OutputFields> = {
@@ -17,7 +18,7 @@ const sortList: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "input",
       label: "Input",
-      component: "Textarea",
+      component: "Code",
       defaultValue: ""
     }
   ],
@@ -25,7 +26,7 @@ const sortList: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "Output",
-      component: "Textarea"
+      component: "Code"
     }
   ],
   action: ({ input }) => {

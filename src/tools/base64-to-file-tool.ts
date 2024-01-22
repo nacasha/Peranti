@@ -3,7 +3,7 @@ import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
-  input: InputFieldsType.Textarea
+  input: InputFieldsType.Code
 }
 
 interface OutputFields {
@@ -18,7 +18,7 @@ const base64ToFileTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "input",
       label: "Input",
-      component: "Textarea",
+      component: "Code",
       defaultValue: ""
     }
   ],

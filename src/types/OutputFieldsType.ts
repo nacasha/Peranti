@@ -8,8 +8,9 @@ type ExtractType<T> = T extends React.FC<OutputComponentProps<infer P>> ? P : ne
 export namespace OutputFieldsType {
   export type Diff = ExtractType<typeof listOfOutputComponent.Diff>
   export type Text = ExtractType<typeof listOfOutputComponent.Text>
-  export type Textarea = ExtractType<typeof listOfOutputComponent.Textarea>
+  export type TextArea = ExtractType<typeof listOfOutputComponent.TextArea>
   export type GridStat = ExtractType<typeof listOfOutputComponent.GridStat>
   export type Image = ExtractType<typeof listOfOutputComponent.Image>
   export type File = ExtractType<typeof listOfOutputComponent.File>
+  export type Code = ExtractType<typeof listOfOutputComponent.Code>
 }

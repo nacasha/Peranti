@@ -50,7 +50,7 @@ class ToolHistoryStore {
    */
   openHistory(toolHistory: ToolHistory) {
     const toolConstructor = toolStore.mapOfToolsAndPresets[toolHistory.toolId]
-    const toolSession = new Tool(toolConstructor, { toolHistory, isReadOnly: true })
+    const toolSession = new Tool(toolConstructor, { initialState: toolHistory, isReadOnly: true })
     toolRunnerStore.setActiveTool(toolSession)
   }
 

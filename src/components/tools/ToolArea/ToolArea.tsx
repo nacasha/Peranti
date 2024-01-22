@@ -29,7 +29,7 @@ export const ToolArea: FC = observer(() => {
       {
         key: batchInput.key,
         label: batchInput.label,
-        component: "Textarea",
+        component: "TextArea",
         defaultValue: ""
       }
     ]
@@ -40,7 +40,7 @@ export const ToolArea: FC = observer(() => {
       {
         key: batchOutput.key,
         label: batchOutput.label,
-        component: "Textarea"
+        component: "TextArea"
       }
     ]
     : []

@@ -145,6 +145,10 @@ export class Tool<
 
   readonly disablePersistence: boolean = false
 
+  get localStorageKey() {
+    return "Tool".concat(this.sessionId)
+  }
+
   /**
    * Tool sessionId generator
    *
@@ -204,11 +208,33 @@ export class Tool<
    * Tool Constructor
    */
   constructor(
+    /**
+     * Base tool constructor
+     */
     params: ToolConstructor<InputFields, OutputFields>,
+
+    /**
+     * Additional options
+     */
     options: {
-      toolHistory?: ToolHistory
+      /**
+       * Data will be merged into tool as initial state
+       */
+      initialState?: ToolHistory
+
+      /**
+       * Make tool as read only
+       */
       isReadOnly?: boolean
+
+      /**
+       * Set session name of tool
+       */
       sessionName?: string
+
+      /**
+       * Disable persistence of tool
+       */
       disablePersistence?: boolean
     } = {}
   ) {
@@ -237,7 +263,7 @@ export class Tool<
     this.type = type
 
     /**
-     * Set default layout setting and merge with setting from tool definition
+     * Prepare default layout setting and merge with layout setting from tool constructor
      */
     this.layoutSetting = {
       direction: "horizontal",
@@ -255,19 +281,18 @@ export class Tool<
     this.fillInputValuesWithDefault()
 
     let assignedSessionName
-    const { isReadOnly = false, toolHistory, sessionName, disablePersistence = false } = options
+    const { isReadOnly = false, initialState, sessionName, disablePersistence = false } = options
 
-    if (toolHistory) {
-      this.sessionId = toolHistory.sessionId
-      this.isBatchEnabled = toolHistory.isBatchEnabled
-      this.batchInputKey = toolHistory.batchInputKey
-      this.batchOutputKey = toolHistory.batchOutputKey
-      this.runCount = toolHistory.runCount
+    if (initialState) {
+      this.sessionId = initialState.sessionId
+      this.isBatchEnabled = initialState.isBatchEnabled
+      this.batchInputKey = initialState.batchInputKey
+      this.batchOutputKey = initialState.batchOutputKey
+      this.runCount = initialState.runCount
+      this.inputValues = initialState.inputValues
+      this.outputValues = initialState.outputValues
 
-      this.setInputValues(toolHistory.inputValues, { markAsModified: false })
-      this.setOutputValues(toolHistory.outputValues, { markAsModified: false })
-
-      assignedSessionName = toolHistory.sessionName
+      assignedSessionName = initialState.sessionName
     }
 
     if (!assignedSessionName) {
@@ -282,6 +307,11 @@ export class Tool<
     this.setupPersistence()
   }
 
+  /**
+   * Empty instance of tool
+   *
+   * @returns
+   */
   static empty() {
     return new Tool({
       name: "",
@@ -293,6 +323,11 @@ export class Tool<
     })
   }
 
+  /**
+   * Setup persistence
+   *
+   * @returns
+   */
   private setupPersistence() {
     /**
      * Skip if it's an empty tool
@@ -302,7 +337,7 @@ export class Tool<
     }
 
     void makePersistable(this, {
-      name: "Tool".concat(this.sessionId),
+      name: this.localStorageKey,
       properties: [
         {
           key: "toolHistory",
@@ -312,7 +347,7 @@ export class Tool<
           deserialize: () => {
             /**
              * Do nothing when deserialize, as it is already handled
-             * by ToolSessionStore.getToolFromLocalStorage
+             * by Tool Constructor and ToolSessionStore.getToolFromLocalStorage
              */
             return this
           }
@@ -324,6 +359,10 @@ export class Tool<
 
   stopStore() {
     stopPersisting(this)
+  }
+
+  destroyLocalStorage() {
+    localStorage.removeItem(this.localStorageKey)
   }
 
   /**

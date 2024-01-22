@@ -1,11 +1,12 @@
 import hash from "hash.js"
 import hashMd5 from "md5"
 
+import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
-  input: string
+  input: InputFieldsType.Text
 }
 
 interface OutputFields {

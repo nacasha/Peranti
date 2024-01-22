@@ -1,17 +1,19 @@
 import { ButtonInput } from "./ButtonInput"
 import { CheckboxInput } from "./CheckboxInput"
+import { CodeInput } from "./CodeInput"
 import { FileInput } from "./FileInput"
 import { SelectInput } from "./SelectInput"
 import { SwitchInput } from "./SwitchInput"
+import { TextAreaInput } from "./TextAreaInput"
 import { TextInput } from "./TextInput"
-import { TextareaInput } from "./TextareaInput"
 
 export const listOfInputComponent = {
   Checkbox: CheckboxInput,
-  Textarea: TextareaInput,
+  TextArea: TextAreaInput,
   Text: TextInput,
   Select: SelectInput,
   Switch: SwitchInput,
   Button: ButtonInput,
-  File: FileInput
+  File: FileInput,
+  Code: CodeInput
 }

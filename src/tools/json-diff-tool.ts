@@ -1,11 +1,12 @@
 import { DiffMethod } from "react-diff-viewer"
 
+import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
-  inputA: string
-  inputB: string
+  inputA: InputFieldsType.Code
+  inputB: InputFieldsType.Code
 }
 
 interface OutputFields {
@@ -23,7 +24,7 @@ const jsonDiffTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "inputA",
       label: "JSON A",
-      component: "Textarea",
+      component: "Code",
       defaultValue: "",
       props: {
         language: "json"
@@ -32,7 +33,7 @@ const jsonDiffTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "inputB",
       label: "JSON B",
-      component: "Textarea",
+      component: "Code",
       defaultValue: "",
       props: {
         language: "json"

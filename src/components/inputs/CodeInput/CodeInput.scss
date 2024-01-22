@@ -1,0 +1,11 @@
+.CodeInput {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ToolAreaInput.horizontal {
+  .CodeInput {
+    flex: 1;
+  }
+}

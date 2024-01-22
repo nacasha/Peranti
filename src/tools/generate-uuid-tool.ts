@@ -1,16 +1,17 @@
 import { v1, v4 } from "uuid"
 
+import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
-  numberOfGenerated: number
-  type: string
-  runner: unknown
+  numberOfGenerated: InputFieldsType.Text
+  type: InputFieldsType.Select
+  runner: InputFieldsType.Button
 }
 
 interface OutputFields {
-  output: OutputFieldsType.Textarea
+  output: OutputFieldsType.Code
 }
 
 const generateUuidTool: ToolConstructor<InputFields, OutputFields> = {
@@ -47,7 +48,7 @@ const generateUuidTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "Output",
-      component: "Textarea"
+      component: "Code"
     }
   ],
   action: ({ numberOfGenerated, type }) => {
@@ -55,7 +56,7 @@ const generateUuidTool: ToolConstructor<InputFields, OutputFields> = {
     if (uuidGenerator === undefined) return { output: "" }
 
     const generatedUuids = []
-    for (let i = 0; i < numberOfGenerated; i++) {
+    for (let i = 0; i < Number(numberOfGenerated); i++) {
       generatedUuids.push(uuidGenerator())
     }
     const output = generatedUuids.join("\n")

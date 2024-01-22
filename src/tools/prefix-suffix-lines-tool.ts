@@ -1,14 +1,15 @@
+import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
-  prefix: string
-  suffix: string
-  input: string
+  prefix: InputFieldsType.Text
+  suffix: InputFieldsType.Text
+  input: InputFieldsType.Code
 }
 
 interface OutputFields {
-  output: OutputFieldsType.Textarea
+  output: OutputFieldsType.Code
 }
 
 const prefixSuffixLines: ToolConstructor<InputFields, OutputFields> = {
@@ -31,7 +32,7 @@ const prefixSuffixLines: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "input",
       label: "Text Lines",
-      component: "Textarea",
+      component: "Code",
       defaultValue: ""
     }
   ],
@@ -39,7 +40,7 @@ const prefixSuffixLines: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "Output",
-      component: "Textarea"
+      component: "Code"
     }
   ],
   action: ({ input, prefix, suffix }: { prefix: string, suffix: string, input: string }) => {

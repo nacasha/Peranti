@@ -1,15 +1,17 @@
+import { CodeOutput } from "./CodeOutput"
 import { DiffOutput } from "./DiffOutput"
 import { FileOutput } from "./FileOutput"
 import { GridStatOutput } from "./GridStatOutput"
 import { ImageOutput } from "./ImageOutput"
+import { TextAreaOutput } from "./TextAreaOutput"
 import { TextOutput } from "./TextOutput"
-import { TextareaOutput } from "./TextareaOutput"
 
 export const listOfOutputComponent = {
-  Textarea: TextareaOutput,
+  TextArea: TextAreaOutput,
   Text: TextOutput,
   GridStat: GridStatOutput,
   Diff: DiffOutput,
   Image: ImageOutput,
-  File: FileOutput
+  File: FileOutput,
+  Code: CodeOutput
 }

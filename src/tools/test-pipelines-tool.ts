@@ -8,7 +8,7 @@ const testPipelines: ToolConstructor = {
     {
       key: "input",
       label: "Input",
-      component: "Textarea",
+      component: "Code",
       defaultValue: ""
     }
   ],
@@ -16,7 +16,7 @@ const testPipelines: ToolConstructor = {
     {
       key: "output",
       label: "Output",
-      component: "Textarea"
+      component: "Code"
     }
   ],
   pipelines: [

@@ -1,15 +1,16 @@
+import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
-  listA: string
-  listB: string
+  listA: InputFieldsType.Code
+  listB: InputFieldsType.Code
 }
 
 interface OutputFields {
-  output: OutputFieldsType.Textarea
-  onlyExistInputA: OutputFieldsType.Textarea
-  onlyExistInputB: OutputFieldsType.Textarea
+  output: OutputFieldsType.Code
+  onlyExistInputA: OutputFieldsType.Code
+  onlyExistInputB: OutputFieldsType.Code
 }
 
 const compareListTool: ToolConstructor<InputFields, OutputFields> = {
@@ -25,13 +26,13 @@ const compareListTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "listA",
       label: "List A",
-      component: "Textarea",
+      component: "Code",
       defaultValue: ""
     },
     {
       key: "listB",
       label: "List B",
-      component: "Textarea",
+      component: "Code",
       defaultValue: ""
     }
   ],
@@ -39,17 +40,17 @@ const compareListTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "onlyExistInputA",
       label: "Only Exist In List A",
-      component: "Textarea"
+      component: "Code"
     },
     {
       key: "output",
       label: "Exist In Both List",
-      component: "Textarea"
+      component: "Code"
     },
     {
       key: "onlyExistInputB",
       label: "Only Exist In List B",
-      component: "Textarea"
+      component: "Code"
     }
   ],
   action: (inputParams) => {

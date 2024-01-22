@@ -1,7 +1,8 @@
+import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
-  input: string
+  input: InputFieldsType.Code
 }
 
 const textEditorTool: ToolConstructor<InputFields> = {
@@ -15,7 +16,7 @@ const textEditorTool: ToolConstructor<InputFields> = {
     {
       key: "input",
       label: "Input",
-      component: "Textarea",
+      component: "Code",
       defaultValue: ""
     }
   ],

@@ -41,6 +41,13 @@ class ToolSessionStore {
    */
   activeSessionIds: Record<string, string> = {}
 
+  /**
+   * Load tool from local storage and create new instance of tool
+   *
+   * @param toolSession
+   * @param options
+   * @returns
+   */
   getToolFromLocalStorage(toolSession: ToolSession, options: { disablePersistence?: boolean } = {}) {
     const toolData = localStorage.getItem("Tool".concat(toolSession.sessionId))
 
@@ -49,7 +56,7 @@ class ToolSessionStore {
       const { toolHistory }: { toolHistory: ToolHistory } = JSON.parse(toolData)
       const toolConstructor = toolStore.mapOfToolsAndPresets[toolHistory.toolId]
 
-      return new Tool(toolConstructor, { toolHistory, disablePersistence })
+      return new Tool(toolConstructor, { initialState: toolHistory, disablePersistence })
     }
 
     return Tool.empty()
@@ -174,7 +181,7 @@ class ToolSessionStore {
       sessionId: Tool.generateSessionId()
     }
 
-    this.createSession(mainTool, { toolHistory: clonedToolHistory })
+    this.createSession(mainTool, { initialState: clonedToolHistory })
   }
 
   /**
@@ -219,41 +226,74 @@ class ToolSessionStore {
    * @param tool
    */
   openSession(toolSession: ToolSession) {
+    const activeTool = toolRunnerStore.getActiveTool()
+
+    /**
+     * Skip action if tool is already opened
+     */
+    if (activeTool.sessionId === toolSession.sessionId) {
+      return
+    }
+
     const tool = this.getToolFromLocalStorage(toolSession)
     this.openTool(tool)
   }
 
   /**
-   * Open initizlied tool session
+   * Open initialized tool instance
    *
    * @param tool
    */
   openTool(tool: Tool) {
     const activeTool = toolRunnerStore.getActiveTool()
+
+    /**
+     * Skip action if tool is already opened
+     */
+    if (tool.sessionId === activeTool.sessionId) {
+      return
+    }
+
+    /**
+     * Stop store (disable persistence) for currently active tool
+     */
     if (activeTool) {
       activeTool.stopStore()
     }
 
+    /**
+     * Set new tool as active tool
+     */
     toolRunnerStore.setActiveTool(tool)
     this.setActiveToolSessionId(tool)
   }
 
   /**
-   * Close running tool session
+   * Close tool session
    *
    * @param tool
    */
   closeSession(toolSession: ToolSession) {
     const activeTool = toolRunnerStore.getActiveTool()
+
+    /**
+     * Save old sessions of tool for future reference
+     */
     const oldSessionsOfTool = this.sessions.filter((session) => session.toolId === toolSession.toolId)
 
+    /**
+     * Filter sessions without closed tool
+     */
     this.sessions = this.sessions.filter((session) => session.sessionId !== toolSession.sessionId)
 
     /**
-     * Save to history
+     * Begin rountine for closed session of tool
      */
-    this.saveClosedToolToHistory(toolSession)
+    this.proceedClosedSession(toolSession)
 
+    /**
+     * Run another routine if the closed session is the currently active tool
+     */
     if (activeTool.sessionId === toolSession.sessionId) {
       const newSessionsOfTool = this.sessions.filter((session) => session.toolId === toolSession.toolId)
 
@@ -280,7 +320,7 @@ class ToolSessionStore {
         }, 0)
 
       /**
-       * Open existing sessions from tool
+       * Open another existing sessions from tool based on closed tool session index
        */
       } else {
         let newSessionToBeOpened
@@ -302,6 +342,9 @@ class ToolSessionStore {
       }
     }
 
+    /**
+     * Remove closed tool session name from store
+     */
     this.detachToolWithSessionNames(toolSession)
   }
 
@@ -328,14 +371,21 @@ class ToolSessionStore {
   }
 
   /**
-   * Add to closed session history if tool has been modified
+   * Save tool session to history if tool has been modified
+   * and delete its local storage
    *
    * @param tool
    */
-  private saveClosedToolToHistory(toolSession: ToolSession) {
+  private proceedClosedSession(toolSession: ToolSession) {
+    /**
+     * Load tool from storage but disable the persistence, because we only need
+     * to get tool state and save it into history
+     */
     const toolHistory = this.getToolFromLocalStorage(toolSession, { disablePersistence: true })
 
     if (toolHistory) {
+      toolHistory.destroyLocalStorage()
+
       if (
         toolHistory.getIsInputAndOutputHasValues() &&
       (toolHistory.isInputValuesModified || toolHistory.isOutputValuesModified) &&

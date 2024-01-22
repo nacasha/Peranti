@@ -11,7 +11,12 @@ export const FileOutput: FC<FileOutputProps> = (props) => {
   const { label, output = [] } = props
   const [initialized, setInitialized] = useState(() => false)
 
-  const documents = output.map((output) => ({ uri: output }))
+  let documents: Array<{ uri: string }>
+  try {
+    documents = output.map((output) => ({ uri: output }))
+  } catch (exception) {
+    documents = []
+  }
 
   useEffect(() => {
     setTimeout(() => {

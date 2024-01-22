@@ -1,0 +1,12 @@
+.CodeOutput {
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.ToolAreaOutput.horizontal {
+  .CodeOutput {
+    flex: 1;
+  }
+}

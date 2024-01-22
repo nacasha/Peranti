@@ -1,11 +1,40 @@
-.TextareaInput {
+.TextAreaInput {
   height: 100%;
   display: flex;
   flex-direction: column;
+
+  textarea {
+    flex: 1;
+    border-radius: var(--border-radius);
+    padding: var(--input-output-padding);
+    outline: none !important;
+    font-size: var(--input-output-font-size);
+    line-height: 1.15;
+    text-wrap: nowrap;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-output-background-color);
+    resize: none;
+    transition: all var(--transition-speed);
+    font-family: var(--font-family-mono);
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 20%);
+    }
+
+    &:focus {
+      border: 1px solid var(--accent-color);
+    }
+  }
+}
+
+.ToolArea.text-area-word-wrap {
+  .TextAreaInput textarea {
+    text-wrap: wrap;
+  }
 }
 
 .ToolAreaInput.horizontal {
-  .TextareaInput {
+  .TextAreaInput {
     flex: 1;
   }
 }

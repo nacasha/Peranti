@@ -27,8 +27,8 @@ interface ToolOutputText<K extends Record<string, string> = any> extends BaseOut
 }
 
 interface ToolOutputTextarea<K extends Record<string, string> = any> extends BaseOutput<K> {
-  component: "Textarea"
-  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.Textarea>
+  component: "TextArea"
+  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.TextArea>
 }
 
 interface ToolOutputGridStat<K extends Record<string, string> = any> extends BaseOutput<K> {
@@ -51,6 +51,11 @@ interface ToolOutputFile<K extends Record<string, string> = any> extends BaseOut
   props?: ExtractOutputComponentProps<typeof listOfOutputComponent.File>
 }
 
+interface ToolOutputCode<K extends Record<string, string> = any> extends BaseOutput<K> {
+  component: "Code"
+  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.Code>
+}
+
 export type ToolOutput<K extends Record<string, string> = any> =
   ToolOutputText<K>
   | ToolOutputTextarea<K>
@@ -58,3 +63,4 @@ export type ToolOutput<K extends Record<string, string> = any> =
   | ToolOutputDiff<K>
   | ToolOutputImage<K>
   | ToolOutputFile<K>
+  | ToolOutputCode<K>

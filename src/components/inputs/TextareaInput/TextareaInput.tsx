@@ -1,35 +1,33 @@
-import { observer } from "mobx-react"
-import { type FC, useState } from "react"
+import { type FC, useId } from "react"
 
-import { BaseCodeMirror, type BaseCodeMirrorProps } from "src/components/common/BaseCodeMirror"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
-import "./TextareaInput.scss"
+import "./TextAreaInput.scss"
 
-interface TextareaInputProps extends InputComponentProps, BaseCodeMirrorProps {}
+interface TextAreaInputProps extends InputComponentProps {}
 
-export const TextareaInput: FC<TextareaInputProps> = observer((props) => {
-  const { onSubmit, defaultValue, readOnly, label, ...restProps } = props
-  const [value, setValue] = useState<string>(() => defaultValue ?? "")
+export const TextAreaInput: FC<TextAreaInputProps> = (props) => {
+  const id = useId()
+  const { onSubmit, defaultValue, readOnly, label = "Input" } = props
 
-  const onInputChange = (newValue: string) => {
-    setValue(newValue)
-    onSubmit(newValue)
+  const onInputChange: React.InputHTMLAttributes<HTMLTextAreaElement>["onBlur"] = (event) => {
+    const value = event.target.value
+    onSubmit(value.trim())
   }
 
   return (
-    <div className="TextareaInput">
-      <label className="InputOutputLabel">
+    <div className="TextAreaInput">
+      <label className="InputOutputLabel" htmlFor={id}>
         {label}
       </label>
-      <div className="CodeMirrorContainer">
-        <BaseCodeMirror
-          {...restProps}
-          value={value}
-          onChange={(newValue) => { onInputChange(newValue) }}
-          readOnly={readOnly}
-        />
-      </div>
+      <textarea
+        id={id}
+        defaultValue={defaultValue}
+        onChange={onInputChange}
+        readOnly={readOnly}
+        tabIndex={readOnly ? -1 : undefined}
+        rows={5}
+      />
     </div>
   )
-})
+}

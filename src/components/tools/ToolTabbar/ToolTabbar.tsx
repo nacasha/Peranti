@@ -22,8 +22,7 @@ export const ToolTabbar: FC = observer(() => {
   )
 
   const onClickAddTab = () => {
-    const createdSession = toolSessionStore.createSession(activeTool)
-    focusActiveTab(createdSession.sessionId)
+    focusActiveTab(toolSessionStore.createSession(activeTool).sessionId)
   }
 
   const focusActiveTab = (sessionId: string) => {

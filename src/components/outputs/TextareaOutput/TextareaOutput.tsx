@@ -1,25 +1,25 @@
-import { type FC } from "react"
+import { useId, type FC } from "react"
 
-import { BaseCodeMirror, type BaseCodeMirrorProps } from "src/components/common/BaseCodeMirror"
-import type { OutputComponentProps } from "src/types/OutputComponentProps.ts"
+import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
-import "./TextareaOutput.scss"
+import "./TextAreaOutput.scss"
 
-interface TextareaOutputProps extends OutputComponentProps, BaseCodeMirrorProps {}
+interface TextAreaOutputProps extends OutputComponentProps {}
 
-export const TextareaOutput: FC<TextareaOutputProps> = (props) => {
-  const { output, label = "Output", ...restprops } = props
+export const TextAreaOutput: FC<TextAreaOutputProps> = (props) => {
+  const id = useId()
+  const { output, label = "Output" } = props
 
   return (
-    <div className="TextareaOutput">
-      <label className="InputOutputLabel">{label}</label>
-      <div className="CodeMirrorContainer">
-        <BaseCodeMirror
-          {...restprops}
-          value={typeof output === "string" ? output : JSON.stringify(output, null, 2)}
-          readOnly
-        />
-      </div>
+    <div className="TextAreaOutput">
+      <label htmlFor={id} className="InputOutputLabel">
+        {label}
+      </label>
+      <textarea
+        id={id}
+        value={output}
+        readOnly
+      />
     </div>
   )
 }

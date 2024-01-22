@@ -1,13 +1,14 @@
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 
+import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 dayjs.extend(utc)
 
 interface InputFields {
-  milliseconds: string
+  milliseconds: InputFieldsType.Text
 }
 
 interface OutputFields {

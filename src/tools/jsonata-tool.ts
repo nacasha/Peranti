@@ -1,15 +1,16 @@
 import jsonata from "jsonata"
 
+import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
-  jsonString: string
-  expression: string
+  jsonString: InputFieldsType.Code
+  expression: InputFieldsType.Code
 }
 
 interface OutputFields {
-  output: OutputFieldsType.Textarea
+  output: OutputFieldsType.Code
 }
 
 const jsonataTool: ToolConstructor<InputFields, OutputFields> = {
@@ -20,13 +21,13 @@ const jsonataTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "expression",
       label: "Expression",
-      component: "Textarea",
+      component: "Code",
       defaultValue: ""
     },
     {
       key: "jsonString",
       label: "JSON",
-      component: "Textarea",
+      component: "Code",
       defaultValue: "",
       props: {
         language: "json"
@@ -37,7 +38,7 @@ const jsonataTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "Result",
-      component: "Textarea",
+      component: "Code",
       props: {
         language: "json"
       }

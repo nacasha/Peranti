@@ -1,19 +1,20 @@
+import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { generateRandomString } from "src/utils/generateRandomString"
 
 interface InputFields {
-  count: number
-  stringLength: number
-  smallAz: boolean
-  capitalAz: boolean
-  number: boolean
-  symbol: boolean
-  runner: unknown
+  count: InputFieldsType.Text
+  stringLength: InputFieldsType.Text
+  smallAz: InputFieldsType.Checkbox
+  capitalAz: InputFieldsType.Checkbox
+  number: InputFieldsType.Checkbox
+  symbol: InputFieldsType.Checkbox
+  runner: InputFieldsType.Button
 }
 
 interface OutputFields {
-  output: OutputFieldsType.Textarea
+  output: OutputFieldsType.Code
 }
 
 const generateRandomStringTool: ToolConstructor<InputFields, OutputFields> = {
@@ -68,7 +69,7 @@ const generateRandomStringTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "Output",
-      component: "Textarea"
+      component: "Code"
     }
   ],
   action: ({ count, stringLength, smallAz, capitalAz, number, symbol }: InputFields) => {
@@ -80,8 +81,8 @@ const generateRandomStringTool: ToolConstructor<InputFields, OutputFields> = {
 
     const outputLines = []
 
-    for (let i = 0; i < count; i++) {
-      outputLines.push(generateRandomString(stringLength, characters))
+    for (let i = 0; i < Number(count); i++) {
+      outputLines.push(generateRandomString(Number(stringLength), characters))
     }
 
     return { output: outputLines.join("\n") }

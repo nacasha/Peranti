@@ -1,11 +1,12 @@
 import { ResponseType, fetch } from "@tauri-apps/api/http"
 
+import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
-  websiteUrl: string
-  runner: unknown
+  websiteUrl: InputFieldsType.Text
+  runner: InputFieldsType.Button
 }
 
 interface OutputFields {

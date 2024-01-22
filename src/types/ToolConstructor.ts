@@ -20,13 +20,13 @@ export interface ToolConstructor<
    * List of input fields for tool
    */
   inputFields: Array<ToolInput<InputFields>>
-  | ((inputParams: any) => Array<ToolInput<InputFields>>)
+  | ((inputParams: InputFields) => Array<ToolInput<InputFields>>)
 
   /**
    * List of output fields for tool
    */
   outputFields: Array<ToolOutput<OutputFields>>
-  | ((outputParams: any) => Array<ToolOutput<OutputFields>>)
+  | ((outputParams: OutputFields) => Array<ToolOutput<OutputFields>>)
 
   /**
    * Category of tool

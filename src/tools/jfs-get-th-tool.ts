@@ -14,7 +14,7 @@ interface InputFields {
 }
 
 interface OutputFields {
-  output: OutputFieldsType.Textarea
+  output: OutputFieldsType.Code
 }
 
 const jfsGetThTool: ToolConstructor<InputFields, OutputFields> = {
@@ -43,7 +43,7 @@ const jfsGetThTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "accounts",
       label: "Accounts",
-      component: "Textarea",
+      component: "Code",
       defaultValue: "",
       allowBatch: true
     },
@@ -59,7 +59,7 @@ const jfsGetThTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "MD5",
-      component: "Textarea",
+      component: "Code",
       allowBatch: true
     }
   ],

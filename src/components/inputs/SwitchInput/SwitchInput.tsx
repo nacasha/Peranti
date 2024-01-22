@@ -6,7 +6,7 @@ import { type InputComponentProps } from "src/types/InputComponentProps"
 import "./SwitchInput.scss"
 
 interface SwitchInputProps extends InputComponentProps {
-  options: Array<{ value: string, label: string }>
+  options?: Array<{ value: string, label: string }>
 }
 
 export const SwitchInput: FC<SwitchInputProps> = (props) => {

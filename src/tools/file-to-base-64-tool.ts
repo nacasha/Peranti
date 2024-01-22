@@ -7,7 +7,7 @@ interface InputFields {
 }
 
 interface OutputFields {
-  output: OutputFieldsType.Textarea
+  output: OutputFieldsType.Code
 }
 
 const toBase64 = async(file: File) => await new Promise<string>((resolve, reject) => {
@@ -33,7 +33,7 @@ const fileToBase64Tool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "Output",
-      component: "Textarea"
+      component: "Code"
     }
   ],
   async action({ input }) {

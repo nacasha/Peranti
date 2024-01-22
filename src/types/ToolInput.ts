@@ -31,9 +31,9 @@ interface ToolInputText<K extends Record<string, string> = any> extends BaseInpu
   props?: ExtractInputComponentProps<typeof listOfInputComponent.Text>
 }
 
-interface ToolInputTextarea<K extends Record<string, string> = any> extends BaseInput<K> {
-  component: "Textarea"
-  props?: ExtractInputComponentProps<typeof listOfInputComponent.Textarea>
+interface ToolInputTextArea<K extends Record<string, string> = any> extends BaseInput<K> {
+  component: "TextArea"
+  props?: ExtractInputComponentProps<typeof listOfInputComponent.TextArea>
 }
 
 interface ToolInputSwitch<K extends Record<string, string> = any> extends BaseInput<K> {
@@ -61,11 +61,17 @@ interface ToolInputFile<K extends Record<string, string> = any> extends BaseInpu
   props?: ExtractInputComponentProps<typeof listOfInputComponent.File>
 }
 
+interface ToolInputCode<K extends Record<string, string> = any> extends BaseInput<K> {
+  component: "Code"
+  props?: ExtractInputComponentProps<typeof listOfInputComponent.Code>
+}
+
 export type ToolInput<K extends Record<string, string> = any> =
   ToolInputText<K>
-  | ToolInputTextarea<K>
+  | ToolInputTextArea<K>
   | ToolInputSwitch<K>
   | ToolInputButton<K>
   | ToolInputCheckbox<K>
   | ToolInputSelect<K>
   | ToolInputFile<K>
+  | ToolInputCode<K>

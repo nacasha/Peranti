@@ -5,7 +5,7 @@ import { type InputComponentProps } from "src/types/InputComponentProps"
 import "./SelectInput.scss"
 
 interface SelectInputProps<T extends string> extends InputComponentProps<T> {
-  options: Array<{ value: T, label: string }>
+  options?: Array<{ value: T, label: string }>
 }
 
 export const SelectInput: <T extends string>(props: SelectInputProps<T>) => JSX.Element = (props) => {
