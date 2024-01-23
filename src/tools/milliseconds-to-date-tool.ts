@@ -30,7 +30,10 @@ const millisecondsToDate: ToolConstructor<InputFields, OutputFields> = {
       label: "Milliseconds",
       component: "Text",
       defaultValue: "",
-      allowBatch: true
+      allowBatch: true,
+      props: {
+        autoFocus: true
+      }
     }
   ],
   outputFields: [

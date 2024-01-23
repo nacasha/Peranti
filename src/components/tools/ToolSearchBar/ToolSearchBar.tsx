@@ -49,12 +49,12 @@ interface SearchComponentProps {
 
 const SearchComponent: FC<SearchComponentProps> = (props) => {
   const { onClickOutside } = props
-  const [tools, setTools] = useState(() => toolStore.listOfTools)
+  const [tools, setTools] = useState(() => toolStore.listOfLoadedTools)
   const [selectedIndex, setSelectedIndex] = useState(0)
 
   const onSearchChange: React.InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
     const value = event.target.value
-    const filteredTools = toolStore.listOfTools
+    const filteredTools = toolStore.listOfLoadedTools
       .filter((tool) => tool.name.toLocaleLowerCase().includes(value.toLocaleLowerCase()))
 
     setTools(filteredTools)

@@ -73,7 +73,6 @@ class ToolRunnerStore {
    * @returns
    */
   isToolActive(tool: ToolConstructor | ToolHistory) {
-    console.log(this.getActiveTool().toolId, tool.toolId)
     return this.getActiveTool().toolId === tool.toolId
   }
 

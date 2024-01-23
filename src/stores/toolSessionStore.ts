@@ -51,7 +51,7 @@ class ToolSessionStore {
    */
   async getToolFromLocalStorage(toolSession: ToolSession, options: { disablePersistence?: boolean } = {}) {
     const { disablePersistence = false } = options
-    const toolConstructor = toolStore.mapOfToolsAndPresets[toolSession.toolId]
+    const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
     const cachedSession: { toolHistory: ToolHistory } | null = await localForage.getItem("Tool".concat(toolSession.sessionId))
 
     if (cachedSession) {
@@ -68,7 +68,7 @@ class ToolSessionStore {
    */
   generateSessionName(tool: ToolConstructor) {
     if (!this.sessionNames[tool.toolId]) {
-      this.sessionNames[tool.toolId] = ["reserved"]
+      this.resetSessionNamesOfTool(tool.toolId)
     }
 
     let nextIndex
@@ -166,7 +166,7 @@ class ToolSessionStore {
    * @param toolHistory
    */
   createSessionFromHistory(toolHistory: ToolHistory) {
-    const mainTool = toolStore.mapOfToolsAndPresets[toolHistory.toolId]
+    const mainTool = toolStore.mapOfLoadedTools[toolHistory.toolId]
 
     /**
      * Deep copy toolHistory to new variable to avoid modifying original data
@@ -277,7 +277,7 @@ class ToolSessionStore {
    *
    * @param tool
    */
-  closeSession(toolSession: ToolSession) {
+  async closeSession(toolSession: ToolSession) {
     const activeTool = toolRunnerStore.getActiveTool()
 
     /**
@@ -293,7 +293,7 @@ class ToolSessionStore {
     /**
      * Begin rountine for closed session of tool
      */
-    void this.proceedClosedSession(toolSession)
+    await this.proceedClosedSession(toolSession)
 
     /**
      * Run another routine if the closed session is the currently active tool
@@ -308,9 +308,9 @@ class ToolSessionStore {
         /**
          * Reset name of session because list is already empty
          */
-        this.sessionNames[toolSession.toolId] = ["reserved"]
+        this.resetSessionNamesOfTool(toolSession.toolId)
 
-        const toolConstructor = toolStore.mapOfToolsAndPresets[toolSession.toolId]
+        const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
 
         /**
          * I have no idea but this code makes the method `createSession`
@@ -332,14 +332,18 @@ class ToolSessionStore {
           (session) => session.sessionId === toolSession.sessionId
         )
 
-        if (closedSessionIndex >= 0) {
-          if (closedSessionIndex <= newSessionsOfTool.length - 1) {
-            newSessionToBeOpened = newSessionsOfTool[closedSessionIndex]
-          } else {
-            newSessionToBeOpened = newSessionsOfTool[closedSessionIndex - 1]
-          }
+        /**
+         * If closed session is not found on list of session, it means closeSession()
+         * was called more than once with same session (usually through holding the hotkey)
+         */
+        if (closedSessionIndex < 0) {
+          return
+        }
+
+        if (closedSessionIndex <= newSessionsOfTool.length - 1) {
+          newSessionToBeOpened = newSessionsOfTool[closedSessionIndex]
         } else {
-          newSessionToBeOpened = newSessionsOfTool[0]
+          newSessionToBeOpened = newSessionsOfTool[closedSessionIndex - 1]
         }
 
         void this.openSession(newSessionToBeOpened)
@@ -350,6 +354,10 @@ class ToolSessionStore {
      * Remove closed tool session name from store
      */
     this.detachToolWithSessionNames(toolSession)
+  }
+
+  resetSessionNamesOfTool(toolId: string) {
+    this.sessionNames[toolId] = ["reserved"]
   }
 
   /**
@@ -382,7 +390,7 @@ class ToolSessionStore {
    */
   private async proceedClosedSession(toolSession: ToolSession) {
     /**
-     * Load tool from storage but disable the persistence, because we only need
+     * Load tool from storage but disable the persistence, we only need
      * to get tool state and save it into history
      */
     const toolHistory = await this.getToolFromLocalStorage(toolSession, { disablePersistence: true })

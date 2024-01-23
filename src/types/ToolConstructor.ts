@@ -57,5 +57,10 @@ export interface ToolConstructor<
   /**
    * Type of tool
    */
-  type?: "Tool" | "Pipeline" | "Preset"
+  type?: "Tool" | "Pipeline" | "Preset" | "Extension"
+
+  /**
+   * Additional data for tool based on tool type
+   */
+  metadata?: any
 }

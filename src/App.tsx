@@ -50,7 +50,7 @@ const AppRoot = ({ children }: { children: ReactNode }) => {
   const theme = useSelector(() => interfaceStore.theme)
 
   useEffect(() => {
-    toolStore.setupTools()
+    void toolStore.setupTools()
   }, [])
 
   return (

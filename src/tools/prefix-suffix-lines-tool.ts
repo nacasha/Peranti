@@ -33,7 +33,10 @@ const prefixSuffixLines: ToolConstructor<InputFields, OutputFields> = {
       key: "input",
       label: "Text Lines",
       component: "Code",
-      defaultValue: ""
+      defaultValue: "",
+      props: {
+        autoFocus: true
+      }
     }
   ],
   outputFields: [

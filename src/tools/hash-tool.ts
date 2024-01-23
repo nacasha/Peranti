@@ -30,7 +30,10 @@ const hashTool: ToolConstructor<InputFields, OutputFields> = {
       label: "Input",
       component: "Text",
       defaultValue: "",
-      allowBatch: true
+      allowBatch: true,
+      props: {
+        autoFocus: true
+      }
     }
   ],
   outputFields: [

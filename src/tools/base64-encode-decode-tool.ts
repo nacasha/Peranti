@@ -32,7 +32,10 @@ const base64EncodeDecodeTool: ToolConstructor<InputFields, OutputFields> = {
       key: "input",
       label: "Input",
       component: "Code",
-      defaultValue: ""
+      defaultValue: "",
+      props: {
+        autoFocus: true
+      }
     }
   ],
   outputFields: [

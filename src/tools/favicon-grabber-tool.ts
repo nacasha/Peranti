@@ -34,7 +34,10 @@ const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
       key: "websiteUrl",
       label: "Website URL",
       component: "Text",
-      defaultValue: ""
+      defaultValue: "",
+      props: {
+        autoFocus: true
+      }
     },
     {
       key: "runner",

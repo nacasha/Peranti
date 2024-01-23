@@ -44,15 +44,18 @@ export const AppSidebarContent = observer(() => {
 
 const AppSidebarContentBody: FC = memo(() => {
   const sidebarActiveMenuId = useSelector(() => interfaceStore.sidebarActiveMenuId)
-  let component = null
+  let Component: FC | undefined
 
   if (sidebarActiveMenuId === "tools") {
-    component = <ToolSidebar />
+    Component = ToolSidebar
   } else if (sidebarActiveMenuId === "settings") {
-    component = <SettingsSidebar />
+    Component = SettingsSidebar
   } else if (sidebarActiveMenuId === "history") {
-    component = <HistorySidebar />
+    Component = HistorySidebar
   }
 
-  return component
+  if (Component) {
+    return <Component />
+  }
+  return null
 }, () => true)

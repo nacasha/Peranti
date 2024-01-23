@@ -17,7 +17,10 @@ const textEditorTool: ToolConstructor<InputFields> = {
       key: "input",
       label: "Input",
       component: "Code",
-      defaultValue: ""
+      defaultValue: "",
+      props: {
+        autoFocus: true
+      }
     }
   ],
   outputFields: [],

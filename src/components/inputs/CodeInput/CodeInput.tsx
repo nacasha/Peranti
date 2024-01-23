@@ -5,7 +5,9 @@ import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./CodeInput.scss"
 
-interface CodeInputProps extends InputComponentProps, BaseCodeMirrorProps {}
+interface CodeInputProps extends InputComponentProps, BaseCodeMirrorProps {
+  autoFocus?: boolean
+}
 
 export const CodeInput: FC<CodeInputProps> = (props) => {
   const { onSubmit, defaultValue, readOnly, label, ...restProps } = props
@@ -27,7 +29,6 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
           value={value}
           onChange={(newValue) => { onInputChange(newValue) }}
           readOnly={readOnly}
-          autoFocus
         />
       </div>
     </div>

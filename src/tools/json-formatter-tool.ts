@@ -34,7 +34,8 @@ const jsonFormatter: ToolConstructor<InputFields, OutputFields> = {
       component: "Code",
       defaultValue: "",
       props: {
-        language: "json"
+        language: "json",
+        autoFocus: true
       }
     }
   ],

@@ -27,7 +27,10 @@ const compareListTool: ToolConstructor<InputFields, OutputFields> = {
       key: "listA",
       label: "List A",
       component: "Code",
-      defaultValue: ""
+      defaultValue: "",
+      props: {
+        autoFocus: true
+      }
     },
     {
       key: "listB",

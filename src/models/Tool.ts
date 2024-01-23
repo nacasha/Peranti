@@ -1,3 +1,4 @@
+import { Command } from "@tauri-apps/api/shell"
 import fastDeepEqual from "fast-deep-equal"
 import localForage from "localforage"
 import hashMd5 from "md5"
@@ -83,6 +84,11 @@ export class Tool<
   readonly action: (input: any) => any
 
   /**
+   * Additional data of tool based on type
+   */
+  readonly metadata?: any
+
+  /**
    * Stored value for input
    */
   @observable inputValues: any = {}
@@ -135,7 +141,7 @@ export class Tool<
   /**
    * Type of tool
    */
-  readonly type: "Tool" | "Pipeline" | "Preset" | undefined = "Tool"
+  readonly type: "Tool" | "Pipeline" | "Preset" | "Extension" | undefined = "Tool"
 
   /**
    * Number of tool has been running
@@ -246,6 +252,7 @@ export class Tool<
       inputFields,
       outputFields,
       name,
+      metadata,
       pipelines = [],
       autoRun = true,
       type = "Tool",
@@ -262,6 +269,7 @@ export class Tool<
     this.pipelines = pipelines
     this.autoRun = autoRun
     this.type = type
+    this.metadata = metadata
 
     /**
      * Prepare default layout setting and merge with layout setting from tool constructor
@@ -281,8 +289,8 @@ export class Tool<
      */
     this.fillInputValuesWithDefault()
 
-    let assignedSessionName
     const { isReadOnly = false, initialState, sessionName, disablePersistence = false } = options
+    let assignedSessionName
 
     if (initialState) {
       this.sessionId = initialState.sessionId ?? this.sessionId
@@ -572,6 +580,11 @@ export class Tool<
   async run() {
     if (this.isReadOnly) return
 
+    if (this.type === "Extension") {
+      void this.runExtension()
+      return
+    }
+
     if (this.canRunPipeline && this.pipelines.length > 0) {
       await this.runPipeline()
     } else if (this.isBatchEnabled) {
@@ -585,6 +598,19 @@ export class Tool<
 
   private get isActionAsync() {
     return this.action.constructor.name === "AsyncFunction"
+  }
+
+  private async runExtension() {
+    if (this.metadata) {
+      const { files, actionFile } = this.metadata
+      const actionFilePath = files[actionFile]
+
+      const inputParams = JSON.stringify({ ...this.inputValues })
+      const command = Command.sidecar("binaries/node", [actionFilePath, inputParams])
+
+      const result = await command.execute()
+      this.setOutputValues(JSON.parse(result.stdout))
+    }
   }
 
   private async runAction(actionInput: any) {
@@ -633,7 +659,7 @@ export class Tool<
       } else if (i === pipelineTools.length - 1) {
         this.setOutputValues(pipelineResults[i - 1])
       } else {
-        const toolConstructor = toolStore.mapOfToolsAndPresets[pipeline.toolId]
+        const toolConstructor = toolStore.mapOfLoadedTools[pipeline.toolId]
         const tool = new Tool(toolConstructor)
         tool.canRunPipeline = false
 

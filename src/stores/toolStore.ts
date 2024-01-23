@@ -1,3 +1,8 @@
+import { BaseDirectory, createDir, exists, readDir, readTextFile } from "@tauri-apps/api/fs"
+import { appDataDir } from "@tauri-apps/api/path"
+import { Command } from "@tauri-apps/api/shell"
+import { makeAutoObservable } from "mobx"
+
 import { Tool } from "src/models/Tool"
 import base64EncodeDecodeTool from "src/tools/base64-encode-decode-tool.js"
 import base64ToFileTool from "src/tools/base64-to-file-tool.js"
@@ -51,44 +56,6 @@ class ToolStore {
   sortCategoryAZ: boolean = true
 
   /**
-   * Pair of category name and list of tools
-   *
-   * Example:
-   * {
-   *    List: [compare-list, sort-list, remove-duplicate-list],
-   *    Text: [word-counter, text-transform]
-   * }
-   */
-  listOfCategoriesAndTools: Record<string, ToolConstructor[]> = {}
-
-  /**
-   * List of all tools without categorized
-   */
-  listOfTools: Array<ToolConstructor<any, any>> = []
-
-  /**
-   * Pair of toolId and tool name
-   *
-   * Example:
-   * {
-   *     "text-transform": "Text Transform",
-   *     "math-evaluator": "Math Evaluator",
-   *     "compare-list": "Compare List",
-   * }
-   */
-  mapOfToolsName: Record<string, string> = {}
-
-  /**
-   * Pair of toolId and tool constructor
-   */
-  mapOfToolsAndPresets: Record<string, ToolConstructor> = {}
-
-  /**
-   * Indicates tools has been initialized
-   */
-  isToolsInitialized: boolean = false
-
-  /**
    * List of tool presets
    */
   private readonly _toolPresets: ToolPreset[] = [
@@ -115,7 +82,7 @@ class ToolStore {
   /**
    * Map of built-in tools
    */
-  private readonly _mapOfTools: Record<string, ToolConstructor> = {
+  private readonly _builtInTools: Record<string, ToolConstructor> = {
     [removeDuplicateList.toolId]: removeDuplicateList,
     [sortList.toolId]: sortList,
     [compareListTool.toolId]: compareListTool,
@@ -143,36 +110,78 @@ class ToolStore {
   }
 
   /**
+   * Pair of toolId and tool constructor, has default value of built in tools
+   */
+  mapOfLoadedTools: Record<string, ToolConstructor> = {
+    ...this._builtInTools
+  }
+
+  /**
+   * List of all tools without categorized
+   */
+  listOfLoadedTools: Array<ToolConstructor<any, any>> = []
+
+  /**
+   * Pair of toolId and tool name
+   *
+   * Example:
+   * {
+   *     "text-transform": "Text Transform",
+   *     "math-evaluator": "Math Evaluator",
+   *     "compare-list": "Compare List",
+   * }
+   */
+  mapOfLoadedToolsName: Record<string, string> = {}
+
+  /**
+   * Pair of category name and list of tools
+   *
+   * Example:
+   * {
+   *    List: [compare-list, sort-list, remove-duplicate-list],
+   *    Text: [word-counter, text-transform]
+   * }
+   */
+  listOfCategoriesAndTools: Record<string, ToolConstructor[]> = {}
+
+  /**
+   * Indicates tool store has been initialized
+   */
+  isToolsInitialized: boolean = false
+
+  /**
    * Setup built-in tools and preset
    */
-  setupTools() {
+  async setupTools() {
     /**
-     * Prepare tool presets
+     * Load tool presets
      */
-    const presets = Object.fromEntries(this._toolPresets.map((preset) => {
-      const toolConstructor = this._mapOfTools[preset.toolId]
-      const tool = Tool.mergeWithPreset(toolConstructor, preset)
-
-      return [tool.toolId, tool]
-    }))
+    this.loadToolPresets()
 
     /**
-     * Combine tools and presets into one variable
+     * Load tool extensions
      */
-    this.mapOfToolsAndPresets = { ...this._mapOfTools, ...presets }
+    await this.loadToolExtensions()
+
+    // TODO separate
 
     /**
      * Get values only of mapOfTools (without categorized)
      */
-    this.listOfTools = Object.values(this.mapOfToolsAndPresets)
+    this.listOfLoadedTools = Object.values(this.mapOfLoadedTools)
 
     /**
      * Map tools with its name
      */
-    this.mapOfToolsName = Object.fromEntries(
-      Object.entries(this.mapOfToolsAndPresets).map(([toolId, tool]) => [toolId, tool.name])
+    this.mapOfLoadedToolsName = Object.fromEntries(
+      Object.entries(this.mapOfLoadedTools).map(([toolId, tool]) => [toolId, tool.name])
     )
 
+    // TODO end separate
+
+    /**
+     * Setup tools for sidebar
+     */
     this.setupToolsForSidebar()
 
     /**
@@ -181,19 +190,68 @@ class ToolStore {
     toolSessionStore.setupPersistence()
   }
 
+  private loadToolPresets() {
+    /**
+     * Prepare tool presets
+     */
+    const mapOfPresets = Object.fromEntries(this._toolPresets.map((preset) => {
+      const toolConstructor = this._builtInTools[preset.toolId]
+      const tool = Tool.mergeWithPreset(toolConstructor, preset)
+
+      return [tool.toolId, tool]
+    }))
+
+    /**
+     * Put presets into loaded tools
+     */
+    this.mapOfLoadedTools = { ...this.mapOfLoadedTools, ...mapOfPresets }
+  }
+
+  private async loadToolExtensions() {
+    const EXTENSIONS = "extensions"
+    await this.prepareExtensionsFolder()
+
+    const extensions = []
+    const entries = await readDir(EXTENSIONS, { dir: BaseDirectory.AppData, recursive: true })
+
+    for (const entry of entries) {
+      if (entry.children) {
+        const files = Object.fromEntries(entry.children.map((children) => [children.name, children.path]))
+
+        const devPipeDataRaw = await readTextFile(files["devpipe.json"])
+        const devPipeData = JSON.parse(devPipeDataRaw)
+        devPipeData.type = "Extension"
+        devPipeData.metadata.files = files
+
+        console.log(files)
+
+        extensions.push(devPipeData)
+      }
+    }
+
+    const mapOfExtensions = Object.fromEntries(extensions.map((extension) => {
+      return [extension.toolId, extension]
+    }))
+
+    /**
+     * Put extensions into loaded tools
+     */
+    this.mapOfLoadedTools = { ...this.mapOfLoadedTools, ...mapOfExtensions }
+  }
+
   /**
    * Prepare tools for categorized
    */
   private setupToolsForSidebar() {
     let listOfCategoriesAndTools: Record<string, ToolConstructor[]> = { General: [] }
     if (this.groupToolsByCategory) {
-      listOfCategoriesAndTools = Object.fromEntries(toolStore.listOfTools.map((tool) => [tool.category, [] as Tool[]]))
+      listOfCategoriesAndTools = Object.fromEntries(toolStore.listOfLoadedTools.map((tool) => [tool.category, [] as Tool[]]))
     }
 
     /**
      * Put each tools on its category
      */
-    toolStore.listOfTools.forEach((tool) => {
+    [...toolStore.listOfLoadedTools].forEach((tool) => {
       if (this.groupToolsByCategory) {
         listOfCategoriesAndTools[tool.category].push(tool)
       } else {
@@ -224,6 +282,55 @@ class ToolStore {
     }
 
     this.listOfCategoriesAndTools = listOfCategoriesAndTools
+  }
+
+  private async loadExtensions() {
+    const EXTENSIONS = "extensions"
+    await this.prepareExtensionsFolder()
+
+    const entries = await readDir(EXTENSIONS, { dir: BaseDirectory.AppData, recursive: true })
+
+    for (const entry of entries) {
+      if (entry.children) {
+        const files = Object.fromEntries(entry.children.map((children) => [children.name, children.path]))
+
+        const devPipeDataRaw = await readTextFile(files["devpipe.json"])
+        const devPipeData = JSON.parse(devPipeDataRaw)
+
+        const actionFile = files[devPipeData.actionFile]
+
+        const inputParams = JSON.stringify({ input: "oke", type: "12" })
+        const command = Command.sidecar("binaries/node", [actionFile, inputParams])
+
+        await command.execute()
+      }
+    }
+  }
+
+  private async prepareExtensionsFolder() {
+    const EXTENSIONS = "extensions"
+
+    const appDataDirs = BaseDirectory.AppData
+    const baseFolder = await appDataDir()
+
+    try {
+      if (!(await exists(baseFolder))) {
+        await createDir(baseFolder)
+      }
+
+      if (!(await exists(EXTENSIONS, { dir: appDataDirs }))) {
+        await createDir(EXTENSIONS, { dir: appDataDirs })
+      }
+    } catch (err: any) {
+      // console.log(err)
+    }
+  }
+
+  /**
+   * ToolSessionStore constructor
+   */
+  constructor() {
+    makeAutoObservable(this)
   }
 }
 

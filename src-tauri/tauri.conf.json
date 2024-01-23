@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "dev-pipe",
+    "productName": "DevPipe",
     "version": "0.0.0"
   },
   "tauri": {
@@ -19,7 +19,22 @@
       "all": false,
       "shell": {
         "all": false,
-        "open": true
+        "open": true,
+        "sidecar": true,
+        "scope": [
+          {
+            "name": "binaries/node",
+            "sidecar": true,
+            "args": [
+              {
+                "validator": "\\S+"
+              },
+              {
+                "validator": "\\S+"
+              }
+            ]
+          }
+        ]
       },
       "window": {
         "all": false,
@@ -31,18 +46,28 @@
         "unmaximize": true,
         "unminimize": true,
         "startDragging": true
+      },
+      "fs": {
+        "all": true,
+        "scope": ["$APPDATA/*", "$APPDATA/extensions/**"]
+      },
+      "path": {
+        "all": true
       }
     },
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.nacasha.devpipe",
+      "identifier": "DevPipe",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
+      ],
+      "externalBin": [
+        "binaries/node"
       ]
     },
     "security": {

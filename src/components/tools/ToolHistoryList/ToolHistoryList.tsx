@@ -38,7 +38,7 @@ export const ToolHistoryList: FC<ToolHistoryListProps> = observer((props) => {
             onClick={onClickItem(toolHistory)}
             onDoubleClick={onDoubleClickItem(toolHistory)}
           >
-            <div>{toolStore.mapOfToolsName[toolHistory.toolId]}</div>
+            <div>{toolStore.mapOfLoadedToolsName[toolHistory.toolId]}</div>
             <div className="subtitle">{prettyDateFormat(new Date(toolHistory.createdAt))}</div>
           </AppSidebarContentItem>
         ))}

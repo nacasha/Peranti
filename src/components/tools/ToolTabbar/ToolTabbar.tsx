@@ -67,7 +67,7 @@ export const ToolTabbar: FC = observer(() => {
 
   useHotkeysModified(hotkeysStore.keys.TAB_CLOSE, (event) => {
     event.preventDefault()
-    toolSessionStore.closeSession(activeTool.toSession())
+    void toolSessionStore.closeSession(activeTool.toSession())
   })
 
   return (
@@ -105,7 +105,7 @@ const TabItem: FC<TabItemProps> = (props) => {
 
   const onClickCloseTab: MouseEventHandler = (event) => {
     event.stopPropagation()
-    toolSessionStore.closeSession(toolSession)
+    void toolSessionStore.closeSession(toolSession)
   }
 
   useEffect(() => {

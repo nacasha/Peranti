@@ -22,7 +22,10 @@ const jsonataTool: ToolConstructor<InputFields, OutputFields> = {
       key: "expression",
       label: "Expression",
       component: "Code",
-      defaultValue: ""
+      defaultValue: "",
+      props: {
+        autoFocus: true
+      }
     },
     {
       key: "jsonString",
