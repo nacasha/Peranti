@@ -1,6 +1,5 @@
 import { BaseDirectory, createDir, exists, readDir, readTextFile } from "@tauri-apps/api/fs"
-import { appDataDir } from "@tauri-apps/api/path"
-import { Command } from "@tauri-apps/api/shell"
+import { appDataDir, resolve } from "@tauri-apps/api/path"
 import { makeAutoObservable } from "mobx"
 
 import { Tool } from "src/models/Tool"
@@ -39,7 +38,7 @@ class ToolStore {
    *
    * @configurable
    */
-  groupToolsByCategory: boolean = false
+  groupToolsByCategory: boolean = true
 
   /**
    * Sort tools by name A-Z
@@ -221,9 +220,9 @@ class ToolStore {
         const devPipeDataRaw = await readTextFile(files["devpipe.json"])
         const devPipeData = JSON.parse(devPipeDataRaw)
         devPipeData.type = "Extension"
-        devPipeData.metadata.files = files
 
-        console.log(files)
+        const realActionFilePath = await resolve(entry.path, devPipeData.metadata.actionFile)
+        devPipeData.metadata.actionFile = realActionFilePath
 
         extensions.push(devPipeData)
       }
@@ -284,29 +283,6 @@ class ToolStore {
     this.listOfCategoriesAndTools = listOfCategoriesAndTools
   }
 
-  private async loadExtensions() {
-    const EXTENSIONS = "extensions"
-    await this.prepareExtensionsFolder()
-
-    const entries = await readDir(EXTENSIONS, { dir: BaseDirectory.AppData, recursive: true })
-
-    for (const entry of entries) {
-      if (entry.children) {
-        const files = Object.fromEntries(entry.children.map((children) => [children.name, children.path]))
-
-        const devPipeDataRaw = await readTextFile(files["devpipe.json"])
-        const devPipeData = JSON.parse(devPipeDataRaw)
-
-        const actionFile = files[devPipeData.actionFile]
-
-        const inputParams = JSON.stringify({ input: "oke", type: "12" })
-        const command = Command.sidecar("binaries/node", [actionFile, inputParams])
-
-        await command.execute()
-      }
-    }
-  }
-
   private async prepareExtensionsFolder() {
     const EXTENSIONS = "extensions"
 
@@ -322,7 +298,7 @@ class ToolStore {
         await createDir(EXTENSIONS, { dir: appDataDirs })
       }
     } catch (err: any) {
-      // console.log(err)
+      console.log(err)
     }
   }
 

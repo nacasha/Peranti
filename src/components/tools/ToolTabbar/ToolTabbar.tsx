@@ -3,12 +3,12 @@ import { observer } from "mobx-react"
 import { type MouseEventHandler, type FC, useEffect } from "react"
 import SimpleBar from "simplebar-react"
 
-import { assets } from "src/constants/assets"
+import { icons } from "src/constants/icons"
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { hotkeysStore } from "src/stores/hotkeysStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { toolSessionStore } from "src/stores/toolSessionStore"
-import { type ToolSession } from "src/types/ToolIdle"
+import { type ToolSession } from "src/types/ToolSession"
 
 import "./ToolTabbar.scss"
 
@@ -83,7 +83,7 @@ export const ToolTabbar: FC = observer(() => {
           ))}
 
           <div onClick={onClickAddTab} className="ToolTabbar-item new">
-            <div className="ToolTabbar-icon"><img src={assets.PlusSVG} alt="Add Tab" /></div>
+            <div className="ToolTabbar-icon"><img src={icons.Plus} alt="Add Tab" /></div>
           </div>
         </SimpleBar>
       </div>
@@ -127,7 +127,7 @@ const TabItem: FC<TabItemProps> = (props) => {
       {toolSession.sessionName}
       {toolSession.isActionRunning ? " ..." : ""}
       <div className="ToolTabbar-icon" onClick={onClickCloseTab}>
-        <img src={assets.CloseSVG} alt="Close Tab" />
+        <img src={icons.Close} alt="Close Tab" />
       </div>
     </div>
   )

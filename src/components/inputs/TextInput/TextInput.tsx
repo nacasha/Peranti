@@ -6,6 +6,7 @@ import "./TextInput.scss"
 
 interface TextInputProps extends InputComponentProps {
   autoFocus?: boolean
+  type?: string
 }
 
 export const TextInput: FC<TextInputProps> = (props) => {

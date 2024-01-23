@@ -1,3 +1,4 @@
+import localforage from "localforage"
 import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
@@ -12,11 +13,15 @@ import "./SettingsSidebar.scss"
 export const SettingsSidebar: FC = () => {
   const onClickLocalStorage = () => {
     localStorage.clear()
+
+    void localforage.clear().then(() => {
+      window.document.location.reload()
+    })
   }
 
   return (
     <div className="SettingsSidebar">
-      <div className="AppSidebarContent-title">Tools</div>
+      <div className="AppSidebarContent-title">Settings</div>
       <div className="section">
         <div className="section-title">Appearance</div>
         <div className="section-list">
@@ -65,7 +70,7 @@ export const SettingsSidebar: FC = () => {
         <div className="section-list">
           <div className="item">
             <Button onClick={onClickLocalStorage}>
-              Clear Storage
+              Reset Tool
             </Button>
           </div>
         </div>

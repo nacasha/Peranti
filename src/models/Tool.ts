@@ -1,18 +1,20 @@
 import { Command } from "@tauri-apps/api/shell"
 import fastDeepEqual from "fast-deep-equal"
-import localForage from "localforage"
+import localforage from "localforage"
 import hashMd5 from "md5"
 import { observable, action, makeObservable, toJS } from "mobx"
 import { PersistStoreMap, isPersisting, makePersistable, stopPersisting } from "mobx-persist-store"
 
+import { storageKeys } from "src/constants/storage-keys"
+import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolHistory } from "src/types/ToolHistory"
-import { type ToolSession } from "src/types/ToolIdle"
 import { type ToolInput } from "src/types/ToolInput"
 import { type ToolLayoutSetting } from "src/types/ToolLayoutSetting"
 import { type ToolOutput } from "src/types/ToolOutput"
 import { type ToolPreset } from "src/types/ToolPreset"
+import { type ToolSession } from "src/types/ToolSession"
 import { generateRandomString } from "src/utils/generateRandomString"
 import { generateSha256 } from "src/utils/generateSha256"
 
@@ -153,7 +155,7 @@ export class Tool<
   readonly disablePersistence: boolean = false
 
   get localStorageKey() {
-    return "Tool".concat(this.sessionId)
+    return storageKeys.Tool.concat(this.sessionId)
   }
 
   /**
@@ -356,8 +358,6 @@ export class Tool<
 
     void makePersistable(this, {
       name: this.localStorageKey,
-      storage: localForage,
-      stringify: false,
       properties: [
         {
           key: "toolHistory",
@@ -381,7 +381,7 @@ export class Tool<
   }
 
   destroyLocalStorage() {
-    void localForage.removeItem(this.localStorageKey)
+    void localforage.removeItem(this.localStorageKey)
   }
 
   /**
@@ -564,6 +564,7 @@ export class Tool<
   @action
   private setIsActionRunning(value: boolean) {
     this.isActionRunning = value
+    toolSessionStore.keepAliveSession(this.sessionId, value)
   }
 
   /**
@@ -578,7 +579,9 @@ export class Tool<
    * Evaluate this tool action with input
    */
   async run() {
-    if (this.isReadOnly) return
+    if (this.isReadOnly || this.isActionRunning) {
+      return
+    }
 
     if (this.type === "Extension") {
       void this.runExtension()
@@ -596,37 +599,49 @@ export class Tool<
     this.incrementRunCount()
   }
 
-  private get isActionAsync() {
-    return this.action.constructor.name === "AsyncFunction"
-  }
-
   private async runExtension() {
     if (this.metadata) {
-      const { files, actionFile } = this.metadata
-      const actionFilePath = files[actionFile]
+      this.setIsActionRunning(true)
 
-      const inputParams = JSON.stringify({ ...this.inputValues })
-      const command = Command.sidecar("binaries/node", [actionFilePath, inputParams])
+      const { actionFile } = this.metadata
 
-      const result = await command.execute()
-      this.setOutputValues(JSON.parse(result.stdout))
+      try {
+        const inputParams = JSON.stringify({ ...this.inputValues })
+        const command = Command.sidecar("binaries/node", [actionFile, inputParams])
+
+        const result = await command.execute()
+        this.setOutputValues(JSON.parse(result.stdout))
+      } catch (exception) {
+        console.log("Tool failed to run")
+      }
+
+      this.setIsActionRunning(false)
     }
   }
 
+  /**
+   * Run action of tool
+   *
+   * @param actionInput
+   * @returns
+   */
   private async runAction(actionInput: any) {
-    if (this.isActionAsync) {
-      if (this.isActionRunning) {
-        return
+    /**
+     * Weird implementation to check async action or not, but okay
+     */
+    const runResult = await new Promise<any>((resolve) => {
+      const result = this.action(actionInput)
+
+      if ("then" in result) {
+        this.setIsActionRunning(true)
+        result.then((data: any) => {
+          this.setIsActionRunning(false)
+          resolve(data)
+        })
       }
 
-      this.setIsActionRunning(true)
-    }
-
-    const runResult = await this.action(actionInput)
-
-    if (this.isActionAsync) {
-      this.setIsActionRunning(false)
-    }
+      resolve(result)
+    })
 
     return runResult
   }

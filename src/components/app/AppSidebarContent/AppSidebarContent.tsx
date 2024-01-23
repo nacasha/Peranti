@@ -4,6 +4,7 @@ import { memo, type FC } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
 import SimpleBar from "simplebar-react"
 
+import { DevToolsSidebar } from "src/components/devtools/DevToolsSidebar"
 import { HistorySidebar } from "src/components/sidebar/HistorySidebar"
 import { SettingsSidebar } from "src/components/sidebar/SettingsSidebar"
 import { ToolSidebar } from "src/components/sidebar/ToolSidebar"
@@ -25,7 +26,7 @@ export const AppSidebarContent = observer(() => {
       interfaceStore.hideSidebar()
     }
   }, {
-    ignoreClass: "AppSidebar"
+    ignoreClass: ["AppSidebar", "AppSidebarContent"]
   })
 
   const sidebarMode = isFloatingSidebar
@@ -52,6 +53,8 @@ const AppSidebarContentBody: FC = memo(() => {
     Component = SettingsSidebar
   } else if (sidebarActiveMenuId === "history") {
     Component = HistorySidebar
+  } else if (sidebarActiveMenuId === "devtools") {
+    Component = DevToolsSidebar
   }
 
   if (Component) {

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react"
 
 import { Button } from "src/components/common/Button"
-import { assets } from "src/constants/assets"
+import { icons } from "src/constants/icons"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
 import { ToolBatchModeButton } from "../ToolBatchModeButton"
@@ -26,7 +26,7 @@ export const ToolHeader = observer(() => {
     <div className="ToolHeader">
       <div className="ToolHeader-button-list">
         {!isToolReadOnly && (
-          <Button icon={assets.CleanSVG} onClick={onClickClean}>
+          <Button icon={icons.Clean} onClick={onClickClean}>
             Clear
           </Button>
         )}
@@ -35,10 +35,10 @@ export const ToolHeader = observer(() => {
       </div>
 
       <div className="ToolHeader-button-list">
-        <Button icon={assets.SettingsSVG}>
+        <Button icon={icons.Settings}>
           Tool Settings
         </Button>
-        <Button icon={assets.HistorySVG} onClick={onClickHistory}>
+        <Button icon={icons.History} onClick={onClickHistory}>
           History
         </Button>
       </div>

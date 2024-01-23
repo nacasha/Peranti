@@ -1,7 +1,8 @@
 import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
-import { assets } from "src/constants/assets"
+import { icons } from "src/constants/icons"
+import { useSelector } from "src/hooks/useSelector"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
@@ -10,16 +11,24 @@ import "./ButtonInput.scss"
 interface ButtonInputProps extends InputComponentProps { }
 
 export const ButtonInput: FC<ButtonInputProps> = (props) => {
+  const isActionRunning = useSelector(() => toolRunnerStore.getActiveTool().isActionRunning)
   const { label } = props
 
   const onClickButton = () => {
-    toolRunnerStore.runActiveTool()
+    if (!isActionRunning) {
+      toolRunnerStore.runActiveTool()
+    }
   }
 
   return (
     <div className="ButtonInput">
-      <Button icon={assets.RefreshSVG} onClick={onClickButton}>
-        {label}
+      <Button
+        type="submit"
+        icon={icons.Refresh}
+        onClick={onClickButton}
+        disabled={isActionRunning}
+      >
+        {label} {isActionRunning ? "..." : ""}
       </Button>
     </div>
   )

@@ -4,6 +4,7 @@ import { observer } from "mobx-react"
 import { memo, type FC } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
+import { interfaceStore } from "src/stores/interfaceStore.js"
 import { toolRunnerStore } from "src/stores/toolRunnerStore.js"
 import { type ToolInput } from "src/types/ToolInput.ts"
 import { type ToolOutput } from "src/types/ToolOutput.ts"
@@ -17,6 +18,7 @@ export const ToolArea: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
   const { batchInputKey, batchOutputKey, isBatchEnabled, layoutSetting, isReadOnly } = activeTool
   const { direction, reversed, inputAreaDirection, inputAreaSize, outputAreaDirection, outputAreaSize } = layoutSetting
+  const { textAreaWordWrap } = interfaceStore
 
   const inputs = activeTool.getInputFields()
   const outputs = activeTool.getOutputFields()
@@ -59,6 +61,7 @@ export const ToolArea: FC = observer(() => {
     }
 
   const classNames = {
+    "text-area-word-wrap": textAreaWordWrap,
     reversed
   }
 

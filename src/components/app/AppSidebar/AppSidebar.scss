@@ -56,12 +56,13 @@
     .tooltip {
       display: none;
       position: fixed;
-      margin-left: calc(var(--sidebar-width) - 5px);
+      margin-left: calc(var(--sidebar-width) - 3px);
       padding: 2px 5px;
-      background-color: #333;
-      color: #fff;
+      background-color: var(--background-color-main);
+      color: var(--text-color);
       border-radius: 4px;
       white-space: nowrap;
+      border: 1px solid var(--border-color);
     }
 
     &:hover .tooltip {

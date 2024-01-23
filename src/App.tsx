@@ -1,9 +1,9 @@
 import { clsx } from "clsx"
-import { type ReactNode, useEffect } from "react"
-import "simplebar-react/dist/simplebar.min.css"
+import { type ReactNode } from "react"
 
 import { interfaceStore } from "src/stores/interfaceStore.ts"
 
+import { withProviders } from "./app/providers/index.js"
 import { AppSidebar } from "./components/app/AppSidebar"
 import { AppSidebarContent } from "./components/app/AppSidebarContent"
 import { AppStatusbar } from "./components/app/AppStatusbar"
@@ -12,14 +12,29 @@ import { AppWindowSizeListener } from "./components/app/AppWindowSizeListener"
 import { AppWindowSizeObserver } from "./components/app/AppWindowSizeObserver"
 import { useSelector } from "./hooks/useSelector.js"
 import { ToolPage } from "./pages/ToolPage"
-import { toolStore } from "./stores/toolStore.js"
+
+/**
+ * AppRoot
+ *
+ * @param param0 ReactNode
+ * @returns
+ */
+const AppRoot = ({ children }: { children: ReactNode }) => {
+  const theme = useSelector(() => interfaceStore.theme)
+
+  return (
+    <div className={clsx("AppRoot", theme)}>
+      {children}
+    </div>
+  )
+}
 
 /**
  * App
  *
  * @returns ReactNode
  */
-export const App = () => {
+const AppMain = () => {
   return (
     <AppRoot>
       <AppWindowSizeListener />
@@ -40,22 +55,4 @@ export const App = () => {
   )
 }
 
-/**
- * AppRoot
- *
- * @param param0 ReactNode
- * @returns
- */
-const AppRoot = ({ children }: { children: ReactNode }) => {
-  const theme = useSelector(() => interfaceStore.theme)
-
-  useEffect(() => {
-    void toolStore.setupTools()
-  }, [])
-
-  return (
-    <div className={clsx("AppRoot", theme)}>
-      {children}
-    </div>
-  )
-}
+export const App = withProviders(AppMain)

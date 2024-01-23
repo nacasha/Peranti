@@ -17,7 +17,7 @@ export const ToolAreaInput: FC<ToolAreaInputProps> = memo((props) => {
   const { toolSessionId, components, direction, readOnly } = props
 
   return (
-    <div className={clsx("ToolAreaInput", direction)}>
+    <form action="#" className={clsx("ToolAreaInput", direction)}>
       {components.map((component) => (
         <ToolInputRenderer
           key={toolSessionId.concat(component.key as any)}
@@ -29,6 +29,6 @@ export const ToolAreaInput: FC<ToolAreaInputProps> = memo((props) => {
           readOnly={readOnly}
         />
       ))}
-    </div>
+    </form>
   )
 }, fastDeepEqual)

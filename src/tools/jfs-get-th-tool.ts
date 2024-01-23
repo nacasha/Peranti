@@ -63,8 +63,8 @@ const jfsGetThTool: ToolConstructor<InputFields, OutputFields> = {
       allowBatch: true
     }
   ],
-  action: async(inputParams) => {
-    const { startDate, endDate, accounts } = inputParams
+  action: async() => {
+    // const { startDate, endDate, accounts } = inputParams
     const transactions = []
 
     try {

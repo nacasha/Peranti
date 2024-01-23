@@ -1,6 +1,8 @@
+import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
+import { storageKeys } from "src/constants/storage-keys"
 import { SidebarMode } from "src/enums/SidebarMode"
 import { ThemeEnum } from "src/enums/ThemeEnum.ts"
 import { getWindowSize } from "src/utils/getWindowSize"
@@ -30,7 +32,9 @@ class InterfaceStore {
     makeAutoObservable(this)
 
     void makePersistable(this, {
-      name: "InterfaceStore",
+      name: storageKeys.InterfaceStore,
+      storage: localforage,
+      stringify: false,
       properties: [
         "isFloatingSidebar",
         "_isSidebarShow",
@@ -38,8 +42,7 @@ class InterfaceStore {
         "textAreaWordWrap",
         "theme",
         "_restoreLastToolInputAndOutput"
-      ],
-      storage: window.localStorage
+      ]
     })
   }
 

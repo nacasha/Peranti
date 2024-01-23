@@ -2,7 +2,7 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
-import { assets } from "src/constants/assets.tsx"
+import { icons } from "src/constants/icons"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
 export const ToolBatchModeButton: FC = observer(() => {
@@ -17,7 +17,7 @@ export const ToolBatchModeButton: FC = observer(() => {
   }
 
   return (
-    <Button icon={assets.Layers2SVG} onClick={onClickButton}>
+    <Button icon={icons.Layers2} onClick={onClickButton}>
       Batch
     </Button>
   )

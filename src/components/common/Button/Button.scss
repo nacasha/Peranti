@@ -10,12 +10,13 @@
   align-items: center;
   font-size: var(--font-size);
   height: 30px;
+  color: var(--text-color);
 
   &:hover {
     background: var(--button-hover-color);
   }
 
-  &:active {
+  &:focus {
     background: var(--button-active-color);
   }
 

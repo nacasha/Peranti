@@ -1,11 +1,12 @@
-import localForage from "localforage"
+import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
+import { storageKeys } from "src/constants/storage-keys.js"
 import { Tool } from "src/models/Tool"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolHistory } from "src/types/ToolHistory.js"
-import { type ToolSession } from "src/types/ToolIdle.js"
+import { type ToolSession } from "src/types/ToolSession.js"
 
 import { toolHistoryStore } from "./toolHistoryStore.js"
 import { toolRunnerStore } from "./toolRunnerStore.js"
@@ -32,6 +33,8 @@ class ToolSessionStore {
    */
   sessions: ToolSession[] = []
 
+  private readonly _keepAliveToolSession: Tool[] = []
+
   /**
    * Pair of toolId and list of created session names
    */
@@ -52,12 +55,25 @@ class ToolSessionStore {
   async getToolFromLocalStorage(toolSession: ToolSession, options: { disablePersistence?: boolean } = {}) {
     const { disablePersistence = false } = options
     const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
-    const cachedSession: { toolHistory: ToolHistory } | null = await localForage.getItem("Tool".concat(toolSession.sessionId))
+    const cachedSession: { toolHistory: ToolHistory } | null = await localforage.getItem(
+      storageKeys.Tool.concat(toolSession.sessionId)
+    )
 
     if (cachedSession) {
       return new Tool(toolConstructor, { initialState: cachedSession.toolHistory, disablePersistence })
     }
     return new Tool(toolConstructor, { initialState: toolSession, disablePersistence })
+  }
+
+  keepAliveSession(sessionId: string, value: boolean) {
+    const sessionIndex = this.sessions.findIndex((session) => session.sessionId === sessionId)
+
+    if (sessionIndex > -1) {
+      this.sessions[sessionIndex] = {
+        ...this.sessions[sessionIndex],
+        isActionRunning: value
+      }
+    }
   }
 
   /**
@@ -107,8 +123,7 @@ class ToolSessionStore {
     this.setIsPersisted(true)
 
     void makePersistable(this, {
-      name: "ToolSessionStore",
-      storage: localForage,
+      name: storageKeys.ToolSessionStore,
       stringify: false,
       properties: [
         "sessionNames",
@@ -155,7 +170,7 @@ class ToolSessionStore {
      * Push new tool into session
      */
     this.pushIntoSessionList(tool.toSession())
-    this.openTool(tool)
+    this.activateTool(tool)
 
     return tool.toSession()
   }
@@ -234,21 +249,16 @@ class ToolSessionStore {
       return
     }
 
-    /**
-     * Disable persist for currently opened tool session
-     */
-    activeTool.stopStore()
-
     const tool = await this.getToolFromLocalStorage(toolSession)
-    this.openTool(tool)
+    this.activateTool(tool)
   }
 
   /**
-   * Open initialized tool instance
+   * Activate created session of tool
    *
    * @param tool
    */
-  openTool(tool: Tool) {
+  activateTool(tool: Tool) {
     const activeTool = toolRunnerStore.getActiveTool()
 
     /**
@@ -259,11 +269,9 @@ class ToolSessionStore {
     }
 
     /**
-     * Stop store (disable persistence) for currently active tool
+     * Deactivate currently active tool
      */
-    if (activeTool) {
-      activeTool.stopStore()
-    }
+    void this.deactivateCurrentSession()
 
     /**
      * Set new tool as active tool
@@ -291,12 +299,12 @@ class ToolSessionStore {
     this.sessions = this.sessions.filter((session) => session.sessionId !== toolSession.sessionId)
 
     /**
-     * Begin rountine for closed session of tool
+     * Begin process to close session
      */
-    await this.proceedClosedSession(toolSession)
+    await this.proceedCloseSession(toolSession)
 
     /**
-     * Run another routine if the closed session is the currently active tool
+     * Run another process if the closed session is the currently active tool
      */
     if (activeTool.sessionId === toolSession.sessionId) {
       const newSessionsOfTool = this.sessions.filter((session) => session.toolId === toolSession.toolId)
@@ -388,7 +396,7 @@ class ToolSessionStore {
    *
    * @param tool
    */
-  private async proceedClosedSession(toolSession: ToolSession) {
+  private async proceedCloseSession(toolSession: ToolSession) {
     /**
      * Load tool from storage but disable the persistence, we only need
      * to get tool state and save it into history
@@ -405,6 +413,17 @@ class ToolSessionStore {
       ) {
         toolHistoryStore.addHistory(toolHistory.toHistory())
       }
+    }
+  }
+
+  private async deactivateCurrentSession() {
+    const activeTool = toolRunnerStore.getActiveTool()
+
+    /**
+     * Disable store if session has no action running
+     */
+    if (!activeTool.isActionRunning) {
+      activeTool.stopStore()
     }
   }
 

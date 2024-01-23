@@ -49,7 +49,7 @@
       },
       "fs": {
         "all": true,
-        "scope": ["$APPDATA/*", "$APPDATA/extensions/**"]
+        "scope": ["$APPDATA", "$APPDATA/**"]
       },
       "path": {
         "all": true

@@ -45,7 +45,7 @@ const mathEvaluatorTool: ToolConstructor<InputFields, OutputFields> = {
 
       try {
         const result = mexp.eval(input, [], {}).toString()
-        return result.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        return result
       } catch (e) {
         return "Invalid"
       }

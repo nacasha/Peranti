@@ -1,7 +1,7 @@
 import { type FC } from "react"
 
 import { ToolSearchBar } from "src/components/tools/ToolSearchBar/ToolSearchBar"
-import { assets } from "src/constants/assets"
+import { icons } from "src/constants/icons"
 import { useWindowListener } from "src/hooks/useWindowListener"
 
 import "./AppTitlebar.scss"
@@ -18,19 +18,19 @@ export const AppTitlebar: FC = () => {
       <div className="AppTitlebar-control">
         <div className="titlebar-button" id="titlebar-minimize">
           <img
-            src={assets.MinimizeSVG}
+            src={icons.Minimize}
             alt="minimize"
           />
         </div>
         <div className="titlebar-button" id="titlebar-maximize">
           <img
-            src={assets.BoxSVG}
+            src={icons.Box}
             alt="maximize"
           />
         </div>
         <div className="titlebar-button" id="titlebar-close">
           <img
-            src={assets.CloseSVG}
+            src={icons.Close}
             alt="close"
           />
         </div>

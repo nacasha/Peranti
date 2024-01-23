@@ -1,25 +1,24 @@
-import { type ClassValue, clsx } from "clsx"
-import { type DetailedHTMLProps, type FC, type HTMLAttributes, type ReactNode } from "react"
+import { clsx } from "clsx"
+import { type ButtonHTMLAttributes, type DetailedHTMLProps, type DOMAttributes, type FC, type ReactNode } from "react"
 
 import "./Button.scss"
 
-interface ButtonProps {
-  className?: ClassValue[]
+interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
   icon?: string
   children?: ReactNode
-  onClick?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>["onClick"]
+  onClick?: DOMAttributes<HTMLButtonElement>["onClick"]
 }
 
 export const Button: FC<ButtonProps> = (props) => {
-  const { children, icon, className, onClick } = props
+  const { children, icon, className, ...restProps } = props
 
   return (
-    <div
+    <button
       className={clsx("Button", className)}
-      onClick={onClick}
+      {...restProps}
     >
       {icon && <img src={icon} alt={children?.toString()} />}
       {children}
-    </div>
+    </button>
   )
 }

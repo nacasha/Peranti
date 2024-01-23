@@ -1,10 +1,10 @@
 .SettingsSidebar {
-  padding: 0 10px 10px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
 
   .section {
+    padding: 0 10px 10px;
+
     .section-title {
       font-size: 14px;
       margin-bottom: 5px;
