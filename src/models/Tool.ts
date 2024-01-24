@@ -38,9 +38,14 @@ export class Tool<
   readonly sessionId: string
 
   /**
+   * Index of untitled session name
+   */
+  sessionSequenceNumber?: number
+
+  /**
    * Session name to be showed on tabbar
    */
-  sessionName: string
+  sessionName?: string
 
   /**
    * List of input fields for tool
@@ -241,6 +246,8 @@ export class Tool<
        */
       sessionName?: string
 
+      sessionSequenceNumber?: number
+
       /**
        * Disable persistence of tool
        */
@@ -291,11 +298,18 @@ export class Tool<
      */
     this.fillInputValuesWithDefault()
 
-    const { isReadOnly = false, initialState, sessionName, disablePersistence = false } = options
+    const {
+      isReadOnly = false,
+      initialState,
+      sessionName,
+      disablePersistence = false,
+      sessionSequenceNumber
+    } = options
     let assignedSessionName
 
     if (initialState) {
       this.sessionId = initialState.sessionId ?? this.sessionId
+      this.sessionSequenceNumber = initialState.sessionSequenceNumber ?? this.sessionSequenceNumber
       this.isBatchEnabled = initialState.isBatchEnabled ?? this.isBatchEnabled
       this.batchInputKey = initialState.batchInputKey ?? this.batchInputKey
       this.batchOutputKey = initialState.batchOutputKey ?? this.batchOutputKey
@@ -306,8 +320,12 @@ export class Tool<
       assignedSessionName = initialState.sessionName
     }
 
+    if (!this.sessionSequenceNumber) {
+      this.sessionSequenceNumber = sessionSequenceNumber
+    }
+
     if (!assignedSessionName) {
-      assignedSessionName = sessionName ?? this.sessionId.substring(0, 5)
+      assignedSessionName = sessionName
     }
 
     this.isReadOnly = isReadOnly
@@ -399,6 +417,7 @@ export class Tool<
       runCount,
       sessionId,
       sessionName,
+      sessionSequenceNumber,
       toolId
     } = this
 
@@ -408,6 +427,7 @@ export class Tool<
     return {
       sessionId,
       sessionName,
+      sessionSequenceNumber,
       toolId,
       inputValues: toJS(inputValues),
       outputValues: toJS(outputValues),
@@ -421,9 +441,9 @@ export class Tool<
   }
 
   toSession(): ToolSession {
-    const { sessionId, sessionName, toolId } = this
+    const { sessionId, sessionName, sessionSequenceNumber, toolId } = this
 
-    return { sessionId, sessionName, toolId }
+    return { sessionId, sessionName, sessionSequenceNumber, toolId }
   }
 
   /**

@@ -1,6 +1,6 @@
 import clsx from "clsx"
 import { observer } from "mobx-react"
-import { type MouseEventHandler, type FC, useEffect } from "react"
+import { type MouseEventHandler, type FC, useEffect, useRef } from "react"
 import SimpleBar from "simplebar-react"
 
 import { icons } from "src/constants/icons"
@@ -8,21 +8,28 @@ import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { hotkeysStore } from "src/stores/hotkeysStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { toolSessionStore } from "src/stores/toolSessionStore"
+import { toolStore } from "src/stores/toolStore"
 import { type ToolSession } from "src/types/ToolSession"
 
 import "./ToolTabbar.scss"
 
 export const ToolTabbar: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
-  const tabs = toolSessionStore.getRunningSessionsFromTool(activeTool.toolId)
+  const tabs = toolSessionStore.getRunningSessions(activeTool.toolId)
   const activeIndex = tabs.findIndex((tab) => tab.sessionId === activeTool.sessionId)
+
+  const ref = useRef<HTMLDivElement>(null)
 
   const isToolActive = (toolSession: ToolSession) => (
     toolSession.sessionId === activeTool.sessionId
   )
 
   const onClickAddTab = () => {
-    focusActiveTab(toolSessionStore.createSession(activeTool).sessionId)
+    const createdSession = toolSessionStore.createSession(activeTool, undefined, true)
+
+    if (createdSession) {
+      focusActiveTab(createdSession.sessionId)
+    }
   }
 
   const focusActiveTab = (sessionId: string) => {
@@ -34,7 +41,11 @@ export const ToolTabbar: FC = observer(() => {
 
   useHotkeysModified(hotkeysStore.keys.TAB_NEW_EDITOR, (event) => {
     event.preventDefault()
-    onClickAddTab()
+    const createdSession = toolSessionStore.createSession(activeTool, undefined)
+
+    if (createdSession) {
+      focusActiveTab(createdSession.sessionId)
+    }
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_NEXT, (event) => {
@@ -70,10 +81,29 @@ export const ToolTabbar: FC = observer(() => {
     void toolSessionStore.closeSession(activeTool.toSession())
   })
 
+  useEffect(() => {
+    if (ref.current) {
+      const onScroll = (event: WheelEvent) => {
+        if (ref.current) {
+          event.preventDefault()
+          ref.current.scrollLeft += event.deltaY
+        }
+      }
+
+      ref.current.addEventListener("wheel", onScroll)
+      return () => {
+        ref.current?.removeEventListener("wheel", onScroll)
+      }
+    }
+  }, [ref])
+
   return (
     <div className="ToolTabbar">
       <div className="ToolTabbar-inner">
-        <SimpleBar className="ToolTabbar-inner-simplebar">
+        <SimpleBar
+          className="ToolTabbar-inner-simplebar"
+          scrollableNodeProps={{ ref }}
+        >
           {tabs.map((toolSession) => (
             <TabItem
               key={toolSession.sessionId}
@@ -115,7 +145,14 @@ const TabItem: FC<TabItemProps> = (props) => {
         activeTab.scrollIntoView()
       }
     }
-  }, [])
+  }, [active])
+
+  const getSessionName = (toolSession: ToolSession) => {
+    const { sessionName, sessionSequenceNumber, toolId } = toolSession
+
+    if (sessionName) return sessionName
+    return toolStore.mapOfLoadedToolsName[toolId].concat(` - ${sessionSequenceNumber}`)
+  }
 
   return (
     <div
@@ -124,7 +161,7 @@ const TabItem: FC<TabItemProps> = (props) => {
       onClick={onClickTab}
       data-session-id={toolSession.sessionId}
     >
-      {toolSession.sessionName}
+      {getSessionName(toolSession)}
       {toolSession.isActionRunning ? " ..." : ""}
       <div className="ToolTabbar-icon" onClick={onClickCloseTab}>
         <img src={icons.Close} alt="Close Tab" />

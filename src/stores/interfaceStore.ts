@@ -8,20 +8,50 @@ import { ThemeEnum } from "src/enums/ThemeEnum.ts"
 import { getWindowSize } from "src/utils/getWindowSize"
 
 class InterfaceStore {
+  /**
+   * Currently active theme
+   *
+   * @configurable
+   */
   theme: ThemeEnum = ThemeEnum.Dark
 
+  /**
+   * Show the sidebar
+   */
   _isSidebarShow = true
 
+  /**
+   * App Sidebar mode
+   *
+   * @configurable
+   */
   _sidebarMode: SidebarMode = SidebarMode.DockPinned
 
+  /**
+   * Save last tool and input state
+   */
   _restoreLastToolInputAndOutput = false
 
+  /**
+   * Make App Sidebar alaways floating (hide on click outside)
+   */
   isFloatingSidebar = false
 
+  /**
+   * Currently active menu id
+   */
   sidebarActiveMenuId = "tools"
 
+  /**
+   * Make text area and code component text wrap
+   *
+   * @configurable
+   */
   textAreaWordWrap = false
 
+  /**
+   * State of window size
+   */
   windowSize = {
     width: 0,
     height: 0

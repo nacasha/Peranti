@@ -3,13 +3,17 @@
   background-color: var(--background-color-main);
   height: var(--tool-tabbar-height);
 
-  &::after {
+  .simplebar-offset::after {
     content: " ";
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
     border-bottom: 1px solid var(--border-color);
+  }
+
+  .simplebar-track.simplebar-horizontal {
+    height: 7px;
   }
 }
 
@@ -38,6 +42,10 @@
   &:hover {
     background: var(--button-hover-color);
     cursor: pointer;
+
+    .ToolTabbar-icon {
+      opacity: 1;
+    }
   }
 
   &.active {
@@ -50,8 +58,11 @@
 
   &.new {
     padding-inline: 5px;
+    height: calc(var(--tool-tabbar-height) - 11px);
 
     .ToolTabbar-icon {
+      opacity: 1;
+
       &:hover {
         background-color: transparent;
       }
@@ -63,6 +74,7 @@
   display: flex;
   border-radius: var(--border-radius);
   padding: 3px;
+  opacity: 0;
 
   img {
     width: 12px;
@@ -70,7 +82,7 @@
   }
 
   &:hover {
-    background-color: var(--button-active-color);
+    background-color: var(--button-hover-color);
   }
 }
 

@@ -46,11 +46,15 @@ const uriEncodeDecodeTool: ToolConstructor<InputFields, OutputFields> = {
     }
   ],
   action({ input, type }) {
-    if (type === "encode") {
-      return { output: encodeURIComponent(input) }
-    }
+    try {
+      if (type === "encode") {
+        return { output: encodeURIComponent(input) }
+      }
 
-    return { output: decodeURIComponent(input) }
+      return { output: decodeURIComponent(input) }
+    } catch (error) {
+      return { output: "Invalid Input" }
+    }
   }
 }
 

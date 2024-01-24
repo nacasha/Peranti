@@ -109,7 +109,7 @@ class ToolStore {
   }
 
   /**
-   * Pair of toolId and tool constructor, has default value of built in tools
+   * Pair of toolId and tool constructor, default value is built in tools
    */
   mapOfLoadedTools: Record<string, ToolConstructor> = {
     ...this._builtInTools
@@ -117,29 +117,38 @@ class ToolStore {
 
   /**
    * List of all tools without categorized
+   *
+   * Example value:
+   * ```
+   * [compare-list-tool, text-transform-tool, generate-uuid-tool]
+   * ```
    */
   listOfLoadedTools: Array<ToolConstructor<any, any>> = []
 
   /**
    * Pair of toolId and tool name
    *
-   * Example:
+   * Example value:
+   * ```
    * {
    *     "text-transform": "Text Transform",
    *     "math-evaluator": "Math Evaluator",
    *     "compare-list": "Compare List",
    * }
+   * ```
    */
   mapOfLoadedToolsName: Record<string, string> = {}
 
   /**
    * Pair of category name and list of tools
    *
-   * Example:
+   * Example value:
+   * ```
    * {
    *    List: [compare-list, sort-list, remove-duplicate-list],
    *    Text: [word-counter, text-transform]
    * }
+   * ```
    */
   listOfCategoriesAndTools: Record<string, ToolConstructor[]> = {}
 
@@ -147,6 +156,13 @@ class ToolStore {
    * Indicates tool store has been initialized
    */
   isToolsInitialized: boolean = false
+
+  /**
+   * ToolSessionStore constructor
+   */
+  constructor() {
+    makeAutoObservable(this)
+  }
 
   /**
    * Setup built-in tools and preset
@@ -283,6 +299,10 @@ class ToolStore {
     this.listOfCategoriesAndTools = listOfCategoriesAndTools
   }
 
+  /**
+   * Prepare extensions folder by creating the folder
+   * in user app data folder if not exists
+   */
   private async prepareExtensionsFolder() {
     const EXTENSIONS = "extensions"
 
@@ -300,13 +320,6 @@ class ToolStore {
     } catch (err: any) {
       console.log(err)
     }
-  }
-
-  /**
-   * ToolSessionStore constructor
-   */
-  constructor() {
-    makeAutoObservable(this)
   }
 }
 

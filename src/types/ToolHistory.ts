@@ -1,6 +1,7 @@
 export interface ToolHistory {
   sessionId: string
-  sessionName: string
+  sessionName?: string
+  sessionSequenceNumber?: number
   toolId: string
   inputValues: any
   outputValues: any

@@ -108,6 +108,10 @@ html, body {
       background: #555;
     }
   }
+
+  .simplebar-scrollbar:before {
+    background: rgba(0,0,0,0.5);
+  }
 }
 
 .AppRoot.dark {
@@ -164,6 +168,10 @@ html, body {
     &:hover {
       background: #555;
     }
+  }
+
+  .simplebar-scrollbar:before {
+    background: rgba(255,255,255,0.5);
   }
 }
 

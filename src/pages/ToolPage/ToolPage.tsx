@@ -13,10 +13,6 @@ import { toolSessionStore } from "src/stores/toolSessionStore"
 import "./ToolPage.scss"
 
 export const ToolPage: FC = observer(() => {
-  if (!toolSessionStore.isInitialized || toolRunnerStore.getActiveTool().toolId === "") {
-    return
-  }
-
   return (
     <div className="ToolPage">
       <ToolRunner />

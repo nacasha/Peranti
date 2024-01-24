@@ -1,5 +1,10 @@
 export interface ToolSession {
   /**
+   * Tool ID of session
+   */
+  toolId: string
+
+  /**
    * Session ID
    */
   sessionId: string
@@ -7,12 +12,12 @@ export interface ToolSession {
   /**
    * Session name
    */
-  sessionName: string
+  sessionName?: string
 
   /**
-   * Tool ID of session
+   * Index of untitled session name
    */
-  toolId: string
+  sessionSequenceNumber?: number
 
   /**
    * Indicates session is running an action

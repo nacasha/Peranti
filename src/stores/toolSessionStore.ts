@@ -1,5 +1,5 @@
 import localforage from "localforage"
-import { makeAutoObservable } from "mobx"
+import { makeAutoObservable, toJS } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { storageKeys } from "src/constants/storage-keys.js"
@@ -16,7 +16,7 @@ class ToolSessionStore {
   /**
    * The store has been persisted
    */
-  isPersisted: boolean = false
+  private _isPersisted: boolean = false
 
   /**
    * The store has been initialized
@@ -25,8 +25,34 @@ class ToolSessionStore {
 
   /**
    * Allow editor to have multiple sessions at once
+   *
+   * @configurable
    */
   enableMultipleSession = true
+
+  /**
+   * Close the tool when the last session is closed
+   *
+   * @configurable
+   */
+  closeToolWhenLastSessionIsClosed = false
+
+  /**
+   * Unified tool sessions
+   *
+   * @configurable
+   */
+  unifiedToolSession = true
+
+  /**
+   * New created session will be placed in the last of session (most right)
+   * Only applied when creating session using hotkey
+   *
+   * Creating new session using Tool Tabbar Add button will always placed at the end of list
+   *
+   * @configurable
+   */
+  newSessionPushLast = false
 
   /**
    * List of tool sessions
@@ -34,9 +60,9 @@ class ToolSessionStore {
   sessions: ToolSession[] = []
 
   /**
-   * Pair of toolId and list of created session names
+   * Pair of toolId and list of created sequence of session
    */
-  sessionNames: Record<string, Array<string | undefined>> = {}
+  sessionSequences: Record<string, boolean[]> = {}
 
   /**
    * Pair of toolId and last active sessionId
@@ -76,33 +102,6 @@ class ToolSessionStore {
   }
 
   /**
-   * Generate session name for tool
-   *
-   * @param tool
-   * @returns
-   */
-  generateSessionName(tool: ToolConstructor) {
-    if (!this.sessionNames[tool.toolId]) {
-      this.resetSessionNamesOfTool(tool.toolId)
-    }
-
-    let nextIndex
-    const sessionCounters = this.sessionNames[tool.toolId]
-    const smallestIndex = sessionCounters.findIndex((e) => e === undefined || e === null)
-
-    if (smallestIndex === -1) {
-      nextIndex = sessionCounters.length
-    } else {
-      nextIndex = smallestIndex
-    }
-
-    const sessionName = "Editor ".concat(nextIndex.toString())
-    this.sessionNames[tool.toolId][nextIndex] = sessionName
-
-    return sessionName
-  }
-
-  /**
    * ToolSessionStore constructor
    */
   constructor() {
@@ -115,7 +114,7 @@ class ToolSessionStore {
    * @returns
    */
   setupPersistence() {
-    if (this.isPersisted) {
+    if (this._isPersisted) {
       return
     }
 
@@ -125,7 +124,7 @@ class ToolSessionStore {
       name: storageKeys.ToolSessionStore,
       stringify: false,
       properties: [
-        "sessionNames",
+        "sessionSequences",
         "enableMultipleSession",
         "activeSessionIds",
         "sessions"
@@ -140,7 +139,7 @@ class ToolSessionStore {
   }
 
   private setIsPersisted(value: boolean) {
-    this.isPersisted = value
+    this._isPersisted = value
   }
 
   /**
@@ -150,14 +149,22 @@ class ToolSessionStore {
    */
   createSession(
     toolConstructor: ToolConstructor,
-    options: ConstructorParameters<typeof Tool>["1"] = {}
+    options: ConstructorParameters<typeof Tool>["1"] = {},
+    placeSessionAtTheEnd: boolean = false
   ) {
+    /**
+     * Exit if there is no tool to be created
+     */
+    if (toolConstructor.toolId === "") {
+      return
+    }
+
     /**
      * Create sessionName for tool
      */
     const newOptions: typeof options = {
       ...options,
-      sessionName: this.generateSessionName(toolConstructor)
+      sessionSequenceNumber: this.attachSessionSequence(toolConstructor)
     }
 
     /**
@@ -168,7 +175,7 @@ class ToolSessionStore {
     /**
      * Push new tool into session
      */
-    this.pushIntoSessionList(tool.toSession())
+    this.pushIntoSessionList(tool.toSession(), placeSessionAtTheEnd)
     this.activateTool(tool)
 
     return tool.toSession()
@@ -290,7 +297,7 @@ class ToolSessionStore {
     /**
      * Save old sessions of tool for future reference
      */
-    const oldSessionsOfTool = this.sessions.filter((session) => session.toolId === toolSession.toolId)
+    const oldSessionsOfTool = this.getRunningSessions(toolSession.toolId)
 
     /**
      * Filter sessions without closed tool
@@ -303,68 +310,112 @@ class ToolSessionStore {
     await this.proceedCloseSession(toolSession)
 
     /**
-     * Run another process if the closed session is the currently active tool
+     * Early exit if closed session is not currently active tool
      */
-    if (activeTool.sessionId === toolSession.sessionId) {
-      const newSessionsOfTool = this.sessions.filter((session) => session.toolId === toolSession.toolId)
+    if (activeTool.sessionId !== toolSession.sessionId) {
+      return
+    }
+
+    const newSessionsOfTool = this.getRunningSessions(toolSession.toolId)
+
+    /**
+     * Create another session if closed session if the last session of tool
+     */
+    if (newSessionsOfTool.length === 0) {
+      /**
+       * Reset name of session because list is already empty
+       */
+      this.resetToolSessionSequence(toolSession.toolId)
 
       /**
-       * Create empty session if it's last session of the tool
+       * Close tool based on preferences
        */
-      if (newSessionsOfTool.length === 0) {
-        /**
-         * Reset name of session because list is already empty
-         */
-        this.resetSessionNamesOfTool(toolSession.toolId)
+      if (this.closeToolWhenLastSessionIsClosed) {
+        this.activateTool(Tool.empty())
+        return
+      }
 
-        const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
-
-        /**
-         * I have no idea but this code makes the method `createSession`
-         * using the commited variable of `this.sessionNames`
-         *
-         * This is done to avoid creating new session with session name "Editor 2"
-         * when closing the "Editor 1"
-         */
-        setTimeout(() => {
-          this.createSession(toolConstructor)
-        }, 0)
+      /**
+       * Open new session of tool
+       */
+      const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
+      this.createSession(toolConstructor)
 
       /**
        * Open another existing sessions from tool based on closed tool session index
        */
-      } else {
-        let newSessionToBeOpened
-        const closedSessionIndex = oldSessionsOfTool.findIndex(
-          (session) => session.sessionId === toolSession.sessionId
-        )
+    } else {
+      let newSessionToBeOpened
+      const closedSessionIndex = oldSessionsOfTool.findIndex(
+        (session) => session.sessionId === toolSession.sessionId
+      )
 
-        /**
-         * If closed session is not found on list of session, it means closeSession()
-         * was called more than once with same session (usually through holding the hotkey)
-         */
-        if (closedSessionIndex < 0) {
-          return
-        }
-
-        if (closedSessionIndex <= newSessionsOfTool.length - 1) {
-          newSessionToBeOpened = newSessionsOfTool[closedSessionIndex]
-        } else {
-          newSessionToBeOpened = newSessionsOfTool[closedSessionIndex - 1]
-        }
-
-        void this.openSession(newSessionToBeOpened)
+      /**
+       * If closed session is not found on list of session, it means closeSession()
+       * was called more than once with same session (usually through holding the hotkey)
+       */
+      if (closedSessionIndex < 0) {
+        return
       }
+
+      if (closedSessionIndex <= newSessionsOfTool.length - 1) {
+        newSessionToBeOpened = newSessionsOfTool[closedSessionIndex]
+      } else {
+        newSessionToBeOpened = newSessionsOfTool[closedSessionIndex - 1]
+      }
+
+      void this.openSession(newSessionToBeOpened)
+    }
+  }
+
+  resetToolSessionSequence(toolId: string) {
+    this.sessionSequences[toolId] = [true]
+  }
+
+  /**
+   * Generate session name for tool
+   *
+   * @param tool
+   * @returns
+   */
+  attachSessionSequence(tool: ToolConstructor) {
+    if (!this.sessionSequences[tool.toolId]) {
+      this.resetToolSessionSequence(tool.toolId)
+    }
+
+    if (this.sessionSequences[tool.toolId].length === 1) {
+      this.sessionSequences[tool.toolId][1] = true
+      return 1
+    }
+
+    let nextIndex
+    const sessionSequences = toJS(this.sessionSequences[tool.toolId])
+    const smallestIndex = sessionSequences.findIndex((e) => !e || e === undefined)
+
+    if (smallestIndex === -1) {
+      nextIndex = sessionSequences.length
+    } else {
+      nextIndex = smallestIndex
     }
 
     /**
-     * Remove closed tool session name from store
+     * This block code purposely to avoid new session has same sequence number
+     * when holding the CLOSE_TAB hotkey
      */
-    this.detachToolWithSessionNames(toolSession)
-  }
+    if (nextIndex === 1) {
+      const runningSessions = this.getRunningSessionsFromTool(tool.toolId)
 
-  resetSessionNamesOfTool(toolId: string) {
-    this.sessionNames[toolId] = ["reserved"]
+      /**
+       * When tool has 1 running session but nextIndex is 1, increase the nextIndex
+       */
+      if (runningSessions.length === 1 && runningSessions[0].sessionSequenceNumber === nextIndex) {
+        this.sessionSequences[tool.toolId][1] = true
+        nextIndex = nextIndex + 1
+      }
+    }
+
+    this.sessionSequences[tool.toolId][nextIndex] = true
+    return nextIndex
   }
 
   /**
@@ -372,11 +423,16 @@ class ToolSessionStore {
    *
    * @param toolSession
    */
-  detachToolWithSessionNames(toolSession: ToolSession) {
-    const deletedIndex = this.sessionNames[toolSession.toolId].findIndex((e) => e === toolSession.sessionName)
+  detachSessionSequence(toolSession: ToolSession) {
+    const sessions = this.sessionSequences[toolSession.toolId]
+    const deletedIndex = sessions.findIndex(
+      (_, index) => index === toolSession.sessionSequenceNumber
+    )
 
     if (deletedIndex >= 0) {
-      this.sessionNames[toolSession.toolId][deletedIndex] = undefined
+      this.sessionSequences[toolSession.toolId][deletedIndex] = false
+    } else if (sessions.filter((e) => e).length === 1) {
+      this.resetToolSessionSequence(toolSession.toolId)
     }
   }
 
@@ -413,6 +469,11 @@ class ToolSessionStore {
         toolHistoryStore.addHistory(toolHistory.toHistory())
       }
     }
+
+    /**
+     * Remove closed tool session name from store
+     */
+    this.detachSessionSequence(toolSession)
   }
 
   private async deactivateCurrentSession() {
@@ -431,8 +492,19 @@ class ToolSessionStore {
    *
    * @param tool
    */
-  pushIntoSessionList(tool: ToolSession) {
-    this.sessions.push(tool)
+  pushIntoSessionList(tool: ToolSession, placeSessionAtTheEnd: boolean = false) {
+    if (this.newSessionPushLast || placeSessionAtTheEnd) {
+      this.sessions.push(tool)
+    } else {
+      const activeTool = toolRunnerStore.getActiveTool()
+
+      const runningSessions = this.getRunningSessions(activeTool.toolId)
+      const indexOfActiveTool = runningSessions.findIndex((session) => (
+        session.sessionId === activeTool.sessionId
+      ))
+
+      this.sessions.splice(indexOfActiveTool + 1, 0, tool)
+    }
   }
 
   /**
@@ -443,6 +515,14 @@ class ToolSessionStore {
    */
   getRunningSessionsFromTool(toolId: string) {
     return this.sessions.filter((session) => session.toolId === toolId)
+  }
+
+  getRunningSessions(toolId: string) {
+    if (this.unifiedToolSession) {
+      return this.sessions
+    }
+
+    return this.getRunningSessionsFromTool(toolId)
   }
 }
 
