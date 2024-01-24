@@ -24,6 +24,7 @@
 .ToolTabbar-item {
   padding: 5px 10px;
   padding-right: 5px;
+  padding-top: 3px;
   border-right: 1px solid var(--border-color);
   user-select: none;
   color: var(--tool-tabbar-text-color);
@@ -31,6 +32,7 @@
   align-items: center;
   gap: 5px;
   border-bottom: 1px solid transparent;
+  border-top: 2px solid transparent;
   white-space: nowrap;
 
   &:hover {
@@ -43,6 +45,7 @@
     background-color: var(--tool-header-background-color);
     z-index: 1;
     border-bottom: 1px solid var(--tool-header-background-color);
+    border-top: 2px solid var(--accent-color  );
   }
 
   &.new {

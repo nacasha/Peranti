@@ -33,8 +33,6 @@ class ToolSessionStore {
    */
   sessions: ToolSession[] = []
 
-  private readonly _keepAliveToolSession: Tool[] = []
-
   /**
    * Pair of toolId and list of created session names
    */
@@ -71,7 +69,8 @@ class ToolSessionStore {
     if (sessionIndex > -1) {
       this.sessions[sessionIndex] = {
         ...this.sessions[sessionIndex],
-        isActionRunning: value
+        isActionRunning: value,
+        keepAlive: value
       }
     }
   }
@@ -420,7 +419,7 @@ class ToolSessionStore {
     const activeTool = toolRunnerStore.getActiveTool()
 
     /**
-     * Disable store if session has no action running
+     * Disable session reference to store if session has no action running
      */
     if (!activeTool.isActionRunning) {
       activeTool.stopStore()
