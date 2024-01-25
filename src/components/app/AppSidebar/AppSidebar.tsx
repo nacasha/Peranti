@@ -1,4 +1,4 @@
-import { icons } from "src/constants/icons.ts"
+import { Icons } from "src/constants/icons.ts"
 
 import { AppSidebarItem } from "./AppSidebarItem.tsx"
 
@@ -8,22 +8,22 @@ export const AppSidebar = () => {
   return (
     <div className="AppSidebar">
       <AppSidebarItem
-        icon={icons.Thunder}
+        icon={Icons.Thunder}
         label="Tools"
         menuId="tools"
       />
       <AppSidebarItem
-        icon={icons.ThreeLineVertical}
+        icon={Icons.ThreeLineVertical}
         label="Pipelines"
         menuId="pipelines"
       />
       <AppSidebarItem
-        icon={icons.History}
+        icon={Icons.History}
         label="History"
         menuId="history"
       />
       <AppSidebarItem
-        icon={icons.Gear}
+        icon={Icons.Gear}
         label="Settings"
         menuId="settings"
       />

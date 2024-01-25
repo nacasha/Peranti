@@ -1,9 +1,9 @@
 import clsx from "clsx"
 import { observer } from "mobx-react"
-import { type MouseEventHandler, type FC, useEffect, useRef } from "react"
+import { type MouseEventHandler, type FC, useEffect, useRef, type DragEventHandler } from "react"
 import SimpleBar from "simplebar-react"
 
-import { icons } from "src/constants/icons"
+import { Icons } from "src/constants/icons"
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { hotkeysStore } from "src/stores/hotkeysStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
@@ -25,27 +25,12 @@ export const ToolTabbar: FC = observer(() => {
   )
 
   const onClickAddTab = () => {
-    const createdSession = toolSessionStore.createSession(activeTool, undefined, true)
-
-    if (createdSession) {
-      focusActiveTab(createdSession.sessionId)
-    }
-  }
-
-  const focusActiveTab = (sessionId: string) => {
-    const activeTab: HTMLDivElement | null = document.querySelector(`[data-session-id="${sessionId}"]`)
-    if (activeTab) {
-      activeTab.scrollIntoView()
-    }
+    toolSessionStore.createSession(activeTool, undefined, true)
   }
 
   useHotkeysModified(hotkeysStore.keys.TAB_NEW_EDITOR, (event) => {
     event.preventDefault()
-    const createdSession = toolSessionStore.createSession(activeTool, undefined)
-
-    if (createdSession) {
-      focusActiveTab(createdSession.sessionId)
-    }
+    toolSessionStore.createSession(activeTool, undefined)
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_NEXT, (event) => {
@@ -59,7 +44,6 @@ export const ToolTabbar: FC = observer(() => {
     }
 
     void toolSessionStore.openSession(toolSession)
-    focusActiveTab(toolSession.sessionId)
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_PREV, (event) => {
@@ -73,7 +57,6 @@ export const ToolTabbar: FC = observer(() => {
     }
 
     void toolSessionStore.openSession(toolSession)
-    focusActiveTab(toolSession.sessionId)
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CLOSE, (event) => {
@@ -113,7 +96,7 @@ export const ToolTabbar: FC = observer(() => {
           ))}
 
           <div onClick={onClickAddTab} className="ToolTabbar-item new">
-            <div className="ToolTabbar-icon"><img src={icons.Plus} alt="Add Tab" /></div>
+            <div className="ToolTabbar-icon"><img src={Icons.Plus} alt="Add Tab" /></div>
           </div>
         </SimpleBar>
       </div>
@@ -128,6 +111,7 @@ interface TabItemProps {
 
 const TabItem: FC<TabItemProps> = (props) => {
   const { toolSession, active } = props
+  const { sessionId, sessionName, sessionSequenceNumber, toolId, isActionRunning } = toolSession
 
   const onClickTab = () => {
     void toolSessionStore.openSession(toolSession)
@@ -138,33 +122,69 @@ const TabItem: FC<TabItemProps> = (props) => {
     void toolSessionStore.closeSession(toolSession)
   }
 
+  const getSessionName = () => {
+    if (sessionName) return sessionName
+    return toolStore.mapOfLoadedToolsName[toolId].concat(`-${sessionSequenceNumber}`)
+  }
+
+  const handleDragStart: DragEventHandler<HTMLDivElement> = (event) => {
+    event.dataTransfer.effectAllowed = "move"
+    event.dataTransfer.setData("sessionId", sessionId)
+  }
+
+  const handleDragOver: DragEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const element = event.currentTarget
+    if (element.classList.contains("droptarget")) {
+      element.style.backdropFilter = "contrast(0.8)"
+    }
+  }
+
+  const handleDrop: DragEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault()
+    const element = event.currentTarget
+    element.style.backdropFilter = "none"
+
+    const fromSessionId = event.dataTransfer.getData("sessionId")
+    toolSessionStore.switchSessionPosition(fromSessionId, sessionId)
+  }
+
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault()
+    const element = event.currentTarget
+    element.style.backdropFilter = "none"
+  }
+
   useEffect(() => {
     if (active) {
-      const activeTab: HTMLDivElement | null = document.querySelector(`[data-session-id="${toolSession.sessionId}"]`)
+      const activeTab: HTMLDivElement | null = document.querySelector(`[data-session-id="${sessionId}"]`)
+
       if (activeTab) {
         activeTab.scrollIntoView()
       }
     }
   }, [active])
 
-  const getSessionName = (toolSession: ToolSession) => {
-    const { sessionName, sessionSequenceNumber, toolId } = toolSession
-
-    if (sessionName) return sessionName
-    return toolStore.mapOfLoadedToolsName[toolId].concat(` - ${sessionSequenceNumber}`)
-  }
-
   return (
     <div
       key={toolSession.sessionId}
-      className={clsx("ToolTabbar-item", { active })}
-      onClick={onClickTab}
+      className={clsx("ToolTabbar-item", { active }, "droptarget")}
       data-session-id={toolSession.sessionId}
+      onMouseDown={onClickTab}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragLeaveCapture={handleDragLeave}
+      onDrop={handleDrop}
+      draggable
     >
-      {getSessionName(toolSession)}
-      {toolSession.isActionRunning ? " ..." : ""}
+      <div>
+        {getSessionName()}
+        {isActionRunning ? " ..." : ""}
+      </div>
       <div className="ToolTabbar-icon" onClick={onClickCloseTab}>
-        <img src={icons.Close} alt="Close Tab" />
+        <img src={Icons.Close} alt="Close Tab" />
       </div>
     </div>
   )

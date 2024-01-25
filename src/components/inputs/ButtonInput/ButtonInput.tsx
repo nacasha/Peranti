@@ -1,7 +1,7 @@
 import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
-import { icons } from "src/constants/icons"
+import { Icons } from "src/constants/icons"
 import { useSelector } from "src/hooks/useSelector"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type InputComponentProps } from "src/types/InputComponentProps"
@@ -24,7 +24,7 @@ export const ButtonInput: FC<ButtonInputProps> = (props) => {
     <div className="ButtonInput">
       <Button
         type="submit"
-        icon={icons.Refresh}
+        icon={Icons.Refresh}
         onClick={onClickButton}
         disabled={isActionRunning}
       >

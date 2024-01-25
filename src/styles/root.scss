@@ -59,7 +59,7 @@ html, body {
 
 .AppRoot.light {
   // General
-  --border-color: #dddddd;
+  --border-color: #cbcccd;
   --text-color: #0f0f0f;
   --icon-color: invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%);
 
@@ -69,13 +69,13 @@ html, body {
   --button-active-color: #ececec;
 
   // App Content
-  --background-color-main: #f6f6f6;
+  --background-color-main: #ffffff;
   --background-color-content: #ffffff;
 
   // App Sidebar
+  --sidebar-content-background-color: #f6f8fa;
   --sidebar-item-background-color-hover: #dfdddd;
   --sidebar-item-background-color-active: #d6d6d6;
-  --sidebar-content-background-color: #ffffff;
 
   // App Statusbar
   --statusbar-background-color: #f6f6f6;
@@ -130,9 +130,9 @@ html, body {
   --background-color-content: #222429;
 
   // App Sidebar
+  --sidebar-content-background-color: #222429;
   --sidebar-item-background-color-hover: #5a5b5e;
   --sidebar-item-background-color-active: #434549;
-  --sidebar-content-background-color: #222429;
 
   // App Statusbar
   --statusbar-background-color: #1e1f22;
@@ -171,7 +171,7 @@ html, body {
   }
 
   .simplebar-scrollbar:before {
-    background: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.2);
   }
 }
 

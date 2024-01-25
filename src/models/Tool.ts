@@ -5,7 +5,7 @@ import hashMd5 from "md5"
 import { observable, action, makeObservable, toJS } from "mobx"
 import { PersistStoreMap, isPersisting, makePersistable, stopPersisting } from "mobx-persist-store"
 
-import { storageKeys } from "src/constants/storage-keys"
+import { StorageKeys } from "src/constants/storage-keys"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
@@ -160,7 +160,7 @@ export class Tool<
   readonly disablePersistence: boolean = false
 
   get localStorageKey() {
-    return storageKeys.Tool.concat(this.sessionId)
+    return StorageKeys.Tool.concat(this.sessionId)
   }
 
   /**

@@ -21,7 +21,7 @@ import ThreeLineHorizontal from "src/assets/icons/three-line-horizontal.svg"
 import ThreeLineVertical from "src/assets/icons/three-line-vertical.svg"
 import Thunder from "src/assets/icons/thunder.svg"
 
-export const icons = {
+export const Icons = {
   PanelLeft,
   Run,
   History,

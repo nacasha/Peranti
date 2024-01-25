@@ -2,7 +2,7 @@ import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
-import { storageKeys } from "src/constants/storage-keys"
+import { StorageKeys } from "src/constants/storage-keys"
 import { Tool } from "src/models/Tool.ts"
 import { type ToolConstructor } from "src/types/ToolConstructor.js"
 import { type ToolHistory } from "src/types/ToolHistory.ts"
@@ -36,7 +36,7 @@ class ToolRunnerStore {
     makeAutoObservable(this)
 
     void makePersistable(this, {
-      name: storageKeys.ToolRunnerStore,
+      name: StorageKeys.ToolRunnerStore,
       storage: localforage,
       stringify: false,
       properties: []

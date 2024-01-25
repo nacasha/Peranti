@@ -2,7 +2,7 @@ import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
-import { storageKeys } from "src/constants/storage-keys"
+import { StorageKeys } from "src/constants/storage-keys"
 import { SidebarMode } from "src/enums/SidebarMode"
 import { ThemeEnum } from "src/enums/ThemeEnum.ts"
 import { getWindowSize } from "src/utils/getWindowSize"
@@ -62,7 +62,7 @@ class InterfaceStore {
     makeAutoObservable(this)
 
     void makePersistable(this, {
-      name: storageKeys.InterfaceStore,
+      name: StorageKeys.InterfaceStore,
       storage: localforage,
       stringify: false,
       properties: [

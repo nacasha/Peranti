@@ -2,7 +2,7 @@ import localforage from "localforage"
 import { makeAutoObservable, toJS } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
-import { storageKeys } from "src/constants/storage-keys.js"
+import { StorageKeys } from "src/constants/storage-keys.js"
 import { Tool } from "src/models/Tool"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolHistory } from "src/types/ToolHistory.js"
@@ -52,7 +52,7 @@ class ToolSessionStore {
    *
    * @configurable
    */
-  newSessionPushLast = false
+  placeNewSessionToLast = false
 
   /**
    * List of tool sessions
@@ -80,7 +80,7 @@ class ToolSessionStore {
     const { disablePersistence = false } = options
     const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
     const cachedSession: { toolHistory: ToolHistory } | null = await localforage.getItem(
-      storageKeys.Tool.concat(toolSession.sessionId)
+      StorageKeys.Tool.concat(toolSession.sessionId)
     )
 
     if (cachedSession) {
@@ -121,7 +121,7 @@ class ToolSessionStore {
     this.setIsPersisted(true)
 
     void makePersistable(this, {
-      name: storageKeys.ToolSessionStore,
+      name: StorageKeys.ToolSessionStore,
       stringify: false,
       properties: [
         "sessionSequences",
@@ -149,7 +149,7 @@ class ToolSessionStore {
    */
   createSession(
     toolConstructor: ToolConstructor,
-    options: ConstructorParameters<typeof Tool>["1"] = {},
+    toolOptions: ConstructorParameters<typeof Tool>["1"] = {},
     placeSessionAtTheEnd: boolean = false
   ) {
     /**
@@ -162,8 +162,8 @@ class ToolSessionStore {
     /**
      * Create sessionName for tool
      */
-    const newOptions: typeof options = {
-      ...options,
+    const newOptions: typeof toolOptions = {
+      ...toolOptions,
       sessionSequenceNumber: this.attachSessionSequence(toolConstructor)
     }
 
@@ -493,13 +493,12 @@ class ToolSessionStore {
    * @param tool
    */
   pushIntoSessionList(tool: ToolSession, placeSessionAtTheEnd: boolean = false) {
-    if (this.newSessionPushLast || placeSessionAtTheEnd) {
+    if (this.placeNewSessionToLast || placeSessionAtTheEnd) {
       this.sessions.push(tool)
     } else {
       const activeTool = toolRunnerStore.getActiveTool()
 
-      const runningSessions = this.getRunningSessions(activeTool.toolId)
-      const indexOfActiveTool = runningSessions.findIndex((session) => (
+      const indexOfActiveTool = this.sessions.findIndex((session) => (
         session.sessionId === activeTool.sessionId
       ))
 
@@ -517,12 +516,35 @@ class ToolSessionStore {
     return this.sessions.filter((session) => session.toolId === toolId)
   }
 
+  /**
+   * Get running sessions based on use preferences
+   *
+   * @param toolId
+   * @returns
+   */
   getRunningSessions(toolId: string) {
     if (this.unifiedToolSession) {
       return this.sessions
     }
 
     return this.getRunningSessionsFromTool(toolId)
+  }
+
+  /**
+   * Switch index position of session
+   *
+   * @param fromSessionId
+   * @param toSessionId
+   */
+  switchSessionPosition(fromSessionId: string, toSessionId: string) {
+    const fromIndex = this.sessions.findIndex((session) => session.sessionId === fromSessionId)
+    const toIndex = this.sessions.findIndex((session) => session.sessionId === toSessionId)
+
+    // Remove the item from the original index
+    const removedItem = this.sessions.splice(fromIndex, 1)[0]
+
+    // Insert the removed item at the new index
+    this.sessions.splice(toIndex, 0, removedItem)
   }
 }
 

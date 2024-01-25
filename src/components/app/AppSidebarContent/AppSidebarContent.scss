@@ -3,7 +3,7 @@
   width: 100%;
   max-width: var(--sidebar-content-width);
   background-color: var(--sidebar-content-background-color);
-  transition: margin-left var(--transition-speed);
+  // transition: margin-left var(--transition-speed);
   z-index: 2;
 
   &.hidden {
@@ -19,7 +19,7 @@
     box-shadow: 0 0 4px -1px rgba(0,0,0,0.3);
 
     &.hidden {
-      box-shadow: 0 0 4px rgba(0,0,0,0)
+      box-shadow: none
     }
   }
 }

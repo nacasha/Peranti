@@ -1,6 +1,6 @@
 import { clsx } from "clsx"
 import fastDeepEqual from "fast-deep-equal"
-import { memo, type FC } from "react"
+import { memo, type FC, type FormEventHandler } from "react"
 
 import { type ToolInput } from "src/types/ToolInput.ts"
 
@@ -16,8 +16,12 @@ interface ToolAreaInputProps {
 export const ToolAreaInput: FC<ToolAreaInputProps> = memo((props) => {
   const { toolSessionId, components, direction, readOnly } = props
 
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault()
+  }
+
   return (
-    <form action="#" className={clsx("ToolAreaInput", direction)}>
+    <form action="#" onSubmit={handleSubmit} className={clsx("ToolAreaInput", direction)}>
       {components.map((component) => (
         <ToolInputRenderer
           key={toolSessionId.concat(component.key as any)}

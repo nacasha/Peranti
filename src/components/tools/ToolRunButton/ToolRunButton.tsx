@@ -1,7 +1,7 @@
 import { observer } from "mobx-react"
 
 import { Button } from "src/components/common/Button"
-import { icons } from "src/constants/icons"
+import { Icons } from "src/constants/icons"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
 import "./ToolRunButton.scss"
@@ -18,7 +18,7 @@ export const ToolRunButton = observer(() => {
   }
 
   return (
-    <Button icon={icons.RunFilled} onClick={onClickRun}>
+    <Button icon={Icons.RunFilled} onClick={onClickRun}>
       Run Tool
     </Button>
   )
