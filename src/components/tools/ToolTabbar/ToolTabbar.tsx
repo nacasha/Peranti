@@ -124,7 +124,7 @@ const TabItem: FC<TabItemProps> = (props) => {
 
   const getSessionName = () => {
     if (sessionName) return sessionName
-    return toolStore.mapOfLoadedToolsName[toolId].concat(`-${sessionSequenceNumber}`)
+    return toolStore.mapOfLoadedToolsName[toolId]?.concat(`-${sessionSequenceNumber}`)
   }
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (event) => {

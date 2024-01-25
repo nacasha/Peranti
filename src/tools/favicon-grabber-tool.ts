@@ -10,7 +10,7 @@ interface InputFields {
 }
 
 interface OutputFields {
-  output: OutputFieldsType.File
+  output: OutputFieldsType.Image
 }
 
 async function getFavicon(url: any) {
@@ -50,7 +50,7 @@ const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "Output",
-      component: "File",
+      component: "Image",
       props: {
         width: 150
       }
@@ -64,7 +64,7 @@ const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
     const base64String = btoa(String.fromCharCode.apply(null, binaryArray))
     const dataUrl = `data:image/png;base64,${base64String}`
 
-    return { output: [dataUrl] }
+    return { output: dataUrl }
   }
 }
 

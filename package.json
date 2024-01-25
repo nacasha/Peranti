@@ -48,6 +48,7 @@
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.12",
     "react-hotkeys-hook": "^4.4.4",
+    "react-zoom-pan-pinch": "^3.3.0",
     "simplebar-react": "^3.2.4",
     "tauri-plugin-context-menu": "^0.7.0",
     "uuid": "^9.0.1"
