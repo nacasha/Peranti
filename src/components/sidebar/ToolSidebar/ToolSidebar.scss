@@ -19,4 +19,25 @@
       }
     }
   }
+
+  .ToolSidebarItem {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+    color: var(--tool-sidebar-text-color);
+
+    img {
+      width: 14px;
+      filter: var(--tool-sidebar-icon-color);
+    }
+
+    &.active {
+      color: var(--tool-sidebar-text-color-active);
+
+      img {
+        width: 14px;
+        filter: var(--tool-sidebar-icon-color-active);
+      }
+    }
+  }
 }

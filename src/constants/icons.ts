@@ -5,6 +5,7 @@ import Clean from "src/assets/icons/clean.svg"
 import Close from "src/assets/icons/close.svg"
 import Download from "src/assets/icons/download.svg"
 import Gear from "src/assets/icons/gear.svg"
+import Hash from "src/assets/icons/hash.svg"
 import History from "src/assets/icons/history.svg"
 import Home from "src/assets/icons/home.svg"
 import Layers2 from "src/assets/icons/layers-2.svg"
@@ -43,5 +44,6 @@ export const Icons = {
   BackspaceFill,
   Clean,
   Newspaper,
-  Plus
+  Plus,
+  Hash
 }

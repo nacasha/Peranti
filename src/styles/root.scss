@@ -85,10 +85,16 @@ html, body {
 
   // Tool component styles
   --tool-header-background-color: #ffffff;
+
   --tool-area-background-color: #f9f9fc;
 
-  --tool-tabbar-text-color: #818181;
+  --tool-tabbar-text-color: #585858;
   --tool-tabbar-text-color-active: #000000;
+
+  --tool-sidebar-text-color: #212418;
+  --tool-sidebar-text-color-active: #ffffff;
+  --tool-sidebar-icon-color: invert(11%) sepia(7%) saturate(1891%) hue-rotate(34deg) brightness(98%) contrast(92%);
+  --tool-sidebar-icon-color-active: invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%);
 
   // Theme color
   --opposite-color: #939393;
@@ -141,11 +147,17 @@ html, body {
   --input-output-background-color: #1e1e1e;
 
   // Tool component styles
-  --tool-header-background-color: #212121;
-  --tool-area-background-color: #232427;
+  --tool-header-background-color: #181818;
 
-  --tool-tabbar-text-color: rgb(147, 147, 147);
+  --tool-area-background-color: #1e1f22;
+
+  --tool-tabbar-text-color: #939393;
   --tool-tabbar-text-color-active: white;
+
+  --tool-sidebar-text-color: #cfcfcf;
+  --tool-sidebar-text-color-active: #ffffff;
+  --tool-sidebar-icon-color: invert(99%) sepia(3%) saturate(156%) hue-rotate(232deg) brightness(106%) contrast(62%);
+  --tool-sidebar-icon-color-active: invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%);
 
   // Theme color
   --opposite-color: #ffffff;

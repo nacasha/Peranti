@@ -1,4 +1,4 @@
-import { clsx } from "clsx"
+import { type ClassValue, clsx } from "clsx"
 import { memo, type FC, type ReactNode } from "react"
 
 import "./AppSidebarContentItem.scss"
@@ -8,14 +8,15 @@ interface AppSidebarContentItemProps {
   children?: ReactNode
   onClick: () => any
   onDoubleClick?: () => any
+  className?: ClassValue
 }
 
 export const AppSidebarContentItem: FC<AppSidebarContentItemProps> = memo((props) => {
-  const { children, onClick, onDoubleClick, active } = props
+  const { children, onClick, onDoubleClick, active, className } = props
 
   return (
     <div
-      className={clsx("AppSidebarContentItem", active && "active")}
+      className={clsx("AppSidebarContentItem", active && "active", className)}
       onClick={onClick}
       onDoubleClick={onDoubleClick}
     >

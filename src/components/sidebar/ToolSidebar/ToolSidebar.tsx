@@ -2,6 +2,7 @@ import { clsx } from "clsx"
 import { type ReactNode, type FC } from "react"
 
 import { AppSidebarContentItem } from "src/components/app/AppSidebarContentItem"
+import { Icons } from "src/constants/icons"
 import { SidebarMode } from "src/enums/SidebarMode"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/stores/interfaceStore"
@@ -52,10 +53,12 @@ const ToolSidebarItem: FC<{ tool: ToolConstructor, children: ReactNode }> = ({ t
 
   return (
     <AppSidebarContentItem
+      className="ToolSidebarItem"
       active={isActive}
       onClick={onClickSidebarItem(tool)}
     >
-      {tool.name}
+      <img src={Icons.Hash} alt="Hash" />
+      <div>{tool.name}</div>
     </AppSidebarContentItem>
   )
 }
