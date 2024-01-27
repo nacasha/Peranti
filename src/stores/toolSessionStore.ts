@@ -35,7 +35,7 @@ class ToolSessionStore {
    *
    * @configurable
    */
-  closeToolWhenLastSessionIsClosed = false
+  closeToolWhenLastSessionIsClosed = true
 
   /**
    * Unified tool sessions
@@ -67,9 +67,14 @@ class ToolSessionStore {
   sessionSequences: Record<string, boolean[]> = {}
 
   /**
-   * Pair of toolId and last active sessionId
+   * Pair of each tool last active sessionId
    */
-  activeSessionIds: Record<string, string> = {}
+  activeSessionIdOfTools: Record<string, string> = {}
+
+  /**
+   * Currently active sessionId
+   */
+  activeSessionId: string = ""
 
   /**
    * Load tool from local storage and create new instance of tool
@@ -139,12 +144,24 @@ class ToolSessionStore {
       properties: [
         "sessionSequences",
         "enableMultipleSession",
-        "activeSessionIds",
+        "activeSessionIdOfTools",
+        "activeSessionId",
         "sessions"
       ]
     }).then(() => {
-      this.setIsInitialized(true)
+      void this.handleHydratedStore()
     })
+  }
+
+  async handleHydratedStore() {
+    const toolSession = this.sessions.find((session) => session.sessionId === this.activeSessionId)
+
+    if (toolSession) {
+      const tool = await this.getToolFromStorage(toolSession)
+      this.activateTool(tool)
+    }
+
+    this.setIsInitialized(true)
   }
 
   private setIsInitialized(value: boolean) {
@@ -236,7 +253,7 @@ class ToolSessionStore {
      */
     } else {
       const activeTool = toolRunnerStore.getActiveTool()
-      const lastToolSessionId = this.activeSessionIds[toolConstructor.toolId]
+      const lastToolSessionId = this.activeSessionIdOfTools[toolConstructor.toolId]
 
       /**
        * Skip action if the session is already opened
@@ -336,12 +353,12 @@ class ToolSessionStore {
      */
     if (newSessionsOfTool.length === 0) {
       /**
-       * Reset name of session because list is already empty
+       * Reset session sequence because list is empty
        */
       this.resetToolSessionSequence(toolSession.toolId)
 
       /**
-       * Close tool based on preferences
+       * Open empty tool if user has preference to close tool when all session is closed
        */
       if (this.closeToolWhenLastSessionIsClosed) {
         this.activateTool(Tool.empty())
@@ -378,6 +395,47 @@ class ToolSessionStore {
       }
 
       void this.openSession(newSessionToBeOpened)
+    }
+  }
+
+  closeAllSession() {
+    /**
+     * Empty the session
+     */
+    this.sessions = []
+
+    /**
+     * Reset session sequence
+     */
+    this.sessionSequences = {}
+
+    /**
+     * Open empty tool
+     */
+    this.activateTool(Tool.empty())
+  }
+
+  async closeOtherSession(toolSession: ToolSession) {
+    /**
+     * Empty the session and remains the choosen tool sesion
+     */
+    this.sessions = [toolSession]
+
+    /**
+     * Reset session sequence
+     */
+    this.sessionSequences = {}
+    this.sessionSequences[toolSession.toolId] = [true]
+    if (toolSession.sessionSequenceNumber) {
+      this.sessionSequences[toolSession.toolId][toolSession.sessionSequenceNumber] = true
+    }
+
+    /**
+     * Open empty tool
+     */
+    const tool = await this.getToolFromStorage(toolSession)
+    if (tool) {
+      this.activateTool(tool)
     }
   }
 
@@ -455,7 +513,8 @@ class ToolSessionStore {
    * @param tool
    */
   setActiveToolSessionId(tool: ToolSession) {
-    this.activeSessionIds[tool.toolId] = tool.sessionId
+    this.activeSessionIdOfTools[tool.toolId] = tool.sessionId
+    this.activeSessionId = tool.sessionId
   }
 
   /**
@@ -568,6 +627,16 @@ class ToolSessionStore {
 
     // Insert the removed item at the new index
     this.sessions.splice(toIndex, 0, removedItem)
+  }
+
+  renameSession(toolSession: ToolSession, newSessionName: string) {
+    this.detachSessionSequence(toolSession)
+    toolSession.sessionName = newSessionName
+
+    /**
+     * Switch session order to itself for react to be able pickup the new state
+     */
+    this.switchSessionPosition(toolSession.sessionId, toolSession.sessionId)
   }
 }
 

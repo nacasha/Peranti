@@ -1,6 +1,9 @@
+import { useStore } from "@nanostores/react"
 import clsx from "clsx"
 import { observer } from "mobx-react"
-import { type MouseEventHandler, type FC, useEffect, useRef, type DragEventHandler } from "react"
+import { atom } from "nanostores"
+import { ContextMenuTrigger, ContextMenu, ContextMenuItem } from "rctx-contextmenu"
+import { type MouseEventHandler, type FC, useEffect, useRef, type DragEventHandler, memo, type FocusEventHandler, useMemo } from "react"
 import SimpleBar from "simplebar-react"
 
 import { Icons } from "src/constants/icons"
@@ -13,10 +16,13 @@ import { type ToolSession } from "src/types/ToolSession"
 
 import "./ToolTabbar.scss"
 
+const $selectedSession = atom<ToolSession | undefined>()
+const $renamingSessionId = atom<string>("")
+
 export const ToolTabbar: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
-  const tabs = toolSessionStore.getRunningSessions(activeTool.toolId)
-  const activeIndex = tabs.findIndex((tab) => tab.sessionId === activeTool.sessionId)
+  const sessions = toolSessionStore.getRunningSessions(activeTool.toolId)
+  const activeIndex = sessions.findIndex((tab) => tab.sessionId === activeTool.sessionId)
 
   const ref = useRef<HTMLDivElement>(null)
 
@@ -37,10 +43,10 @@ export const ToolTabbar: FC = observer(() => {
     event.preventDefault()
     const nextActiveIndex = activeIndex + 1
     let toolSession
-    if (nextActiveIndex > tabs.length - 1) {
-      toolSession = tabs[0]
+    if (nextActiveIndex > sessions.length - 1) {
+      toolSession = sessions[0]
     } else {
-      toolSession = tabs[nextActiveIndex]
+      toolSession = sessions[nextActiveIndex]
     }
 
     void toolSessionStore.openSession(toolSession)
@@ -51,9 +57,9 @@ export const ToolTabbar: FC = observer(() => {
     const nextActiveIndex = activeIndex - 1
     let toolSession
     if (nextActiveIndex < 0) {
-      toolSession = tabs[tabs.length - 1]
+      toolSession = sessions[sessions.length - 1]
     } else {
-      toolSession = tabs[nextActiveIndex]
+      toolSession = sessions[nextActiveIndex]
     }
 
     void toolSessionStore.openSession(toolSession)
@@ -81,26 +87,32 @@ export const ToolTabbar: FC = observer(() => {
   }, [ref])
 
   return (
-    <div className="ToolTabbar">
-      <div className="ToolTabbar-inner">
-        <SimpleBar
-          className="ToolTabbar-inner-simplebar"
-          scrollableNodeProps={{ ref }}
-        >
-          {tabs.map((toolSession) => (
-            <TabItem
-              key={toolSession.sessionId}
-              toolSession={toolSession}
-              active={isToolActive(toolSession)}
-            />
-          ))}
+    <>
+      <div className="ToolTabbar">
+        <div className="ToolTabbar-inner">
+          <SimpleBar
+            className="ToolTabbar-inner-simplebar"
+            scrollableNodeProps={{ ref }}
+          >
+            {sessions.map((toolSession) => (
+              <TabItem
+                key={toolSession.sessionId.concat(toolSession.sessionName ?? "")}
+                toolSession={toolSession}
+                active={isToolActive(toolSession)}
+              />
+            ))}
 
-          <div onClick={onClickAddTab} className="ToolTabbar-item new">
-            <div className="ToolTabbar-icon"><img src={Icons.Plus} alt="Add Tab" /></div>
-          </div>
-        </SimpleBar>
+            <div onClick={onClickAddTab} className="ToolTabbar-item new">
+              <div className="ToolTabbar-icon">
+                <img src={Icons.Plus} alt="Add Tab" />
+              </div>
+            </div>
+          </SimpleBar>
+        </div>
       </div>
-    </div>
+
+      <TabbarContextMenu />
+    </>
   )
 })
 
@@ -109,30 +121,73 @@ interface TabItemProps {
   active: boolean
 }
 
-const TabItem: FC<TabItemProps> = (props) => {
+const TabbarContextMenu: FC = () => {
+  const selectedSession = useStore($selectedSession)
+
+  const handleCloseAllSession = () => {
+    toolSessionStore.closeAllSession()
+  }
+
+  const handleCloseSession = () => {
+    if (selectedSession) {
+      void toolSessionStore.closeSession(selectedSession)
+    }
+  }
+
+  const handleCloseOtherSession = () => {
+    if (selectedSession) {
+      void toolSessionStore.closeOtherSession(selectedSession)
+    }
+  }
+
+  const handleRenameSession = () => {
+    if (selectedSession) {
+      $renamingSessionId.set(selectedSession.sessionId)
+    }
+  }
+
+  return (
+    <ContextMenu id="TabbarContentMenu">
+      <ContextMenuItem onClick={handleCloseSession}>Close</ContextMenuItem>
+      <ContextMenuItem onClick={handleCloseOtherSession}>Close Others</ContextMenuItem>
+      <ContextMenuItem onClick={handleCloseAllSession}>Close All</ContextMenuItem>
+      <div className="contextmenu__divider"></div>
+      <ContextMenuItem onClick={handleRenameSession}>Rename</ContextMenuItem>
+    </ContextMenu>
+  )
+}
+
+const TabItem: FC<TabItemProps> = memo((props) => {
   const { toolSession, active } = props
   const { sessionId, sessionName, sessionSequenceNumber, toolId, isActionRunning } = toolSession
+  const renamingSessionId = useStore($renamingSessionId)
+  const isRenamingSession = useMemo(() => renamingSessionId === sessionId, [renamingSessionId])
+  const tabLabelRef = useRef<HTMLDivElement>(null)
+
+  const getSessionName = () => {
+    if (sessionName) return sessionName
+    return toolStore.mapOfLoadedToolsName[toolId]?.concat(`-${sessionSequenceNumber}`)
+  }
 
   const handleMouseDown: MouseEventHandler = (event) => {
     if (event.button === 0) {
       void toolSessionStore.openSession(toolSession)
+    } else if (event.button === 1) {
+      event.preventDefault()
     }
   }
 
   const handleMouseUp: MouseEventHandler = (event) => {
     if (event.button === 1) {
       void toolSessionStore.closeSession(toolSession)
+    } else if (event.button === 2) {
+      $selectedSession.set(toolSession)
     }
   }
 
-  const onClickCloseTab: MouseEventHandler = (event) => {
+  const handleCloseTab: MouseEventHandler = (event) => {
     event.stopPropagation()
     void toolSessionStore.closeSession(toolSession)
-  }
-
-  const getSessionName = () => {
-    if (sessionName) return sessionName
-    return toolStore.mapOfLoadedToolsName[toolId]?.concat(`-${sessionSequenceNumber}`)
   }
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (event) => {
@@ -145,7 +200,7 @@ const TabItem: FC<TabItemProps> = (props) => {
     event.stopPropagation()
 
     const element = event.currentTarget
-    if (element.classList.contains("droptarget")) {
+    if (element.classList.contains("ToolTabbar-item")) {
       element.style.backdropFilter = "contrast(0.8)"
     }
   }
@@ -175,26 +230,86 @@ const TabItem: FC<TabItemProps> = (props) => {
     }
   }, [active])
 
+  useEffect(() => {
+    if (isRenamingSession) {
+      if (tabLabelRef.current) {
+        tabLabelRef.current.focus()
+
+        const range = document.createRange()
+        range.selectNodeContents(tabLabelRef.current)
+        const selection = window.getSelection()
+        if (selection) {
+          selection.removeAllRanges()
+          selection.addRange(range)
+        }
+      }
+    }
+  }, [isRenamingSession])
+
+  useEffect(() => {
+    const { current: tabLabelInput } = tabLabelRef
+
+    if (tabLabelInput) {
+      const keyDownListener = (event: KeyboardEvent) => {
+        if (event.key === "Enter") {
+          tabLabelInput.blur()
+        }
+      }
+
+      tabLabelInput.addEventListener("keydown", keyDownListener)
+      return () => {
+        tabLabelInput?.removeEventListener("keydown", keyDownListener)
+      }
+    }
+  }, [tabLabelRef.current])
+
+  const handleSessionNameInputBlur: FocusEventHandler<HTMLDivElement> = () => {
+    $renamingSessionId.set("")
+
+    if (tabLabelRef.current) {
+      const tabLabel = tabLabelRef.current.innerText
+
+      if (tabLabel !== getSessionName()) {
+        toolSessionStore.renameSession(toolSession, tabLabel)
+      }
+    }
+  }
+
   return (
-    <div
-      key={toolSession.sessionId}
-      className={clsx("ToolTabbar-item", { active }, "droptarget")}
-      data-session-id={toolSession.sessionId}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragLeaveCapture={handleDragLeave}
-      onDrop={handleDrop}
-      draggable
+    <ContextMenuTrigger
+      id="TabbarContentMenu"
+      key={toolSession.sessionId.concat(toolSession.sessionName ?? "")}
     >
-      <div>
-        {getSessionName()}
-        {isActionRunning ? " ..." : ""}
+      <div
+        key={toolSession.sessionId}
+        className={clsx("ToolTabbar-item", { active })}
+        data-session-id={toolSession.sessionId}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragLeaveCapture={handleDragLeave}
+        onDrop={handleDrop}
+        draggable
+      >
+        <div
+          ref={tabLabelRef}
+          suppressContentEditableWarning
+          contentEditable={isRenamingSession}
+          onBlur={handleSessionNameInputBlur}
+        >
+          {getSessionName()}
+          {isActionRunning ? " ..." : ""}
+        </div>
+        <div className="ToolTabbar-icon" onClick={handleCloseTab}>
+          <img src={Icons.Close} alt="Close Tab" />
+        </div>
       </div>
-      <div className="ToolTabbar-icon" onClick={onClickCloseTab}>
-        <img src={Icons.Close} alt="Close Tab" />
-      </div>
-    </div>
+    </ContextMenuTrigger>
   )
-}
+}, (prevProps, nextProps) => {
+  return prevProps.active === nextProps.active &&
+    prevProps.toolSession.isActionRunning === nextProps.toolSession.isActionRunning &&
+    prevProps.toolSession.sessionName === nextProps.toolSession.sessionName &&
+    prevProps.toolSession.sessionSequenceNumber === nextProps.toolSession.sessionSequenceNumber
+})
