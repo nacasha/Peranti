@@ -113,8 +113,16 @@ const TabItem: FC<TabItemProps> = (props) => {
   const { toolSession, active } = props
   const { sessionId, sessionName, sessionSequenceNumber, toolId, isActionRunning } = toolSession
 
-  const onClickTab = () => {
-    void toolSessionStore.openSession(toolSession)
+  const handleMouseDown: MouseEventHandler = (event) => {
+    if (event.button === 0) {
+      void toolSessionStore.openSession(toolSession)
+    }
+  }
+
+  const handleMouseUp: MouseEventHandler = (event) => {
+    if (event.button === 1) {
+      void toolSessionStore.closeSession(toolSession)
+    }
   }
 
   const onClickCloseTab: MouseEventHandler = (event) => {
@@ -172,7 +180,8 @@ const TabItem: FC<TabItemProps> = (props) => {
       key={toolSession.sessionId}
       className={clsx("ToolTabbar-item", { active }, "droptarget")}
       data-session-id={toolSession.sessionId}
-      onMouseDown={onClickTab}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragLeaveCapture={handleDragLeave}

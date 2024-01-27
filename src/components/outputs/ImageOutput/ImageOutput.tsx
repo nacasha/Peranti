@@ -14,7 +14,6 @@ interface ImageOutputProps extends OutputComponentProps<string> {
 export const ImageOutput: FC<ImageOutputProps> = (props) => {
   const { output = "", showControl = false } = props
 
-  const scaleUp = true
   const zoomFactor = 8
 
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
@@ -25,8 +24,8 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
   const [imageNaturalWidth, setImageNaturalWidth] = useState<number>(0)
   const [imageNaturalHeight, setImageNaturalHeight] = useState<number>(0)
 
-  const [hideImage, setHideImage] = useState(false)
-  const [firstTimeLoad, setFirstTimeLoad] = useState(true)
+  const [imageInitialized, setImageInitialized] = useState(true)
+  const [imageLoaded, setImageLoaded] = useState(true)
 
   const imageScale = useMemo(() => {
     if (
@@ -45,10 +44,9 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
       containerWidth / imageNaturalWidth,
       containerHeight / imageNaturalHeight
     )
-    return scaleUp ? scale : Math.max(scale, 1)
+    return scale
   }, [
     output,
-    scaleUp,
     containerWidth,
     containerHeight,
     imageNaturalWidth,
@@ -66,6 +64,11 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
     }
   }, [container])
 
+  const handleImageOnLoad = (image: HTMLImageElement) => {
+    setImageNaturalWidth(image.naturalWidth)
+    setImageNaturalHeight(image.naturalHeight)
+  }
+
   useEffect(() => {
     handleResize()
     window.addEventListener("resize", handleResize)
@@ -74,41 +77,31 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
     }
   }, [handleResize])
 
-  const handleImageOnLoad = (image: HTMLImageElement) => {
-    setImageNaturalWidth(image.naturalWidth)
-    setImageNaturalHeight(image.naturalHeight)
-  }
-
   useEffect(() => {
-    const image = new Image()
-    image.onload = () => { handleImageOnLoad(image) }
-    image.src = output
+    setImageLoaded(false)
 
-    if (firstTimeLoad) {
-      setFirstTimeLoad(false)
-    } else {
-      setHideImage(true)
-      setTimeout(() => {
-        setHideImage(false)
-      }, 1000)
+    const image = new Image()
+    image.onload = () => {
+      handleImageOnLoad(image)
+      setImageLoaded(true)
     }
+    image.src = output
   }, [output])
 
   return (
     <div className="ImageOutput">
       <div className="ImageOutput-inner" ref={(el: HTMLDivElement | null) => { setContainer(el) }}>
-        {(imageScale > 0 && !hideImage) && (
+        {(imageScale > 0 && imageInitialized) && (
           <TransformWrapper
-            key={`${containerWidth}x${containerHeight}`}
+            key={`${containerWidth}x${containerHeight}x${imageScale}`}
             initialScale={imageScale}
             minScale={imageScale}
-            initialPositionX={0}
-            initialPositionY={0}
             maxScale={imageScale * zoomFactor}
+            onInit={() => { setImageInitialized(true) }}
             centerOnInit
           >
             {({ zoomIn, zoomOut, resetTransform }) => (
-              <ImageShow
+              imageLoaded && <ImageShow
                 zoomIn={zoomIn}
                 zoomOut={zoomOut}
                 resetTransform={resetTransform}
@@ -125,10 +118,6 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
 
 const ImageShow = (props: any) => {
   const { showControl, zoomIn, zoomOut, resetTransform, output } = props
-
-  useEffect(() => {
-    resetTransform()
-  }, [output])
 
   return (
     <>
