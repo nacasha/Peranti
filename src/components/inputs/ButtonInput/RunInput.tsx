@@ -6,11 +6,11 @@ import { useSelector } from "src/hooks/useSelector"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
-import "./ButtonInput.scss"
+import "./RunInput.scss"
 
-interface ButtonInputProps extends InputComponentProps { }
+interface RunInputProps extends InputComponentProps { }
 
-export const ButtonInput: FC<ButtonInputProps> = (props) => {
+export const RunInput: FC<RunInputProps> = (props) => {
   const isActionRunning = useSelector(() => toolRunnerStore.getActiveTool().isActionRunning)
   const { label } = props
 
@@ -21,7 +21,7 @@ export const ButtonInput: FC<ButtonInputProps> = (props) => {
   }
 
   return (
-    <div className="ButtonInput">
+    <div className="RunInput">
       <Button
         type="submit"
         icon={Icons.Refresh}

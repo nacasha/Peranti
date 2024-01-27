@@ -8,7 +8,7 @@ type ExtractType<T> = T extends FC<InputComponentProps<infer P>> ? P : never
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace InputFieldsType {
-  export type Button = ExtractType<typeof listOfInputComponent.Button>
+  export type Run = ExtractType<typeof listOfInputComponent.Run>
   export type Checkbox = ExtractType<typeof listOfInputComponent.Checkbox>
   export type TextArea = ExtractType<typeof listOfInputComponent.TextArea>
   export type Text = ExtractType<typeof listOfInputComponent.Text>

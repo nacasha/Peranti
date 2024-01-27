@@ -42,8 +42,8 @@ interface ToolInputSwitch<K extends Record<string, string> = any> extends BaseIn
 }
 
 interface ToolInputButton<K extends Record<string, string> = any> extends BaseInput<K> {
-  component: "Button"
-  props?: ExtractInputComponentProps<typeof listOfInputComponent.Button>
+  component: "Run"
+  props?: ExtractInputComponentProps<typeof listOfInputComponent.Run>
 }
 
 interface ToolInputCheckbox<K extends Record<string, string> = any> extends BaseInput<K> {

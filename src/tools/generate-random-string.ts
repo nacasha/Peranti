@@ -10,7 +10,7 @@ interface InputFields {
   capitalAz: InputFieldsType.Checkbox
   number: InputFieldsType.Checkbox
   symbol: InputFieldsType.Checkbox
-  runner: InputFieldsType.Button
+  runner: InputFieldsType.Run
 }
 
 interface OutputFields {
@@ -61,7 +61,7 @@ const generateRandomStringTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "runner",
       label: "Regenerate",
-      component: "Button",
+      component: "Run",
       defaultValue: ""
     }
   ],

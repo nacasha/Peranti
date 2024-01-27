@@ -6,7 +6,7 @@ import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
   websiteUrl: InputFieldsType.Text
-  runner: InputFieldsType.Button
+  runner: InputFieldsType.Run
 }
 
 interface OutputFields {
@@ -42,7 +42,7 @@ const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "runner",
       label: "Grab Favicon",
-      component: "Button",
+      component: "Run",
       defaultValue: ""
     }
   ],

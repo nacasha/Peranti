@@ -1,4 +1,4 @@
-import { ButtonInput } from "./ButtonInput"
+import { RunInput } from "./ButtonInput"
 import { CheckboxInput } from "./CheckboxInput"
 import { CodeInput } from "./CodeInput"
 import { FileInput } from "./FileInput"
@@ -13,7 +13,7 @@ export const listOfInputComponent = {
   Text: TextInput,
   Select: SelectInput,
   Switch: SwitchInput,
-  Button: ButtonInput,
+  Run: RunInput,
   File: FileInput,
   Code: CodeInput
 }

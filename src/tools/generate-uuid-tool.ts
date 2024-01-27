@@ -7,7 +7,7 @@ import { type ToolConstructor } from "src/types/ToolConstructor"
 interface InputFields {
   numberOfGenerated: InputFieldsType.Text
   type: InputFieldsType.Select
-  runner: InputFieldsType.Button
+  runner: InputFieldsType.Run
 }
 
 interface OutputFields {
@@ -40,7 +40,7 @@ const generateUuidTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "runner",
       label: "Regenerate",
-      component: "Button",
+      component: "Run",
       defaultValue: ""
     }
   ],

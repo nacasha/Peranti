@@ -50,7 +50,7 @@ const jfsGetThTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "startButton",
       label: "Start",
-      component: "Button",
+      component: "Run",
       defaultValue: "",
       allowBatch: true
     }

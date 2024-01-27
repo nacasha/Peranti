@@ -59,6 +59,8 @@ class ToolSessionStore {
    */
   sessions: ToolSession[] = []
 
+  runningTools: Record<string, Tool | undefined> = {}
+
   /**
    * Pair of toolId and list of created sequence of session
    */
@@ -76,7 +78,18 @@ class ToolSessionStore {
    * @param options
    * @returns
    */
-  async getToolFromLocalStorage(toolSession: ToolSession, options: { disablePersistence?: boolean } = {}) {
+  async getToolFromStorage(toolSession: ToolSession, options: { disablePersistence?: boolean } = {}) {
+    /**
+     * Retrieve tool from running tools when exists to get the same reference mobx store
+     */
+    const runningTool = this.runningTools[toolSession.sessionId]
+    if (runningTool && runningTool !== undefined) {
+      return runningTool
+    }
+
+    /**
+     * Try to retrieve tool from storage
+     */
     const { disablePersistence = false } = options
     const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
     const cachedSession: { toolHistory: ToolHistory } | null = await localforage.getItem(
@@ -255,7 +268,7 @@ class ToolSessionStore {
       return
     }
 
-    const tool = await this.getToolFromLocalStorage(toolSession)
+    const tool = await this.getToolFromStorage(toolSession)
     this.activateTool(tool)
   }
 
@@ -456,7 +469,7 @@ class ToolSessionStore {
      * Load tool from storage but disable the persistence, we only need
      * to get tool state and save it into history
      */
-    const toolHistory = await this.getToolFromLocalStorage(toolSession, { disablePersistence: true })
+    const toolHistory = await this.getToolFromStorage(toolSession, { disablePersistence: true })
 
     if (toolHistory) {
       toolHistory.destroyLocalStorage()
@@ -480,10 +493,20 @@ class ToolSessionStore {
     const activeTool = toolRunnerStore.getActiveTool()
 
     /**
+     * Save to state if the tool has running action
+     */
+    if (activeTool.isActionRunning) {
+      this.runningTools[activeTool.sessionId] = activeTool
+
+    /**
      * Disable session reference to store if session has no action running
      */
-    if (!activeTool.isActionRunning) {
+    } else {
       activeTool.stopStore()
+
+      if (this.runningTools[activeTool.sessionId]) {
+        this.runningTools[activeTool.sessionId] = undefined
+      }
     }
   }
 
