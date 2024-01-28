@@ -1,9 +1,7 @@
 .ImageOutput {
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  overflow: hidden;
   flex: 1;
   display: flex;
+  flex-direction: column;
   position: relative;
 
   .tools {
@@ -21,10 +19,18 @@
 }
 
 .ImageOutput-inner {
+  position: relative;
+  flex: 1;
+}
+
+.ImageOutput-image {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
 
   background-position: 0px 0px, 10px 10px;
   background-size: 20px 20px;

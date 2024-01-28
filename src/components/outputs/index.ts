@@ -3,6 +3,7 @@ import { DiffOutput } from "./DiffOutput"
 import { FileOutput } from "./FileOutput"
 import { GridStatOutput } from "./GridStatOutput"
 import { ImageOutput } from "./ImageOutput"
+import { MarkdownOutput } from "./MarkdownOutput"
 import { TextAreaOutput } from "./TextAreaOutput"
 import { TextOutput } from "./TextOutput"
 
@@ -13,5 +14,6 @@ export const listOfOutputComponent = {
   Diff: DiffOutput,
   Image: ImageOutput,
   File: FileOutput,
-  Code: CodeOutput
+  Code: CodeOutput,
+  Markdown: MarkdownOutput
 }

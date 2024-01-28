@@ -38,7 +38,7 @@ export const ToolOutputRenderer: FC<ToolOutputRendererProps> = (props) => {
       {...componentProps}
       key={field}
       label={label}
-      output={outputValue ?? ""}
+      value={outputValue ?? ""}
     />
   )
 }

@@ -1,0 +1,20 @@
+.MarkdownOutput {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.MarkdownOutput-inner {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  position: relative;
+
+  .body {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+  }
+}

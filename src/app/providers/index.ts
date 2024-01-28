@@ -1,9 +1,9 @@
 import compose from "compose-function"
 
-import { withBootstrap } from "./withBootstrap.js"
-import { withPlugins } from "./withPlugins.js"
+import { withAppBootstrap } from "./withAppBootstrap.js"
+import { withPluginsSetup } from "./withPluginsSetup.js"
 
 export const withProviders = compose(
-  withBootstrap,
-  withPlugins
+  withAppBootstrap,
+  withPluginsSetup
 )

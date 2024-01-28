@@ -27,6 +27,7 @@
 }
 
 .ToolTabbar-item {
+  background-color: var(--background-color-main);
   padding: 5px 10px;
   padding-right: 5px;
   padding-top: 3px;
@@ -60,6 +61,9 @@
   &.new {
     padding-inline: 5px;
     height: calc(var(--tool-tabbar-height) - 11px);
+    position: sticky;
+    right: 0;
+    z-index: 1;
 
     .ToolTabbar-icon {
       opacity: 1;

@@ -8,7 +8,7 @@ import "./CodeOutput.scss"
 interface CodeOutputProps extends OutputComponentProps, BaseCodeMirrorProps {}
 
 export const CodeOutput: FC<CodeOutputProps> = (props) => {
-  const { output, label = "Output", ...restprops } = props
+  const { value, label = "Output", ...restprops } = props
 
   return (
     <div className="CodeOutput">
@@ -18,7 +18,7 @@ export const CodeOutput: FC<CodeOutputProps> = (props) => {
       <div className="CodeMirrorContainer">
         <BaseCodeMirror
           {...restprops}
-          value={typeof output === "string" ? output : JSON.stringify(output, null, 2)}
+          value={typeof value === "string" ? value : JSON.stringify(value, null, 2)}
           readOnly
         />
       </div>

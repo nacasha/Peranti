@@ -1,5 +1,6 @@
 import { clsx } from "clsx"
-import { type ReactNode } from "react"
+import { type ReactNode, useEffect } from "react"
+import { Route, useLocation } from "wouter"
 
 import { interfaceStore } from "src/stores/interfaceStore.ts"
 
@@ -11,7 +12,9 @@ import { AppTitlebar } from "./components/app/AppTitlebar"
 import { AppWindowSizeListener } from "./components/app/AppWindowSizeListener"
 import { AppWindowSizeObserver } from "./components/app/AppWindowSizeObserver"
 import { useSelector } from "./hooks/useSelector.js"
+import { HomePage } from "./pages/HomePage/HomePage.js"
 import { ToolPage } from "./pages/ToolPage"
+import { toolRunnerStore } from "./stores/toolRunnerStore.js"
 
 /**
  * AppRoot
@@ -37,6 +40,7 @@ const AppRoot = ({ children }: { children: ReactNode }) => {
 const AppMain = () => {
   return (
     <AppRoot>
+      <AppRouteListener />
       <AppWindowSizeListener />
       <AppWindowSizeObserver />
       <AppTitlebar />
@@ -46,13 +50,34 @@ const AppMain = () => {
 
         <div className="AppContent">
           <AppSidebarContent />
-          <ToolPage />
+
+          <Route path="/welcome">
+            <HomePage />
+          </Route>
+          <Route path="/">
+            <ToolPage />
+          </Route>
         </div>
       </div>
 
       <AppStatusbar />
     </AppRoot>
   )
+}
+
+const AppRouteListener = () => {
+  const [, setLocation] = useLocation()
+  const tool = useSelector(() => toolRunnerStore.getActiveTool())
+
+  useEffect(() => {
+    if (tool.toolId === "") {
+      setLocation("/welcome", { replace: true })
+    } else {
+      setLocation("/", { replace: true })
+    }
+  }, [tool.sessionId])
+
+  return null
 }
 
 export const App = withProviders(AppMain)

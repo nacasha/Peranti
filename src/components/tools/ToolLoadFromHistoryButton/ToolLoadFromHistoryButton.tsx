@@ -3,26 +3,25 @@ import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
 import { Icons } from "src/constants/icons"
+import { toolHistoryStore } from "src/stores/toolHistoryStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
-import { toolSessionStore } from "src/stores/toolSessionStore"
 
 export const ToolLoadFromHistoryButton: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
 
-  const onClick = () => {
-    /**
-     * Transform active tool to history
-     */
-    toolSessionStore.createSessionFromHistory(activeTool.toHistory())
+  const handleRestoreHistory = () => {
+    if (activeTool.isHistory) {
+      toolHistoryStore.restoreHistory(activeTool.sessionId)
+    }
   }
 
-  if (!activeTool.isReadOnly) {
+  if (!activeTool.isHistory) {
     return null
   }
 
   return (
-    <Button icon={Icons.Download} onClick={onClick}>
-      Open In Editor
+    <Button icon={Icons.Download} onClick={handleRestoreHistory}>
+      Restore This Editor
     </Button>
   )
 })

@@ -20,6 +20,10 @@
     }
   }
 
+  .ToolSidebar-section-title {
+    user-select: none;
+  }
+
   .ToolSidebarItem {
     display: flex;
     gap: 7px;

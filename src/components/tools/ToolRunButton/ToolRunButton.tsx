@@ -13,7 +13,7 @@ export const ToolRunButton = observer(() => {
     toolRunnerStore.runActiveTool()
   }
 
-  if (activeTool.isReadOnly) {
+  if (activeTool.isHistory) {
     return null
   }
 

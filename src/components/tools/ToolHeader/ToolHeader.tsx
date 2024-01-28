@@ -12,7 +12,7 @@ import "./ToolHeader.scss"
 export const ToolHeader = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
 
-  const isToolReadOnly = activeTool.isReadOnly
+  const isToolReadOnly = activeTool.isHistory
 
   const onClickHistory = () => {
     toolRunnerStore.toggleHistoryPanel()

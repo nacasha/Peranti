@@ -3,18 +3,18 @@ import fastDeepEqual from "fast-deep-equal"
 import localforage from "localforage"
 import hashMd5 from "md5"
 import { observable, action, makeObservable, toJS } from "mobx"
-import { PersistStoreMap, isPersisting, makePersistable, stopPersisting } from "mobx-persist-store"
+import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, stopPersisting } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
-import { type ToolHistory } from "src/types/ToolHistory"
 import { type ToolInput } from "src/types/ToolInput"
 import { type ToolLayoutSetting } from "src/types/ToolLayoutSetting"
 import { type ToolOutput } from "src/types/ToolOutput"
 import { type ToolPreset } from "src/types/ToolPreset"
 import { type ToolSession } from "src/types/ToolSession"
+import { type ToolState } from "src/types/ToolState"
 import { generateRandomString } from "src/utils/generateRandomString"
 import { generateSha256 } from "src/utils/generateSha256"
 
@@ -121,9 +121,9 @@ export class Tool<
   @observable batchOutputKey: string | number | symbol = ""
 
   /**
-   * Indicates tool input is read only
+   * Indicates tool is history, which is read only
    */
-  @observable readonly isReadOnly: boolean = false
+  @observable readonly isHistory: boolean = false
 
   /**
    * Indicates input values has been changed
@@ -155,7 +155,10 @@ export class Tool<
    */
   @observable runCount: number = 0
 
-  toolHistory?: ToolHistory = undefined
+  /**
+   * Key to be used for storing tool state in storage
+   */
+  toolState?: ToolState = undefined
 
   readonly disablePersistence: boolean = false
 
@@ -234,12 +237,12 @@ export class Tool<
       /**
        * Data will be merged into tool as initial state
        */
-      initialState?: Partial<ToolHistory>
+      initialState?: Partial<ToolState>
 
       /**
        * Make tool as read only
        */
-      isReadOnly?: boolean
+      isHistory?: boolean
 
       /**
        * Set session name of tool
@@ -299,7 +302,7 @@ export class Tool<
     this.fillInputValuesWithDefault()
 
     const {
-      isReadOnly = false,
+      isHistory = false,
       initialState,
       sessionName,
       disablePersistence = false,
@@ -316,6 +319,8 @@ export class Tool<
       this.runCount = initialState.runCount ?? this.runCount
       this.inputValues = initialState.inputValues ?? this.inputValues
       this.outputValues = initialState.outputValues ?? this.outputValues
+      this.isInputValuesModified = initialState.isInputValuesModified ?? this.isInputValuesModified
+      this.isOutputValuesModified = initialState.isOutputValuesModified ?? this.isOutputValuesModified
 
       assignedSessionName = initialState.sessionName
     }
@@ -328,7 +333,7 @@ export class Tool<
       assignedSessionName = sessionName
     }
 
-    this.isReadOnly = isReadOnly
+    this.isHistory = isHistory
     this.sessionName = assignedSessionName
     this.disablePersistence = disablePersistence
 
@@ -378,9 +383,9 @@ export class Tool<
       name: this.localStorageKey,
       properties: [
         {
-          key: "toolHistory",
+          key: "toolState",
           serialize: () => {
-            return this.toHistory()
+            return this.toState()
           },
           deserialize: () => {
             /**
@@ -398,16 +403,12 @@ export class Tool<
     stopPersisting(this)
   }
 
-  destroyLocalStorage() {
-    void localforage.removeItem(this.localStorageKey)
-  }
-
   /**
-   * Generate object of current tool state to save into history
+   * Generate object of current tool state
    *
    * @returns
    */
-  toHistory(): ToolHistory {
+  toState(): ToolState {
     const {
       batchInputKey,
       batchOutputKey,
@@ -418,6 +419,8 @@ export class Tool<
       sessionId,
       sessionName,
       sessionSequenceNumber,
+      isOutputValuesModified,
+      isInputValuesModified,
       toolId
     } = this
 
@@ -436,7 +439,9 @@ export class Tool<
       isBatchEnabled,
       batchInputKey,
       batchOutputKey,
-      runCount
+      runCount,
+      isOutputValuesModified,
+      isInputValuesModified
     }
   }
 
@@ -599,7 +604,7 @@ export class Tool<
    * Evaluate this tool action with input
    */
   async run() {
-    if (this.isReadOnly || this.isActionRunning) {
+    if (this.isHistory || this.isActionRunning) {
       return
     }
 
@@ -742,6 +747,40 @@ export class Tool<
       Object.fromEntries(
         Object.entries(listOfOutputParams).map(([key, value]) => [key, value.join("\n")])
       )
+    )
+  }
+
+  @action
+  setSessionName(value: string) {
+    this.sessionName = value
+  }
+
+  @action
+  setSessionSequenceNumber(value?: number) {
+    this.sessionSequenceNumber = value
+  }
+
+  async hydrateStore() {
+    await hydrateStore(this)
+  }
+
+  static async getToolStateFromStorage(sessionId: string) {
+    const storedToolData: { toolState: ToolState } | null = await localforage.getItem(
+      StorageKeys.ToolState.concat(sessionId)
+    )
+    return storedToolData?.toolState
+  }
+
+  static async removeToolStateFromStorage(sessionId: string) {
+    await localforage.removeItem(
+      StorageKeys.ToolState.concat(sessionId)
+    )
+  }
+
+  static async putToolStateIntoStorage(sessionId: string, toolState: ToolState) {
+    await localforage.setItem(
+      StorageKeys.ToolHistory.concat(sessionId),
+      { toolState }
     )
   }
 }

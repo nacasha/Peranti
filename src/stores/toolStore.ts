@@ -18,6 +18,7 @@ import jsonDiffTool from "src/tools/json-diff-tool"
 import jsonFormatter from "src/tools/json-formatter-tool.js"
 import jsonataTool from "src/tools/jsonata-tool"
 import loremIpsumGeneratorTool from "src/tools/lorem-ipsum-generator-tool.js"
+import markdownParserTool from "src/tools/markdown-parser-tool.js"
 import mathEvaluatorTool from "src/tools/math-evaluator-tool.ts"
 import millisecondsToDate from "src/tools/milliseconds-to-date-tool.js"
 import prefixSuffixLines from "src/tools/prefix-suffix-lines-tool.js"
@@ -105,7 +106,8 @@ class ToolStore {
     [jsonataTool.toolId]: jsonataTool,
     [fileToBase64Tool.toolId]: fileToBase64Tool,
     [base64ToFileTool.toolId]: base64ToFileTool,
-    [jfsGetThTool.toolId]: jfsGetThTool
+    [jfsGetThTool.toolId]: jfsGetThTool,
+    [markdownParserTool.toolId]: markdownParserTool
   }
 
   /**

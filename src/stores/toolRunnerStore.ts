@@ -4,8 +4,6 @@ import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys"
 import { Tool } from "src/models/Tool.ts"
-import { type ToolConstructor } from "src/types/ToolConstructor.js"
-import { type ToolHistory } from "src/types/ToolHistory.ts"
 
 class ToolRunnerStore {
   /**
@@ -75,18 +73,8 @@ class ToolRunnerStore {
    * @param tool
    * @returns
    */
-  isToolActive(tool: ToolConstructor | ToolHistory) {
-    return this.getActiveTool().toolId === tool.toolId
-  }
-
-  /**
-   * Check whether passed tool in arguments is currently active
-   *
-   * @param tool
-   * @returns
-   */
-  isToolActiveBySessionId(tool: Tool | ToolHistory) {
-    return this.getActiveTool().sessionId === tool.sessionId
+  isToolActiveBySessionId(sessionId: string) {
+    return this.getActiveTool().sessionId === sessionId
   }
 
   /**

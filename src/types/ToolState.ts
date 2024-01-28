@@ -1,4 +1,4 @@
-export interface ToolHistory {
+export interface ToolState {
   sessionId: string
   sessionName?: string
   sessionSequenceNumber?: number
@@ -11,4 +11,6 @@ export interface ToolHistory {
   batchOutputKey: string | number | symbol
   createdAt: number
   runCount: number
+  isOutputValuesModified: boolean
+  isInputValuesModified: boolean
 }

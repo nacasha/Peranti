@@ -15,7 +15,9 @@
   },
   "dependencies": {
     "@app-elements/use-mount": "^0.1.1",
+    "@codemirror/commands": "^6.3.3",
     "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/lang-markdown": "^6.2.4",
     "@codemirror/language": "^6.10.0",
     "@cyntler/react-doc-viewer": "^1.14.1",
     "@nanostores/react": "^0.7.1",
@@ -51,10 +53,12 @@
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.12",
     "react-hotkeys-hook": "^4.4.4",
+    "react-markdown": "^9.0.1",
     "react-zoom-pan-pinch": "^3.3.0",
     "simplebar-react": "^3.2.4",
     "tauri-plugin-context-menu": "^0.7.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "wouter": "^2.12.1"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.6",

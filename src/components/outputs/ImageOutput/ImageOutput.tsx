@@ -12,7 +12,7 @@ interface ImageOutputProps extends OutputComponentProps<string> {
 }
 
 export const ImageOutput: FC<ImageOutputProps> = (props) => {
-  const { output = "", showControl = false } = props
+  const { value = "", label, showControl = false } = props
 
   const zoomFactor = 8
 
@@ -46,7 +46,7 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
     )
     return scale
   }, [
-    output,
+    value,
     containerWidth,
     containerHeight,
     imageNaturalWidth,
@@ -85,32 +85,39 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
       handleImageOnLoad(image)
       setImageLoaded(true)
     }
-    image.src = output
-  }, [output])
+    image.src = value
+  }, [value])
 
   return (
     <div className="ImageOutput">
-      <div className="ImageOutput-inner" ref={(el: HTMLDivElement | null) => { setContainer(el) }}>
-        {(imageScale > 0 && imageInitialized) && (
-          <TransformWrapper
-            key={`${containerWidth}x${containerHeight}x${imageScale}`}
-            initialScale={imageScale}
-            minScale={imageScale}
-            maxScale={imageScale * zoomFactor}
-            onInit={() => { setImageInitialized(true) }}
-            centerOnInit
-          >
-            {({ zoomIn, zoomOut, resetTransform }) => (
-              imageLoaded && <ImageShow
-                zoomIn={zoomIn}
-                zoomOut={zoomOut}
-                resetTransform={resetTransform}
-                output={output}
-                showControl={showControl}
-              />
-            )}
-          </TransformWrapper>
-        )}
+      <div className="InputOutputLabel">
+        {label}
+      </div>
+      <div className="ImageOutput-inner">
+        <div className="ImageOutput-image" ref={(el: HTMLDivElement | null) => { setContainer(el) }}>
+          {(imageScale > 0 && imageInitialized) && (
+            <TransformWrapper
+              key={`${containerWidth}x${containerHeight}x${imageScale}`}
+              initialScale={imageScale}
+              minScale={imageScale}
+              maxScale={imageScale * zoomFactor}
+              onInit={() => { setImageInitialized(true) }}
+              centerOnInit
+            >
+              {({ zoomIn, zoomOut, resetTransform }) => (
+                imageLoaded && (
+                  <ImageShow
+                    zoomIn={zoomIn}
+                    zoomOut={zoomOut}
+                    resetTransform={resetTransform}
+                    output={value}
+                    showControl={showControl}
+                  />
+                )
+              )}
+            </TransformWrapper>
+          )}
+        </div>
       </div>
     </div>
   )

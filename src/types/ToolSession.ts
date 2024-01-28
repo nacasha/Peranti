@@ -27,5 +27,5 @@ export interface ToolSession {
   /**
    * Keep session alive when change to another session
    */
-  keepAlive?: boolean
+  isKeepAlive?: boolean
 }

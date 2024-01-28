@@ -12,7 +12,7 @@ export const ToolBatchModeButton: FC = observer(() => {
     toolRunnerStore.toggleBatchMode()
   }
 
-  if (!toolRunnerStore.toolHasBatchOutput || activeTool.isReadOnly) {
+  if (!toolRunnerStore.toolHasBatchOutput || activeTool.isHistory) {
     return null
   }
 

@@ -20,15 +20,15 @@ interface DiffOutputProps extends OutputComponentProps<Output> {
 }
 
 export const DiffOutput: FC<DiffOutputProps> = observer((props) => {
-  const { label, output = { newCode: "", oldCode: "" }, compareMethod, leftTitle, rightTitle, splitView } = props
+  const { label, value = { newCode: "", oldCode: "" }, compareMethod, leftTitle, rightTitle, splitView } = props
 
   return (
     <div className="DiffOutput">
       <label className="InputOutputLabel">{label}</label>
       <div className="DiffOutput-body">
         <ReactDiffViewer
-          oldValue={output.oldCode}
-          newValue={output.newCode}
+          oldValue={value.oldCode}
+          newValue={value.newCode}
           compareMethod={compareMethod}
           leftTitle={leftTitle}
           rightTitle={rightTitle}

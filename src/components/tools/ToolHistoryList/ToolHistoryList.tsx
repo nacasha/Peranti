@@ -5,9 +5,8 @@ import { type FC } from "react"
 import { AppSidebarContentItem } from "src/components/app/AppSidebarContentItem"
 import { toolHistoryStore } from "src/stores/toolHistoryStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
-import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
-import { type ToolHistory } from "src/types/ToolHistory"
+import { type ToolHistory } from "src/types/ToolHistorySimple"
 import { prettyDateFormat } from "src/utils/prettyDateFormat"
 
 import "./ToolHistoryList.scss"
@@ -21,22 +20,17 @@ export const ToolHistoryList: FC<ToolHistoryListProps> = observer((props) => {
   const activeTool = toolRunnerStore.getActiveTool()
 
   const onClickItem = (toolHistory: ToolHistory) => () => {
-    toolHistoryStore.openHistory(toolHistory)
-  }
-
-  const onDoubleClickItem = (toolHistory: ToolHistory) => () => {
-    toolSessionStore.createSessionFromHistory(toolHistory)
+    void toolHistoryStore.openHistory(toolHistory)
   }
 
   return (
     <div className={clsx(toolRunnerStore.isHistoryPanelOpen && "open")}>
       <div className="ToolHistoryList">
-        {(showAllHistory ? toolHistoryStore.history : toolHistoryStore.getHistoryOfToolId(activeTool.toolId)).map((toolHistory) => (
+        {(showAllHistory ? toolHistoryStore.histories : toolHistoryStore.getHistoryOfToolId(activeTool.toolId)).map((toolHistory) => (
           <AppSidebarContentItem
             key={toolHistory.sessionId}
-            active={toolRunnerStore.isToolActiveBySessionId(toolHistory)}
+            active={toolRunnerStore.isToolActiveBySessionId(toolHistory.sessionId)}
             onClick={onClickItem(toolHistory)}
-            onDoubleClick={onDoubleClickItem(toolHistory)}
           >
             <div>{toolStore.mapOfLoadedToolsName[toolHistory.toolId]}</div>
             <div className="subtitle">{prettyDateFormat(new Date(toolHistory.createdAt))}</div>

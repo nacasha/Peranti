@@ -6,6 +6,7 @@ import { ContextMenuTrigger, ContextMenu, ContextMenuItem } from "rctx-contextme
 import { type MouseEventHandler, type FC, useEffect, useRef, type DragEventHandler, memo, type FocusEventHandler, useMemo } from "react"
 import SimpleBar from "simplebar-react"
 
+import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { Icons } from "src/constants/icons"
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { hotkeysStore } from "src/stores/hotkeysStore"
@@ -147,7 +148,7 @@ const TabbarContextMenu: FC = () => {
   }
 
   return (
-    <ContextMenu id="TabbarContentMenu">
+    <ContextMenu id={ContextMenuKeys.ToolTabbar}>
       <ContextMenuItem onClick={handleCloseSession}>Close</ContextMenuItem>
       <ContextMenuItem onClick={handleCloseOtherSession}>Close Others</ContextMenuItem>
       <ContextMenuItem onClick={handleCloseAllSession}>Close All</ContextMenuItem>
@@ -201,14 +202,14 @@ const TabItem: FC<TabItemProps> = memo((props) => {
 
     const element = event.currentTarget
     if (element.classList.contains("ToolTabbar-item")) {
-      element.style.backdropFilter = "contrast(0.8)"
+      element.style.filter = "contrast(0.8)"
     }
   }
 
   const handleDrop: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault()
     const element = event.currentTarget
-    element.style.backdropFilter = "none"
+    element.style.filter = "none"
 
     const fromSessionId = event.dataTransfer.getData("sessionId")
     toolSessionStore.switchSessionPosition(fromSessionId, sessionId)
@@ -217,7 +218,7 @@ const TabItem: FC<TabItemProps> = memo((props) => {
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault()
     const element = event.currentTarget
-    element.style.backdropFilter = "none"
+    element.style.filter = "none"
   }
 
   useEffect(() => {
@@ -270,14 +271,14 @@ const TabItem: FC<TabItemProps> = memo((props) => {
       const tabLabel = tabLabelRef.current.innerText
 
       if (tabLabel !== getSessionName()) {
-        toolSessionStore.renameSession(toolSession, tabLabel)
+        void toolSessionStore.renameSession(toolSession, tabLabel)
       }
     }
   }
 
   return (
     <ContextMenuTrigger
-      id="TabbarContentMenu"
+      id={ContextMenuKeys.ToolTabbar}
       key={toolSession.sessionId.concat(toolSession.sessionName ?? "")}
     >
       <div

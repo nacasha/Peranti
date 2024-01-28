@@ -7,5 +7,5 @@ export interface OutputComponentProps<T = string> {
   /**
    * Value output of field
    */
-  output?: T
+  value?: T
 }

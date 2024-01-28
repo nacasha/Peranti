@@ -8,7 +8,7 @@ interface TextAreaOutputProps extends OutputComponentProps {}
 
 export const TextAreaOutput: FC<TextAreaOutputProps> = (props) => {
   const id = useId()
-  const { output, label = "Output" } = props
+  const { value, label = "Output" } = props
 
   return (
     <div className="TextAreaOutput">
@@ -17,7 +17,7 @@ export const TextAreaOutput: FC<TextAreaOutputProps> = (props) => {
       </label>
       <textarea
         id={id}
-        value={output}
+        value={value}
         readOnly
       />
     </div>

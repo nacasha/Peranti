@@ -1,12 +1,11 @@
-import localforage from "localforage"
 import { makeAutoObservable, toJS } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys.js"
 import { Tool } from "src/models/Tool"
 import { type ToolConstructor } from "src/types/ToolConstructor"
-import { type ToolHistory } from "src/types/ToolHistory.js"
 import { type ToolSession } from "src/types/ToolSession.js"
+import { type ToolState } from "src/types/ToolState.js"
 
 import { toolHistoryStore } from "./toolHistoryStore.js"
 import { toolRunnerStore } from "./toolRunnerStore.js"
@@ -48,7 +47,7 @@ class ToolSessionStore {
    * New created session will be placed in the last of session (most right)
    * Only applied when creating session using hotkey
    *
-   * Creating new session using Tool Tabbar Add button will always placed at the end of list
+   * Creating new session using `Tool Tabbar Add button` will always placed at the end of list
    *
    * @configurable
    */
@@ -59,6 +58,9 @@ class ToolSessionStore {
    */
   sessions: ToolSession[] = []
 
+  /**
+   * List of tools that has running action
+   */
   runningTools: Record<string, Tool | undefined> = {}
 
   /**
@@ -75,49 +77,6 @@ class ToolSessionStore {
    * Currently active sessionId
    */
   activeSessionId: string = ""
-
-  /**
-   * Load tool from local storage and create new instance of tool
-   *
-   * @param toolSession
-   * @param options
-   * @returns
-   */
-  async getToolFromStorage(toolSession: ToolSession, options: { disablePersistence?: boolean } = {}) {
-    /**
-     * Retrieve tool from running tools when exists to get the same reference mobx store
-     */
-    const runningTool = this.runningTools[toolSession.sessionId]
-    if (runningTool && runningTool !== undefined) {
-      return runningTool
-    }
-
-    /**
-     * Try to retrieve tool from storage
-     */
-    const { disablePersistence = false } = options
-    const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
-    const cachedSession: { toolHistory: ToolHistory } | null = await localforage.getItem(
-      StorageKeys.Tool.concat(toolSession.sessionId)
-    )
-
-    if (cachedSession) {
-      return new Tool(toolConstructor, { initialState: cachedSession.toolHistory, disablePersistence })
-    }
-    return new Tool(toolConstructor, { initialState: toolSession, disablePersistence })
-  }
-
-  keepAliveSession(sessionId: string, value: boolean) {
-    const sessionIndex = this.sessions.findIndex((session) => session.sessionId === sessionId)
-
-    if (sessionIndex > -1) {
-      this.sessions[sessionIndex] = {
-        ...this.sessions[sessionIndex],
-        isActionRunning: value,
-        keepAlive: value
-      }
-    }
-  }
 
   /**
    * ToolSessionStore constructor
@@ -153,6 +112,9 @@ class ToolSessionStore {
     })
   }
 
+  /**
+   * Action handler when store is successfully hydrated from storage
+   */
   async handleHydratedStore() {
     const toolSession = this.sessions.find((session) => session.sessionId === this.activeSessionId)
 
@@ -164,12 +126,78 @@ class ToolSessionStore {
     this.setIsInitialized(true)
   }
 
+  /**
+   * Set value of isInitialized\
+   *
+   * @param value
+   */
   private setIsInitialized(value: boolean) {
     this.isInitialized = value
   }
 
+  /**
+   * Set value of isPersisted
+   *
+   * @param value
+   */
   private setIsPersisted(value: boolean) {
     this._isPersisted = value
+  }
+
+  /**
+   * Load tool from local storage and create new instance of tool
+   *
+   * @param toolSession
+   * @param options
+   * @returns
+   */
+  async getToolFromStorage(toolSession: ToolSession, options: { disablePersistence?: boolean } = {}) {
+    /**
+     * Return the active tool if has same sessionId
+     */
+    const activeTool = toolRunnerStore.getActiveTool()
+    if (activeTool.sessionId === toolSession.sessionId) {
+      return activeTool
+    }
+
+    /**
+     * Try to retrieve tool from running tools when exists to get
+     * same reference from mobx store
+     */
+    const runningTool = this.runningTools[toolSession.sessionId]
+    if (runningTool && runningTool !== undefined) {
+      return runningTool
+    }
+
+    /**
+     * Try to retrieve tool from storage
+     */
+    const { disablePersistence = false } = options
+    const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
+    const toolState = await Tool.getToolStateFromStorage(toolSession.sessionId)
+
+    if (toolState) {
+      return new Tool(toolConstructor, { initialState: toolState, disablePersistence })
+    }
+    return new Tool(toolConstructor, { initialState: toolSession, disablePersistence })
+  }
+
+  /**
+   * Set value of isActionRunning and isKeepAlive
+   *
+   * @param sessionId
+   * @param value
+   */
+  keepAliveSession(sessionId: string, value: boolean) {
+    const sessionIndex = this.sessions.findIndex((session) => session.sessionId === sessionId)
+
+    if (sessionIndex > -1) {
+      this.sessions[sessionIndex] = {
+        ...this.sessions[sessionIndex],
+        isActionRunning: value,
+        isKeepAlive: value
+      }
+    }
   }
 
   /**
@@ -216,22 +244,9 @@ class ToolSessionStore {
    *
    * @param toolHistory
    */
-  createSessionFromHistory(toolHistory: ToolHistory) {
+  createSessionFromHistory(toolHistory: ToolState) {
     const mainTool = toolStore.mapOfLoadedTools[toolHistory.toolId]
-
-    /**
-     * Deep copy toolHistory to new variable to avoid modifying original data
-     */
-    const clonedToolHistory = {
-      ...toolHistory,
-
-      /**
-       * Generate new sessionId to avoid using sessionId from toolHistory
-       */
-      sessionId: Tool.generateSessionId()
-    }
-
-    this.createSession(mainTool, { initialState: clonedToolHistory })
+    this.createSession(mainTool, { initialState: toolHistory })
   }
 
   /**
@@ -307,7 +322,7 @@ class ToolSessionStore {
     /**
      * Deactivate currently active tool
      */
-    void this.deactivateCurrentSession()
+    void this.deactivateTool(activeTool)
 
     /**
      * Set new tool as active tool
@@ -317,7 +332,29 @@ class ToolSessionStore {
   }
 
   /**
-   * Close tool session
+   * Deactivate session but keep it in the list of session
+   */
+  private async deactivateTool(tool: Tool) {
+    /**
+     * Save to state if the tool has running action
+     */
+    if (tool.isActionRunning) {
+      this.runningTools[tool.sessionId] = tool
+
+    /**
+     * Disable session reference to store if session has no action running
+     */
+    } else {
+      tool.stopStore()
+
+      if (this.runningTools[tool.sessionId]) {
+        this.runningTools[tool.sessionId] = undefined
+      }
+    }
+  }
+
+  /**
+   * Close tool session and remove from list of session state
    *
    * @param tool
    */
@@ -353,7 +390,7 @@ class ToolSessionStore {
      */
     if (newSessionsOfTool.length === 0) {
       /**
-       * Reset session sequence because list is empty
+       * Reset session sequence (to remove array item with value = false) because list is empty
        */
       this.resetToolSessionSequence(toolSession.toolId)
 
@@ -371,9 +408,9 @@ class ToolSessionStore {
       const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
       this.createSession(toolConstructor)
 
-      /**
-       * Open another existing sessions from tool based on closed tool session index
-       */
+    /**
+     * Open another existing sessions from tool based on closed tool session index
+     */
     } else {
       let newSessionToBeOpened
       const closedSessionIndex = oldSessionsOfTool.findIndex(
@@ -382,7 +419,7 @@ class ToolSessionStore {
 
       /**
        * If closed session is not found on list of session, it means closeSession()
-       * was called more than once with same session (usually through holding the hotkey)
+       * was called more than once with same session (usually because hold the hotkey)
        */
       if (closedSessionIndex < 0) {
         return
@@ -398,7 +435,14 @@ class ToolSessionStore {
     }
   }
 
+  /**
+   * Close all session and remove it's store reference as well as the storage
+   */
   closeAllSession() {
+    this.sessions.forEach((session) => {
+      void this.closeSession(session)
+    })
+
     /**
      * Empty the session
      */
@@ -415,7 +459,18 @@ class ToolSessionStore {
     this.activateTool(Tool.empty())
   }
 
+  /**
+   * Close all session except one tool session
+   *
+   * @param toolSession
+   */
   async closeOtherSession(toolSession: ToolSession) {
+    this.sessions.forEach((session) => {
+      if (session.sessionId !== toolSession.sessionId) {
+        void this.closeSession(session)
+      }
+    })
+
     /**
      * Empty the session and remains the choosen tool sesion
      */
@@ -439,6 +494,11 @@ class ToolSessionStore {
     }
   }
 
+  /**
+   * Reset session sequence of tool
+   *
+   * @param toolId
+   */
   resetToolSessionSequence(toolId: string) {
     this.sessionSequences[toolId] = [true]
   }
@@ -470,7 +530,7 @@ class ToolSessionStore {
     }
 
     /**
-     * This block code purposely to avoid new session has same sequence number
+     * This block code purposely to prevent new session has same sequence number
      * when holding the CLOSE_TAB hotkey
      */
     if (nextIndex === 1) {
@@ -494,16 +554,27 @@ class ToolSessionStore {
    *
    * @param toolSession
    */
-  detachSessionSequence(toolSession: ToolSession) {
-    const sessions = this.sessionSequences[toolSession.toolId]
+  async detachSessionSequence(toolSession: ToolSession, tool?: Tool) {
+    const sessions = this.sessionSequences[toolSession.toolId] ?? []
     const deletedIndex = sessions.findIndex(
       (_, index) => index === toolSession.sessionSequenceNumber
     )
 
     if (deletedIndex >= 0) {
       this.sessionSequences[toolSession.toolId][deletedIndex] = false
-    } else if (sessions.filter((e) => e).length === 1) {
+    }
+
+    if (sessions.filter((e) => e).length === 1) {
       this.resetToolSessionSequence(toolSession.toolId)
+    }
+
+    /**
+     * Remove sequence number from actual tool
+     */
+    const retrievedTool = tool ?? (await this.getToolFromStorage(toolSession))
+    if (retrievedTool) {
+      retrievedTool.setSessionSequenceNumber(undefined)
+      await retrievedTool.hydrateStore()
     }
   }
 
@@ -524,48 +595,29 @@ class ToolSessionStore {
    * @param tool
    */
   private async proceedCloseSession(toolSession: ToolSession) {
+    let isAddedToHistory = false
     /**
      * Load tool from storage but disable the persistence, we only need
      * to get tool state and save it into history
      */
-    const toolHistory = await this.getToolFromStorage(toolSession, { disablePersistence: true })
+    const tool = await this.getToolFromStorage(toolSession, { disablePersistence: true })
 
-    if (toolHistory) {
-      toolHistory.destroyLocalStorage()
-
-      if (
-        toolHistory.getIsInputAndOutputHasValues() &&
-      (toolHistory.isInputValuesModified || toolHistory.isOutputValuesModified) &&
-      toolHistory.runCount > 0
-      ) {
-        toolHistoryStore.addHistory(toolHistory.toHistory())
+    if (tool) {
+      /**
+       * If state has been changed, insert into history
+       */
+      if (tool.getIsInputAndOutputHasValues() && tool.isInputValuesModified && tool.runCount > 0) {
+        isAddedToHistory = toolHistoryStore.addHistory(tool.toState())
       }
     }
 
     /**
      * Remove closed tool session name from store
      */
-    this.detachSessionSequence(toolSession)
-  }
+    await this.detachSessionSequence(toolSession, tool)
 
-  private async deactivateCurrentSession() {
-    const activeTool = toolRunnerStore.getActiveTool()
-
-    /**
-     * Save to state if the tool has running action
-     */
-    if (activeTool.isActionRunning) {
-      this.runningTools[activeTool.sessionId] = activeTool
-
-    /**
-     * Disable session reference to store if session has no action running
-     */
-    } else {
-      activeTool.stopStore()
-
-      if (this.runningTools[activeTool.sessionId]) {
-        this.runningTools[activeTool.sessionId] = undefined
-      }
+    if (!isAddedToHistory) {
+      void Tool.removeToolStateFromStorage(toolSession.sessionId)
     }
   }
 
@@ -629,14 +681,42 @@ class ToolSessionStore {
     this.sessions.splice(toIndex, 0, removedItem)
   }
 
-  renameSession(toolSession: ToolSession, newSessionName: string) {
-    this.detachSessionSequence(toolSession)
-    toolSession.sessionName = newSessionName
+  /**
+   *
+   * @param toolSession
+   * @param newSessionName
+   */
+  async renameSession(toolSession: ToolSession, newSessionName: string) {
+    void this.detachSessionSequence(toolSession)
+
+    /**
+     * Set session name to actual tool
+     */
+    const retrievedTool = await this.getToolFromStorage(toolSession)
+    if (retrievedTool) {
+      retrievedTool.setSessionName(newSessionName)
+      void retrievedTool.hydrateStore()
+    }
+
+    /**
+     * Set session name to tool session
+     */
+    this.setSessionName(toolSession, newSessionName)
 
     /**
      * Switch session order to itself for react to be able pickup the new state
      */
     this.switchSessionPosition(toolSession.sessionId, toolSession.sessionId)
+  }
+
+  /**
+   * Set session name of tool session
+   *
+   * @param toolSession
+   * @param sessionName
+   */
+  private setSessionName(toolSession: ToolSession, sessionName: string) {
+    toolSession.sessionName = sessionName
   }
 }
 

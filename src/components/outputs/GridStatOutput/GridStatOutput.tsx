@@ -9,16 +9,18 @@ interface Output {
   value: string | number
 }
 
-export const GridStatOutput: FC<OutputComponentProps<Output[]>> = (props) => {
-  let { output = [] } = props
+interface GridStatOutputProps extends OutputComponentProps<Output[]> { }
 
-  if (!Array.isArray(output)) {
-    output = []
+export const GridStatOutput: FC<GridStatOutputProps> = (props) => {
+  let { value = [] } = props
+
+  if (!Array.isArray(value)) {
+    value = []
   }
 
   return (
     <div className="GridStatOutput">
-      {output.map((item) => (
+      {value.map((item) => (
         <div key={item.label} className="GridStatOutput-item">
           <div className="GridStatOutput-item-label">{item.label}</div>
           <div className="GridStatOutput-item-value">{item.value}</div>

@@ -1,0 +1,27 @@
+.HomePage {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+
+  .content {
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    max-width: 900px;
+    max-height: 500px;
+  }
+
+  .headline {
+
+  }
+
+  .title {
+    font-size: 2.3em;
+    line-height: 45px;
+  }
+
+  .subtitle {
+    font-size: 1.1em;
+  }
+}

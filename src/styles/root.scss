@@ -141,7 +141,7 @@ html, body {
   --sidebar-item-background-color-active: #434549;
 
   // App Statusbar
-  --statusbar-background-color: #1e1f22;
+  --statusbar-background-color: #181818;
 
   // Input component styles
   --input-output-background-color: #1e1e1e;
@@ -236,7 +236,6 @@ html, body {
   overflow-x: hidden;
   // TODO: Watch changes, from auto
   overflow-y: hidden;
-  border-top-left-radius: 10px;
   border: 1px solid var(--border-color);
   border-right: 0;
   border-bottom: 0;
