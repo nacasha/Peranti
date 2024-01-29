@@ -21,14 +21,12 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
       <label className="InputOutputLabel">
         {label}
       </label>
-      <div className="CodeMirrorContainer">
-        <BaseCodeMirror
-          {...restProps}
-          value={defaultValue}
-          onChange={(newValue) => { onInputChange(newValue) }}
-          readOnly={readOnly}
-        />
-      </div>
+      <BaseCodeMirror
+        {...restProps}
+        value={defaultValue}
+        onChange={(newValue) => { onInputChange(newValue) }}
+        readOnly={readOnly}
+      />
     </div>
   )
 }

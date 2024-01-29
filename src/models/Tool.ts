@@ -526,7 +526,14 @@ export class Tool<
   @action
   setInputValue(key: string, value: any, options: { markAsModified: boolean } = { markAsModified: true }) {
     const newInputValues = { ...this.inputValues, [key]: value }
-    const inputValuesHasChanged = !fastDeepEqual(this.inputValues, newInputValues)
+
+    /**
+     * Value with type File cannot be compared using fastDeepEqual
+     * Make this variable always true
+     */
+    const inputValuesHasChanged = value instanceof File
+      ? true
+      : !fastDeepEqual(this.inputValues, newInputValues)
 
     if (inputValuesHasChanged) {
       this.inputValues = { ...this.inputValues, [key]: value }
@@ -535,6 +542,11 @@ export class Tool<
     if (options.markAsModified) {
       this.isInputValuesModified = true
     }
+  }
+
+  setInputAndOutputValueToDefault() {
+    this.fillInputValuesWithDefault()
+    this.outputValues = {}
   }
 
   /**
@@ -546,10 +558,7 @@ export class Tool<
   @action
   setInputValues(inputValues: any, options: { markAsModified: boolean } = { markAsModified: true }) {
     this.inputValues = inputValues
-
-    if (options.markAsModified) {
-      this.isInputValuesModified = true
-    }
+    this.isInputValuesModified = options.markAsModified
   }
 
   /**
@@ -560,10 +569,7 @@ export class Tool<
   @action
   setOutputValues(outputValues: any, options: { markAsModified: boolean } = { markAsModified: true }) {
     this.outputValues = outputValues
-
-    if (options.markAsModified) {
-      this.isOutputValuesModified = true
-    }
+    this.isOutputValuesModified = options.markAsModified
   }
 
   /**
@@ -652,10 +658,16 @@ export class Tool<
 
       if ("then" in result) {
         this.setIsActionRunning(true)
-        result.then((data: any) => {
-          this.setIsActionRunning(false)
-          resolve(data)
-        })
+        result
+          .then((data: any) => {
+            this.setIsActionRunning(false)
+            resolve(data)
+          })
+          .catch((error: any) => {
+            console.log(error)
+            this.setIsActionRunning(false)
+            resolve(undefined)
+          })
       }
 
       resolve(result)
@@ -757,7 +769,7 @@ export class Tool<
     await hydrateStore(this)
   }
 
-  increaseRenderCounter() {
+  forceRerender() {
     this.renderCounter += 1
   }
 }

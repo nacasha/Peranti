@@ -10,6 +10,7 @@ import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { Icons } from "src/constants/icons"
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { hotkeysStore } from "src/stores/hotkeysStore"
+import { toolHistoryStore } from "src/stores/toolHistoryStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
@@ -69,6 +70,16 @@ export const ToolTabbar: FC = observer(() => {
   useHotkeysModified(hotkeysStore.keys.TAB_CLOSE, (event) => {
     event.preventDefault()
     void toolSessionStore.closeSession(activeTool.toSession())
+  })
+
+  useHotkeysModified(hotkeysStore.keys.RESTORE_CLOSED_TAB, (event) => {
+    event?.preventDefault()
+    void toolHistoryStore.restoreLastHistory()
+  })
+
+  useHotkeysModified(hotkeysStore.keys.RENAME_ACTIVE_TAB, (event) => {
+    event?.preventDefault()
+    $renamingSessionId.set(activeTool.sessionId)
   })
 
   useEffect(() => {

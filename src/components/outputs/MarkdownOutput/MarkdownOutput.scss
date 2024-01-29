@@ -7,6 +7,7 @@
 .MarkdownOutput-inner {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
+  background-color: var(--input-output-background-color);
   overflow: hidden;
   flex: 1;
   display: flex;
@@ -16,5 +17,6 @@
     position: absolute;
     inset: 0;
     overflow: auto;
+    padding: 0 10px;
   }
 }

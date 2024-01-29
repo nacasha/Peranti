@@ -15,13 +15,11 @@ export const CodeOutput: FC<CodeOutputProps> = (props) => {
       <label className="InputOutputLabel">
         {label}
       </label>
-      <div className="CodeMirrorContainer">
-        <BaseCodeMirror
-          {...restprops}
-          value={typeof value === "string" ? value : JSON.stringify(value, null, 2)}
-          readOnly
-        />
-      </div>
+      <BaseCodeMirror
+        {...restprops}
+        value={typeof value === "string" ? value : JSON.stringify(value, null, 2)}
+        readOnly
+      />
     </div>
   )
 }

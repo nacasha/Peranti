@@ -68,7 +68,7 @@ export const ToolArea: FC = observer(() => {
   return (
     <div className={clsx("ToolArea", computedLayoutDirection, classNames)} style={computedStyles}>
       <ToolAreaBody
-        toolSessionId={activeTool.sessionId}
+        toolSessionId={activeTool.sessionId.concat(activeTool.renderCounter.toString())}
         inputs={computedInputs}
         outputs={computedOutputs}
         inputLayoutDirection={inputAreaDirection}

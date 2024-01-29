@@ -3,15 +3,6 @@
   background-color: var(--background-color-main);
   height: var(--tool-tabbar-height);
 
-  .simplebar-offset::after {
-    content: " ";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-bottom: 1px solid var(--border-color);
-  }
-
   .simplebar-track.simplebar-horizontal {
     height: 5px;
     border-radius: 0;
@@ -37,7 +28,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid var(--border-color);
   border-top: 2px solid transparent;
   white-space: nowrap;
 

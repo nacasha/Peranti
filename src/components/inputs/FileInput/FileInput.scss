@@ -1,14 +1,17 @@
-.CheckboxInput {
-  transition: all var(--transition-speed);
+.FileInput {
+  display: flex;
+  flex-direction: column;
+}
+
+.FileInputPicker {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  display: flex;
-  justify-content: space-between;
-  gap: 3px;
-  padding: 4px var(--input-output-padding);
   background-color: var(--input-output-background-color);
+  padding: 20px;
+  margin-bottom: 10px;
 
   &:hover {
+    cursor: pointer;
     border-color: var(--input-output-border-color-hover);
   }
 }

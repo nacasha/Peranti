@@ -8,6 +8,8 @@ import { type FC } from "react"
 
 import { interfaceStore } from "src/stores/interfaceStore.ts"
 
+import "./BaseCodeMirror.scss"
+
 export interface BaseCodeMirrorProps {
   language?: "json" | "plain" | "markdown"
 }
@@ -32,10 +34,12 @@ export const BaseCodeMirror: FC<Props> = observer((props) => {
   }
 
   return (
-    <CodeMirror
-      {...codeMirrorProps}
-      theme={isDarkMode ? monokaiDimmed : githubLight}
-      extensions={extensions}
-    />
+    <div className="CodeMirrorContainer">
+      <CodeMirror
+        {...codeMirrorProps}
+        theme={isDarkMode ? monokaiDimmed : githubLight}
+        extensions={extensions}
+      />
+    </div>
   )
 })

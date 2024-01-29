@@ -3,7 +3,7 @@ import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 interface InputFields {
-  input: InputFieldsType.File
+  file: InputFieldsType.File
 }
 
 interface OutputFields {
@@ -21,9 +21,13 @@ const fileToBase64Tool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "file-to-base64-encode",
   name: "File to Base64",
   category: "File",
+  layoutSetting: {
+    direction: "vertical",
+    inputAreaSize: "auto"
+  },
   inputFields: [
     {
-      key: "input",
+      key: "file",
       label: "Input",
       component: "File",
       defaultValue: ""
@@ -36,9 +40,8 @@ const fileToBase64Tool: ToolConstructor<InputFields, OutputFields> = {
       component: "Code"
     }
   ],
-  async action({ input }) {
-    if (input) {
-      const file = input[0]
+  async action({ file }) {
+    if (file) {
       const base64 = await toBase64(file)
       return { output: base64 }
     }

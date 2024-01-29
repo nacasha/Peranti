@@ -15,7 +15,7 @@
     transition: all var(--transition-speed);
 
     &:hover {
-      border-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 20%);
+      border-color: var(--input-output-border-color-hover);
     }
 
     &:focus {

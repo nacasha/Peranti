@@ -1,5 +1,6 @@
 import { type FC } from "react"
 import Markdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
@@ -17,7 +18,9 @@ export const MarkdownOutput: FC<MarkdownOutputProps> = (props) => {
       </label>
       <div className="MarkdownOutput-inner">
         <div className="body">
-          <Markdown>{value}</Markdown>
+          <Markdown remarkPlugins={[remarkGfm]}>
+            {value}
+          </Markdown>
         </div>
       </div>
     </div>

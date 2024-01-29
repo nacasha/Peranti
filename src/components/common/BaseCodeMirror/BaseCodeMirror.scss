@@ -1,0 +1,38 @@
+.CodeMirrorContainer {
+  position: relative;
+  flex: 1;
+  border: 1px solid var(--input-output-border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: all var(--transition-speed);
+  min-height: 150px;
+
+  .cm-theme {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    min-height: 150px;
+
+    .cm-editor {
+      height: 100%;
+      max-height: 100%;
+    }
+
+    .cm-editor.cm-focused { outline: 2px solid cyan }
+    .cm-editor .cm-content {
+      font-family: var(--input-output-font-size);
+      font-size: calc(1px + var(--font-size));
+      font-weight: 500;
+    }
+  }
+
+  &:hover {
+    border-color: var(--input-output-border-color-hover);
+  }
+
+  &:focus-within {
+    border: 1px solid var(--accent-color);
+  }
+}

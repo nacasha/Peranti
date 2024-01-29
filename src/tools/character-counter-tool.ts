@@ -38,12 +38,12 @@ const characterCounterTool: ToolConstructor<InputFields, OutputFields> = {
     }
   ],
   action({ input }) {
-    const emptyInput = input.length === 0
+    const isInputEmpty = input.length === 0
 
-    const charactersCount = emptyInput ? 0 : input.length
-    const charactersWithoutSpacesCount = emptyInput ? 0 : input.replace(/\s/g, "").length
-    const wordsCount = emptyInput ? 0 : input.split(/\s+/).length
-    const paragraphsCount = emptyInput ? 0 : input.split(/\n\s*/).length
+    const charactersCount = isInputEmpty ? 0 : input.length
+    const charactersWithoutSpacesCount = isInputEmpty ? 0 : input.replace(/\s/g, "").length
+    const wordsCount = isInputEmpty ? 0 : input.split(/\s+/).length
+    const paragraphsCount = isInputEmpty ? 0 : input.split(/\n\s*/).length
 
     const output = [
       {

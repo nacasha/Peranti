@@ -78,6 +78,14 @@ class ToolHistoryStore {
     }
   }
 
+  async restoreLastHistory() {
+    const toolHistory = this.histories[0]
+
+    if (toolHistory) {
+      void this.restoreHistory(toolHistory.sessionId)
+    }
+  }
+
   /**
    * Get specific history list of tool by its toolId
    *

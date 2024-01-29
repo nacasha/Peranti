@@ -98,7 +98,8 @@ class ToolRunnerStore {
   cleanActiveToolState() {
     const activeTool = this.getActiveTool()
 
-    this.setActiveTool(new Tool({ ...activeTool }))
+    activeTool.setInputAndOutputValueToDefault()
+    activeTool.forceRerender()
   }
 }
 
