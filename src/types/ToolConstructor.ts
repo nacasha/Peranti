@@ -2,10 +2,7 @@ import { type ToolInput } from "./ToolInput.js"
 import { type ToolLayoutSetting } from "./ToolLayoutSetting.js"
 import { type ToolOutput } from "./ToolOutput.js"
 
-export interface ToolConstructor<
-  InputFields extends Record<string, any> = any,
-  OutputFields extends Record<string, any> = any,
-> {
+export interface ToolConstructor<IF extends Record<string, any> = any, OF extends Record<string, any> = any> {
   /**
    * Tool ID
    */
@@ -19,14 +16,14 @@ export interface ToolConstructor<
   /**
    * List of input fields for tool
    */
-  inputFields: Array<ToolInput<InputFields>>
-  | ((inputParams: InputFields) => Array<ToolInput<InputFields>>)
+  inputFields: Array<ToolInput<IF>>
+  | ((inputParams: IF) => Array<ToolInput<IF>>)
 
   /**
    * List of output fields for tool
    */
-  outputFields: Array<ToolOutput<OutputFields>>
-  | ((outputParams: OutputFields) => Array<ToolOutput<OutputFields>>)
+  outputFields: Array<ToolOutput<OF>>
+  | ((outputParams: OF) => Array<ToolOutput<OF>>)
 
   /**
    * Category of tool
@@ -37,7 +34,7 @@ export interface ToolConstructor<
    * Action of tool.
    * Input always comes in form of Map as well as the returned value
    */
-  action: (input: InputFields) => OutputFields | undefined | Promise<OutputFields>
+  action: (input: IF) => OF | undefined | Promise<OF>
 
   /**
    * Tool layout setting

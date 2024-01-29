@@ -3,7 +3,7 @@ import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys.js"
-import { ToolStateManager } from "src/services/toolStateManager.js"
+import { ToolStateManager } from "src/services/toolStorageManager.js"
 import { type ToolHistory } from "src/types/ToolHistory.js"
 import { type ToolState } from "src/types/ToolState.js"
 

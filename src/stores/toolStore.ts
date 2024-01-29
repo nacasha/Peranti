@@ -1,8 +1,8 @@
-import { BaseDirectory, createDir, exists, readDir, readTextFile } from "@tauri-apps/api/fs"
-import { appDataDir, resolve } from "@tauri-apps/api/path"
 import { makeAutoObservable } from "mobx"
 
+import { Files } from "src/constants/files.js"
 import { Tool } from "src/models/Tool"
+import { FileSystemManager } from "src/services/fileSystemManager.js"
 import base64EncodeDecodeTool from "src/tools/base64-encode-decode-tool.js"
 import base64ToFileTool from "src/tools/base64-to-file-tool.js"
 import characterCounterTool from "src/tools/character-counter-tool.ts"
@@ -225,21 +225,20 @@ class ToolStore {
   }
 
   private async loadToolExtensions() {
-    const EXTENSIONS = "extensions"
-    await this.prepareExtensionsFolder()
+    await FileSystemManager.createExtensionsFolder()
 
     const extensions = []
-    const entries = await readDir(EXTENSIONS, { dir: BaseDirectory.AppData, recursive: true })
+    const entries = await FileSystemManager.readExtensionsFolder()
 
     for (const entry of entries) {
       if (entry.children) {
         const files = Object.fromEntries(entry.children.map((children) => [children.name, children.path]))
 
-        const devPipeDataRaw = await readTextFile(files["devpipe.json"])
-        const devPipeData = JSON.parse(devPipeDataRaw)
-        devPipeData.type = "Extension"
+        const devPipeDataRaw = await FileSystemManager.readFileAsText(files[Files.ExtensionDefinition])
+        const devPipeData: ToolConstructor = JSON.parse(devPipeDataRaw)
+        const realActionFilePath = await FileSystemManager.resolveFilePath(entry.path, devPipeData.metadata.actionFile)
 
-        const realActionFilePath = await resolve(entry.path, devPipeData.metadata.actionFile)
+        devPipeData.type = "Extension"
         devPipeData.metadata.actionFile = realActionFilePath
 
         extensions.push(devPipeData)
@@ -262,7 +261,9 @@ class ToolStore {
   private setupToolsForSidebar() {
     let listOfCategoriesAndTools: Record<string, ToolConstructor[]> = { General: [] }
     if (this.groupToolsByCategory) {
-      listOfCategoriesAndTools = Object.fromEntries(toolStore.listOfLoadedTools.map((tool) => [tool.category, [] as Tool[]]))
+      listOfCategoriesAndTools = Object.fromEntries(toolStore.listOfLoadedTools.map(
+        (tool) => [tool.category, [] as ToolConstructor[]]
+      ))
     }
 
     /**
@@ -299,29 +300,6 @@ class ToolStore {
     }
 
     this.listOfCategoriesAndTools = listOfCategoriesAndTools
-  }
-
-  /**
-   * Prepare extensions folder by creating the folder
-   * in user app data folder if not exists
-   */
-  private async prepareExtensionsFolder() {
-    const EXTENSIONS = "extensions"
-
-    const appDataDirs = BaseDirectory.AppData
-    const baseFolder = await appDataDir()
-
-    try {
-      if (!(await exists(baseFolder))) {
-        await createDir(baseFolder)
-      }
-
-      if (!(await exists(EXTENSIONS, { dir: appDataDirs }))) {
-        await createDir(EXTENSIONS, { dir: appDataDirs })
-      }
-    } catch (err: any) {
-      console.log(err)
-    }
   }
 }
 

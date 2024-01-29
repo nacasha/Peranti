@@ -4,7 +4,7 @@ import { observable, action, makeObservable, toJS } from "mobx"
 import { PersistStoreMap, hydrateStore, makePersistable, pausePersisting, startPersisting, stopPersisting } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys"
-import { ToolStateManager } from "src/services/toolStateManager"
+import { ToolStateManager } from "src/services/toolStorageManager"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
@@ -18,8 +18,8 @@ import { generateRandomString } from "src/utils/generateRandomString"
 import { generateSha256 } from "src/utils/generateSha256"
 
 export class Tool<
-  InputFields extends Record<string, any> = any,
-  OutputFields extends Record<string, any> = any,
+  IF extends Record<string, any> = any,
+  OF extends Record<string, any> = any,
 > implements ToolConstructor {
   /**
    * Tool ID
@@ -49,14 +49,14 @@ export class Tool<
   /**
    * List of input fields for tool
    */
-  readonly inputFields: Array<ToolInput<InputFields>>
-  | ((inputValues: any) => Array<ToolInput<InputFields>>)
+  readonly inputFields: Array<ToolInput<IF>>
+  | ((inputValues: any) => Array<ToolInput<IF>>)
 
   /**
    * List of output fields for tool
    */
-  readonly outputFields: Array<ToolOutput<OutputFields>>
-  | ((outputValues: any) => Array<ToolOutput<OutputFields>>)
+  readonly outputFields: Array<ToolOutput<OF>>
+  | ((outputValues: any) => Array<ToolOutput<OF>>)
 
   /**
    * Category of tool
@@ -224,7 +224,7 @@ export class Tool<
     /**
      * Base tool constructor
      */
-    params: ToolConstructor<InputFields, OutputFields>,
+    params: ToolConstructor<IF, OF>,
 
     /**
      * Additional options

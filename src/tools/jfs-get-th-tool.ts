@@ -1,10 +1,6 @@
-import axios from "axios"
-import axiosTauriApiAdapter from "axios-tauri-api-adapter"
-
+import { httpClient } from "src/services/httpClient"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
-
-const client = axios.create({ adapter: axiosTauriApiAdapter })
 
 interface InputFields {
   startDate: string
@@ -69,7 +65,7 @@ const jfsGetThTool: ToolConstructor<InputFields, OutputFields> = {
 
     try {
       const url = ""
-      const response = await client.get(url, {
+      const response = await httpClient.get(url, {
         headers: {
           Authorization: ""
         }

@@ -3,7 +3,7 @@ import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys.js"
 import { Tool } from "src/models/Tool"
-import { ToolStateManager } from "src/services/toolStateManager.js"
+import { ToolStateManager } from "src/services/toolStorageManager.js"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolHistory } from "src/types/ToolHistory.js"
 import { type ToolSession } from "src/types/ToolSession.js"

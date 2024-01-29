@@ -1,5 +1,4 @@
-import { ResponseType, fetch } from "@tauri-apps/api/http"
-
+import { httpClient } from "src/services/httpClient"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
@@ -15,10 +14,8 @@ interface OutputFields {
 
 async function getFavicon(url: any) {
   // Make a request to the website's root
-  const response = await fetch(`https://www.google.com/s2/favicons?domain=${url}&sz=180`, {
-    method: "GET",
-    timeout: 30,
-    responseType: ResponseType.Binary
+  const response = await httpClient.get(`https://www.google.com/s2/favicons?domain=${url}&sz=180`, {
+    responseType: "arraybuffer"
   })
 
   return response
@@ -59,6 +56,7 @@ const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
   action: async(inputParams) => {
     const { websiteUrl } = inputParams
     const result = await getFavicon(websiteUrl)
+    console.log(result)
 
     const binaryArray = (result?.data ?? []) as number[]
     const base64String = btoa(String.fromCharCode.apply(null, binaryArray))
