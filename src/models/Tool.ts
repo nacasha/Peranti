@@ -1,11 +1,10 @@
 import { Command } from "@tauri-apps/api/shell"
 import fastDeepEqual from "fast-deep-equal"
-import localforage from "localforage"
-import hashMd5 from "md5"
 import { observable, action, makeObservable, toJS } from "mobx"
-import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, stopPersisting } from "mobx-persist-store"
+import { PersistStoreMap, hydrateStore, makePersistable, pausePersisting, startPersisting, stopPersisting } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys"
+import { ToolStateManager } from "src/services/toolStateManager"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
@@ -121,9 +120,11 @@ export class Tool<
   @observable batchOutputKey: string | number | symbol = ""
 
   /**
-   * Indicates tool is history, which is read only
+   * Indicates tool is deleted
    */
-  @observable readonly isHistory: boolean = false
+  @observable isDeleted: boolean = false
+
+  @observable renderCounter: number = 0
 
   /**
    * Indicates input values has been changed
@@ -162,18 +163,13 @@ export class Tool<
 
   readonly disablePersistence: boolean = false
 
-  get localStorageKey() {
-    return StorageKeys.Tool.concat(this.sessionId)
-  }
-
   /**
    * Tool sessionId generator
    *
    * @returns
    */
   static generateSessionId() {
-    const randomString = generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm")
-    return hashMd5(new Date().getTime().toString().concat(randomString))
+    return generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm")
   }
 
   /**
@@ -240,18 +236,6 @@ export class Tool<
       initialState?: Partial<ToolState>
 
       /**
-       * Make tool as read only
-       */
-      isHistory?: boolean
-
-      /**
-       * Set session name of tool
-       */
-      sessionName?: string
-
-      sessionSequenceNumber?: number
-
-      /**
        * Disable persistence of tool
        */
       disablePersistence?: boolean
@@ -272,7 +256,7 @@ export class Tool<
     } = params
 
     this.toolId = toolId
-    this.sessionId = Tool.generateSessionId()
+    this.sessionId = toolId.concat("|", Tool.generateSessionId())
     this.name = name
     this.action = action
     this.category = category
@@ -301,15 +285,10 @@ export class Tool<
      */
     this.fillInputValuesWithDefault()
 
-    const {
-      isHistory = false,
-      initialState,
-      sessionName,
-      disablePersistence = false,
-      sessionSequenceNumber
-    } = options
-    let assignedSessionName
-
+    /**
+     * Fill created tool with initial state
+     */
+    const { initialState, disablePersistence = false } = options
     if (initialState) {
       this.sessionId = initialState.sessionId ?? this.sessionId
       this.sessionSequenceNumber = initialState.sessionSequenceNumber ?? this.sessionSequenceNumber
@@ -321,20 +300,10 @@ export class Tool<
       this.outputValues = initialState.outputValues ?? this.outputValues
       this.isInputValuesModified = initialState.isInputValuesModified ?? this.isInputValuesModified
       this.isOutputValuesModified = initialState.isOutputValuesModified ?? this.isOutputValuesModified
-
-      assignedSessionName = initialState.sessionName
+      this.sessionName = initialState.sessionName ?? this.sessionName
+      this.isDeleted = initialState.isDeleted ?? this.isDeleted
     }
 
-    if (!this.sessionSequenceNumber) {
-      this.sessionSequenceNumber = sessionSequenceNumber
-    }
-
-    if (!assignedSessionName) {
-      assignedSessionName = sessionName
-    }
-
-    this.isHistory = isHistory
-    this.sessionName = assignedSessionName
     this.disablePersistence = disablePersistence
 
     makeObservable(this)
@@ -373,14 +342,23 @@ export class Tool<
     })
 
     /**
-     * Skip if it's an empty tool, disable persistence or already persisting
+     * Skip if it's an empty tool, disable persistence
      */
-    if (!this.toolId || this.disablePersistence || isPersisting(this)) {
+    if (!this.toolId || this.disablePersistence) {
       return
     }
 
+    /**
+     * Early put toolState into storage, because makePersistable did not
+     * immediately seralize the state
+     */
+    void ToolStateManager.putToolStateIntoStorage(this.sessionId, this.toState())
+
+    /**
+     * Watch changes of state and put into storage
+     */
     void makePersistable(this, {
-      name: this.localStorageKey,
+      name: StorageKeys.ToolState.concat(this.sessionId),
       properties: [
         {
           key: "toolState",
@@ -389,14 +367,21 @@ export class Tool<
           },
           deserialize: () => {
             /**
-             * Do nothing when deserialize, as it is already handled
-             * by Tool Constructor and ToolSessionStore.getToolFromLocalStorage
+             * Do nothing when deserialize, must be handled by Tool Constructor
              */
             return this
           }
         }
       ] as any
     })
+  }
+
+  pauseStore() {
+    pausePersisting(this)
+  }
+
+  startStore() {
+    startPersisting(this)
   }
 
   stopStore() {
@@ -408,7 +393,7 @@ export class Tool<
    *
    * @returns
    */
-  toState(): ToolState {
+  toState(replacedValue: Partial<ToolState> = {}): ToolState {
     const {
       batchInputKey,
       batchOutputKey,
@@ -421,7 +406,8 @@ export class Tool<
       sessionSequenceNumber,
       isOutputValuesModified,
       isInputValuesModified,
-      toolId
+      toolId,
+      isDeleted
     } = this
 
     const createdAt = new Date().getTime()
@@ -441,7 +427,9 @@ export class Tool<
       batchOutputKey,
       runCount,
       isOutputValuesModified,
-      isInputValuesModified
+      isInputValuesModified,
+      isDeleted,
+      ...replacedValue
     }
   }
 
@@ -449,6 +437,11 @@ export class Tool<
     const { sessionId, sessionName, sessionSequenceNumber, toolId } = this
 
     return { sessionId, sessionName, sessionSequenceNumber, toolId }
+  }
+
+  @action
+  setIsDeleted(isDeleted: boolean) {
+    this.isDeleted = isDeleted
   }
 
   /**
@@ -517,7 +510,7 @@ export class Tool<
    *
    * @returns boolean
    */
-  getIsInputAndOutputHasValues() {
+  getIsInputAndOutputHasValues(): boolean {
     const hasInputValues = Object.values(this.inputValues).filter((value) => Boolean(value)).length > 0
     const hasOutputValues = Object.values(this.outputValues).filter((value) => Boolean(value)).length > 0
 
@@ -604,7 +597,7 @@ export class Tool<
    * Evaluate this tool action with input
    */
   async run() {
-    if (this.isHistory || this.isActionRunning) {
+    if (this.isDeleted || this.isActionRunning) {
       return
     }
 
@@ -764,23 +757,7 @@ export class Tool<
     await hydrateStore(this)
   }
 
-  static async getToolStateFromStorage(sessionId: string) {
-    const storedToolData: { toolState: ToolState } | null = await localforage.getItem(
-      StorageKeys.ToolState.concat(sessionId)
-    )
-    return storedToolData?.toolState
-  }
-
-  static async removeToolStateFromStorage(sessionId: string) {
-    await localforage.removeItem(
-      StorageKeys.ToolState.concat(sessionId)
-    )
-  }
-
-  static async putToolStateIntoStorage(sessionId: string, toolState: ToolState) {
-    await localforage.setItem(
-      StorageKeys.ToolHistory.concat(sessionId),
-      { toolState }
-    )
+  increaseRenderCounter() {
+    this.renderCounter += 1
   }
 }

@@ -13,4 +13,5 @@ export interface ToolState {
   runCount: number
   isOutputValuesModified: boolean
   isInputValuesModified: boolean
+  isDeleted: boolean
 }

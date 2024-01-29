@@ -10,7 +10,7 @@ export const ToolBatchModeHeader = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
   const { isBatchEnabled, batchOutputKey, batchInputKey } = activeTool
 
-  const isToolReadOnly = activeTool.isHistory
+  const isToolReadOnly = activeTool.isDeleted
   const inputFields = activeTool.getInputFields()
   const outputFields = activeTool.getOutputFields()
 

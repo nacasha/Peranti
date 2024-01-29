@@ -1,4 +1,16 @@
 .ToolHistoryList {
+  .title {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+
+    .session-name {
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 0 5px;
+    }
+  }
+
   .subtitle {
     font-size: 11px;
   }

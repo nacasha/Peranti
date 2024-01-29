@@ -57,14 +57,7 @@ class ToolRunnerStore {
       return activeTool
     }
 
-    return new Tool({
-      name: "",
-      toolId: "",
-      category: "",
-      action: () => ({}),
-      inputFields: [],
-      outputFields: []
-    })
+    return Tool.empty()
   }
 
   /**

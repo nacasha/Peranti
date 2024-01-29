@@ -1,21 +1,22 @@
-import { observer } from "mobx-react"
 import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
 import { Icons } from "src/constants/icons"
+import { useSelector } from "src/hooks/useSelector"
 import { toolHistoryStore } from "src/stores/toolHistoryStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
-export const ToolLoadFromHistoryButton: FC = observer(() => {
-  const activeTool = toolRunnerStore.getActiveTool()
+export const ToolLoadFromHistoryButton: FC = () => {
+  const sessionId = useSelector(() => toolRunnerStore.getActiveTool().sessionId)
+  const isHistory = useSelector(() => toolRunnerStore.getActiveTool().isDeleted)
 
   const handleRestoreHistory = () => {
-    if (activeTool.isHistory) {
-      toolHistoryStore.restoreHistory(activeTool.sessionId)
+    if (isHistory) {
+      void toolHistoryStore.restoreHistory(sessionId)
     }
   }
 
-  if (!activeTool.isHistory) {
+  if (!isHistory) {
     return null
   }
 
@@ -24,4 +25,4 @@ export const ToolLoadFromHistoryButton: FC = observer(() => {
       Restore This Editor
     </Button>
   )
-})
+}

@@ -16,7 +16,7 @@ import "./ToolArea.scss"
 
 export const ToolArea: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
-  const { batchInputKey, batchOutputKey, isBatchEnabled, layoutSetting, isHistory: isReadOnly } = activeTool
+  const { batchInputKey, batchOutputKey, isBatchEnabled, layoutSetting, isDeleted: isHistory } = activeTool
   const { direction, reversed, inputAreaDirection, inputAreaSize, outputAreaDirection, outputAreaSize } = layoutSetting
   const { textAreaWordWrap } = interfaceStore
 
@@ -73,7 +73,7 @@ export const ToolArea: FC = observer(() => {
         outputs={computedOutputs}
         inputLayoutDirection={inputAreaDirection}
         outputLayoutDirection={outputAreaDirection}
-        readOnly={isReadOnly}
+        readOnly={isHistory}
       />
     </div>
   )

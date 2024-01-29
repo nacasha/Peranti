@@ -3,13 +3,12 @@ import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys.js"
-import { Tool } from "src/models/Tool"
-import { type ToolHistory } from "src/types/ToolHistorySimple.js"
+import { ToolStateManager } from "src/services/toolStateManager.js"
+import { type ToolHistory } from "src/types/ToolHistory.js"
 import { type ToolState } from "src/types/ToolState.js"
 
 import { toolRunnerStore } from "./toolRunnerStore.js"
 import { toolSessionStore } from "./toolSessionStore.js"
-import { toolStore } from "./toolStore.js"
 
 class ToolHistoryStore {
   histories: ToolHistory[] = []
@@ -63,9 +62,19 @@ class ToolHistoryStore {
    * @param toolHistory
    */
   async openHistory(toolHistory: ToolHistory) {
-    const retrievedTool = await this.getToolFromStorage(toolHistory, { disablePersistence: true })
+    const retrievedTool = await ToolStateManager.getToolFromStorage(toolHistory.sessionId)
     if (retrievedTool) {
       toolRunnerStore.setActiveTool(retrievedTool)
+    }
+  }
+
+  async restoreHistory(sessionId: string) {
+    const toolHistoryIndex = this.histories.findIndex((history) => history.sessionId === sessionId)
+    const toolHistory = this.histories[toolHistoryIndex]
+
+    if (toolHistory) {
+      this.removeHistoryEntry(sessionId)
+      void toolSessionStore.openHistory(toolHistory)
     }
   }
 
@@ -78,46 +87,7 @@ class ToolHistoryStore {
     return this.histories.filter((history) => history.toolId === toolId)
   }
 
-  /**
-   * Load tool from local storage and create new instance of tool
-   *
-   * @param toolHistory
-   * @param options
-   * @returns
-   */
-  async getToolFromStorage(toolHistory: ToolHistory, options: { disablePersistence?: boolean } = {}) {
-    /**
-     * Try to retrieve tool from storage
-     */
-    const { disablePersistence = false } = options
-    const toolConstructor = toolStore.mapOfLoadedTools[toolHistory.toolId]
-    const toolState = await Tool.getToolStateFromStorage(toolHistory.sessionId)
-
-    if (toolState) {
-      return new Tool(toolConstructor, {
-        initialState: toolState,
-        isHistory: true,
-        disablePersistence
-      })
-    }
-  }
-
-  async restoreHistory(sessionId: string) {
-    const toolHistorySimpleIndex = this.histories.findIndex((history) => history.sessionId === sessionId)
-    const toolHistorySimple = this.histories[toolHistorySimpleIndex]
-
-    if (toolHistorySimple) {
-      const toolHistory = await this.getToolFromStorage(toolHistorySimple, { disablePersistence: true })
-
-      if (toolHistory) {
-        toolSessionStore.createSessionFromHistory(toolHistory.toState())
-      }
-    }
-
-    this.fromSessionIdFromHistories(sessionId)
-  }
-
-  fromSessionIdFromHistories(sessionId: string) {
+  private removeHistoryEntry(sessionId: string) {
     this.histories = this.histories.filter(
       (history) => history.sessionId !== sessionId
     )

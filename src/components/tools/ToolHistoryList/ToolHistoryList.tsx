@@ -6,7 +6,7 @@ import { AppSidebarContentItem } from "src/components/app/AppSidebarContentItem"
 import { toolHistoryStore } from "src/stores/toolHistoryStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { toolStore } from "src/stores/toolStore"
-import { type ToolHistory } from "src/types/ToolHistorySimple"
+import { type ToolHistory } from "src/types/ToolHistory"
 import { prettyDateFormat } from "src/utils/prettyDateFormat"
 
 import "./ToolHistoryList.scss"
@@ -32,7 +32,12 @@ export const ToolHistoryList: FC<ToolHistoryListProps> = observer((props) => {
             active={toolRunnerStore.isToolActiveBySessionId(toolHistory.sessionId)}
             onClick={onClickItem(toolHistory)}
           >
-            <div>{toolStore.mapOfLoadedToolsName[toolHistory.toolId]}</div>
+            <div className="title">
+              <div>{toolStore.mapOfLoadedToolsName[toolHistory.toolId]}</div>
+              {toolHistory.sessionName && (
+                <div className="session-name">{toolHistory.sessionName}</div>
+              )}
+            </div>
             <div className="subtitle">{prettyDateFormat(new Date(toolHistory.createdAt))}</div>
           </AppSidebarContentItem>
         ))}
