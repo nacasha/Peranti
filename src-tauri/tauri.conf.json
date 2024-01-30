@@ -83,7 +83,7 @@
         "height": 600,
         "minHeight": 390,
         "decorations": false,
-        "fileDropEnabled": false
+        "fileDropEnabled": true
       }
     ]
   }

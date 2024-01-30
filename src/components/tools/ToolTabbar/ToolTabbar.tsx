@@ -3,11 +3,12 @@ import clsx from "clsx"
 import { observer } from "mobx-react"
 import { atom } from "nanostores"
 import { ContextMenuTrigger, ContextMenu, ContextMenuItem } from "rctx-contextmenu"
-import { type MouseEventHandler, type FC, useEffect, useRef, type DragEventHandler, memo, type FocusEventHandler, useMemo } from "react"
+import { type MouseEventHandler, type FC, useEffect, useRef, memo, type FocusEventHandler, useMemo } from "react"
 import SimpleBar from "simplebar-react"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { Icons } from "src/constants/icons"
+import { useDragAndDropJS } from "src/hooks/useDragAndDropJS"
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { hotkeysStore } from "src/stores/hotkeysStore"
 import { toolHistoryStore } from "src/stores/toolHistoryStore"
@@ -202,46 +203,18 @@ const TabItem: FC<TabItemProps> = memo((props) => {
     void toolSessionStore.closeSession(toolSession)
   }
 
-  const handleDragStart: DragEventHandler<HTMLDivElement> = (event) => {
-    event.dataTransfer.effectAllowed = "move"
-    event.dataTransfer.setData("sessionId", sessionId)
-  }
-
-  const handleDragOver: DragEventHandler<HTMLDivElement> = (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-
-    const element = event.currentTarget
-    if (element.classList.contains("ToolTabbar-item")) {
-      element.style.filter = "contrast(0.8)"
-    }
-  }
-
-  const handleDrop: DragEventHandler<HTMLDivElement> = (event) => {
-    event.preventDefault()
-    const element = event.currentTarget
-    element.style.filter = "none"
-
-    const fromSessionId = event.dataTransfer.getData("sessionId")
-    toolSessionStore.switchSessionPosition(fromSessionId, sessionId)
-  }
-
-  const handleDragLeave: DragEventHandler<HTMLDivElement> = (event) => {
-    event.preventDefault()
-    const element = event.currentTarget
-    element.style.filter = "none"
-  }
-
+  /**
+   * Scroll tool tabbar to this tab when active
+   */
   useEffect(() => {
-    if (active) {
-      const activeTab: HTMLDivElement | null = document.querySelector(`[data-session-id="${sessionId}"]`)
-
-      if (activeTab) {
-        activeTab.scrollIntoView()
-      }
+    if (active && draggableElementRef.current) {
+      draggableElementRef.current.scrollIntoView()
     }
   }, [active])
 
+  /**
+   * Select all text when starting to rename this tab
+   */
   useEffect(() => {
     if (isRenamingSession) {
       if (tabLabelRef.current) {
@@ -258,6 +231,9 @@ const TabItem: FC<TabItemProps> = memo((props) => {
     }
   }, [isRenamingSession])
 
+  /**
+   * Blur the input for renaming tab when user hit Enter
+   */
   useEffect(() => {
     const { current: tabLabelInput } = tabLabelRef
 
@@ -275,6 +251,9 @@ const TabItem: FC<TabItemProps> = memo((props) => {
     }
   }, [tabLabelRef.current])
 
+  /**
+   * Rename session when rename tab input get blur event
+   */
   const handleSessionNameInputBlur: FocusEventHandler<HTMLDivElement> = () => {
     $renamingSessionId.set("")
 
@@ -287,28 +266,41 @@ const TabItem: FC<TabItemProps> = memo((props) => {
     }
   }
 
+  const { draggableElementRef, draggableElementPlaceholderRef } = useDragAndDropJS({
+    onMouseUp: (event) => {
+      const elementBelowMouse = document.elementsFromPoint(event.clientX, event.clientY)
+      const otherTabbar = elementBelowMouse.find((element) => (
+        element.classList.contains("ToolTabbar-item") && !element.classList.contains("active")
+      ))
+
+      if (otherTabbar) {
+        const targetSessionId = (otherTabbar as HTMLDivElement).getAttribute("data-session-id")
+        if (targetSessionId) {
+          toolSessionStore.switchSessionPosition(sessionId, targetSessionId)
+        }
+      }
+    }
+  })
+
   return (
     <ContextMenuTrigger
       id={ContextMenuKeys.ToolTabbar}
       key={toolSession.sessionId.concat(toolSession.sessionName ?? "")}
     >
+      <div ref={draggableElementPlaceholderRef}></div>
       <div
+        ref={draggableElementRef}
         key={toolSession.sessionId}
         className={clsx("ToolTabbar-item", { active })}
         data-session-id={toolSession.sessionId}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragLeaveCapture={handleDragLeave}
-        onDrop={handleDrop}
-        draggable
       >
         <div
           ref={tabLabelRef}
-          suppressContentEditableWarning
           contentEditable={isRenamingSession}
           onBlur={handleSessionNameInputBlur}
+          suppressContentEditableWarning
         >
           {getSessionName()}
           {isActionRunning ? " ..." : ""}
