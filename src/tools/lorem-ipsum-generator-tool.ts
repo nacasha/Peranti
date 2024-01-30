@@ -37,6 +37,7 @@ const loremIpsumGeneratorTool: ToolConstructor<InputFields, OutputFields> = {
         label: "Type",
         component: "Switch",
         defaultValue: "paragraphs",
+        skipValidateHasValue: true,
         props: {
           options: typeOptions
         }

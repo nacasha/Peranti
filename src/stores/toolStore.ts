@@ -8,6 +8,7 @@ import base64ToFileTool from "src/tools/base64-to-file-tool.js"
 import characterCounterTool from "src/tools/character-counter-tool.ts"
 import compareListTool from "src/tools/compare-list-tool.js"
 import cronReadableTool from "src/tools/cron-readable-tool.js"
+import dateToMillisecondsTool from "src/tools/date-to-milliseconds.js"
 import faviconGrabberTool from "src/tools/favicon-grabber-tool.js"
 import fileToBase64Tool from "src/tools/file-to-base-64-tool"
 import generateRandomStringTool from "src/tools/generate-random-string.js"
@@ -107,7 +108,8 @@ class ToolStore {
     [fileToBase64Tool.toolId]: fileToBase64Tool,
     [base64ToFileTool.toolId]: base64ToFileTool,
     [jfsGetThTool.toolId]: jfsGetThTool,
-    [markdownParserTool.toolId]: markdownParserTool
+    [markdownParserTool.toolId]: markdownParserTool,
+    [dateToMillisecondsTool.toolId]: dateToMillisecondsTool
   }
 
   /**

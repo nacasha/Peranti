@@ -24,6 +24,7 @@ const textTransformTool: ToolConstructor<InputFields, OutputFields> = {
       label: "Type",
       component: "Switch",
       defaultValue: "original",
+      skipValidateHasValue: true,
       props: {
         options: [
           { value: "original", label: "Original Text" },

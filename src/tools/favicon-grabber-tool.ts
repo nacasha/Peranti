@@ -56,7 +56,6 @@ const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
   action: async(inputParams) => {
     const { websiteUrl } = inputParams
     const result = await getFavicon(websiteUrl)
-    console.log(result)
 
     const binaryArray = (result?.data ?? []) as number[]
     const base64String = btoa(String.fromCharCode.apply(null, binaryArray))

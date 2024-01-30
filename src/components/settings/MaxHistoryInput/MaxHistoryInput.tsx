@@ -18,6 +18,7 @@ export const MaxHistoryInput: FC = () => {
       defaultValue={numberOfMaximumHistory}
       onChange={onChange}
       style={{ width: 50 }}
+      autoComplete="off"
     />
   )
 }

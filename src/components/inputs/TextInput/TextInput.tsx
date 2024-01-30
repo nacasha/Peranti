@@ -30,6 +30,7 @@ export const TextInput: FC<TextInputProps> = (props) => {
         readOnly={readOnly}
         tabIndex={readOnly ? -1 : undefined}
         {...restProps}
+        autoComplete="off"
       />
     </div>
   )

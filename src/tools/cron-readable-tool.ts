@@ -1,5 +1,4 @@
 import cronstrue from "cronstrue"
-import "cronstrue/locales/id"
 
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
@@ -17,11 +16,15 @@ const cronReadableTool: ToolConstructor<InputFields, OutputFields> = {
   toolId: "cron-parser",
   name: "CRON Parser",
   category: "Date Time",
+  layoutSetting: {
+    direction: "vertical",
+    inputAreaSize: "auto"
+  },
   inputFields: [
     {
       key: "input",
-      label: "Input",
-      component: "Code",
+      label: "CRON Expression",
+      component: "Text",
       defaultValue: "",
       props: {
         autoFocus: true
@@ -32,7 +35,7 @@ const cronReadableTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "Output",
-      component: "Code"
+      component: "Text"
     }
   ],
   action: (inputParams) => {

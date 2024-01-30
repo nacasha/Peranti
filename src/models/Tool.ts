@@ -15,7 +15,6 @@ import { type ToolPreset } from "src/types/ToolPreset"
 import { type ToolSession } from "src/types/ToolSession"
 import { type ToolState } from "src/types/ToolState"
 import { generateRandomString } from "src/utils/generateRandomString"
-import { generateSha256 } from "src/utils/generateSha256"
 
 export class Tool<
   IF extends Record<string, any> = any,
@@ -411,7 +410,6 @@ export class Tool<
     } = this
 
     const createdAt = new Date().getTime()
-    const inputOutputHash = generateSha256(this.getInputAndOutputAsString())
 
     return {
       sessionId,
@@ -420,7 +418,6 @@ export class Tool<
       toolId,
       inputValues: toJS(inputValues),
       outputValues: toJS(outputValues),
-      inputOutputHash,
       createdAt,
       isBatchEnabled,
       batchInputKey,
@@ -511,8 +508,14 @@ export class Tool<
    * @returns boolean
    */
   getIsInputAndOutputHasValues(): boolean {
-    const hasInputValues = Object.values(this.inputValues).filter((value) => Boolean(value)).length > 0
-    const hasOutputValues = Object.values(this.outputValues).filter((value) => Boolean(value)).length > 0
+    const inputFields = this.getInputFields()
+    const hasInputValues = Object.entries(this.inputValues).filter(
+      ([key, value]) => Boolean(value) && !inputFields.find((field) => field.key === key)?.skipValidateHasValue
+    ).length > 0
+
+    const hasOutputValues = Object.values(this.outputValues).filter(
+      (value) => Boolean(value)
+    ).length > 0
 
     return hasInputValues || hasOutputValues
   }

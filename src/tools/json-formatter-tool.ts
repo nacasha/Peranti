@@ -21,6 +21,7 @@ const jsonFormatter: ToolConstructor<InputFields, OutputFields> = {
       label: "Mode",
       component: "Switch",
       defaultValue: "pretty",
+      skipValidateHasValue: true,
       props: {
         options: [
           { value: "minify", label: "Minify" },

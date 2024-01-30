@@ -33,10 +33,22 @@ export class FileSystemManager {
     return entries
   }
 
+  /**
+   * Read file as text string
+   *
+   * @param filePath
+   * @returns
+   */
   static async readFileAsText(filePath: string) {
     return await readTextFile(filePath)
   }
 
+  /**
+   * Return composed string as file path
+   *
+   * @param paths
+   * @returns
+   */
   static async resolveFilePath(...paths: string[]) {
     return await resolve(...paths)
   }

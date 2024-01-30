@@ -18,6 +18,7 @@ export const AutoSaveDelay = () => {
       defaultValue={autoSaveDelayInSeconds}
       onChange={onChange}
       style={{ width: 50 }}
+      autoComplete="off"
     />
   )
 }

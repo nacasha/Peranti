@@ -7,6 +7,16 @@
     height: 5px;
     border-radius: 0;
   }
+
+  .simplebar-offset::after {
+    content: " ";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-bottom: 1px solid var(--border-color);
+    z-index: -1;
+  }
 }
 
 .ToolTabbar-inner {

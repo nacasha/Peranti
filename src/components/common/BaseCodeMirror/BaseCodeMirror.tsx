@@ -3,9 +3,9 @@ import { markdownLanguage } from "@codemirror/lang-markdown"
 import { githubLight } from "@uiw/codemirror-theme-github"
 import { monokaiDimmed } from "@uiw/codemirror-theme-monokai-dimmed"
 import CodeMirror, { EditorView, type ReactCodeMirrorProps } from "@uiw/react-codemirror"
-import { observer } from "mobx-react"
 import { type FC } from "react"
 
+import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/stores/interfaceStore.ts"
 
 import "./BaseCodeMirror.scss"
@@ -16,10 +16,10 @@ export interface BaseCodeMirrorProps {
 
 interface Props extends BaseCodeMirrorProps, Omit<ReactCodeMirrorProps, "theme" | "extensions"> {}
 
-export const BaseCodeMirror: FC<Props> = observer((props) => {
+export const BaseCodeMirror: FC<Props> = (props) => {
   const { language = "plain", ...codeMirrorProps } = props
-  const textAreaWordWrapEnabled = interfaceStore.textAreaWordWrap
-  const isDarkMode = interfaceStore.isThemeDarkMode
+  const textAreaWordWrapEnabled = useSelector(() => interfaceStore.textAreaWordWrap)
+  const isDarkMode = useSelector(() => interfaceStore.isThemeDarkMode)
 
   const extensions = []
 
@@ -42,4 +42,4 @@ export const BaseCodeMirror: FC<Props> = observer((props) => {
       />
     </div>
   )
-})
+}

@@ -1,9 +1,9 @@
 import { clsx } from "clsx"
 import fastDeepEqual from "fast-deep-equal"
-import { observer } from "mobx-react"
 import { memo, type FC } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
+import { useSelector } from "src/hooks/useSelector.js"
 import { interfaceStore } from "src/stores/interfaceStore.js"
 import { toolRunnerStore } from "src/stores/toolRunnerStore.js"
 import { type ToolInput } from "src/types/ToolInput.ts"
@@ -14,14 +14,18 @@ import { ToolAreaOutput } from "./ToolAreaOutput.js"
 
 import "./ToolArea.scss"
 
-export const ToolArea: FC = observer(() => {
-  const activeTool = toolRunnerStore.getActiveTool()
-  const { batchInputKey, batchOutputKey, isBatchEnabled, layoutSetting, isDeleted: isHistory } = activeTool
-  const { direction, reversed, inputAreaDirection, inputAreaSize, outputAreaDirection, outputAreaSize } = layoutSetting
-  const { textAreaWordWrap } = interfaceStore
+export const ToolArea: FC = () => {
+  const sessionId = useSelector(() => toolRunnerStore.getActiveTool().sessionId)
+  const renderCounter = useSelector(() => toolRunnerStore.getActiveTool().renderCounter)
+  const batchInputKey = useSelector(() => toolRunnerStore.getActiveTool().batchInputKey)
+  const batchOutputKey = useSelector(() => toolRunnerStore.getActiveTool().batchOutputKey)
+  const isBatchEnabled = useSelector(() => toolRunnerStore.getActiveTool().isBatchEnabled)
+  const layoutSetting = useSelector(() => toolRunnerStore.getActiveTool().layoutSetting)
+  const isDeleted = useSelector(() => toolRunnerStore.getActiveTool().isDeleted)
+  const inputs = useSelector(() => toolRunnerStore.getActiveTool().getInputFields())
+  const outputs = useSelector(() => toolRunnerStore.getActiveTool().getOutputFields())
 
-  const inputs = activeTool.getInputFields()
-  const outputs = activeTool.getOutputFields()
+  const { inputAreaDirection, outputAreaDirection } = layoutSetting
 
   const batchInput = inputs.find((input) => input.key === batchInputKey)
   const batchOutput = outputs.find((output) => output.key === batchOutputKey)
@@ -31,7 +35,7 @@ export const ToolArea: FC = observer(() => {
       {
         key: batchInput.key,
         label: batchInput.label,
-        component: "TextArea",
+        component: "Code",
         defaultValue: ""
       }
     ]
@@ -42,16 +46,38 @@ export const ToolArea: FC = observer(() => {
       {
         key: batchOutput.key,
         label: batchOutput.label,
-        component: "TextArea"
+        component: "Code"
       }
     ]
     : []
 
+  const computedInputs = isBatchEnabled ? batchInputs : inputs
+  const computedOutputs = isBatchEnabled ? batchOutputs : outputs
+
+  return (
+    <ToolAreaContainer>
+      <ToolAreaBody
+        toolSessionId={sessionId.concat(renderCounter.toString())}
+        inputs={computedInputs}
+        outputs={computedOutputs}
+        inputLayoutDirection={inputAreaDirection}
+        outputLayoutDirection={outputAreaDirection}
+        readOnly={isDeleted}
+      />
+    </ToolAreaContainer>
+  )
+}
+
+const ToolAreaContainer: FC<{ children: React.ReactNode }> = ({ children }) => {
+  const isBatchEnabled = useSelector(() => toolRunnerStore.getActiveTool().isBatchEnabled)
+  const layoutSetting = useSelector(() => toolRunnerStore.getActiveTool().layoutSetting)
+  const textAreaWordWrap = useSelector(() => interfaceStore.textAreaWordWrap)
+
+  const { direction, reversed, inputAreaSize, outputAreaSize } = layoutSetting
+
   const computedLayoutDirection = isBatchEnabled ? "horizontal-batch" : direction
   const isLayoutHorizontal = computedLayoutDirection === "horizontal"
 
-  const computedInputs = isBatchEnabled ? batchInputs : inputs
-  const computedOutputs = isBatchEnabled ? batchOutputs : outputs
   const computedStyles = isLayoutHorizontal
     ? {
       gridTemplateColumns: `${inputAreaSize} ${outputAreaSize}`
@@ -67,17 +93,10 @@ export const ToolArea: FC = observer(() => {
 
   return (
     <div className={clsx("ToolArea", computedLayoutDirection, classNames)} style={computedStyles}>
-      <ToolAreaBody
-        toolSessionId={activeTool.sessionId.concat(activeTool.renderCounter.toString())}
-        inputs={computedInputs}
-        outputs={computedOutputs}
-        inputLayoutDirection={inputAreaDirection}
-        outputLayoutDirection={outputAreaDirection}
-        readOnly={isHistory}
-      />
+      {children}
     </div>
   )
-})
+}
 
 interface ToolAreaBodyProps {
   toolSessionId: string

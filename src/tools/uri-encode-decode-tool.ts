@@ -21,6 +21,7 @@ const uriEncodeDecodeTool: ToolConstructor<InputFields, OutputFields> = {
       label: "Mode",
       component: "Switch",
       defaultValue: "encode",
+      skipValidateHasValue: true,
       props: {
         options: [
           { value: "encode", label: "Encode" },

@@ -11,7 +11,7 @@ export const TextOutput: FC<OutputComponentProps> = (props) => {
   return (
     <div className="TextOutput">
       <label className="InputOutputLabel" htmlFor={id}>{label}</label>
-      <input id={id} value={value} readOnly />
+      <input id={id} value={value} readOnly autoComplete="off" />
     </div>
   )
 }

@@ -4,6 +4,6 @@ import "./Input.scss"
 
 export const Input: FC<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>> = (props) => {
   return (
-    <input className="Input" {...props} />
+    <input className="Input" {...props} autoComplete="off" />
   )
 }

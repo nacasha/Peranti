@@ -24,6 +24,11 @@ export type ToolInput<K extends Record<string, string> = any> = {
    * Allow this field as batch operations
    */
   allowBatch?: boolean
+
+  /**
+   * Skip this field's value when determining tool has inputValues or not
+   */
+  skipValidateHasValue?: boolean
 } & ({
   component: "Text"
   props?: ExtractInputComponentProps<typeof listOfInputComponent.Text>
