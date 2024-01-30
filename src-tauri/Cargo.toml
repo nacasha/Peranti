@@ -1,8 +1,8 @@
 [package]
-name = "dev-pipe"
+name = "peranti"
 version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Peranti"
+authors = ["nacasha"]
 license = ""
 repository = ""
 edition = "2021"

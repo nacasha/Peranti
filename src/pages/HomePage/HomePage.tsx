@@ -8,7 +8,7 @@ export const HomePage: FC = () => {
       <div className="content">
         <div className="headline">
           <div className="title">Peranti</div>
-          <div className="subtitle">The Next-Generation Developer Toolbox</div>
+          <div className="subtitle">Next-Generation Developer Toolbox</div>
         </div>
       </div>
     </div>

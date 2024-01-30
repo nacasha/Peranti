@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient gradientUnits="userSpaceOnUse" cx="165.26" cy="301.429" r="113.91" id="gradient-1" gradientTransform="matrix(2.577685, 0.010621, -0.009366, 2.274282, -255.528214, -364.458191)" spreadMethod="pad">
+      <stop offset="0" style="stop-color: rgb(54, 54, 200);"/>
+      <stop offset="1" style="stop-color: rgb(197, 48, 197);"/>
+    </radialGradient>
+    <radialGradient gradientUnits="userSpaceOnUse" cx="247.535" cy="238.226" r="113.91" id="gradient-2" gradientTransform="matrix(1.178109, 0, 0, 1.178109, -41.623821, -31.844795)">
+      <stop offset="0" style="stop-color: rgb(52.549% 25.098% 25.098%)"/>
+      <stop offset="1" style="stop-color: rgb(37.131% 11.331% 12.749%)"/>
+    </radialGradient>
+    <radialGradient gradientUnits="userSpaceOnUse" cx="176.301" cy="309.37" r="105.544" id="gradient-3" gradientTransform="matrix(1.992002, 0.029748, -0.025082, 1.679518, -154.934166, -233.725426)">
+      <stop offset="0" style="stop-color: rgb(0, 44, 145);"/>
+      <stop offset="1" style="stop-color: rgb(39, 94, 254);"/>
+    </radialGradient>
+  </defs>
+  <g transform="matrix(1.600871, 0, 0, 1.600871, 0, -0.000015)" style="transform-origin: 250px 250px;">
+    <g transform="matrix(1.157133, 0, 0, 1.157133, -39.283245, -37.908554)" style="">
+      <ellipse style="fill: url('#gradient-1'); paint-order: fill; stroke: url('#gradient-2'); stroke-miterlimit: 4.42; stroke-width: 0px; visibility: hidden;" cx="250" cy="248.812" rx="134.199" ry="134.199"/>
+      <ellipse style="stroke-width: 50px; fill: rgba(216, 216, 216, 0); stroke: url('#gradient-3');" cx="250" cy="250" rx="105.544" ry="105.544"/>
+      <ellipse style="stroke-width: 42px; fill: rgba(155, 143, 171, 0); stroke: rgb(71, 118, 255);" cx="250" cy="250" rx="73.658" ry="73.658"/>
+      <rect x="175.794" y="254.014" width="0.885" height="107.511" style="fill: rgb(255, 255, 255); stroke-dashoffset: -21px; stroke-miterlimit: 1; stroke-linejoin: round; stroke-linecap: square; stroke-width: 41px; stroke: rgb(71, 118, 255);"/>
+    </g>
+  </g>
+</svg>

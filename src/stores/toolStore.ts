@@ -236,14 +236,14 @@ class ToolStore {
       if (entry.children) {
         const files = Object.fromEntries(entry.children.map((children) => [children.name, children.path]))
 
-        const devPipeDataRaw = await FileSystemManager.readFileAsText(files[Files.ExtensionDefinition])
-        const devPipeData: ToolConstructor = JSON.parse(devPipeDataRaw)
-        const realActionFilePath = await FileSystemManager.resolveFilePath(entry.path, devPipeData.metadata.actionFile)
+        const extensionDefinitionRaw = await FileSystemManager.readFileAsText(files[Files.ExtensionDefinition])
+        const extensionDefinition: ToolConstructor = JSON.parse(extensionDefinitionRaw)
+        const realActionFilePath = await FileSystemManager.resolveFilePath(entry.path, extensionDefinition.metadata.actionFile)
 
-        devPipeData.type = "Extension"
-        devPipeData.metadata.actionFile = realActionFilePath
+        extensionDefinition.type = "Extension"
+        extensionDefinition.metadata.actionFile = realActionFilePath
 
-        extensions.push(devPipeData)
+        extensions.push(extensionDefinition)
       }
     }
 

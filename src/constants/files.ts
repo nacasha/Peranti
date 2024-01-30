@@ -1,3 +1,3 @@
 export const Files = {
-  ExtensionDefinition: "devpipe.json"
+  ExtensionDefinition: "peranti.json"
 }
