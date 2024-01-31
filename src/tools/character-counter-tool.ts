@@ -16,7 +16,7 @@ const characterCounterTool: ToolConstructor<InputFields, OutputFields> = {
   category: "Text",
   layoutSetting: {
     direction: "vertical",
-    inputAreaSize: "auto",
+    gridTemplate: "auto 1fr",
     reversed: true
   },
   inputFields: [

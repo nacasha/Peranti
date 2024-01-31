@@ -15,6 +15,7 @@ import generateRandomStringTool from "src/tools/generate-random-string.js"
 import generateUuidTool from "src/tools/generate-uuid-tool.js"
 import hashTool from "src/tools/hash-tool.js"
 import jfsGetThTool from "src/tools/jfs-get-th-tool.js"
+import jsonCrackTool from "src/tools/json-crack-tool.js"
 import jsonDiffTool from "src/tools/json-diff-tool"
 import jsonFormatter from "src/tools/json-formatter-tool.js"
 import jsonataTool from "src/tools/jsonata-tool"
@@ -109,7 +110,8 @@ class ToolStore {
     [base64ToFileTool.toolId]: base64ToFileTool,
     [jfsGetThTool.toolId]: jfsGetThTool,
     [markdownParserTool.toolId]: markdownParserTool,
-    [dateToMillisecondsTool.toolId]: dateToMillisecondsTool
+    [dateToMillisecondsTool.toolId]: dateToMillisecondsTool,
+    [jsonCrackTool.toolId]: jsonCrackTool
   }
 
   /**

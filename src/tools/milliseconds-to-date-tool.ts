@@ -22,7 +22,7 @@ const millisecondsToDate: ToolConstructor<InputFields, OutputFields> = {
   category: "Date Time",
   layoutSetting: {
     direction: "vertical",
-    inputAreaSize: "auto"
+    gridTemplate: "auto 1fr"
   },
   inputFields: [
     {

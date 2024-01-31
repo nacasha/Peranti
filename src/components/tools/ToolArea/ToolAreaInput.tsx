@@ -11,17 +11,22 @@ interface ToolAreaInputProps {
   components: ToolInput[]
   direction?: "horizontal" | "vertical"
   readOnly?: boolean
+  className?: string
 }
 
 export const ToolAreaInput: FC<ToolAreaInputProps> = memo((props) => {
-  const { toolSessionId, components, direction, readOnly } = props
+  const { toolSessionId, components, direction, readOnly, className } = props
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault()
   }
 
   return (
-    <form action="#" onSubmit={handleSubmit} className={clsx("ToolAreaInput", direction)}>
+    <form
+      action="#"
+      onSubmit={handleSubmit}
+      className={clsx("ToolAreaInput", direction, className)}
+    >
       {components.map((component) => (
         <ToolInputRenderer
           key={toolSessionId.concat(component.key as any)}

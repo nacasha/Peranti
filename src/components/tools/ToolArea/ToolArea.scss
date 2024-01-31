@@ -64,5 +64,9 @@ $padding: var(--input-output-fields-spacing);
     &.vertical {
       flex-direction: column;
     }
+
+    &.hidden {
+      display: none;
+    }
   }
 }

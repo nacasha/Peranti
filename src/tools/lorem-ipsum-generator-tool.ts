@@ -19,7 +19,7 @@ const loremIpsumGeneratorTool: ToolConstructor<InputFields, OutputFields> = {
   category: "Generator",
   layoutSetting: {
     direction: "vertical",
-    inputAreaSize: "auto"
+    gridTemplate: "auto 1fr"
   },
   inputFields: (inputParams) => {
     const { type } = inputParams

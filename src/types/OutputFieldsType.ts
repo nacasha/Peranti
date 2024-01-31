@@ -14,4 +14,5 @@ export namespace OutputFieldsType {
   export type File = ExtractType<typeof listOfOutputComponent.File>
   export type Code = ExtractType<typeof listOfOutputComponent.Code>
   export type Markdown = ExtractType<typeof listOfOutputComponent.Markdown>
+  export type IFrame = ExtractType<typeof listOfOutputComponent.IFrame>
 }

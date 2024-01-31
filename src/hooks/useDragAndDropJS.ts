@@ -55,11 +55,11 @@ export function useDragAndDropJS(options: Options = {}) {
       if (draggableElementPlaceholderRef.current.parentElement) {
         draggableElementPlaceholderRef.current.parentElement.append(draggableElementRef.current)
         draggableElementPlaceholderRef.current.style.width = "auto"
-        draggableElementRef.current.style.position = "inherit"
+        draggableElementRef.current.style.position = "initial"
         draggableElementRef.current.style.pointerEvents = "auto"
         draggableElementRef.current.style.zIndex = "auto"
         draggableElementRef.current.style.transform = "none"
-        draggableElementRef.current.style.cursor = "inherit"
+        draggableElementRef.current.style.cursor = "pointer"
         draggableElementRef.current.style.opacity = "1"
 
         if (isDragging) {

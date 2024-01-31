@@ -10,14 +10,9 @@ export interface ToolLayoutSetting {
   direction?: "horizontal" | "vertical"
 
   /**
-   * Input area size, default is 1fr
+   * Grid template used for tool, default is "1fr 1fr"
    */
-  inputAreaSize?: string
-
-  /**
-   * Output area size, deafult is 1fr
-   */
-  outputAreaSize?: string
+  gridTemplate?: string
 
   /**
    * Input area layout direction, default is vertical

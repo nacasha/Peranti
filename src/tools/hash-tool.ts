@@ -22,7 +22,7 @@ const hashTool: ToolConstructor<InputFields, OutputFields> = {
   category: "Generator",
   layoutSetting: {
     direction: "vertical",
-    inputAreaSize: "auto"
+    gridTemplate: "auto 1fr"
   },
   inputFields: [
     {

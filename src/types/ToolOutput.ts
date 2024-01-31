@@ -43,4 +43,7 @@ export type ToolOutput<K extends Record<string, string> = any> = {
 } | {
   component: "Markdown"
   props?: ExtractOutputComponentProps<typeof listOfOutputComponent.Markdown>
+} | {
+  component: "IFrame"
+  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.IFrame>
 })

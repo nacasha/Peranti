@@ -23,7 +23,7 @@ const fileToBase64Tool: ToolConstructor<InputFields, OutputFields> = {
   category: "File",
   layoutSetting: {
     direction: "vertical",
-    inputAreaSize: "auto"
+    gridTemplate: "auto 1fr"
   },
   inputFields: [
     {

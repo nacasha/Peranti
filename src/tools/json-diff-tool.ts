@@ -18,7 +18,7 @@ const jsonDiffTool: ToolConstructor<InputFields, OutputFields> = {
   name: "JSON Diff",
   category: "JSON",
   layoutSetting: {
-    outputAreaSize: "1.5fr"
+    gridTemplate: "1fr 1.5fr"
   },
   inputFields: [
     {

@@ -9,7 +9,7 @@
       <stop offset="0" style="stop-color: rgb(52.549% 25.098% 25.098%)"/>
       <stop offset="1" style="stop-color: rgb(37.131% 11.331% 12.749%)"/>
     </radialGradient>
-    <radialGradient gradientUnits="userSpaceOnUse" cx="176.301" cy="309.37" r="105.544" id="gradient-3" gradientTransform="matrix(1.992002, 0.029748, -0.025082, 1.679518, -154.934166, -233.725426)">
+    <radialGradient gradientUnits="userSpaceOnUse" cx="176.301" cy="309.37" r="105.544" id="gradient-3" gradientTransform="matrix(1.992002, 0.029748, -0.025082, 1.679518, -154.934167, -234.912977)">
       <stop offset="0" style="stop-color: rgb(0, 44, 145);"/>
       <stop offset="1" style="stop-color: rgb(39, 94, 254);"/>
     </radialGradient>
@@ -17,9 +17,9 @@
   <g transform="matrix(1.600871, 0, 0, 1.600871, 0, -0.000015)" style="transform-origin: 250px 250px;">
     <g transform="matrix(1.157133, 0, 0, 1.157133, -39.283245, -37.908554)" style="">
       <ellipse style="fill: url('#gradient-1'); paint-order: fill; stroke: url('#gradient-2'); stroke-miterlimit: 4.42; stroke-width: 0px; visibility: hidden;" cx="250" cy="248.812" rx="134.199" ry="134.199"/>
-      <ellipse style="stroke-width: 50px; fill: rgba(216, 216, 216, 0); stroke: url('#gradient-3');" cx="250" cy="250" rx="105.544" ry="105.544"/>
-      <ellipse style="stroke-width: 42px; fill: rgba(155, 143, 171, 0); stroke: rgb(71, 118, 255);" cx="250" cy="250" rx="73.658" ry="73.658"/>
-      <rect x="175.794" y="254.014" width="0.885" height="107.511" style="fill: rgb(255, 255, 255); stroke-dashoffset: -21px; stroke-miterlimit: 1; stroke-linejoin: round; stroke-linecap: square; stroke-width: 41px; stroke: rgb(71, 118, 255);"/>
+      <ellipse style="stroke-width: 50px; fill: rgba(216, 216, 216, 0); stroke: url('#gradient-3');" cx="250" cy="248.812" rx="105.544" ry="105.544"/>
+      <ellipse style="fill: rgba(155, 143, 171, 0); stroke: rgb(71, 118, 255); stroke-width: 48.5851px;" cx="250" cy="248.812" rx="67.424" ry="67.424"/>
+      <rect x="178.671" y="250.657" width="7.12" height="109.505" style="fill: rgb(255, 255, 255); stroke-dashoffset: -21px; stroke-miterlimit: 1; stroke-linejoin: round; stroke-linecap: square; stroke: rgb(71, 118, 255); stroke-width: 41.0274px;"/>
     </g>
   </g>
 </svg>

@@ -2,6 +2,7 @@ import { CodeOutput } from "./CodeOutput"
 import { DiffOutput } from "./DiffOutput"
 import { FileOutput } from "./FileOutput"
 import { GridStatOutput } from "./GridStatOutput"
+import { IFrameOutput } from "./IFrameOutput"
 import { ImageOutput } from "./ImageOutput"
 import { MarkdownOutput } from "./MarkdownOutput"
 import { TextAreaOutput } from "./TextAreaOutput"
@@ -15,5 +16,6 @@ export const listOfOutputComponent = {
   Image: ImageOutput,
   File: FileOutput,
   Code: CodeOutput,
-  Markdown: MarkdownOutput
+  Markdown: MarkdownOutput,
+  IFrame: IFrameOutput
 }

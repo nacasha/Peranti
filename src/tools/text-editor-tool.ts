@@ -10,7 +10,7 @@ const textEditorTool: ToolConstructor<InputFields> = {
   name: "Text Editor",
   category: "Editor",
   layoutSetting: {
-    outputAreaSize: "0"
+    gridTemplate: "1fr"
   },
   inputFields: [
     {

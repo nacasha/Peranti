@@ -171,6 +171,10 @@ export class Tool<
     return generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm")
   }
 
+  static getToolIdFromSessionId(sessionId: string) {
+    return sessionId.split("|")[0]
+  }
+
   /**
    * Merge tool constructor with preset
    *
@@ -272,9 +276,8 @@ export class Tool<
     this.layoutSetting = {
       direction: "horizontal",
       reversed: false,
-      inputAreaSize: "1fr",
+      gridTemplate: "1fr 1fr",
       inputAreaDirection: "vertical",
-      outputAreaSize: "1fr",
       outputAreaDirection: "vertical",
       ...layoutSetting
     }
@@ -774,5 +777,9 @@ export class Tool<
 
   forceRerender() {
     this.renderCounter += 1
+  }
+
+  getToolHasIframe() {
+    return this.getOutputFields().some((field) => field.component === "IFrame")
   }
 }
