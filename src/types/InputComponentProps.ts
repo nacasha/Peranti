@@ -18,12 +18,12 @@ export interface InputComponentProps<T = string> {
   onSubmit: (value: T) => any
 
   /**
-   * Initial state of input, such as selection, scroll position, input history, etc.
+   * Initial state of component, such as selection, scroll position, edit history, etc.
    */
   initialState?: unknown
 
   /**
-   * Event to capture state changes on input component
+   * Event to capture state changes on component
    *
    * @param value
    * @returns

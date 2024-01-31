@@ -15,12 +15,26 @@ interface ToolOutputRendererProps {
 
 export const ToolOutputRenderer: FC<ToolOutputRendererProps> = (props) => {
   const { toolOutput } = props
+  const activeTool = useSelector(() => toolRunnerStore.getActiveTool())
 
-  const outputValue = useSelector(() => (
-    toolRunnerStore.getActiveTool()?.outputValues?.[toolOutput.key]
-  )) ?? ""
+  const outputValue = useSelector(() => activeTool.outputValues[toolOutput.key] ?? "")
+  const initialState = activeTool.outputFieldsState[toolOutput.key]
+
+  const onStateChange = (state: unknown) => {
+    activeTool.setOutputFieldState(toolOutput.key, state)
+  }
 
   const Component: FC<OutputComponentProps<any>> = listOfOutputComponent[toolOutput.component]
+
+  /**
+   * Only pass editor state props to some components that handle it,
+   * This is needed to suppress `Unknown event handler property` warning on console
+   */
+  const additionalProps: Record<string, any> = {}
+  if (["Code"].includes(toolOutput.component)) {
+    additionalProps.initialState = initialState
+    additionalProps.onStateChange = onStateChange
+  }
 
   return (
     <Component
@@ -28,6 +42,7 @@ export const ToolOutputRenderer: FC<ToolOutputRendererProps> = (props) => {
       key={toolOutput.key}
       label={toolOutput.label}
       value={outputValue}
+      {...additionalProps}
     />
   )
 }

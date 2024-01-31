@@ -30,25 +30,17 @@ export const ToolInputRenderer: FC<ToolInputRendererProps> = (props) => {
 
   const onStateChange = (state: unknown) => {
     activeTool.setInputFieldState(toolInput.key, state)
-
-    /**
-     * TODO
-     * Manual call hydrate store to pu tinto storage because Code input
-     * component won't serialize when only change the selection :(
-     */
-    if (toolInput.component === "Code") {
-      // void activeTool.hydrateStore()
-    }
   }
 
   const Component: FC<InputComponentProps<any>> = listOfInputComponent[toolInput.component]
 
   /**
-   * Only pass the state related props because not all components handling the editor state
+   * Only pass editor state props to some components that handle it,
+   * This is needed to suppress `Unknown event handler property` warning on console
    */
   const additionalProps: Record<string, any> = {}
-  if (initialState) additionalProps.initialState = initialState
-  if (toolInput.component === "Code") {
+  if (["Code"].includes(toolInput.component)) {
+    additionalProps.initialState = initialState
     additionalProps.onStateChange = onStateChange
   }
 

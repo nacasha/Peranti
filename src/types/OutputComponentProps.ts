@@ -8,4 +8,17 @@ export interface OutputComponentProps<T = string> {
    * Value output of field
    */
   value?: T
+
+  /**
+   * Initial state of component, such as selection, scroll position, edit history, etc.
+   */
+  initialState?: unknown
+
+  /**
+   * Event to capture state changes on component
+   *
+   * @param value
+   * @returns
+   */
+  onStateChange?: (value: any) => void
 }

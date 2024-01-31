@@ -14,7 +14,6 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
     defaultValue = "",
     initialState,
     label,
-    onStateChange,
     onSubmit,
     readOnly,
     ...baseCodeMirrorProps
@@ -33,7 +32,6 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
         {...baseCodeMirrorProps}
         value={defaultValue}
         onChange={(newValue) => { onInputChange(newValue) }}
-        onStateChange={onStateChange}
         initialStateCodeMirror={initialState as any}
         readOnly={readOnly}
       />

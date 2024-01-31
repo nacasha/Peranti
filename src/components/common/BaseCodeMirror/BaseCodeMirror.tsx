@@ -17,7 +17,10 @@ export interface BaseCodeMirrorProps {
 
 interface InitialStateCodeMirror {
   editor: any
-  scroll: number
+  scroll: {
+    top: number
+    left: number
+  }
 }
 
 interface Props extends BaseCodeMirrorProps, Omit<ReactCodeMirrorProps, "theme" | "extensions"> {
@@ -41,7 +44,9 @@ export const BaseCodeMirror: FC<Props> = (props) => {
 
   const editorRef = useRef<ReactCodeMirrorRef>(null)
   const editorStateRef = useRef(null)
-  const scrollStateRef = useRef(Number(initialStateCodeMirror?.scroll ?? 0))
+  const scrollStateRef = useRef<InitialStateCodeMirror["scroll"]>(
+    initialStateCodeMirror?.scroll ?? { left: 0, top: 0 }
+  )
 
   const [ready, setReady] = useState(false)
 
@@ -84,14 +89,18 @@ export const BaseCodeMirror: FC<Props> = (props) => {
 
   const handleCreateEditor = (view: EditorView) => {
     setTimeout(() => {
-      view.scrollDOM.scrollTop = Number(scrollStateRef.current)
+      view.scrollDOM.scrollTop = Number(scrollStateRef.current.top)
+      view.scrollDOM.scrollLeft = Number(scrollStateRef.current.left)
       setReady(true)
     }, 0)
   }
 
   const handleScroll = () => {
     if (editorRef.current?.state && editorRef.current?.view?.scrollDOM?.scrollTop !== undefined) {
-      scrollStateRef.current = editorRef.current?.view?.scrollDOM?.scrollTop ?? 0
+      scrollStateRef.current = {
+        top: editorRef.current?.view?.scrollDOM?.scrollTop ?? 0,
+        left: editorRef.current?.view?.scrollDOM?.scrollLeft ?? 0
+      }
     }
   }
 
