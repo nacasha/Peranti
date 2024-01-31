@@ -15,6 +15,7 @@ import { useSelector } from "./hooks/useSelector.js"
 import { HomePage } from "./pages/HomePage/HomePage.js"
 import { ToolPage } from "./pages/ToolPage"
 import { toolRunnerStore } from "./stores/toolRunnerStore.js"
+import { toolSessionStore } from "./stores/toolSessionStore.js"
 
 /**
  * AppRoot
@@ -50,18 +51,31 @@ const AppMain = () => {
 
         <div className="AppContent">
           <AppSidebarContent />
-
-          <Route path="/welcome">
-            <HomePage />
-          </Route>
-          <Route path="/">
-            <ToolPage />
-          </Route>
+          <AppRoute />
         </div>
       </div>
 
       <AppStatusbar />
     </AppRoot>
+  )
+}
+
+const AppRoute = () => {
+  const isSessionInitialized = useSelector(() => toolSessionStore.isInitialized)
+
+  if (!isSessionInitialized) {
+    return null
+  }
+
+  return (
+    <>
+      <Route path="/welcome">
+        <HomePage />
+      </Route>
+      <Route path="/">
+        <ToolPage />
+      </Route>
+    </>
   )
 }
 
