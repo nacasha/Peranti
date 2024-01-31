@@ -4,7 +4,7 @@ import { markdownLanguage } from "@codemirror/lang-markdown"
 import { githubLight } from "@uiw/codemirror-theme-github"
 import { monokaiDimmed } from "@uiw/codemirror-theme-monokai-dimmed"
 import CodeMirror, { EditorView, type ReactCodeMirrorRef, type ReactCodeMirrorProps, type ViewUpdate } from "@uiw/react-codemirror"
-import { useRef, type FC, useEffect } from "react"
+import { useRef, type FC, useEffect, useState } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/stores/interfaceStore.ts"
@@ -39,10 +39,11 @@ export const BaseCodeMirror: FC<Props> = (props) => {
   const isDarkMode = useSelector(() => interfaceStore.isThemeDarkMode)
   const textAreaWordWrapEnabled = useSelector(() => interfaceStore.textAreaWordWrap)
 
-  const editor = useRef<ReactCodeMirrorRef>(null)
-
+  const editorRef = useRef<ReactCodeMirrorRef>(null)
   const editorStateRef = useRef(null)
-  const scrollStateRef = useRef(0)
+  const scrollStateRef = useRef(Number(initialStateCodeMirror?.scroll ?? 0))
+
+  const [ready, setReady] = useState(false)
 
   const initialState = initialStateCodeMirror?.editor
     ? { json: initialStateCodeMirror?.editor, fields: stateFields }
@@ -82,8 +83,25 @@ export const BaseCodeMirror: FC<Props> = (props) => {
   }
 
   const handleCreateEditor = (view: EditorView) => {
-    view.scrollDOM.scrollTo({ top: Number(initialStateCodeMirror?.scroll) })
+    setTimeout(() => {
+      view.scrollDOM.scrollTop = Number(scrollStateRef.current)
+      setReady(true)
+    }, 0)
   }
+
+  const handleScroll = () => {
+    if (editorRef.current?.state && editorRef.current?.view?.scrollDOM?.scrollTop !== undefined) {
+      scrollStateRef.current = editorRef.current?.view?.scrollDOM?.scrollTop ?? 0
+    }
+  }
+
+  useEffect(() => {
+    if (editorRef.current?.view) {
+      setReady(true)
+    } else {
+      setReady(false)
+    }
+  }, [editorRef.current?.view])
 
   useEffect(() => {
     return () => {
@@ -97,16 +115,15 @@ export const BaseCodeMirror: FC<Props> = (props) => {
     <div className="CodeMirrorContainer">
       <CodeMirror
         {...codeMirrorProps}
-        ref={editor}
+        ref={editorRef}
         theme={isDarkMode ? monokaiDimmed : githubLight}
         extensions={getExtensions()}
         initialState={initialState}
         onChange={handleOnChange}
         onUpdate={handleStateChange}
         onCreateEditor={handleCreateEditor}
-        onScrollCapture={() => {
-          scrollStateRef.current = editor.current?.view?.scrollDOM.scrollTop ?? 0
-        }}
+        onScrollCapture={handleScroll}
+        style={{ opacity: ready ? "1" : "0" }}
       />
     </div>
   )
