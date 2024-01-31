@@ -5,7 +5,7 @@ export interface InputComponentProps<T = string> {
   label?: string
 
   /**
-   * Initial value of input component
+   * Default value of input component
    */
   defaultValue?: any
 
@@ -16,6 +16,19 @@ export interface InputComponentProps<T = string> {
    * @returns
    */
   onSubmit: (value: T) => any
+
+  /**
+   * Initial state of input, such as selection, scroll position, input history, etc.
+   */
+  initialState?: unknown
+
+  /**
+   * Event to capture state changes on input component
+   *
+   * @param value
+   * @returns
+   */
+  onStateChange?: (value: any) => void
 
   /**
    * Indicates component is read only

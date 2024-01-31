@@ -14,17 +14,14 @@ interface ToolAreaOutputProps {
 }
 
 export const ToolAreaOutput: FC<ToolAreaOutputProps> = memo((props) => {
-  const { toolSessionId, components, direction, className } = props
+  const { toolSessionId, components: toolOutputs, direction, className } = props
 
   return (
     <div className={clsx("ToolAreaOutput", direction, className)}>
-      {components.map((component) => (
+      {toolOutputs.map((toolOutput) => (
         <ToolOutputRenderer
-          key={toolSessionId.concat(component.key as any)}
-          field={component.key as any}
-          label={component.label}
-          component={component.component}
-          props={component.props}
+          key={toolSessionId.concat(toolOutput.key)}
+          toolOutput={toolOutput}
         />
       ))}
     </div>

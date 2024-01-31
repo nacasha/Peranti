@@ -1,6 +1,6 @@
 .ToolTabbar {
   position: relative;
-  background-color: var(--background-color-main);
+  background-color: var(--tool-tabbar-background-color);
   height: var(--tool-tabbar-height);
 
   .simplebar-track.simplebar-horizontal {
@@ -28,7 +28,7 @@
 }
 
 .ToolTabbar-item {
-  background-color: var(--background-color-main);
+  background-color: var(--tool-tabbar-color);
   padding: 5px 10px;
   padding-right: 5px;
   padding-top: 3px;
@@ -43,7 +43,7 @@
   white-space: nowrap;
 
   &:hover {
-    background: var(--button-hover-color);
+    background-color: var(--tool-tabbar-color-hover);
     cursor: pointer;
 
     .ToolTabbar-icon {

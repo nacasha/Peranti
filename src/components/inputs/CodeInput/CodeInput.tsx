@@ -10,7 +10,15 @@ interface CodeInputProps extends InputComponentProps, BaseCodeMirrorProps {
 }
 
 export const CodeInput: FC<CodeInputProps> = (props) => {
-  const { onSubmit, defaultValue = "", readOnly, label, ...restProps } = props
+  const {
+    defaultValue = "",
+    initialState,
+    label,
+    onStateChange,
+    onSubmit,
+    readOnly,
+    ...baseCodeMirrorProps
+  } = props
 
   const onInputChange = (newValue: string) => {
     onSubmit(newValue)
@@ -22,9 +30,11 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
         {label}
       </label>
       <BaseCodeMirror
-        {...restProps}
+        {...baseCodeMirrorProps}
         value={defaultValue}
         onChange={(newValue) => { onInputChange(newValue) }}
+        onStateChange={onStateChange}
+        initialStateCodeMirror={initialState as any}
         readOnly={readOnly}
       />
     </div>

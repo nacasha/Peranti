@@ -7,6 +7,7 @@ import { StorageKeys } from "src/constants/storage-keys"
 import { ToolStateManager } from "src/services/toolStorageManager"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
+import { type MetadataExtension } from "src/types/MetadataExtension"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolInput } from "src/types/ToolInput"
 import { type ToolLayoutSetting } from "src/types/ToolLayoutSetting"
@@ -31,31 +32,43 @@ export class Tool<
   readonly name: string
 
   /**
-   * Unique ID of each created instance with this tool.
+   * Unique ID of created session
    */
   readonly sessionId: string
 
   /**
-   * Index of untitled session name
+   * Sequence number of session, only filled when the session has no session name assigned
    */
   sessionSequenceNumber?: number
 
   /**
-   * Session name to be showed on tabbar
+   * Name of the session
    */
   sessionName?: string
 
   /**
-   * List of input fields for tool
+   * List of input fields
    */
-  readonly inputFields: Array<ToolInput<IF>>
-  | ((inputValues: any) => Array<ToolInput<IF>>)
+  readonly inputFields: Array<ToolInput<IF>> | ((inputValues: any) => Array<ToolInput<IF>>)
+
+  @observable inputFieldsState: any = {}
+
+  @action
+  setInputFieldState(key: string, state: unknown) {
+    this.inputFieldsState = { ...this.inputFieldsState, [key]: state }
+  }
+
+  @action
+  setOutputFieldState(key: string, state: unknown) {
+    this.outputFieldsState = { ...this.outputFieldsState, [key]: state }
+  }
 
   /**
-   * List of output fields for tool
+   * List of output fields
    */
-  readonly outputFields: Array<ToolOutput<OF>>
-  | ((outputValues: any) => Array<ToolOutput<OF>>)
+  readonly outputFields: Array<ToolOutput<OF>> | ((outputValues: any) => Array<ToolOutput<OF>>)
+
+  @observable outputFieldsState: Record<string, any> = {}
 
   /**
    * Category of tool
@@ -73,11 +86,6 @@ export class Tool<
   readonly pipelines: any[] = []
 
   /**
-   * Indicated tool must be running on the first time running
-   */
-  readonly runOnFirstTimeOpen: boolean = true
-
-  /**
    * Indicates whether run the pipeline or no
    */
   private canRunPipeline = true
@@ -91,7 +99,7 @@ export class Tool<
   /**
    * Additional data of tool based on type
    */
-  readonly metadata?: any
+  readonly metadata?: MetadataExtension
 
   /**
    * Stored value for input
@@ -109,20 +117,23 @@ export class Tool<
   @observable isBatchEnabled: boolean = false
 
   /**
-   * Key input of batch mode
+   * Key input field for batch mode
    */
   @observable batchInputKey: string | number | symbol = ""
 
   /**
-   * Key output of batch mode
+   * Key output field for batch mode
    */
   @observable batchOutputKey: string | number | symbol = ""
 
   /**
-   * Indicates tool is deleted
+   * Indicates tool has been deleted
    */
   @observable isDeleted: boolean = false
 
+  /**
+   * Used to force rerender tool input and output components by increasing the number
+   */
   @observable renderCounter: number = 0
 
   /**
@@ -212,7 +223,7 @@ export class Tool<
       ...toolConstructor,
       name: preset.name,
       toolId: preset.presetId,
-      inputFields: presetInputs as any,
+      inputFields: presetInputs,
       category: preset.category ?? toolConstructor.category,
       type: "Preset"
     }
@@ -283,27 +294,16 @@ export class Tool<
     }
 
     /**
-     * Fill inputValues with value from tool input fields
+     * Fill inputValues with value from tool inputFields
      */
     this.fillInputValuesWithDefault()
 
     /**
-     * Fill created tool with initial state
+     * Set initial tool state
      */
     const { initialState, disablePersistence = false } = options
     if (initialState) {
-      this.sessionId = initialState.sessionId ?? this.sessionId
-      this.sessionSequenceNumber = initialState.sessionSequenceNumber ?? this.sessionSequenceNumber
-      this.isBatchEnabled = initialState.isBatchEnabled ?? this.isBatchEnabled
-      this.batchInputKey = initialState.batchInputKey ?? this.batchInputKey
-      this.batchOutputKey = initialState.batchOutputKey ?? this.batchOutputKey
-      this.runCount = initialState.runCount ?? this.runCount
-      this.inputValues = initialState.inputValues ?? this.inputValues
-      this.outputValues = initialState.outputValues ?? this.outputValues
-      this.isInputValuesModified = initialState.isInputValuesModified ?? this.isInputValuesModified
-      this.isOutputValuesModified = initialState.isOutputValuesModified ?? this.isOutputValuesModified
-      this.sessionName = initialState.sessionName ?? this.sessionName
-      this.isDeleted = initialState.isDeleted ?? this.isDeleted
+      Object.assign(this, initialState)
     }
 
     this.disablePersistence = disablePersistence
@@ -369,25 +369,14 @@ export class Tool<
           },
           deserialize: () => {
             /**
-             * Do nothing when deserialize, must be handled by Tool Constructor
+             * Do nothing when deserialize, because some properties are readonly
+             * so we need to handle initial value through constructor
              */
-            return this
+            return this.toolState
           }
         }
-      ] as any
+      ]
     })
-  }
-
-  pauseStore() {
-    pausePersisting(this)
-  }
-
-  startStore() {
-    startPersisting(this)
-  }
-
-  stopStore() {
-    stopPersisting(this)
   }
 
   /**
@@ -399,36 +388,40 @@ export class Tool<
     const {
       batchInputKey,
       batchOutputKey,
+      inputFieldsState,
       inputValues,
       isBatchEnabled,
+      isDeleted,
+      isInputValuesModified,
+      isOutputValuesModified,
+      outputFieldsState,
       outputValues,
       runCount,
       sessionId,
       sessionName,
       sessionSequenceNumber,
-      isOutputValuesModified,
-      isInputValuesModified,
-      toolId,
-      isDeleted
+      toolId
     } = this
 
     const createdAt = new Date().getTime()
 
     return {
+      batchInputKey,
+      batchOutputKey,
+      createdAt,
+      inputFieldsState: toJS(inputFieldsState),
+      inputValues: toJS(inputValues),
+      isBatchEnabled,
+      isDeleted,
+      isInputValuesModified,
+      isOutputValuesModified,
+      outputFieldsState: toJS(outputFieldsState),
+      outputValues: toJS(outputValues),
+      runCount,
       sessionId,
       sessionName,
       sessionSequenceNumber,
       toolId,
-      inputValues: toJS(inputValues),
-      outputValues: toJS(outputValues),
-      createdAt,
-      isBatchEnabled,
-      batchInputKey,
-      batchOutputKey,
-      runCount,
-      isOutputValuesModified,
-      isInputValuesModified,
-      isDeleted,
       ...replacedValue
     }
   }
@@ -530,7 +523,7 @@ export class Tool<
    * @param value value of input
    */
   @action
-  setInputValue(key: string, value: any, options: { markAsModified: boolean } = { markAsModified: true }) {
+  setInputValue(key: any, value: any, options: { markAsModified: boolean } = { markAsModified: true }) {
     const newInputValues = { ...this.inputValues, [key]: value }
 
     /**
@@ -656,12 +649,13 @@ export class Tool<
    * @returns
    */
   private async runAction(actionInput: any) {
-    /**
-     * Weird implementation to check async action or not, but okay
-     */
     const runResult = await new Promise<any>((resolve) => {
       const result = this.action(actionInput)
 
+      /**
+       * Weird implementation to check wheter function is synchronous or asynchronous
+       * But I think it should be fine ;)
+       */
       if ("then" in result) {
         this.setIsActionRunning(true)
         result
@@ -669,8 +663,7 @@ export class Tool<
             this.setIsActionRunning(false)
             resolve(data)
           })
-          .catch((error: any) => {
-            console.log(error)
+          .catch(() => {
             this.setIsActionRunning(false)
             resolve(undefined)
           })
@@ -781,5 +774,17 @@ export class Tool<
 
   getToolHasIframe() {
     return this.getOutputFields().some((field) => field.component === "IFrame")
+  }
+
+  pauseStore() {
+    pausePersisting(this)
+  }
+
+  startStore() {
+    startPersisting(this)
+  }
+
+  stopStore() {
+    stopPersisting(this)
   }
 }

@@ -29,7 +29,6 @@ export function useDragAndDropJS(options: Options = {}) {
       draggableElementPlaceholderRef.current.style.width = `${draggableElementRef.current.clientWidth + 1}px`
       draggableElementRef.current.style.position = "fixed"
       draggableElementRef.current.style.zIndex = "1000"
-      draggableElementRef.current.style.pointerEvents = "none"
       draggableElementRef.current.style.left = `${event.x}px`
       draggableElementRef.current.style.top = `${event.y}px`
       draggableElementRef.current.style.cursor = "move"
@@ -89,7 +88,6 @@ export function useDragAndDropJS(options: Options = {}) {
     }
 
     const handleMouseUp = (event: MouseEvent) => {
-      stopDragging()
       setMouseDownPosition(undefined)
       setIsMouseDown(false)
 
@@ -111,6 +109,28 @@ export function useDragAndDropJS(options: Options = {}) {
       document.removeEventListener("mousemove", handleMouseMove)
     }
   }, [isMouseDown])
+
+  useEffect(() => {
+    const handleMouseUp = (event: MouseEvent) => {
+      stopDragging()
+      setMouseDownPosition(undefined)
+      setIsMouseDown(false)
+
+      if (onMouseUp) {
+        onMouseUp(event)
+      }
+    }
+
+    if (isDragging) {
+      document.addEventListener("mouseup", handleMouseUp)
+    } else {
+      document.removeEventListener("mouseup", handleMouseUp)
+    }
+
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp)
+    }
+  }, [isDragging])
 
   /**
    * Register event listener MouseDown when draggable element is exist

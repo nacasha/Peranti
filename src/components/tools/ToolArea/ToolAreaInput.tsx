@@ -15,7 +15,7 @@ interface ToolAreaInputProps {
 }
 
 export const ToolAreaInput: FC<ToolAreaInputProps> = memo((props) => {
-  const { toolSessionId, components, direction, readOnly, className } = props
+  const { toolSessionId, components: toolInputs, direction, readOnly, className } = props
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault()
@@ -27,14 +27,10 @@ export const ToolAreaInput: FC<ToolAreaInputProps> = memo((props) => {
       onSubmit={handleSubmit}
       className={clsx("ToolAreaInput", direction, className)}
     >
-      {components.map((component) => (
+      {toolInputs.map((toolInput) => (
         <ToolInputRenderer
-          key={toolSessionId.concat(component.key as any)}
-          field={component.key as any}
-          label={component.label}
-          component={component.component}
-          props={component.props}
-          defaultValue={component.defaultValue}
+          key={toolSessionId.concat(toolInput.key)}
+          toolInput={toolInput}
           readOnly={readOnly}
         />
       ))}

@@ -184,6 +184,17 @@ const TabItem: FC<TabItemProps> = memo((props) => {
 
   const handleMouseDown: MouseEventHandler = (event) => {
     if (event.button === 0) {
+      /**
+       * Dont open the session when user click on close button
+       */
+      const clickedElement = event.target as HTMLDivElement
+      if (clickedElement.tagName.toLowerCase() === "img" ||
+        clickedElement.classList.contains("ToolTabbar-icon")) {
+        event.stopPropagation()
+        event.preventDefault()
+        return
+      }
+
       void toolSessionStore.openSession(toolSession)
     } else if (event.button === 1) {
       event.preventDefault()
@@ -305,7 +316,7 @@ const TabItem: FC<TabItemProps> = memo((props) => {
           {getSessionName()}
           {isActionRunning ? " ..." : ""}
         </div>
-        <div className="ToolTabbar-icon" onClick={handleCloseTab}>
+        <div className="ToolTabbar-icon" onClickCapture={handleCloseTab}>
           <img src={Icons.Close} alt="Close Tab" />
         </div>
       </div>

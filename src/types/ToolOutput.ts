@@ -8,7 +8,7 @@ export type ToolOutput<K extends Record<string, string> = any> = {
   /**
    * Field name that will be used as key in output map to show the value
    */
-  key: keyof K
+  key: Extract<keyof K, string>
 
   /**
    * Label of field

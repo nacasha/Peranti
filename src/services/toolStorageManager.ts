@@ -102,7 +102,10 @@ export class ToolStateManager {
     const toolState = await ToolStateManager.getToolStateFromStorage(sessionId)
     if (toolState) {
       const toolConstructor = toolStore.mapOfLoadedTools[toolState.toolId]
-      return new Tool(toolConstructor, { initialState: { ...toolState, ...initialState }, disablePersistence })
+      return new Tool(toolConstructor, {
+        initialState: { ...toolState, ...initialState },
+        disablePersistence
+      })
     }
   }
 }

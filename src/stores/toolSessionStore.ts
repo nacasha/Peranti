@@ -337,7 +337,12 @@ class ToolSessionStore {
      * Disable session reference to store if session has no action running
      */
     } else {
-      tool.stopStore()
+      /**
+       * TODO: do we need to stop the store?
+       * because there some case we need to store some state after
+       * the components / session deactivated, such as save the editor state
+       */
+      // tool.stopStore()
 
       if (this.runningTools[tool.sessionId]) {
         this.runningTools[tool.sessionId] = undefined

@@ -13,4 +13,6 @@ export interface ToolState {
   isOutputValuesModified: boolean
   isInputValuesModified: boolean
   isDeleted: boolean
+  inputFieldsState: Record<string, any>
+  outputFieldsState: Record<string, any>
 }

@@ -4,41 +4,30 @@ import { listOfOutputComponent } from "src/components/outputs"
 import { useSelector } from "src/hooks/useSelector"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
+import { type ToolOutput } from "src/types/ToolOutput"
 
 interface ToolOutputRendererProps {
   /**
-   * Name of output component to be rendered
+   * Tool output definition
    */
-  component: string
-
-  /**
-   * Unique key of field
-   */
-  field: string
-
-  /**
-   * Label of field
-   */
-  label: string
-
-  /**
-   * Component properties to be passed
-   */
-  props: any
+  toolOutput: ToolOutput
 }
 
 export const ToolOutputRenderer: FC<ToolOutputRendererProps> = (props) => {
-  const { component, field, props: componentProps, label } = props
+  const { toolOutput } = props
 
-  const Component: FC<OutputComponentProps> = (listOfOutputComponent as any)[component]
-  const outputValue = useSelector(() => toolRunnerStore.getActiveTool()?.outputValues?.[field])
+  const outputValue = useSelector(() => (
+    toolRunnerStore.getActiveTool()?.outputValues?.[toolOutput.key]
+  )) ?? ""
+
+  const Component: FC<OutputComponentProps<any>> = listOfOutputComponent[toolOutput.component]
 
   return (
     <Component
-      {...componentProps}
-      key={field}
-      label={label}
-      value={outputValue ?? ""}
+      {...toolOutput.props}
+      key={toolOutput.key}
+      label={toolOutput.label}
+      value={outputValue}
     />
   )
 }

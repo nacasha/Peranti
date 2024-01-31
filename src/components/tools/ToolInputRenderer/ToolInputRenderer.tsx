@@ -3,58 +3,64 @@ import { type FC } from "react"
 import { listOfInputComponent } from "src/components/inputs"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type InputComponentProps } from "src/types/InputComponentProps"
+import { type ToolInput } from "src/types/ToolInput"
 
 interface ToolInputRendererProps {
   /**
-   * Name of input component to be rendered
+   * Tool input definition
    */
-  component: string
+  toolInput: ToolInput
 
   /**
-   * Unique key of field
-   */
-  field: string
-
-  /**
-   * Label of field
-   */
-  label: string
-
-  /**
-   * Component properties to be passed
-   */
-  props: any
-
-  /**
-   * Default value of input
-   */
-  defaultValue: any
-
-  /**
-   * Indicates the field is read only, used when viewing a history
+   * Indicates the field is read only, used when viewing a deleted session
    */
   readOnly?: boolean
 }
 
 export const ToolInputRenderer: FC<ToolInputRendererProps> = (props) => {
-  const { component, field, props: componentProps, defaultValue, label, readOnly } = props
+  const { readOnly, toolInput } = props
   const activeTool = toolRunnerStore.getActiveTool()
 
-  const Component: FC<InputComponentProps> = (listOfInputComponent as any)[component]
-  const defaultValueFromTool = activeTool.inputValues[field]
+  const defaultValue = activeTool.inputValues[toolInput.key] ?? toolInput.defaultValue
+  const initialState = activeTool.inputFieldsState[toolInput.key]
 
-  const onSubmit = (val: any) => {
-    activeTool.setInputValue(field, val)
+  const onSubmit = (val: unknown) => {
+    activeTool.setInputValue(toolInput.key, val)
+  }
+
+  const onStateChange = (state: unknown) => {
+    activeTool.setInputFieldState(toolInput.key, state)
+
+    /**
+     * TODO
+     * Manual call hydrate store to pu tinto storage because Code input
+     * component won't serialize when only change the selection :(
+     */
+    if (toolInput.component === "Code") {
+      // void activeTool.hydrateStore()
+    }
+  }
+
+  const Component: FC<InputComponentProps<any>> = listOfInputComponent[toolInput.component]
+
+  /**
+   * Only pass the state related props because not all components handling the editor state
+   */
+  const additionalProps: Record<string, any> = {}
+  if (initialState) additionalProps.initialState = initialState
+  if (toolInput.component === "Code") {
+    additionalProps.onStateChange = onStateChange
   }
 
   return (
     <Component
-      {...componentProps}
-      label={label}
-      key={field}
-      defaultValue={defaultValueFromTool ?? defaultValue}
+      {...toolInput.props}
+      label={toolInput.label}
+      key={toolInput.key}
+      defaultValue={defaultValue}
       onSubmit={onSubmit}
       readOnly={readOnly}
+      {...additionalProps}
     />
   )
 }
