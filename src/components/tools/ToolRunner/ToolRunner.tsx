@@ -14,13 +14,13 @@ export const ToolRunner: FC = observer(() => {
       const { isInputValuesModified, runCount } = activeTool
 
       /**
-       * New activated tool hasn't been run at least once
+       * New created session that hasn't been run at least once
        */
       if (isToolChanged && runCount === 0) {
         toolRunnerStore.runActiveTool()
 
       /**
-       * Tool that being shown on application has input changed
+       * Tool remains opened and has input values modified
        */
       } else if (!isToolChanged && isInputValuesModified) {
         toolRunnerStore.runActiveTool()

@@ -4,7 +4,6 @@ import { observable, action, makeObservable, toJS } from "mobx"
 import { PersistStoreMap, hydrateStore, makePersistable, pausePersisting, startPersisting, stopPersisting } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys"
-import { ToolStateManager } from "src/services/toolStorageManager"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type MetadataExtension } from "src/types/MetadataExtension"
@@ -352,31 +351,39 @@ export class Tool<
 
     /**
      * Early put toolState into storage, because makePersistable did not
-     * immediately seralize the state
+     * immediately seralize the state upon create the instance
+     *
+     * TODO: Shi-, I forgot why did I put this line here, what's the purpose?
      */
-    void ToolStateManager.putToolStateIntoStorage(this.sessionId, this.toState())
+    // void ToolStateManager.putToolStateIntoStorage(this.sessionId, this.toState())
 
     /**
      * Watch changes of state and put into storage
      */
-    void makePersistable(this, {
-      name: StorageKeys.ToolState.concat(this.sessionId),
-      properties: [
-        {
-          key: "toolState",
-          serialize: () => {
-            return this.toState()
-          },
-          deserialize: () => {
-            /**
-             * Do nothing when deserialize, because some properties are readonly
-             * so we need to handle initial value through constructor
-             */
-            return this.toolState
+    void makePersistable(
+      this,
+      {
+        name: StorageKeys.ToolState.concat(this.sessionId),
+        properties: [
+          {
+            key: "toolState",
+            serialize: () => {
+              return this.toState()
+            },
+            deserialize: () => {
+              /**
+               * Do nothing when deserialize, because some properties are readonly
+               * so we need to handle initial value through constructor
+               */
+              return this.toolState
+            }
           }
-        }
-      ]
-    })
+        ]
+      },
+      {
+        delay: 100
+      }
+    )
   }
 
   /**
@@ -764,16 +771,16 @@ export class Tool<
     this.sessionSequenceNumber = value
   }
 
-  async hydrateStore() {
-    await hydrateStore(this)
-  }
-
   forceRerender() {
     this.renderCounter += 1
   }
 
   getToolHasIframe() {
     return this.getOutputFields().some((field) => field.component === "IFrame")
+  }
+
+  async hydrateStore() {
+    await hydrateStore(this)
   }
 
   pauseStore() {

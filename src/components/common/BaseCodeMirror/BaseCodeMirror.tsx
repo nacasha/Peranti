@@ -1,4 +1,3 @@
-import { historyField } from "@codemirror/commands"
 import { jsonLanguage } from "@codemirror/lang-json"
 import { markdownLanguage } from "@codemirror/lang-markdown"
 import { githubLight } from "@uiw/codemirror-theme-github"
@@ -28,7 +27,8 @@ interface Props extends BaseCodeMirrorProps, Omit<ReactCodeMirrorProps, "theme" 
   initialStateCodeMirror?: InitialStateCodeMirror
 }
 
-const stateFields = { history: historyField }
+// TODO: If history has many changes, IndexedDB will really slow to store the data
+// const stateFields = { history: historyField }
 
 export const BaseCodeMirror: FC<Props> = (props) => {
   const {
@@ -51,7 +51,7 @@ export const BaseCodeMirror: FC<Props> = (props) => {
   const [ready, setReady] = useState(false)
 
   const initialState = initialStateCodeMirror?.editor
-    ? { json: initialStateCodeMirror?.editor, fields: stateFields }
+    ? { json: initialStateCodeMirror?.editor }
     : undefined
 
   const getExtensions = () => {
@@ -77,7 +77,7 @@ export const BaseCodeMirror: FC<Props> = (props) => {
   }
 
   const handleStateChange = (viewUpdate: ViewUpdate) => {
-    editorStateRef.current = viewUpdate.state.toJSON(stateFields)
+    editorStateRef.current = viewUpdate.state.toJSON()
   }
 
   const handleOnChange: ReactCodeMirrorProps["onChange"] = (value, viewUpdate) => {

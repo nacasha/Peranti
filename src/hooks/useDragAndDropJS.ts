@@ -28,6 +28,7 @@ export function useDragAndDropJS(options: Options = {}) {
     if (draggableElementRef.current && draggableElementPlaceholderRef.current && root) {
       draggableElementPlaceholderRef.current.style.width = `${draggableElementRef.current.clientWidth + 1}px`
       draggableElementRef.current.style.position = "fixed"
+      draggableElementRef.current.style.pointerEvents = "none"
       draggableElementRef.current.style.zIndex = "1000"
       draggableElementRef.current.style.left = `${event.x}px`
       draggableElementRef.current.style.top = `${event.y}px`
