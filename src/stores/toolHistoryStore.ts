@@ -3,7 +3,7 @@ import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys.js"
-import { ToolStateManager } from "src/services/toolStorageManager.js"
+import { ToolStorageManager } from "src/services/toolStorageManager.js"
 import { type ToolHistory } from "src/types/ToolHistory.js"
 import { type ToolState } from "src/types/ToolState.js"
 
@@ -62,7 +62,7 @@ class ToolHistoryStore {
    * @param toolHistory
    */
   async openHistory(toolHistory: ToolHistory) {
-    const retrievedTool = await ToolStateManager.getToolFromStorage(toolHistory.sessionId)
+    const retrievedTool = await ToolStorageManager.getToolFromStorage(toolHistory.sessionId)
     if (retrievedTool) {
       toolRunnerStore.setActiveTool(retrievedTool)
     }

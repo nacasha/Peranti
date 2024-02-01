@@ -8,7 +8,7 @@ import { toolStore } from "src/stores/toolStore"
 import { type ToolState } from "src/types/ToolState"
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
-export class ToolStateManager {
+export class ToolStorageManager {
   /**
    * Retrieve toolState from storage
    *
@@ -53,10 +53,10 @@ export class ToolStateManager {
    * @param replacedToolState
    */
   static async updateToolStatePropertyInStorage(sessionId: string, replacedToolState: Partial<ToolState>) {
-    const existingToolState = await ToolStateManager.getToolStateFromStorage(sessionId)
+    const existingToolState = await ToolStorageManager.getToolStateFromStorage(sessionId)
     if (existingToolState) {
       const newToolState = { ...existingToolState, ...replacedToolState }
-      await ToolStateManager.putToolStateIntoStorage(sessionId, newToolState)
+      await ToolStorageManager.putToolStateIntoStorage(sessionId, newToolState)
     }
   }
 
@@ -99,7 +99,7 @@ export class ToolStateManager {
      * Create new instance of tool based on toolState in storage
      */
     const { disablePersistence = false, initialState = {} } = options
-    const toolState = await ToolStateManager.getToolStateFromStorage(sessionId)
+    const toolState = await ToolStorageManager.getToolStateFromStorage(sessionId)
     if (toolState) {
       const toolConstructor = toolStore.mapOfLoadedTools[toolState.toolId]
       return new Tool(toolConstructor, {

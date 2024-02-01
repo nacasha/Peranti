@@ -3,7 +3,7 @@ import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys.js"
 import { Tool } from "src/models/Tool"
-import { ToolStateManager } from "src/services/toolStorageManager.js"
+import { ToolStorageManager } from "src/services/toolStorageManager.js"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolHistory } from "src/types/ToolHistory.js"
 import { type ToolSession } from "src/types/ToolSession.js"
@@ -120,7 +120,7 @@ class ToolSessionStore {
     const toolSession = this.sessions.find((session) => session.sessionId === this.activeSessionId)
 
     if (toolSession) {
-      const tool = await ToolStateManager.getToolFromStorage(toolSession.sessionId)
+      const tool = await ToolStorageManager.getToolFromStorage(toolSession.sessionId)
 
       if (tool) {
         this.activateTool(tool)
@@ -261,7 +261,7 @@ class ToolSessionStore {
       return
     }
 
-    const tool = await ToolStateManager.getToolFromStorage(toolSession.sessionId)
+    const tool = await ToolStorageManager.getToolFromStorage(toolSession.sessionId)
     if (tool) {
       this.activateTool(tool)
     }
@@ -273,7 +273,7 @@ class ToolSessionStore {
    * @param toolState
    */
   async openHistory(toolHistory: ToolHistory) {
-    const tool = await ToolStateManager.getToolFromStorage(toolHistory.sessionId)
+    const tool = await ToolStorageManager.getToolFromStorage(toolHistory.sessionId)
 
     if (tool) {
       /**
@@ -485,7 +485,7 @@ class ToolSessionStore {
     /**
      * Open selected tool
      */
-    const tool = await ToolStateManager.getToolFromStorage(toolSession.sessionId)
+    const tool = await ToolStorageManager.getToolFromStorage(toolSession.sessionId)
     if (tool) {
       this.activateTool(tool)
     }
@@ -565,7 +565,7 @@ class ToolSessionStore {
       this.resetToolSessionSequence(toolSession.toolId)
     }
 
-    await ToolStateManager.updateToolStatePropertyInStorage(toolSession.sessionId, {
+    await ToolStorageManager.updateToolStatePropertyInStorage(toolSession.sessionId, {
       sessionSequenceNumber: undefined
     })
   }
@@ -598,7 +598,7 @@ class ToolSessionStore {
      * Load tool from storage but disable the persistence, we only need
      * to get tool state and save it into history
      */
-    const tool = await ToolStateManager.getToolFromStorage(toolSession.sessionId, {
+    const tool = await ToolStorageManager.getToolFromStorage(toolSession.sessionId, {
       disablePersistence: true
     })
 
@@ -610,7 +610,7 @@ class ToolSessionStore {
         /**
          * Since tool persistence is disabled, we need to update manually the storage
          */
-        await ToolStateManager.updateToolStatePropertyInStorage(toolSession.sessionId, {
+        await ToolStorageManager.updateToolStatePropertyInStorage(toolSession.sessionId, {
           isDeleted: true
         })
 
@@ -619,7 +619,7 @@ class ToolSessionStore {
     }
 
     if (!isAddedToHistory) {
-      void ToolStateManager.removeToolStateFromStorage(toolSession.sessionId)
+      void ToolStorageManager.removeToolStateFromStorage(toolSession.sessionId)
     }
   }
 
@@ -694,7 +694,7 @@ class ToolSessionStore {
     /**
      * Set session name to actual tool
      */
-    const retrievedTool = await ToolStateManager.getToolFromStorage(toolSession.sessionId)
+    const retrievedTool = await ToolStorageManager.getToolFromStorage(toolSession.sessionId)
     if (retrievedTool) {
       retrievedTool.setSessionName(newSessionName)
       void retrievedTool.hydrateStore()
