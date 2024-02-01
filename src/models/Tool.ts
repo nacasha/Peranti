@@ -1,13 +1,16 @@
 import { Command } from "@tauri-apps/api/shell"
 import fastDeepEqual from "fast-deep-equal"
 import { observable, action, makeObservable, toJS } from "mobx"
-import { PersistStoreMap, hydrateStore, makePersistable, pausePersisting, startPersisting, stopPersisting } from "mobx-persist-store"
+import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, pausePersisting, startPersisting, stopPersisting } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys"
+import { ToolType } from "src/enums/ToolType"
+import { ToolStorageManager } from "src/services/toolStorageManager"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type MetadataExtension } from "src/types/MetadataExtension"
 import { type ToolConstructor } from "src/types/ToolConstructor"
+import { type ToolHistory } from "src/types/ToolHistory"
 import { type ToolInput } from "src/types/ToolInput"
 import { type ToolLayoutSetting } from "src/types/ToolLayoutSetting"
 import { type ToolOutput } from "src/types/ToolOutput"
@@ -16,14 +19,16 @@ import { type ToolSession } from "src/types/ToolSession"
 import { type ToolState } from "src/types/ToolState"
 import { generateRandomString } from "src/utils/generateRandomString"
 
-export class Tool<
-  IF extends Record<string, any> = any,
-  OF extends Record<string, any> = any,
-> implements ToolConstructor {
+export class Tool<IF extends Record<string, any> = any, OF extends Record<string, any> = any> {
   /**
    * Tool ID
    */
   readonly toolId: string
+
+  /**
+   * Type of tool
+   */
+  readonly type: ToolType
 
   /**
    * Name of tool
@@ -31,9 +36,36 @@ export class Tool<
   readonly name: string
 
   /**
+   * Category of tool
+   */
+  readonly category: string
+
+  /**
    * Unique ID of created session
    */
   readonly sessionId: string
+
+  /***
+   * Tool layout setting
+   */
+  readonly layoutSetting: ToolLayoutSetting
+
+  /**
+   * Should tools is auto run when user made changes on inputs, default is true
+   */
+  readonly autoRun: boolean = false
+
+  isAutoRunAndFirstTime: boolean = false
+
+  /**
+   * Pipelines
+   */
+  readonly pipelines: any[] = []
+
+  /**
+   * Indicates whether run the pipeline or no
+   */
+  private canRunPipeline = true
 
   /**
    * Sequence number of session, only filled when the session has no session name assigned
@@ -50,44 +82,40 @@ export class Tool<
    */
   readonly inputFields: Array<ToolInput<IF>> | ((inputValues: any) => Array<ToolInput<IF>>)
 
+  /**
+   * Component last state (scroll position, selection, undo / redo history)
+   */
   @observable inputFieldsState: any = {}
 
-  @action
-  setInputFieldState(key: string, state: unknown) {
-    this.inputFieldsState = { ...this.inputFieldsState, [key]: state }
-  }
+  /**
+   * Stored value for input
+   */
+  @observable inputValues: any = {}
 
-  @action
-  setOutputFieldState(key: string, state: unknown) {
-    this.outputFieldsState = { ...this.outputFieldsState, [key]: state }
-  }
+  /**
+   * Indicates input values has been changed
+   */
+  isInputValuesModified: boolean = false
 
   /**
    * List of output fields
    */
   readonly outputFields: Array<ToolOutput<OF>> | ((outputValues: any) => Array<ToolOutput<OF>>)
 
+  /**
+   * Component last state (scroll position, selection, undo / redo history)
+   */
   @observable outputFieldsState: Record<string, any> = {}
 
   /**
-   * Category of tool
+   * Stored value for output
    */
-  readonly category: string
-
-  /***
-   * Tool layout setting
-   */
-  readonly layoutSetting: ToolLayoutSetting
+  @observable outputValues: any = {}
 
   /**
-   * Pipelines
+   * Indicates output values has been changed
    */
-  readonly pipelines: any[] = []
-
-  /**
-   * Indicates whether run the pipeline or no
-   */
-  private canRunPipeline = true
+  isOutputValuesModified: boolean = false
 
   /**
    * Action of tool.
@@ -96,34 +124,31 @@ export class Tool<
   readonly action: (input: any) => any
 
   /**
-   * Additional data of tool based on type
+   * Number of tool has been running
    */
-  readonly metadata?: MetadataExtension
+  @observable actionRunCount: number = 0
 
   /**
-   * Stored value for input
+   * Indicates action is running asynchronous
    */
-  @observable inputValues: any = {}
-
-  /**
-   * Stored value for output
-   */
-  @observable outputValues: any = {}
-
-  /**
-   * Indicates batch mode for tool
-   */
-  @observable isBatchEnabled: boolean = false
+  @observable isActionRunning: boolean = false
 
   /**
    * Key input field for batch mode
    */
-  @observable batchInputKey: string | number | symbol = ""
+  @observable batchModeInputKey: string = ""
 
   /**
    * Key output field for batch mode
    */
-  @observable batchOutputKey: string | number | symbol = ""
+  @observable batchModeOutputKey: string = ""
+
+  /**
+   * Indicates batch mode for tool
+   */
+  @observable isBatchModeEnabled: boolean = false
+
+  isDeleting: boolean = false
 
   /**
    * Indicates tool has been deleted
@@ -136,41 +161,19 @@ export class Tool<
   @observable renderCounter: number = 0
 
   /**
-   * Indicates input values has been changed
-   */
-  isInputValuesModified: boolean = false
-
-  /**
-   * Indicates output values has been changed
-   */
-  isOutputValuesModified: boolean = false
-
-  /**
-   * Indicates action is running asynchronous
-   */
-  @observable isActionRunning: boolean = false
-
-  /**
-   * Should tools is auto run when user made changes on inputs, default is true
-   */
-  readonly autoRun: boolean = false
-
-  /**
-   * Type of tool
-   */
-  readonly type: "Tool" | "Pipeline" | "Preset" | "Extension" | undefined = "Tool"
-
-  /**
-   * Number of tool has been running
-   */
-  @observable runCount: number = 0
-
-  /**
    * Key to be used for storing tool state in storage
    */
-  toolState?: ToolState = undefined
+  readonly toolState?: ToolState = undefined
 
+  /**
+   * Disable persistence of tool
+   */
   readonly disablePersistence: boolean = false
+
+  /**
+   * Additional data of tool based on type
+   */
+  readonly metadata?: MetadataExtension
 
   /**
    * Tool sessionId generator
@@ -181,8 +184,29 @@ export class Tool<
     return generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm")
   }
 
+  /**
+   * Get toolId by parsing the sessionId string
+   * @param sessionId
+   * @returns
+   */
   static getToolIdFromSessionId(sessionId: string) {
     return sessionId.split("|")[0]
+  }
+
+  /**
+   * Empty instance of tool
+   *
+   * @returns
+   */
+  static empty() {
+    return new Tool({
+      name: "",
+      toolId: "",
+      category: "",
+      action: () => ({}),
+      inputFields: [],
+      outputFields: []
+    })
   }
 
   /**
@@ -224,7 +248,7 @@ export class Tool<
       toolId: preset.presetId,
       inputFields: presetInputs,
       category: preset.category ?? toolConstructor.category,
-      type: "Preset"
+      type: ToolType.Preset
     }
 
     return tool
@@ -264,8 +288,8 @@ export class Tool<
       metadata,
       pipelines = [],
       autoRun = true,
-      type = "Tool",
-      layoutSetting = {}
+      layoutSetting = {},
+      type = ToolType.Tool
     } = params
 
     this.toolId = toolId
@@ -279,6 +303,10 @@ export class Tool<
     this.autoRun = autoRun
     this.type = type
     this.metadata = metadata
+
+    if (this.autoRun) {
+      this.isAutoRunAndFirstTime = true
+    }
 
     /**
      * Prepare default layout setting and merge with layout setting from tool constructor
@@ -295,36 +323,34 @@ export class Tool<
     /**
      * Fill inputValues with value from tool inputFields
      */
-    this.fillInputValuesWithDefault()
+    this.inputValues = this.getInputValuesWithDefault()
 
     /**
      * Set initial tool state
      */
     const { initialState, disablePersistence = false } = options
     if (initialState) {
-      Object.assign(this, initialState)
+      this.sessionId = initialState.sessionId ?? this.sessionId
+      this.sessionName = initialState.sessionName ?? this.sessionName
+      this.sessionSequenceNumber = initialState.sessionSequenceNumber ?? this.sessionSequenceNumber
+      this.inputValues = initialState.inputValues ?? this.inputValues
+      this.outputValues = initialState.outputValues ?? this.outputValues
+      this.isBatchModeEnabled = initialState.isBatchModeEnabled ?? this.isBatchModeEnabled
+      this.batchModeInputKey = initialState.batchModeInputKey ?? this.batchModeInputKey
+      this.batchModeOutputKey = initialState.batchModeOutputKey ?? this.batchModeOutputKey
+      this.actionRunCount = initialState.actionRunCount ?? this.actionRunCount
+      this.isOutputValuesModified = initialState.isOutputValuesModified ?? this.isOutputValuesModified
+      this.isInputValuesModified = initialState.isInputValuesModified ?? this.isInputValuesModified
+      this.isDeleted = initialState.isDeleted ?? this.isDeleted
+      this.inputFieldsState = initialState.inputFieldsState ?? this.inputFieldsState
+      this.outputFieldsState = initialState.outputFieldsState ?? this.outputFieldsState
+      this.isAutoRunAndFirstTime = initialState.isAutoRunAndFirstTime ?? this.isAutoRunAndFirstTime
     }
 
     this.disablePersistence = disablePersistence
 
     makeObservable(this)
     this.setupPersistence()
-  }
-
-  /**
-   * Empty instance of tool
-   *
-   * @returns
-   */
-  static empty() {
-    return new Tool({
-      name: "",
-      toolId: "",
-      category: "",
-      action: () => ({}),
-      inputFields: [],
-      outputFields: []
-    })
   }
 
   /**
@@ -364,6 +390,7 @@ export class Tool<
       this,
       {
         name: StorageKeys.ToolState.concat(this.sessionId),
+        debugMode: true,
         properties: [
           {
             key: "toolState",
@@ -391,52 +418,75 @@ export class Tool<
    *
    * @returns
    */
-  toState(replacedValue: Partial<ToolState> = {}): ToolState {
+  toState(): ToolState {
     const {
-      batchInputKey,
-      batchOutputKey,
+      batchModeInputKey: batchInputKey,
+      batchModeOutputKey: batchOutputKey,
       inputFieldsState,
       inputValues,
-      isBatchEnabled,
+      isBatchModeEnabled: isBatchEnabled,
       isDeleted,
       isInputValuesModified,
       isOutputValuesModified,
       outputFieldsState,
       outputValues,
-      runCount,
+      actionRunCount,
       sessionId,
       sessionName,
       sessionSequenceNumber,
-      toolId
+      toolId,
+      isAutoRunAndFirstTime
     } = this
 
     const createdAt = new Date().getTime()
 
     return {
-      batchInputKey,
-      batchOutputKey,
+      batchModeInputKey: batchInputKey,
+      batchModeOutputKey: batchOutputKey,
       createdAt,
       inputFieldsState: toJS(inputFieldsState),
       inputValues: toJS(inputValues),
-      isBatchEnabled,
+      isBatchModeEnabled: isBatchEnabled,
       isDeleted,
       isInputValuesModified,
       isOutputValuesModified,
       outputFieldsState: toJS(outputFieldsState),
       outputValues: toJS(outputValues),
-      runCount,
+      actionRunCount,
       sessionId,
       sessionName,
       sessionSequenceNumber,
       toolId,
-      ...replacedValue
+      isAutoRunAndFirstTime
     }
   }
 
+  /**
+   * Get tool session data based on current state
+   *
+   * @returns
+   */
   toSession(): ToolSession {
     const { sessionId, sessionName, sessionSequenceNumber, toolId } = this
 
     return { sessionId, sessionName, sessionSequenceNumber, toolId }
+  }
+
+  toHistory(): ToolHistory {
+    const { sessionId, sessionName, toolId } = this
+    const deletedAt = new Date().getTime()
+
+    return { deletedAt, sessionId, sessionName, toolId }
+  }
+
+  @action
+  setSessionName(value: string) {
+    this.sessionName = value
+  }
+
+  @action
+  setSessionSequenceNumber(value?: number) {
+    this.sessionSequenceNumber = value
   }
 
   @action
@@ -445,13 +495,32 @@ export class Tool<
   }
 
   /**
+   * Set batchInputKey and batchOutputKey with first fields
+   * that has allowBatch true
+   *
+   * @param isEnabled
+   */
+  @action
+  setBatchMode(isEnabled: boolean) {
+    this.isBatchModeEnabled = isEnabled
+
+    if (this.batchModeInputKey === "") {
+      this.batchModeInputKey = this.getInputFields().filter((input) => input.allowBatch)[0].key
+    }
+
+    if (this.batchModeOutputKey === "") {
+      this.batchModeOutputKey = this.getOutputFields().filter((output) => output.allowBatch)[0].key
+    }
+  }
+
+  /**
    * Set value of batchOutputKey
    *
    * @param batchOutputKey
    */
   @action
-  setBatchOutputKey(batchOutputKey: string) {
-    this.batchOutputKey = batchOutputKey
+  setBatchModeOutputKey(batchOutputKey: string) {
+    this.batchModeOutputKey = batchOutputKey
   }
 
   /**
@@ -460,8 +529,8 @@ export class Tool<
    * @param batchInputKey
    */
   @action
-  setBatchInputKey(batchInputKey: string) {
-    this.batchInputKey = batchInputKey
+  setBatchModeInputKey(batchInputKey: string) {
+    this.batchModeInputKey = batchInputKey
   }
 
   /**
@@ -489,48 +558,13 @@ export class Tool<
   }
 
   /**
-   * Get input params along with its default value
-   *
-   * @returns
-   */
-  @action
-  fillInputValuesWithDefault() {
-    this.inputValues = Object.fromEntries(this.getInputFields().map((i) => [i.key, i.defaultValue]))
-  }
-
-  /**
-   * Merge input params and output params and convert it to string
-   */
-  getInputAndOutputAsString() {
-    return Object.values(this.inputValues ?? {}).concat(Object.values(this.outputValues ?? {})).toString().trim()
-  }
-
-  /**
-   * Indicates whether tool has input, output and running at least once
-   *
-   * @returns boolean
-   */
-  getIsInputAndOutputHasValues(): boolean {
-    const inputFields = this.getInputFields()
-    const hasInputValues = Object.entries(this.inputValues).filter(
-      ([key, value]) => Boolean(value) && !inputFields.find((field) => field.key === key)?.skipValidateHasValue
-    ).length > 0
-
-    const hasOutputValues = Object.values(this.outputValues).filter(
-      (value) => Boolean(value)
-    ).length > 0
-
-    return hasInputValues || hasOutputValues
-  }
-
-  /**
-   * Set input params value
+   * Set input params value by key
    *
    * @param key key of input
    * @param value value of input
    */
   @action
-  setInputValue(key: any, value: any, options: { markAsModified: boolean } = { markAsModified: true }) {
+  setInputValue(key: string, value: unknown, options: { markAsModified: boolean } = { markAsModified: true }) {
     const newInputValues = { ...this.inputValues, [key]: value }
 
     /**
@@ -545,14 +579,9 @@ export class Tool<
       this.inputValues = { ...this.inputValues, [key]: value }
     }
 
-    if (options.markAsModified) {
-      this.isInputValuesModified = true
+    if (!this.isAutoRunAndFirstTime) {
+      this.isInputValuesModified = options.markAsModified
     }
-  }
-
-  setInputAndOutputValueToDefault() {
-    this.fillInputValuesWithDefault()
-    this.outputValues = {}
   }
 
   /**
@@ -564,7 +593,24 @@ export class Tool<
   @action
   setInputValues(inputValues: any, options: { markAsModified: boolean } = { markAsModified: true }) {
     this.inputValues = inputValues
-    this.isInputValuesModified = options.markAsModified
+
+    if (!this.isAutoRunAndFirstTime) {
+      this.isInputValuesModified = options.markAsModified
+    }
+  }
+
+  /**
+   * Set output params value by key
+   *
+   * @param outputValues
+   */
+  @action
+  setOutputValue(key: string, value: unknown, options: { markAsModified: boolean } = { markAsModified: true }) {
+    this.outputValues = { ...this.outputValues, [key]: value }
+
+    if (!this.isAutoRunAndFirstTime) {
+      this.isOutputValuesModified = options.markAsModified
+    }
   }
 
   /**
@@ -575,20 +621,87 @@ export class Tool<
   @action
   setOutputValues(outputValues: any, options: { markAsModified: boolean } = { markAsModified: true }) {
     this.outputValues = outputValues
-    this.isOutputValuesModified = options.markAsModified
+
+    if (!this.isAutoRunAndFirstTime) {
+      this.isOutputValuesModified = options.markAsModified
+    }
   }
 
   /**
-   * Set batchInputKey and batchOutputKey with first fields
-   * that has allowBatch true
-   *
-   * @param isEnabled
+   * Reset input and output values to its default value
    */
   @action
-  setBatchMode(isEnabled: boolean) {
-    this.isBatchEnabled = isEnabled
-    this.batchInputKey = this.getInputFields().filter((input) => input.allowBatch)[0].key
-    this.batchOutputKey = this.getOutputFields().filter((output) => output.allowBatch)[0].key
+  resetInputAndOutputValues() {
+    this.inputValues = this.getInputValuesWithDefault()
+    this.outputValues = {}
+  }
+
+  /**
+   * Get input params along with its default value
+   *
+   * @returns
+   */
+  getInputValuesWithDefault() {
+    return Object.fromEntries(this.getInputFields().map((i) => [i.key, i.defaultValue]))
+  }
+
+  /**
+   * Indicates whether tool has input, output and running at least once
+   *
+   * @returns boolean
+   */
+  getIsInputOrOutputHasValues(): boolean {
+    const inputFields = this.getInputFields()
+    const hasInputValues = Object.entries(this.inputValues).filter(
+      ([key, value]) => Boolean(value) && !inputFields.find((field) => field.key === key)?.skipValidateHasValue
+    ).length > 0
+
+    const hasOutputValues = Object.values(this.outputValues).filter(
+      (value) => Boolean(value)
+    ).length > 0
+
+    return hasInputValues || hasOutputValues
+  }
+
+  /**
+   * Set input field state by key
+   *
+   * @param key
+   * @param state
+   * @returns
+   */
+  @action
+  setInputFieldState(key: string, state: unknown) {
+    if (this.isDeleted) {
+      return
+    }
+
+    this.inputFieldsState = { ...this.inputFieldsState, [key]: state }
+  }
+
+  /**
+   * Set input field state by key
+   *
+   * @param key
+   * @param state
+   * @returns
+   */
+  @action
+  setOutputFieldState(key: string, state: unknown) {
+    if (this.isDeleted) {
+      return
+    }
+
+    this.outputFieldsState = { ...this.outputFieldsState, [key]: state }
+  }
+
+  /**
+   * Set input and output fields state to its default value
+   */
+  @action
+  resetInputAndOutputFieldsState() {
+    this.inputFieldsState = {}
+    this.outputFieldsState = {}
   }
 
   @action
@@ -601,8 +714,8 @@ export class Tool<
    * Increment the number of runCount
    */
   @action
-  private incrementRunCount() {
-    this.runCount = this.runCount + 1
+  private incrementActionRunCount() {
+    this.actionRunCount = this.actionRunCount + 1
   }
 
   /**
@@ -613,39 +726,23 @@ export class Tool<
       return
     }
 
-    if (this.type === "Extension") {
+    if (this.type === ToolType.Extension) {
       void this.runExtension()
       return
     }
 
     if (this.canRunPipeline && this.pipelines.length > 0) {
       await this.runPipeline()
-    } else if (this.isBatchEnabled) {
+    } else if (this.isBatchModeEnabled) {
       await this.runBatch()
     } else {
       await this.runNormal()
     }
 
-    this.incrementRunCount()
-  }
-
-  private async runExtension() {
-    if (this.metadata) {
-      this.setIsActionRunning(true)
-
-      const { actionFile } = this.metadata
-
-      try {
-        const inputParams = JSON.stringify({ ...this.inputValues })
-        const command = Command.sidecar("binaries/node", [actionFile, inputParams])
-
-        const result = await command.execute()
-        this.setOutputValues(JSON.parse(result.stdout))
-      } catch (exception) {
-        console.log("Tool failed to run")
-      }
-
-      this.setIsActionRunning(false)
+    if (this.isAutoRunAndFirstTime) {
+      this.isAutoRunAndFirstTime = false
+    } else {
+      this.incrementActionRunCount()
     }
   }
 
@@ -680,6 +777,26 @@ export class Tool<
     })
 
     return runResult
+  }
+
+  private async runExtension() {
+    if (this.metadata) {
+      this.setIsActionRunning(true)
+
+      const { actionFile } = this.metadata
+
+      try {
+        const inputParams = JSON.stringify({ ...this.inputValues })
+        const command = Command.sidecar("binaries/node", [actionFile, inputParams])
+
+        const result = await command.execute()
+        this.setOutputValues(JSON.parse(result.stdout))
+      } catch (exception) {
+        console.log("Tool failed to run")
+      }
+
+      this.setIsActionRunning(false)
+    }
   }
 
   /**
@@ -735,7 +852,7 @@ export class Tool<
    * @private
    */
   private async runBatch() {
-    const { inputValues, batchInputKey } = this
+    const { inputValues, batchModeInputKey: batchInputKey } = this
     const batchInputValues = inputValues[batchInputKey]
     const inputLines = batchInputValues.split("\n")
 
@@ -761,16 +878,6 @@ export class Tool<
     )
   }
 
-  @action
-  setSessionName(value: string) {
-    this.sessionName = value
-  }
-
-  @action
-  setSessionSequenceNumber(value?: number) {
-    this.sessionSequenceNumber = value
-  }
-
   forceRerender() {
     this.renderCounter += 1
   }
@@ -793,5 +900,30 @@ export class Tool<
 
   stopStore() {
     stopPersisting(this)
+  }
+
+  @action
+  setDeleted(isDeleted: boolean) {
+    this.isDeleted = isDeleted
+  }
+
+  /**
+   * Reset some properties to its default value
+   */
+  @action
+  async markAsDeleted() {
+    this.resetInputAndOutputFieldsState()
+    this.setDeleted(true)
+
+    /**
+     * Manually update the storage if the tool is not persisting
+     */
+    if (!isPersisting(this)) {
+      await ToolStorageManager.updateToolStatePropertyInStorage(this.sessionId, {
+        inputFieldsState: {},
+        outputFieldsState: {},
+        isDeleted: true
+      })
+    }
   }
 }

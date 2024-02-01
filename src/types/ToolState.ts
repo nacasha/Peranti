@@ -1,18 +1,24 @@
+/**
+ * Properties below must matches with models Tool because we use Object.assign
+ * to put initial state into the tool
+ */
+
 export interface ToolState {
+  toolId: string
   sessionId: string
   sessionName?: string
   sessionSequenceNumber?: number
-  toolId: string
   inputValues: any
   outputValues: any
-  isBatchEnabled: boolean
-  batchInputKey: string | number | symbol
-  batchOutputKey: string | number | symbol
+  isBatchModeEnabled: boolean
+  batchModeInputKey: string
+  batchModeOutputKey: string
   createdAt: number
-  runCount: number
+  actionRunCount: number
   isOutputValuesModified: boolean
   isInputValuesModified: boolean
   isDeleted: boolean
   inputFieldsState: Record<string, any>
   outputFieldsState: Record<string, any>
+  isAutoRunAndFirstTime: boolean
 }

@@ -88,11 +88,14 @@ export const BaseCodeMirror: FC<Props> = (props) => {
   }
 
   const handleCreateEditor = (view: EditorView) => {
+    /**
+     * Delay a bit for layout to be ready based on content
+     */
     setTimeout(() => {
       view.scrollDOM.scrollTop = Number(scrollStateRef.current.top)
       view.scrollDOM.scrollLeft = Number(scrollStateRef.current.left)
       setReady(true)
-    }, 0)
+    }, 10)
   }
 
   const handleScroll = () => {

@@ -6,23 +6,21 @@ import { useSelector } from "src/hooks/useSelector"
 import { toolHistoryStore } from "src/stores/toolHistoryStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
-export const ToolLoadFromHistoryButton: FC = () => {
+export const ToolDeleteButton: FC = () => {
   const sessionId = useSelector(() => toolRunnerStore.getActiveTool().sessionId)
-  const isHistory = useSelector(() => toolRunnerStore.getActiveTool().isDeleted)
+  const isDeleted = useSelector(() => toolRunnerStore.getActiveTool().isDeleted)
 
-  const handleRestoreHistory = () => {
-    if (isHistory) {
-      void toolHistoryStore.restoreHistory(sessionId)
-    }
+  const onClickClean = () => {
+    toolHistoryStore.deleteHistory(sessionId)
   }
 
-  if (!isHistory) {
+  if (!isDeleted) {
     return null
   }
 
   return (
-    <Button icon={Icons.Untrash} onClick={handleRestoreHistory}>
-      Restore
+    <Button icon={Icons.Trash} onClick={onClickClean}>
+      Delete
     </Button>
   )
 }

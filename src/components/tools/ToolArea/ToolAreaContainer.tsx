@@ -10,7 +10,7 @@ interface ToolAreaContainerProps {
 }
 
 export const ToolAreaContainer: FC<ToolAreaContainerProps> = ({ children }) => {
-  const isBatchEnabled = useSelector(() => toolRunnerStore.getActiveTool().isBatchEnabled)
+  const isBatchEnabled = useSelector(() => toolRunnerStore.getActiveTool().isBatchModeEnabled)
   const layoutSetting = useSelector(() => toolRunnerStore.getActiveTool().layoutSetting)
   const textAreaWordWrap = useSelector(() => interfaceStore.textAreaWordWrap)
 

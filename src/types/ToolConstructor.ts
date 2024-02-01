@@ -1,3 +1,5 @@
+import { type ToolType } from "src/enums/ToolType.js"
+
 import { type ToolInput } from "./ToolInput.js"
 import { type ToolLayoutSetting } from "./ToolLayoutSetting.js"
 import { type ToolOutput } from "./ToolOutput.js"
@@ -54,7 +56,7 @@ export interface ToolConstructor<IF extends Record<string, any> = any, OF extend
   /**
    * Type of tool
    */
-  type?: "Tool" | "Pipeline" | "Preset" | "Extension"
+  type?: ToolType
 
   /**
    * Additional data for tool based on tool type

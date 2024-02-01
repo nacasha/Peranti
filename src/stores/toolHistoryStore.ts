@@ -3,9 +3,9 @@ import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys.js"
+import { type Tool } from "src/models/Tool.js"
 import { ToolStorageManager } from "src/services/toolStorageManager.js"
 import { type ToolHistory } from "src/types/ToolHistory.js"
-import { type ToolState } from "src/types/ToolState.js"
 
 import { toolRunnerStore } from "./toolRunnerStore.js"
 import { toolSessionStore } from "./toolSessionStore.js"
@@ -16,8 +16,6 @@ class ToolHistoryStore {
   numberOfMaximumHistory = 100
 
   autoSaveDelayInSeconds = 1
-
-  addDebounceState = setTimeout(() => null, 0)
 
   constructor() {
     makeAutoObservable(this)
@@ -30,30 +28,32 @@ class ToolHistoryStore {
     })
   }
 
-  addHistory(toolState: ToolState) {
+  addHistory(tool: Tool) {
     /**
      * Skip save tool because it's already exists
      */
-    if (this.histories.findIndex((history) => history.sessionId === toolState.sessionId) > -1) {
+    if (this.histories.findIndex((history) => history.sessionId === tool.sessionId) > -1) {
       return true
     }
 
     /**
-     * Save tool state to history only if last saved history has different SHA256 hash
+     * Save tool state to history only if tool has input or output modified
      */
-    if (toolState.runCount > 0 && (toolState.isInputValuesModified || toolState.isInputValuesModified)) {
-      const { createdAt, sessionId, sessionName, toolId } = toolState
-      this.histories.unshift({ createdAt, sessionId, sessionName, toolId })
+    const isToolValuesModified = (tool.isInputValuesModified || tool.isOutputValuesModified)
+    if (tool.actionRunCount > 0 && isToolValuesModified && tool.getIsInputOrOutputHasValues()) {
+      this.histories.unshift(tool.toHistory())
+
+      /**
+       * Delete old history if exceeding allowed maximum history
+       */
+      if (this.histories.length > this.numberOfMaximumHistory) {
+        this.histories = this.histories.slice(0, this.numberOfMaximumHistory)
+      }
+
+      return true
     }
 
-    /**
-     * Delete old history if exceeding allowed maximum history
-     */
-    if (this.histories.length > this.numberOfMaximumHistory) {
-      this.histories = this.histories.slice(0, this.numberOfMaximumHistory)
-    }
-
-    return true
+    return false
   }
 
   /**
@@ -62,7 +62,16 @@ class ToolHistoryStore {
    * @param toolHistory
    */
   async openHistory(toolHistory: ToolHistory) {
-    const retrievedTool = await ToolStorageManager.getToolFromStorage(toolHistory.sessionId)
+    const retrievedTool = await ToolStorageManager.getToolFromStorage(toolHistory.sessionId, {
+      /**
+       * There are some known bug where `isDeleted` has value `true` even already
+       * included in tool history store, so we're just gonna force it here
+       */
+      initialState: {
+        isDeleted: true
+      }
+    })
+
     if (retrievedTool) {
       toolRunnerStore.setActiveTool(retrievedTool)
     }
@@ -75,6 +84,15 @@ class ToolHistoryStore {
     if (toolHistory) {
       this.removeHistoryEntry(sessionId)
       void toolSessionStore.openHistory(toolHistory)
+    }
+  }
+
+  deleteHistory(sessionId: string) {
+    this.histories = this.histories.filter((history) => history.sessionId !== sessionId)
+    void ToolStorageManager.removeToolStateFromStorage(sessionId)
+
+    if (toolRunnerStore.getActiveTool().sessionId === sessionId) {
+      void toolSessionStore.openLastActiveSession()
     }
   }
 

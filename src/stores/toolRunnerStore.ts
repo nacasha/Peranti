@@ -88,7 +88,7 @@ class ToolRunnerStore {
    * Toggle enable and disable batch mode
    */
   toggleBatchMode() {
-    const enabled = !this.getActiveTool().isBatchEnabled
+    const enabled = !this.getActiveTool().isBatchModeEnabled
     this.getActiveTool().setBatchMode(enabled)
   }
 
@@ -98,7 +98,7 @@ class ToolRunnerStore {
   cleanActiveToolState() {
     const activeTool = this.getActiveTool()
 
-    activeTool.setInputAndOutputValueToDefault()
+    activeTool.resetInputAndOutputValues()
     activeTool.forceRerender()
   }
 }

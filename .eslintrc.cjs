@@ -51,6 +51,7 @@ module.exports = {
     "@typescript-eslint/quotes": ["error", "double"],
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/space-before-function-paren": ["error", "never"],
+    "@typescript-eslint/no-non-null-assertion": "off",
     "import/no-unresolved": "error",
     "import/order": [
       "warn", {

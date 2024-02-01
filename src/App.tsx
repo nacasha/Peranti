@@ -12,6 +12,7 @@ import { AppTitlebar } from "./components/app/AppTitlebar"
 import { AppWindowSizeListener } from "./components/app/AppWindowSizeListener"
 import { AppWindowSizeObserver } from "./components/app/AppWindowSizeObserver"
 import { useSelector } from "./hooks/useSelector.js"
+import { Tool } from "./models/Tool.js"
 import { HomePage } from "./pages/HomePage/HomePage.js"
 import { ToolPage } from "./pages/ToolPage"
 import { toolRunnerStore } from "./stores/toolRunnerStore.js"
@@ -81,15 +82,15 @@ const AppRoute = () => {
 
 const AppRouteListener = () => {
   const [, setLocation] = useLocation()
-  const tool = useSelector(() => toolRunnerStore.getActiveTool())
+  const sessionId = useSelector(() => toolRunnerStore.getActiveTool().sessionId)
 
   useEffect(() => {
-    if (tool.toolId === "") {
+    if (Tool.getToolIdFromSessionId(sessionId) === "") {
       setLocation("/welcome", { replace: true })
     } else {
       setLocation("/", { replace: true })
     }
-  }, [tool.sessionId])
+  }, [sessionId])
 
   return null
 }

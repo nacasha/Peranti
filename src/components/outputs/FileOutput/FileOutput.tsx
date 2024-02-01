@@ -21,7 +21,7 @@ export const FileOutput: FC<FileOutputProps> = (props) => {
   useEffect(() => {
     setTimeout(() => {
       setInitialized(true)
-    }, 100)
+    }, 10)
   }, [])
 
   return (

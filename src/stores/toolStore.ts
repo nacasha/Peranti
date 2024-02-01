@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx"
 
 import { Files } from "src/constants/files.js"
+import { ToolType } from "src/enums/ToolType.js"
 import { Tool } from "src/models/Tool"
 import { FileSystemManager } from "src/services/fileSystemManager.js"
 import base64EncodeDecodeTool from "src/tools/base64-encode-decode-tool.js"
@@ -238,14 +239,14 @@ class ToolStore {
       if (entry.children) {
         const files = Object.fromEntries(entry.children.map((children) => [children.name, children.path]))
 
-        const extensionDefinitionRaw = await FileSystemManager.readFileAsText(files[Files.ExtensionDefinition])
-        const extensionDefinition: ToolConstructor = JSON.parse(extensionDefinitionRaw)
-        const realActionFilePath = await FileSystemManager.resolveFilePath(entry.path, extensionDefinition.metadata.actionFile)
+        const toolConstructorRaw = await FileSystemManager.readFileAsText(files[Files.ExtensionDefinition])
+        const toolConstructor: ToolConstructor = JSON.parse(toolConstructorRaw)
+        const realActionFilePath = await FileSystemManager.resolveFilePath(entry.path, toolConstructor.metadata.actionFile)
 
-        extensionDefinition.type = "Extension"
-        extensionDefinition.metadata.actionFile = realActionFilePath
+        toolConstructor.type = ToolType.Extension
+        toolConstructor.metadata.actionFile = realActionFilePath
 
-        extensions.push(extensionDefinition)
+        extensions.push(toolConstructor)
       }
     }
 

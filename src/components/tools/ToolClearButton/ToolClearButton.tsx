@@ -17,7 +17,7 @@ export const ToolClearButton: FC = () => {
   }
 
   return (
-    <Button icon={Icons.Download} onClick={onClickClean}>
+    <Button icon={Icons.Restore} onClick={onClickClean}>
       Reset To Default
     </Button>
   )

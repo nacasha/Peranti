@@ -12,20 +12,25 @@ import "./ToolArea.scss"
 
 export const ToolArea: FC = () => {
   const activeTool = useSelector(() => toolRunnerStore.getActiveTool())
-  const {
-    batchInputKey,
-    batchOutputKey,
-    isBatchEnabled,
-    isDeleted,
-    layoutSetting,
-    renderCounter,
-    sessionId
-  } = activeTool
+
+  /**
+   * These properties are observable, meaning the value can change at anytime
+   * and component need to rerender the output
+   */
+  const isDeleted = useSelector(() => toolRunnerStore.getActiveTool().isDeleted)
+  const isBatchEnabled = useSelector(() => toolRunnerStore.getActiveTool().isBatchModeEnabled)
+  const batchInputKey = useSelector(() => toolRunnerStore.getActiveTool().batchModeInputKey)
+  const batchOutputKey = useSelector(() => toolRunnerStore.getActiveTool().batchModeOutputKey)
+  const renderCounter = useSelector(() => toolRunnerStore.getActiveTool().renderCounter)
+
+  /**
+   * These properties are readonly, meaning the value cannot be updated during showing the tool
+   */
+  const { layoutSetting, sessionId } = activeTool
+  const { inputAreaDirection, outputAreaDirection } = layoutSetting
 
   const inputFields = activeTool.getInputFields()
   const outputFields = activeTool.getOutputFields()
-
-  const { inputAreaDirection, outputAreaDirection } = layoutSetting
 
   const batchInput = inputFields.find((input) => input.key === batchInputKey)
   const batchOutput = outputFields.find((output) => output.key === batchOutputKey)

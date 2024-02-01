@@ -11,12 +11,12 @@ export const ToolRunner: FC = observer(() => {
   useEffect(() => {
     if (activeTool.autoRun) {
       const isToolChanged = previousTool.current?.sessionId !== activeTool.sessionId
-      const { isInputValuesModified, runCount } = activeTool
+      const { isInputValuesModified, isAutoRunAndFirstTime: toolIsAutoRunAndFirstTime } = activeTool
 
       /**
        * New created session that hasn't been run at least once
        */
-      if (isToolChanged && runCount === 0) {
+      if (isToolChanged && toolIsAutoRunAndFirstTime) {
         toolRunnerStore.runActiveTool()
 
       /**

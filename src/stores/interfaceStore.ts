@@ -4,7 +4,7 @@ import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys"
 import { SidebarMode } from "src/enums/SidebarMode"
-import { ThemeEnum } from "src/enums/ThemeEnum.ts"
+import { Theme } from "src/enums/ThemeEnum.ts"
 import { getWindowSize } from "src/utils/getWindowSize"
 
 class InterfaceStore {
@@ -13,7 +13,7 @@ class InterfaceStore {
    *
    * @configurable
    */
-  theme: ThemeEnum = ThemeEnum.Dark
+  theme: Theme = Theme.Dark
 
   /**
    * Show the sidebar
@@ -89,7 +89,7 @@ class InterfaceStore {
   }
 
   get isThemeDarkMode() {
-    return this.theme === ThemeEnum.Dark
+    return this.theme === Theme.Dark
   }
 
   get sidebarMode() {

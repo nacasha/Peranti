@@ -117,6 +117,14 @@ class ToolSessionStore {
    * Action handler when store is successfully hydrated from storage
    */
   async handleHydratedStore() {
+    await this.openLastActiveSession()
+    this.setIsInitialized(true)
+  }
+
+  /**
+   * Activate last active session id
+   */
+  async openLastActiveSession() {
     const toolSession = this.sessions.find((session) => session.sessionId === this.activeSessionId)
 
     if (toolSession) {
@@ -125,13 +133,13 @@ class ToolSessionStore {
       if (tool) {
         this.activateTool(tool)
       }
+    } else {
+      this.activateTool(Tool.empty())
     }
-
-    this.setIsInitialized(true)
   }
 
   /**
-   * Set value of isInitialized\
+   * Set value of isInitialized
    *
    * @param value
    */
@@ -337,17 +345,26 @@ class ToolSessionStore {
      * Disable session reference to store if session has no action running
      */
     } else {
-      /**
-       * TODO: do we need to stop the store?
-       * because there some case we need to store some state after
-       * the components / session deactivated, such as save the editor state
-       */
-      // tool.stopStore()
-
       if (this.runningTools[tool.sessionId]) {
         this.runningTools[tool.sessionId] = undefined
       }
     }
+  }
+
+  private removeSessionBySessionId(sessionId: string) {
+    /**
+     * Filter sessions without closed tool
+     */
+    let removedSessionIndex = -1
+    this.sessions = this.sessions.filter((session, index) => {
+      if (session.sessionId === sessionId) {
+        removedSessionIndex = index
+        return false
+      }
+      return true
+    })
+
+    return removedSessionIndex
   }
 
   /**
@@ -359,76 +376,65 @@ class ToolSessionStore {
     const activeTool = toolRunnerStore.getActiveTool()
 
     /**
-     * Save old sessions of tool for future reference
-     */
-    const oldSessionsOfTool = this.getRunningSessions(toolSession.toolId)
-
-    /**
      * Filter sessions without closed tool
      */
-    this.sessions = this.sessions.filter((session) => session.sessionId !== toolSession.sessionId)
+    const closedSessionIndex = this.removeSessionBySessionId(toolSession.sessionId)
+
+    /**
+     * If closed session is currently active tool, application will
+     * open another running session based on closed session index
+     */
+    if (activeTool.sessionId === toolSession.sessionId) {
+      const newSessionsOfTool = this.getRunningSessions(toolSession.toolId)
+
+      /**
+       * Create another session if closed session if the last session of tool
+       */
+      if (newSessionsOfTool.length === 0) {
+        /**
+         * Reset session sequence (to remove array item with value = false) because list is empty
+         */
+        this.resetToolSessionSequence(toolSession.toolId)
+
+        /**
+         * Open empty tool if user has preference to close tool when all session is closed
+         */
+        if (this.closeToolWhenLastSessionIsClosed) {
+          this.activateTool(Tool.empty())
+
+        /**
+         * Open new session of tool
+         */
+        } else {
+          const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
+          this.createSession(toolConstructor)
+        }
+      /**
+       * Open another existing sessions from tool based on closed tool session index
+       */
+      } else if (closedSessionIndex > -1) {
+        /**
+         * If closed session is not found on list of session, it means closeSession()
+         * was called more than once with same session (usually because hold the hotkey)
+         */
+        let newSessionToBeOpened
+        if (closedSessionIndex <= newSessionsOfTool.length - 1) {
+          newSessionToBeOpened = newSessionsOfTool[closedSessionIndex]
+        } else {
+          newSessionToBeOpened = newSessionsOfTool[closedSessionIndex - 1]
+        }
+
+        void this.openSession(newSessionToBeOpened)
+      }
+    }
 
     /**
      * Begin process to close session
      */
-    await this.proceedCloseTool(toolSession)
-
-    /**
-     * Early exit if closed session is not currently active tool
-     */
-    if (activeTool.sessionId !== toolSession.sessionId) {
-      return
-    }
-
-    const newSessionsOfTool = this.getRunningSessions(toolSession.toolId)
-
-    /**
-     * Create another session if closed session if the last session of tool
-     */
-    if (newSessionsOfTool.length === 0) {
-      /**
-       * Reset session sequence (to remove array item with value = false) because list is empty
-       */
-      this.resetToolSessionSequence(toolSession.toolId)
-
-      /**
-       * Open empty tool if user has preference to close tool when all session is closed
-       */
-      if (this.closeToolWhenLastSessionIsClosed) {
-        this.activateTool(Tool.empty())
-        return
-      }
-
-      /**
-       * Open new session of tool
-       */
-      const toolConstructor = toolStore.mapOfLoadedTools[toolSession.toolId]
-      this.createSession(toolConstructor)
-
-    /**
-     * Open another existing sessions from tool based on closed tool session index
-     */
+    if (activeTool.sessionId === toolSession.sessionId) {
+      await this.proceedCloseSession({ tool: activeTool })
     } else {
-      let newSessionToBeOpened
-      const closedSessionIndex = oldSessionsOfTool.findIndex(
-        (session) => session.sessionId === toolSession.sessionId
-      )
-
-      /**
-       * If closed session is not found on list of session, it means closeSession()
-       * was called more than once with same session (usually because hold the hotkey)
-       */
-      if (closedSessionIndex < 0) {
-        return
-      }
-
-      if (closedSessionIndex <= newSessionsOfTool.length - 1) {
-        newSessionToBeOpened = newSessionsOfTool[closedSessionIndex]
-      } else {
-        newSessionToBeOpened = newSessionsOfTool[closedSessionIndex - 1]
-      }
-
-      void this.openSession(newSessionToBeOpened)
+      await this.proceedCloseSession({ toolSession })
     }
   }
 
@@ -586,40 +592,63 @@ class ToolSessionStore {
    *
    * @param tool
    */
-  private async proceedCloseTool(toolSession: ToolSession) {
-    /**
-     * Remove closed tool session sequence
-     */
-    await this.detachSessionSequence(toolSession)
-
-    let isAddedToHistory = false
-
-    /**
-     * Load tool from storage but disable the persistence, we only need
-     * to get tool state and save it into history
-     */
-    const tool = await ToolStorageManager.getToolFromStorage(toolSession.sessionId, {
-      disablePersistence: true
-    })
+  private async proceedCloseSession(options: { toolSession?: ToolSession, tool?: Tool }) {
+    const { toolSession, tool } = options
+    let toBeDeletedTool: Tool | undefined
 
     if (tool) {
+      toBeDeletedTool = tool
+
+      /**
+       * Stop store persistence since it gonna be deleted anyway
+       */
+      toBeDeletedTool.stopStore()
+    } else if (toolSession) {
+      /**
+       * Load tool from storage but disable the persistence, because not active session
+       * either will be mark as deleted or removed from storage
+       */
+      toBeDeletedTool = await ToolStorageManager.getToolFromStorage(toolSession.sessionId, {
+        disablePersistence: true
+      })
+    }
+
+    console.log(toBeDeletedTool)
+    if (toBeDeletedTool) {
+      /**
+       * Do nothing is tool already deleted
+       */
+      if (toBeDeletedTool.isDeleted) {
+        void this.openLastActiveSession()
+
+        return
+      }
+
+      /**
+       * Remove session sequence from tool
+       */
+      await this.detachSessionSequence(toBeDeletedTool.toSession())
+
       /**
        * If state has been changed, insert into history and set isDeleted to true
        */
-      if (tool.getIsInputAndOutputHasValues() && tool.isInputValuesModified && tool.runCount > 0) {
+      const isAddedToHistory = toolHistoryStore.addHistory(toBeDeletedTool)
+
+      /**
+       * If tool did not added to history, we can remove the entire data from storage
+       */
+      console.log(isAddedToHistory)
+      if (isAddedToHistory) {
+        void toBeDeletedTool.markAsDeleted()
+      } else {
         /**
-         * Since tool persistence is disabled, we need to update manually the storage
+         * Delay removing tool from storage because there are some case where tool properties
+         * still updated (ex. saving last state of input / output components)
          */
-        await ToolStorageManager.updateToolStatePropertyInStorage(toolSession.sessionId, {
-          isDeleted: true
-        })
-
-        isAddedToHistory = toolHistoryStore.addHistory(tool.toState())
+        setTimeout(() => {
+          void ToolStorageManager.removeToolStateFromStorage(toBeDeletedTool!.sessionId)
+        }, 500)
       }
-    }
-
-    if (!isAddedToHistory) {
-      void ToolStorageManager.removeToolStateFromStorage(toolSession.sessionId)
     }
   }
 

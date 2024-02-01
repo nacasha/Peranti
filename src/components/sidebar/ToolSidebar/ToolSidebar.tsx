@@ -41,7 +41,7 @@ export const ToolSidebar: FC = () => {
 
 const ToolSidebarItem: FC<{ tool: ToolConstructor, children: ReactNode }> = ({ tool }) => {
   const isActive = useSelector(() => (
-    toolRunnerStore.getActiveTool().toolId === tool.toolId
+    toolRunnerStore.getActiveTool().toolId === tool.toolId && !toolRunnerStore.getActiveTool().isDeleted
   ))
 
   const onClickSidebarItem = (tool: ToolConstructor) => () => {
