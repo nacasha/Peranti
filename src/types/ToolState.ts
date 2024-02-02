@@ -1,8 +1,6 @@
 /**
- * Properties below must matches with models Tool because we use Object.assign
- * to put initial state into the tool
+ * Tool properties to put into storage
  */
-
 export interface ToolState {
   toolId: string
   sessionId: string

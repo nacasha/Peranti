@@ -9,10 +9,10 @@ import "./MarkdownOutput.scss"
 interface MarkdownOutputProps extends OutputComponentProps {}
 
 export const MarkdownOutput: FC<MarkdownOutputProps> = (props) => {
-  const { value, label = "Output" } = props
+  const { value, label = "Output", onContextMenu } = props
 
   return (
-    <div className="MarkdownOutput">
+    <div className="MarkdownOutput" onContextMenu={onContextMenu}>
       <label className="InputOutputLabel">
         {label}
       </label>

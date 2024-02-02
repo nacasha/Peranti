@@ -12,7 +12,7 @@ interface ImageOutputProps extends OutputComponentProps<string> {
 }
 
 export const ImageOutput: FC<ImageOutputProps> = (props) => {
-  const { value = "", label, showControl = false } = props
+  const { value = "", label, showControl = false, onContextMenu } = props
 
   const zoomFactor = 8
 
@@ -94,7 +94,11 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
         {label}
       </div>
       <div className="ImageOutput-inner">
-        <div className="ImageOutput-image" ref={(el: HTMLDivElement | null) => { setContainer(el) }}>
+        <div
+          ref={(el: HTMLDivElement | null) => { setContainer(el) }}
+          className="ImageOutput-image"
+          onContextMenu={onContextMenu}
+        >
           {(imageScale > 0 && imageInitialized) && (
             <TransformWrapper
               key={`${containerWidth}x${containerHeight}x${imageScale}`}

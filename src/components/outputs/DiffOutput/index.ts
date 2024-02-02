@@ -1,1 +1,1 @@
-export { DiffOutput } from "./DiffOutput.js"
+export { DiffOutput } from "./DiffOutput.tsx"

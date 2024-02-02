@@ -60,7 +60,7 @@ const loremIpsumGeneratorTool: ToolConstructor<InputFields, OutputFields> = {
       component: "Code"
     }
   ],
-  action({ count, type }) {
+  async action({ count, type }) {
     const output = loremIpsum({
       count: Number(count),
       format: "plain",

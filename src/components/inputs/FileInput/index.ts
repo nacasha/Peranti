@@ -1,1 +1,1 @@
-export { FileInput } from "./FileInput.js"
+export { FileInput } from "./FileInput.tsx"

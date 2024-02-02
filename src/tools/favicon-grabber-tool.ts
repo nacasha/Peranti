@@ -26,6 +26,10 @@ const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
   name: "Favicon Grabber",
   category: "Image",
   autoRun: false,
+  layoutSetting: {
+    direction: "vertical",
+    gridTemplate: "auto 1fr"
+  },
   inputFields: [
     {
       key: "websiteUrl",

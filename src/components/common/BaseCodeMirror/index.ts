@@ -1,1 +1,1 @@
-export { BaseCodeMirror, type BaseCodeMirrorProps } from "./BaseCodeMirror.js"
+export { BaseCodeMirror, type BaseCodeMirrorProps } from "./BaseCodeMirror.tsx"

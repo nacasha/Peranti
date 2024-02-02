@@ -1,1 +1,1 @@
-export { AppWindowSizeObserver } from "./AppWindowSizeObserver"
+export { AppWindowSizeObserver } from "./AppWindowSizeObserver.tsx"

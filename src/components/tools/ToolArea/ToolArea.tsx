@@ -1,12 +1,12 @@
 import { type FC } from "react"
 
-import { useSelector } from "src/hooks/useSelector.js"
-import { toolRunnerStore } from "src/stores/toolRunnerStore.js"
-import { type ToolInput } from "src/types/ToolInput.ts"
-import { type ToolOutput } from "src/types/ToolOutput.ts"
+import { useSelector } from "src/hooks/useSelector.ts"
+import { toolRunnerStore } from "src/stores/toolRunnerStore.ts"
 
-import { ToolAreaBody } from "./ToolAreaBody.js"
-import { ToolAreaContainer } from "./ToolAreaContainer.js"
+import { ToolComponentContextMenu } from "../ToolComponentContextMenu"
+
+import { ToolAreaBody } from "./ToolAreaBody.tsx"
+import { ToolAreaContainer } from "./ToolAreaContainer.tsx"
 
 import "./ToolArea.scss"
 
@@ -18,13 +18,11 @@ export const ToolArea: FC = () => {
    * and component need to rerender the output
    */
   const isDeleted = useSelector(() => toolRunnerStore.getActiveTool().isDeleted)
-  const isBatchEnabled = useSelector(() => toolRunnerStore.getActiveTool().isBatchModeEnabled)
-  const batchInputKey = useSelector(() => toolRunnerStore.getActiveTool().batchModeInputKey)
-  const batchOutputKey = useSelector(() => toolRunnerStore.getActiveTool().batchModeOutputKey)
   const renderCounter = useSelector(() => toolRunnerStore.getActiveTool().renderCounter)
 
   /**
-   * These properties are readonly, meaning the value cannot be updated during showing the tool
+   * These properties are readonly, meaning the value will not be updated while showing the tool
+   * No need to use `useSelector`
    */
   const { layoutSetting, sessionId } = activeTool
   const { inputAreaDirection, outputAreaDirection } = layoutSetting
@@ -32,35 +30,14 @@ export const ToolArea: FC = () => {
   const inputFields = activeTool.getInputFields()
   const outputFields = activeTool.getOutputFields()
 
-  const batchInput = inputFields.find((input) => input.key === batchInputKey)
-  const batchOutput = outputFields.find((output) => output.key === batchOutputKey)
-
-  const batchInputs: ToolInput[] = batchInput
-    ? [{
-      key: batchInput.key,
-      label: batchInput.label,
-      component: "Code",
-      defaultValue: ""
-    }]
-    : []
-
-  const batchOutputs: ToolOutput[] = batchOutput
-    ? [{
-      key: batchOutput.key,
-      label: batchOutput.label,
-      component: "Code"
-    }]
-    : []
-
-  const computedInputs = isBatchEnabled ? batchInputs : inputFields
-  const computedOutputs = isBatchEnabled ? batchOutputs : outputFields
-
   return (
     <ToolAreaContainer>
+      <ToolComponentContextMenu />
+
       <ToolAreaBody
         toolSessionId={sessionId.concat(renderCounter.toString())}
-        inputs={computedInputs}
-        outputs={computedOutputs}
+        inputs={inputFields}
+        outputs={outputFields}
         inputLayoutDirection={inputAreaDirection}
         outputLayoutDirection={outputAreaDirection}
         readOnly={isDeleted}

@@ -1,1 +1,1 @@
-export { ToolDeleteButton } from "./ToolDeleteButton.js"
+export { ToolDeleteButton } from "./ToolDeleteButton.tsx"

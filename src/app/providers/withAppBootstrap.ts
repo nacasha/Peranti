@@ -1,7 +1,9 @@
+import { invoke } from "@tauri-apps/api/tauri"
 import { appWindow } from "@tauri-apps/api/window"
 import { useEffect } from "react"
 
-import { FileSystemManager } from "src/services/fileSystemManager"
+import { RustInvoke } from "src/constants/rust-invoke"
+import { FileService } from "src/services/fileService"
 import { toolStore } from "src/stores/toolStore"
 
 export const withAppBootstrap = (component: () => React.ReactNode) => () => {
@@ -29,7 +31,7 @@ export const withAppBootstrap = (component: () => React.ReactNode) => () => {
   })
 
   const getFile = async(filePath: string) => {
-    const result = await FileSystemManager.readFileAsText(filePath)
+    const result = await FileService.readFileAsText(filePath)
     console.log({ result })
   }
 
@@ -40,7 +42,7 @@ export const withAppBootstrap = (component: () => React.ReactNode) => () => {
       } else if (event.payload.type === "drop") {
         console.log("User dropped", event.payload.paths)
         if (event.payload.paths[0]) {
-          void getFile(event.payload.paths[0])
+          void RustInvoke.revealFileManager(event.payload.paths[0])
         }
       } else {
         console.log("File drop cancelled")

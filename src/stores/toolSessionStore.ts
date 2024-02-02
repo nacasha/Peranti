@@ -1,16 +1,16 @@
 import { makeAutoObservable, toJS } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
-import { StorageKeys } from "src/constants/storage-keys.js"
+import { StorageKeys } from "src/constants/storage-keys.ts"
 import { Tool } from "src/models/Tool"
-import { ToolStorageManager } from "src/services/toolStorageManager.js"
+import { ToolStorageManager } from "src/services/toolStorageManager.ts"
 import { type ToolConstructor } from "src/types/ToolConstructor"
-import { type ToolHistory } from "src/types/ToolHistory.js"
-import { type ToolSession } from "src/types/ToolSession.js"
+import { type ToolHistory } from "src/types/ToolHistory.ts"
+import { type ToolSession } from "src/types/ToolSession.ts"
 
-import { toolHistoryStore } from "./toolHistoryStore.js"
-import { toolRunnerStore } from "./toolRunnerStore.js"
-import { toolStore } from "./toolStore.js"
+import { toolHistoryStore } from "./toolHistoryStore.ts"
+import { toolRunnerStore } from "./toolRunnerStore.ts"
+import { toolStore } from "./toolStore.ts"
 
 class ToolSessionStore {
   /**
@@ -372,7 +372,7 @@ class ToolSessionStore {
    *
    * @param tool
    */
-  async closeSession(toolSession: ToolSession) {
+  async closeSession(toolSession: ToolSession, skipOpenAnotherSession: boolean = false) {
     const activeTool = toolRunnerStore.getActiveTool()
 
     /**
@@ -384,7 +384,7 @@ class ToolSessionStore {
      * If closed session is currently active tool, application will
      * open another running session based on closed session index
      */
-    if (activeTool.sessionId === toolSession.sessionId) {
+    if (!skipOpenAnotherSession && (activeTool.sessionId === toolSession.sessionId)) {
       const newSessionsOfTool = this.getRunningSessions(toolSession.toolId)
 
       /**
@@ -443,7 +443,7 @@ class ToolSessionStore {
    */
   closeAllSession() {
     this.sessions.forEach((session) => {
-      void this.closeSession(session)
+      void this.closeSession(session, true)
     })
 
     /**
@@ -470,7 +470,7 @@ class ToolSessionStore {
   async closeOtherSession(toolSession: ToolSession) {
     this.sessions.forEach((session) => {
       if (session.sessionId !== toolSession.sessionId) {
-        void this.closeSession(session)
+        void this.closeSession(session, true)
       }
     })
 
@@ -613,14 +613,12 @@ class ToolSessionStore {
       })
     }
 
-    console.log(toBeDeletedTool)
     if (toBeDeletedTool) {
       /**
        * Do nothing is tool already deleted
        */
       if (toBeDeletedTool.isDeleted) {
         void this.openLastActiveSession()
-
         return
       }
 
@@ -637,7 +635,6 @@ class ToolSessionStore {
       /**
        * If tool did not added to history, we can remove the entire data from storage
        */
-      console.log(isAddedToHistory)
       if (isAddedToHistory) {
         void toBeDeletedTool.markAsDeleted()
       } else {

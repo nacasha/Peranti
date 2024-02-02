@@ -1,9 +1,9 @@
 import { clsx } from "clsx"
 import { type FC } from "react"
 
-import { useSelector } from "src/hooks/useSelector.js"
-import { interfaceStore } from "src/stores/interfaceStore.js"
-import { toolRunnerStore } from "src/stores/toolRunnerStore.js"
+import { useSelector } from "src/hooks/useSelector.ts"
+import { interfaceStore } from "src/stores/interfaceStore.ts"
+import { toolRunnerStore } from "src/stores/toolRunnerStore.ts"
 
 interface ToolAreaContainerProps {
   children: React.ReactNode

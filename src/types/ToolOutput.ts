@@ -1,4 +1,4 @@
-import { type listOfOutputComponent } from "src/components/outputs"
+import { type toolOutputComponents } from "src/services/toolOutputComponents.ts"
 
 import { type OutputComponentProps } from "./OutputComponentProps.ts"
 
@@ -21,29 +21,29 @@ export type ToolOutput<K extends Record<string, string> = any> = {
   allowBatch?: boolean
 } & ({
   component: "Text"
-  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.Text>
+  props?: ExtractOutputComponentProps<typeof toolOutputComponents.Text.component>
 } | {
   component: "TextArea"
-  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.TextArea>
+  props?: ExtractOutputComponentProps<typeof toolOutputComponents.TextArea.component>
 } | {
   component: "GridStat"
-  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.GridStat>
+  props?: ExtractOutputComponentProps<typeof toolOutputComponents.GridStat.component>
 } | {
   component: "Diff"
-  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.Diff>
+  props?: ExtractOutputComponentProps<typeof toolOutputComponents.Diff.component>
 } | {
   component: "Image"
-  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.Image>
+  props?: ExtractOutputComponentProps<typeof toolOutputComponents.Image.component>
 } | {
   component: "File"
-  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.File>
+  props?: ExtractOutputComponentProps<typeof toolOutputComponents.File.component>
 } | {
   component: "Code"
-  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.Code>
+  props?: ExtractOutputComponentProps<typeof toolOutputComponents.Code.component>
 } | {
   component: "Markdown"
-  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.Markdown>
+  props?: ExtractOutputComponentProps<typeof toolOutputComponents.Markdown.component>
 } | {
   component: "IFrame"
-  props?: ExtractOutputComponentProps<typeof listOfOutputComponent.IFrame>
+  props?: ExtractOutputComponentProps<typeof toolOutputComponents.IFrame.component>
 })

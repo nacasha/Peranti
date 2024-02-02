@@ -52,6 +52,7 @@ module.exports = {
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/space-before-function-paren": ["error", "never"],
     "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-extraneous-class": "off",
     "import/no-unresolved": "error",
     "import/order": [
       "warn", {

@@ -5,8 +5,8 @@ import { ErrorBoundary } from "react-error-boundary"
 import { type ToolInput } from "src/types/ToolInput.ts"
 import { type ToolOutput } from "src/types/ToolOutput.ts"
 
-import { ToolAreaInput } from "./ToolAreaInput.js"
-import { ToolAreaOutput } from "./ToolAreaOutput.js"
+import { ToolAreaInput } from "./ToolAreaInput.tsx"
+import { ToolAreaOutput } from "./ToolAreaOutput.tsx"
 
 import "./ToolArea.scss"
 

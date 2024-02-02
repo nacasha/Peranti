@@ -7,7 +7,6 @@ import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolState } from "src/types/ToolState"
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class ToolStorageManager {
   /**
    * Retrieve toolState from storage

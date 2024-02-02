@@ -1,40 +1,40 @@
 import { makeAutoObservable } from "mobx"
 
-import { Files } from "src/constants/files.js"
-import { ToolType } from "src/enums/ToolType.js"
+import { Files } from "src/constants/files.ts"
+import { ToolType } from "src/enums/ToolType.ts"
 import { Tool } from "src/models/Tool"
-import { FileSystemManager } from "src/services/fileSystemManager.js"
-import base64EncodeDecodeTool from "src/tools/base64-encode-decode-tool.js"
-import base64ToFileTool from "src/tools/base64-to-file-tool.js"
+import { FileService } from "src/services/fileService.ts"
+import base64EncodeDecodeTool from "src/tools/base64-encode-decode-tool.ts"
+import base64ToFileTool from "src/tools/base64-to-file-tool.ts"
 import characterCounterTool from "src/tools/character-counter-tool.ts"
-import compareListTool from "src/tools/compare-list-tool.js"
-import cronReadableTool from "src/tools/cron-readable-tool.js"
-import dateToMillisecondsTool from "src/tools/date-to-milliseconds.js"
-import faviconGrabberTool from "src/tools/favicon-grabber-tool.js"
+import compareListTool from "src/tools/compare-list-tool.ts"
+import cronReadableTool from "src/tools/cron-readable-tool.ts"
+import dateToMillisecondsTool from "src/tools/date-to-milliseconds.ts"
+import faviconGrabberTool from "src/tools/favicon-grabber-tool.ts"
 import fileToBase64Tool from "src/tools/file-to-base-64-tool"
-import generateRandomStringTool from "src/tools/generate-random-string.js"
-import generateUuidTool from "src/tools/generate-uuid-tool.js"
-import hashTool from "src/tools/hash-tool.js"
-import jfsGetThTool from "src/tools/jfs-get-th-tool.js"
-import jsonCrackTool from "src/tools/json-crack-tool.js"
+import generateRandomStringTool from "src/tools/generate-random-string.ts"
+import generateUuidTool from "src/tools/generate-uuid-tool.ts"
+import hashTool from "src/tools/hash-tool.ts"
+import jfsGetThTool from "src/tools/jfs-get-th-tool.ts"
+import jsonCrackTool from "src/tools/json-crack-tool.ts"
 import jsonDiffTool from "src/tools/json-diff-tool"
-import jsonFormatter from "src/tools/json-formatter-tool.js"
+import jsonFormatter from "src/tools/json-formatter-tool.ts"
 import jsonataTool from "src/tools/jsonata-tool"
-import loremIpsumGeneratorTool from "src/tools/lorem-ipsum-generator-tool.js"
-import markdownParserTool from "src/tools/markdown-parser-tool.js"
+import loremIpsumGeneratorTool from "src/tools/lorem-ipsum-generator-tool.ts"
+import markdownParserTool from "src/tools/markdown-parser-tool.ts"
 import mathEvaluatorTool from "src/tools/math-evaluator-tool.ts"
-import millisecondsToDate from "src/tools/milliseconds-to-date-tool.js"
-import prefixSuffixLines from "src/tools/prefix-suffix-lines-tool.js"
-import removeDuplicateList from "src/tools/remove-duplicate-lines-tool.js"
-import sortList from "src/tools/sort-list-tool.js"
-import testPipelines from "src/tools/test-pipelines-tool.js"
-import textEditorTool from "src/tools/text-editor-tool.js"
-import textTransformTool from "src/tools/text-transform-tool.js"
-import uriEncodeDecodeTool from "src/tools/uri-encode-decode-tool.js"
+import millisecondsToDate from "src/tools/milliseconds-to-date-tool.ts"
+import prefixSuffixLines from "src/tools/prefix-suffix-lines-tool.ts"
+import removeDuplicateList from "src/tools/remove-duplicate-lines-tool.ts"
+import sortList from "src/tools/sort-list-tool.ts"
+import testPipelines from "src/tools/test-pipelines-tool.ts"
+import textEditorTool from "src/tools/text-editor-tool.ts"
+import textTransformTool from "src/tools/text-transform-tool.ts"
+import uriEncodeDecodeTool from "src/tools/uri-encode-decode-tool.ts"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolPreset } from "src/types/ToolPreset"
 
-import { toolSessionStore } from "./toolSessionStore.js"
+import { toolSessionStore } from "./toolSessionStore.ts"
 
 class ToolStore {
   /**
@@ -230,18 +230,18 @@ class ToolStore {
   }
 
   private async loadToolExtensions() {
-    await FileSystemManager.createExtensionsFolder()
+    await FileService.createExtensionsFolder()
 
     const extensions = []
-    const entries = await FileSystemManager.readExtensionsFolder()
+    const entries = await FileService.readExtensionsFolder()
 
     for (const entry of entries) {
       if (entry.children) {
         const files = Object.fromEntries(entry.children.map((children) => [children.name, children.path]))
 
-        const toolConstructorRaw = await FileSystemManager.readFileAsText(files[Files.ExtensionDefinition])
+        const toolConstructorRaw = await FileService.readFileAsText(files[Files.ExtensionDefinition])
         const toolConstructor: ToolConstructor = JSON.parse(toolConstructorRaw)
-        const realActionFilePath = await FileSystemManager.resolveFilePath(entry.path, toolConstructor.metadata.actionFile)
+        const realActionFilePath = await FileService.resolveFilePath(entry.path, toolConstructor.metadata.actionFile)
 
         toolConstructor.type = ToolType.Extension
         toolConstructor.metadata.actionFile = realActionFilePath

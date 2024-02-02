@@ -70,3 +70,9 @@ html, body {
   border-bottom: 0;
   background-color: var(--background-color-content);
 }
+
+.ContextMenuToolOutput {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}

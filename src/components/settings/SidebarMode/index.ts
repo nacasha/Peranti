@@ -1,1 +1,1 @@
-export { SidebarMode } from "./SidebarMode.js"
+export { SidebarMode } from "./SidebarMode.tsx"

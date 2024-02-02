@@ -1,1 +1,1 @@
-export { ToolBatchModeButton } from "./ToolBatchModeButton.js"
+export { ToolBatchModeButton } from "./ToolBatchModeButton.tsx"

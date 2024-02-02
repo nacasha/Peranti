@@ -390,7 +390,6 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
       this,
       {
         name: StorageKeys.ToolState.concat(this.sessionId),
-        debugMode: true,
         properties: [
           {
             key: "toolState",
@@ -599,6 +598,10 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
     }
   }
 
+  getInputValue(key: string) {
+    return this.inputValues[key]
+  }
+
   /**
    * Set output params value by key
    *
@@ -625,6 +628,10 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
     if (!this.isAutoRunAndFirstTime) {
       this.isOutputValuesModified = options.markAsModified
     }
+  }
+
+  getOutputValue(key: string) {
+    return this.outputValues[key]
   }
 
   /**
@@ -878,6 +885,7 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
     )
   }
 
+  @action
   forceRerender() {
     this.renderCounter += 1
   }

@@ -23,6 +23,9 @@ dependencies:
   '@cyntler/react-doc-viewer':
     specifier: ^1.14.1
     version: 1.14.1(@types/react@18.2.41)(react-dom@18.2.0)(react@18.2.0)
+  '@hexagon/base64':
+    specifier: ^1.1.28
+    version: 1.1.28
   '@nanostores/react':
     specifier: ^0.7.1
     version: 0.7.1(nanostores@0.9.5)(react@18.2.0)
@@ -71,6 +74,9 @@ dependencies:
   hash.js:
     specifier: ^1.1.7
     version: 1.1.7
+  js-base64:
+    specifier: ^3.7.6
+    version: 3.7.6
   jsonata:
     specifier: ^2.0.3
     version: 2.0.3
@@ -107,6 +113,9 @@ dependencies:
   react:
     specifier: ^18.2.0
     version: 18.2.0
+  react-contexify:
+    specifier: ^6.0.0
+    version: 6.0.0(react-dom@18.2.0)(react@18.2.0)
   react-cool-onclickoutside:
     specifier: ^1.7.0
     version: 1.7.0(react@18.2.0)
@@ -134,6 +143,9 @@ dependencies:
   simplebar-react:
     specifier: ^3.2.4
     version: 3.2.4(react@18.2.0)
+  tauri-plugin-clipboard-api:
+    specifier: ^0.5.5
+    version: 0.5.5
   tauri-plugin-context-menu:
     specifier: ^0.7.0
     version: 0.7.0
@@ -874,6 +886,10 @@ packages:
     resolution: {integrity: sha512-qQfo2mxH5yVom1kacMtZZJFVdW+E70mqHMJvVg6WTLo+VBuQJ4TojZlfWBjK0ve5BdEeNAVxOsl/nvNMpJOaJA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@hexagon/base64@1.1.28:
+    resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
+    dev: false
 
   /@humanwhocodes/config-array@0.11.13:
     resolution: {integrity: sha512-JSBDMiDKSzQVngfRjOdFXgFfklaXI4K9nLF49Auh21lmBWRLIK3+xTErTWD4KU54pb6coM6ESE7Awz/FNU3zgQ==}
@@ -1922,6 +1938,11 @@ packages:
 
   /classnames@2.5.1:
     resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
+    dev: false
+
+  /clsx@1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+    engines: {node: '>=6'}
     dev: false
 
   /clsx@2.0.0:
@@ -3476,6 +3497,10 @@ packages:
       set-function-name: 2.0.1
     dev: true
 
+  /js-base64@3.7.6:
+    resolution: {integrity: sha512-NPrWuHFxFUknr1KqJRDgUQPexQF0uIJWjeT+2KjEePhitQxQEx5EJBG1lVn5/hc8aLycTpXrDOgPQ6Zq+EDiTA==}
+    dev: false
+
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -4991,6 +5016,17 @@ packages:
       - ts-node
     dev: false
 
+  /react-contexify@6.0.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-jMhz6yZI81Jv3UDj7TXqCkhdkCFEEmvwGCPXsQuA2ZUC8EbCuVQ6Cy8FzKMXa0y454XTDClBN2YFvvmoFlrFkg==}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      clsx: 1.2.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
   /react-cool-onclickoutside@1.7.0(react@18.2.0):
     resolution: {integrity: sha512-HVZK2155Unee+enpoHKyYP2UdQK69thw90XAOUCjvJBcgRSgfRPgWWt/W1dYzoGp3+nleAa8SJxF1d4FMA4Qmw==}
     peerDependencies:
@@ -5662,6 +5698,14 @@ packages:
     dev: false
     optional: true
 
+  /tauri-plugin-clipboard-api@0.5.5:
+    resolution: {integrity: sha512-Uf8IV/UXItQ2HZF3+JueKWph2GI+EXH5h0ZMzsbgFvuoR1OeQxW88MsV2T8ur0XdAibC9AeZJY0ZD/+kYLQT4w==}
+    dependencies:
+      '@tauri-apps/api': 1.5.1
+      tslib: 2.5.0
+      zod: 3.22.4
+    dev: false
+
   /tauri-plugin-context-menu@0.7.0:
     resolution: {integrity: sha512-NtFyhP2lQrUqs2ZWxw5j75p0K/3+5xPAckKh8yvpn0Bjq6WpKpBRli5chmcP44ltUoHBfXl2yRnpU14G1G5ucg==}
     dependencies:
@@ -6058,6 +6102,10 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zod@3.22.4:
+    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+    dev: false
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}

@@ -8,10 +8,10 @@ interface TextAreaOutputProps extends OutputComponentProps {}
 
 export const TextAreaOutput: FC<TextAreaOutputProps> = (props) => {
   const id = useId()
-  const { value, label = "Output" } = props
+  const { value, label = "Output", onContextMenu } = props
 
   return (
-    <div className="TextAreaOutput">
+    <div className="TextAreaOutput" onContextMenu={onContextMenu}>
       <label htmlFor={id} className="InputOutputLabel">
         {label}
       </label>

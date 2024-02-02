@@ -8,7 +8,7 @@ import "./ToolBatchModeHeader.scss"
 
 export const ToolBatchModeHeader = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
-  const { isBatchModeEnabled: isBatchEnabled, batchModeOutputKey: batchOutputKey, batchModeInputKey: batchInputKey } = activeTool
+  const { isBatchModeEnabled, batchModeOutputKey, batchModeInputKey } = activeTool
 
   const isToolReadOnly = activeTool.isDeleted
   const inputFields = activeTool.getInputFields()
@@ -26,14 +26,14 @@ export const ToolBatchModeHeader = observer(() => {
   }
 
   return (
-    <div className={clsx("ToolBatchModeHeader", isBatchEnabled && "show")}>
+    <div className={clsx("ToolBatchModeHeader", isBatchModeEnabled && "show")}>
       <div className="ToolHeader-button-list">
         <SelectInput<any>
           options={allowedBatchInputFields.map((input) => ({
             label: input.label,
             value: input.key
           }))}
-          defaultValue={batchInputKey}
+          defaultValue={batchModeInputKey}
           onSubmit={onChangeInputKey}
           readOnly={isToolReadOnly}
         />
@@ -42,7 +42,7 @@ export const ToolBatchModeHeader = observer(() => {
             label: output.label,
             value: output.key
           }))}
-          defaultValue={batchOutputKey}
+          defaultValue={batchModeOutputKey}
           onSubmit={onChangeOutputKey}
           readOnly={isToolReadOnly}
         />

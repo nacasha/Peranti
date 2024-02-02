@@ -1,1 +1,1 @@
-export { ToolTabbar } from "./ToolTabbar.js"
+export { ToolTabbar } from "./ToolTabbar.tsx"

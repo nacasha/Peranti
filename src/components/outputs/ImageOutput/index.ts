@@ -1,1 +1,1 @@
-export { ImageOutput } from "./ImageOutput.js"
+export { ImageOutput } from "./ImageOutput.tsx"

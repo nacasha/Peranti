@@ -23,6 +23,11 @@ export interface InputComponentProps<T = string> {
   initialState?: unknown
 
   /**
+   * Indicates component is read only
+   */
+  readOnly?: boolean
+
+  /**
    * Event to capture state changes on component
    *
    * @param value
@@ -31,7 +36,7 @@ export interface InputComponentProps<T = string> {
   onStateChange?: (value: any) => void
 
   /**
-   * Indicates component is read only
+   * Event handler for context menu
    */
-  readOnly?: boolean
+  onContextMenu?: any
 }

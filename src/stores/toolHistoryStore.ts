@@ -2,13 +2,13 @@ import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
-import { StorageKeys } from "src/constants/storage-keys.js"
-import { type Tool } from "src/models/Tool.js"
-import { ToolStorageManager } from "src/services/toolStorageManager.js"
-import { type ToolHistory } from "src/types/ToolHistory.js"
+import { StorageKeys } from "src/constants/storage-keys.ts"
+import { type Tool } from "src/models/Tool.ts"
+import { ToolStorageManager } from "src/services/toolStorageManager.ts"
+import { type ToolHistory } from "src/types/ToolHistory.ts"
 
-import { toolRunnerStore } from "./toolRunnerStore.js"
-import { toolSessionStore } from "./toolSessionStore.js"
+import { toolRunnerStore } from "./toolRunnerStore.ts"
+import { toolSessionStore } from "./toolSessionStore.ts"
 
 class ToolHistoryStore {
   histories: ToolHistory[] = []

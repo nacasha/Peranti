@@ -1,6 +1,10 @@
+import { toJS } from "mobx"
 import { type FC } from "react"
+import { useContextMenu } from "react-contexify"
 
-import { listOfInputComponent } from "src/components/inputs"
+import { ContextMenuKeys } from "src/constants/context-menu-keys"
+import { useSelector } from "src/hooks/useSelector"
+import { toolInputComponents } from "src/services/toolInputComponents"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 import { type ToolInput } from "src/types/ToolInput"
@@ -19,20 +23,35 @@ interface ToolInputRendererProps {
 
 export const ToolInputRenderer: FC<ToolInputRendererProps> = (props) => {
   const { readOnly, toolInput } = props
-  const activeTool = toolRunnerStore.getActiveTool()
+  const { show } = useContextMenu()
 
+  const activeTool = toolRunnerStore.getActiveTool()
   const defaultValue = activeTool.inputValues[toolInput.key] ?? toolInput.defaultValue
   const initialState = activeTool.inputFieldsState[toolInput.key]
+  const isBatchModeEnabled = useSelector(() => activeTool.isBatchModeEnabled)
+  const batchModeInputKey = useSelector(() => activeTool.batchModeInputKey)
 
-  const onSubmit = (val: unknown) => {
+  const outputComponent = toolInputComponents[toolInput.component]
+  const Component: FC<InputComponentProps<any>> = outputComponent[isBatchModeEnabled ? "batchComponent" : "component"]
+
+  const handleSUbmit = (val: unknown) => {
     activeTool.setInputValue(toolInput.key, val)
   }
 
-  const onStateChange = (state: unknown) => {
+  const handleStateChange = (state: unknown) => {
     activeTool.setInputFieldState(toolInput.key, state)
   }
 
-  const Component: FC<InputComponentProps<any>> = listOfInputComponent[toolInput.component]
+  const handleContextMenu = (event: any) => {
+    show({
+      event,
+      id: ContextMenuKeys.ToolOutput,
+      props: {
+        toolInput: toJS(toolInput),
+        component: outputComponent
+      }
+    })
+  }
 
   /**
    * Only pass editor state props to some components that handle it,
@@ -41,17 +60,22 @@ export const ToolInputRenderer: FC<ToolInputRendererProps> = (props) => {
   const additionalProps: Record<string, any> = {}
   if (["Code"].includes(toolInput.component)) {
     additionalProps.initialState = initialState
-    additionalProps.onStateChange = onStateChange
+    additionalProps.onStateChange = handleStateChange
+  }
+
+  if (isBatchModeEnabled && batchModeInputKey !== toolInput.key) {
+    return
   }
 
   return (
     <Component
       {...toolInput.props}
-      label={toolInput.label}
       key={toolInput.key}
+      label={toolInput.label}
       defaultValue={defaultValue}
-      onSubmit={onSubmit}
       readOnly={readOnly}
+      onSubmit={handleSUbmit}
+      onContextMenu={handleContextMenu}
       {...additionalProps}
     />
   )

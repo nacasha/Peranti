@@ -26,6 +26,7 @@ const cronReadableTool: ToolConstructor<InputFields, OutputFields> = {
       label: "CRON Expression",
       component: "Text",
       defaultValue: "",
+      allowBatch: true,
       props: {
         autoFocus: true
       }
@@ -35,7 +36,8 @@ const cronReadableTool: ToolConstructor<InputFields, OutputFields> = {
     {
       key: "output",
       label: "Output",
-      component: "Text"
+      component: "Text",
+      allowBatch: true
     }
   ],
   action: (inputParams) => {

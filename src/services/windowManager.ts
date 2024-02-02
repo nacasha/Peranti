@@ -1,15 +1,23 @@
 import { appWindow } from "@tauri-apps/api/window"
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class windowManager {
+  /**
+   * Minimize app window
+   */
   static async minimize() {
     await appWindow.minimize()
   }
 
+  /**
+   * Toggle maximize app window
+   */
   static async toggleMaximize() {
     await appWindow.toggleMaximize()
   }
 
+  /**
+   * Close window
+   */
   static async close() {
     await appWindow.close()
   }

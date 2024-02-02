@@ -21,4 +21,9 @@ export interface OutputComponentProps<T = string> {
    * @returns
    */
   onStateChange?: (value: any) => void
+
+  /**
+   * Event handler for context menu
+   */
+  onContextMenu?: any
 }
