@@ -8,8 +8,8 @@ import { ToolType } from "src/enums/ToolType"
 import { ToolStorageManager } from "src/services/toolStorageManager"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
-import { type MetadataExtension } from "src/types/MetadataExtension"
 import { type ToolConstructor } from "src/types/ToolConstructor"
+import { type ToolExtensionMetadata } from "src/types/ToolExtensionMetadata"
 import { type ToolHistory } from "src/types/ToolHistory"
 import { type ToolInput } from "src/types/ToolInput"
 import { type ToolLayoutSetting } from "src/types/ToolLayoutSetting"
@@ -173,7 +173,7 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
   /**
    * Additional data of tool based on type
    */
-  readonly metadata?: MetadataExtension
+  readonly metadata?: ToolExtensionMetadata
 
   /**
    * Tool sessionId generator
@@ -293,7 +293,7 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
     } = params
 
     this.toolId = toolId
-    this.sessionId = toolId.concat("|", Tool.generateSessionId())
+    this.sessionId = toolId === "" ? "" : toolId.concat("|", Tool.generateSessionId())
     this.name = name
     this.action = action
     this.category = category

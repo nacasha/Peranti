@@ -6,7 +6,7 @@ type ExtractInputComponentProps<T> = T extends React.FC<infer P> ? Omit<P, keyof
 
 export type ToolInput<K extends Record<string, string> = any> = {
   /**
-   * Field name that will be used as key in map of input
+   * Input field key
    */
   key: Extract<keyof K, string>
 
@@ -21,7 +21,7 @@ export type ToolInput<K extends Record<string, string> = any> = {
   defaultValue: any
 
   /**
-   * Allow this field as batch operations
+   * Allow this field to have batch mode
    */
   allowBatch?: boolean
 

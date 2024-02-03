@@ -1,0 +1,58 @@
+.ActivityBarItem {
+  margin: 0 5px;
+  display: flex;
+  align-items: center;
+  border-radius: var(--border-radius);
+  padding: 5px;
+  height: var(--sidebar-item-height);
+  position: relative;
+
+  &::before {
+    content: "";
+    width: 2px;
+    height: 70%;
+    left: -1px;
+    background-color: var(--accent-color);
+    position: absolute;
+    opacity: 0;
+    transition: all var(--transition-speed);
+  }
+
+  &:hover {
+    background-color: var(--sidebar-item-background-color-hover);
+    cursor: pointer;
+  }
+
+  &.active {
+    background-color: var(--sidebar-item-background-color-active);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  img {
+    user-select: none;
+    display: flex;
+    align-items: center;
+    width: 21px;
+    margin: auto;
+    filter: var(--icon-color);
+  }
+
+  .tooltip {
+    display: none;
+    position: fixed;
+    margin-left: calc(var(--sidebar-width) - 3px);
+    padding: 2px 5px;
+    background-color: var(--background-color-main);
+    color: var(--text-color);
+    border-radius: 4px;
+    white-space: nowrap;
+    border: 1px solid var(--border-color);
+  }
+
+  &:hover .tooltip {
+    display: block;
+  }
+}

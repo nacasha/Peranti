@@ -5,7 +5,7 @@ import { invoke } from "@tauri-apps/api/tauri"
 import * as base64 from "js-base64"
 
 import { Folders } from "src/constants/folders"
-import { base64Only } from "src/utils/base64"
+import { removeBase64Header } from "src/utils/base64"
 
 export class FileService {
   /**
@@ -70,7 +70,7 @@ export class FileService {
     })
 
     if (filePath) {
-      await writeBinaryFile(filePath, base64.toUint8Array(base64Only(base64String)))
+      await writeBinaryFile(filePath, base64.toUint8Array(removeBase64Header(base64String)))
       await FileService.openPathInFileManager(filePath)
     }
   }

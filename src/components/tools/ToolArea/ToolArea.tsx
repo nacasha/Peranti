@@ -3,7 +3,7 @@ import { type FC } from "react"
 import { useSelector } from "src/hooks/useSelector.ts"
 import { toolRunnerStore } from "src/stores/toolRunnerStore.ts"
 
-import { ToolComponentContextMenu } from "../ToolComponentContextMenu"
+import { ToolContextMenu } from "../ToolContextMenu"
 
 import { ToolAreaBody } from "./ToolAreaBody.tsx"
 import { ToolAreaContainer } from "./ToolAreaContainer.tsx"
@@ -32,7 +32,7 @@ export const ToolArea: FC = () => {
 
   return (
     <ToolAreaContainer>
-      <ToolComponentContextMenu />
+      <ToolContextMenu />
 
       <ToolAreaBody
         toolSessionId={sessionId.concat(renderCounter.toString())}

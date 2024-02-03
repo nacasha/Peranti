@@ -6,7 +6,7 @@ type ExtractOutputComponentProps<T> = T extends React.FC<infer P> ? Omit<P, keyo
 
 export type ToolOutput<K extends Record<string, string> = any> = {
   /**
-   * Field name that will be used as key in output map to show the value
+   * Output field key
    */
   key: Extract<keyof K, string>
 
@@ -16,7 +16,7 @@ export type ToolOutput<K extends Record<string, string> = any> = {
   label: string
 
   /**
-   * Allow this field as batch operations
+   * Allow this field to have batch mode
    */
   allowBatch?: boolean
 } & ({

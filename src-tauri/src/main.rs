@@ -4,7 +4,7 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use tauri::Manager;
-use opener::{reveal, OpenError};
+use opener::reveal;
 use window_shadows::set_shadow;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command

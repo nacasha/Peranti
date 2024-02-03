@@ -10,7 +10,7 @@ export interface ToolLayoutSetting {
   direction?: "horizontal" | "vertical"
 
   /**
-   * Grid template used for tool, default is "1fr 1fr"
+   * Grid template for tool area, default is "1fr 1fr"
    */
   gridTemplate?: string
 

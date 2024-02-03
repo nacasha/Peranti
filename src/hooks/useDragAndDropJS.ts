@@ -24,7 +24,7 @@ export function useDragAndDropJS(options: Options = {}) {
    * @param event
    */
   const startDragging = (event: MouseEvent) => {
-    const root = document.querySelector(".AppRoot")
+    const root = document.querySelector<HTMLDivElement>(".AppRoot")
     if (draggableElementRef.current && draggableElementPlaceholderRef.current && root) {
       draggableElementPlaceholderRef.current.style.width = `${draggableElementRef.current.clientWidth + 1}px`
       draggableElementRef.current.style.position = "fixed"
@@ -40,6 +40,7 @@ export function useDragAndDropJS(options: Options = {}) {
       }
 
       root.append(draggableElementRef.current)
+      root.style.cursor = "move"
 
       if (!isDragging) {
         setIsDragging(true)
@@ -51,7 +52,8 @@ export function useDragAndDropJS(options: Options = {}) {
    * Stop dragging the element and return to original position
    */
   const stopDragging = () => {
-    if (draggableElementRef.current && draggableElementPlaceholderRef.current) {
+    const root = document.querySelector<HTMLDivElement>(".AppRoot")
+    if (draggableElementRef.current && draggableElementPlaceholderRef.current && root) {
       if (draggableElementPlaceholderRef.current.parentElement) {
         draggableElementPlaceholderRef.current.parentElement.append(draggableElementRef.current)
         draggableElementPlaceholderRef.current.style.width = "auto"
@@ -61,6 +63,8 @@ export function useDragAndDropJS(options: Options = {}) {
         draggableElementRef.current.style.transform = "none"
         draggableElementRef.current.style.cursor = "pointer"
         draggableElementRef.current.style.opacity = "1"
+
+        root.style.cursor = "initial"
 
         if (isDragging) {
           setIsDragging(false)

@@ -34,6 +34,11 @@ export class ToolComponent<T = any, B = any> {
    */
   readonly pasteFromFileMimes?: string[]
 
+  /**
+   * ToolComponent constructor
+   *
+   * @param options
+   */
   constructor(options: {
     component: T
     batchComponent?: B
