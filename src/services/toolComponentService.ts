@@ -1,3 +1,5 @@
+import { open } from "@tauri-apps/api/dialog"
+
 import { RunInput } from "src/components/inputs/ButtonInput"
 import { CheckboxInput } from "src/components/inputs/CheckboxInput"
 import { CodeInput } from "src/components/inputs/CodeInput"
@@ -16,6 +18,10 @@ import { MarkdownOutput } from "src/components/outputs/MarkdownOutput"
 import { TextAreaOutput } from "src/components/outputs/TextAreaOutput"
 import { TextOutput } from "src/components/outputs/TextOutput"
 import { ToolComponent } from "src/models/ToolComponent"
+import { convertCRLFtoLF } from "src/utils/convertCRLFtoLF"
+import { createFileFromUint32Array } from "src/utils/createFileFromUint32Array"
+
+import { FileService } from "./fileService.js"
 
 class ToolComponentService {
   /**
@@ -128,6 +134,26 @@ class ToolComponentService {
     const batchInputComponent = this.inputs[inputComponent.batchComponent as keyof typeof this.inputs]
 
     return isBatchComponent ? batchInputComponent : inputComponent
+  }
+
+  async readFileFromToolComponent(toolComponent: ToolComponent, filePath: string) {
+    const readFileAs = toolComponent.readFileAs
+
+    if (readFileAs === "text") {
+      const fileContent = await FileService.readFileAsText(filePath)
+      return convertCRLFtoLF(fileContent)
+    } else if (readFileAs === "file") {
+      const file = await FileService.readFileAsBinary(filePath)
+      return createFileFromUint32Array(file, filePath.replace(/^.*[\\/]/, ""))
+    }
+  }
+
+  async openFileAndReadFromToolComponent(toolComponent: ToolComponent) {
+    const selectedFilePath = await open()
+
+    if (selectedFilePath && !Array.isArray(selectedFilePath)) {
+      return await this.readFileFromToolComponent(toolComponent, selectedFilePath)
+    }
   }
 
   /**

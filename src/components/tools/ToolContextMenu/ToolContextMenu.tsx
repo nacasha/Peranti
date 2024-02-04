@@ -6,6 +6,7 @@ import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { type ToolComponent } from "src/models/ToolComponent"
 import { ClipboardService } from "src/services/clipboardService"
 import { FileService } from "src/services/fileService"
+import { toolComponentService } from "src/services/toolComponentService"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type ToolInput } from "src/types/ToolInput"
 import { type ToolOutput } from "src/types/ToolOutput"
@@ -81,15 +82,16 @@ export const ToolContextMenu: FC = () => {
     }
   }
 
-  const handleClickPickFile = (itemParams: ToolContextMenuItemParams) => {
+  const handleClickPickFile = async(itemParams: ToolContextMenuItemParams) => {
     const { toolInput, component } = itemParams.props ?? {}
 
     if (toolInput && component) {
-      void FileService.openAndReadFile()
-        .then((fileContent) => {
-          toolRunnerStore.getActiveTool().setInputValue(toolInput.key, fileContent)
-          toolRunnerStore.getActiveTool().forceRerender()
-        })
+      const fileContent = await toolComponentService.openFileAndReadFromToolComponent(component)
+
+      if (fileContent) {
+        toolRunnerStore.getActiveTool().setInputValue(toolInput.key, fileContent)
+        toolRunnerStore.getActiveTool().forceRerender()
+      }
     }
   }
 
@@ -114,7 +116,7 @@ export const ToolContextMenu: FC = () => {
       </Item>
       <Item
         id="pick-from-file"
-        onClick={handleClickPickFile}
+        onClick={(itemParams) => { void handleClickPickFile(itemParams) }}
         hidden={isHidePasteFromFile}
       >
         Pick File and Drop Here

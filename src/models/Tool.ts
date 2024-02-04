@@ -546,12 +546,20 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
     return this.inputFields
   }
 
+  /**
+   * Filter input fields with matching mimeType
+   *
+   * @param mimeType
+   * @returns
+   */
   getInputFieldsWithMime(mimeType: string): [Array<ToolInput<IF>>, boolean] {
+    const inputFields = this.getInputFields()
+
     /**
      * Filter normal operation input fields
      */
     let hasAllowBatch = false
-    const filteredInputFields = this.getInputFields().filter((inputField) => {
+    const filteredInputFields = inputFields.filter((inputField) => {
       if (inputField.allowBatch) {
         hasAllowBatch = true
       }
@@ -564,21 +572,24 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
     })
 
     /**
-     * No matching input fields with provided mimeType and
-     * has no fields with allowBatch enabled
+     * Return if tool has fields with matching mimeType
      */
-    if (filteredInputFields.length === 0 && !hasAllowBatch) {
-      return [[], false]
+    if (filteredInputFields.length > 0) {
+      return [filteredInputFields, false]
+    }
+
+    /**
+     * Tool has no input fields with matching mimeType and
+     * no fields with allowBatch enabled
+     */
+    if (!hasAllowBatch) {
+      return [[], hasAllowBatch]
     }
 
     /**
      * Check batch fields that match with the provided mimeType
      */
-    const filteredBatchInputFields = this.getInputFields().filter((inputField) => {
-      if (inputField.allowBatch) {
-        hasAllowBatch = true
-      }
-
+    const filteredBatchInputFields = inputFields.filter((inputField) => {
       const inputToCompare = toolComponentService.getInputComponent(inputField.component, true)
 
       return inputToCompare.readFileMimes?.some((mime) => {
