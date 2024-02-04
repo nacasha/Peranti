@@ -1,6 +1,7 @@
 import { type ComponentProps, type FC } from "react"
-import { Item, type ItemParams, Menu } from "react-contexify"
+import { Item, type ItemParams } from "react-contexify"
 
+import { ContextMenu } from "src/components/common/ContextMenu"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { type ToolComponent } from "src/models/ToolComponent"
 import { ClipboardService } from "src/services/clipboardService"
@@ -45,11 +46,12 @@ export const ToolContextMenu: FC = () => {
 
   const isHidePasteFromFile: ComponentProps<typeof Item>["hidden"] = ({ props }) => {
     const { component } = props as MenuParams
-    return !component.pasteFromFileMimes
+    return !component.readFileMimes
   }
 
   const handleClickSaveToFile = (itemParams: ToolContextMenuItemParams) => {
     const { component } = itemParams.props ?? {}
+
     if (component) {
       const { saveAs } = component
       const savedValue = getValue(itemParams)
@@ -92,8 +94,7 @@ export const ToolContextMenu: FC = () => {
   }
 
   return (
-    <Menu
-      theme="dark"
+    <ContextMenu
       animation=""
       id={ContextMenuKeys.ToolOutput}
     >
@@ -116,7 +117,7 @@ export const ToolContextMenu: FC = () => {
         onClick={handleClickPickFile}
         hidden={isHidePasteFromFile}
       >
-        Pick File And Paste
+        Pick File and Drop Here
       </Item>
       <Item
         id="save-to-file"
@@ -125,6 +126,6 @@ export const ToolContextMenu: FC = () => {
       >
         Save To File
       </Item>
-    </Menu>
+    </ContextMenu>
   )
 }

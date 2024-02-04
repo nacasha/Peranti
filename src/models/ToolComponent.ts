@@ -10,11 +10,6 @@ export class ToolComponent<T = any, B = any> {
   readonly batchComponent?: B
 
   /**
-   * Acceptable upload mime types
-   */
-  readonly mimes?: string[]
-
-  /**
    * Type of context when put into clipboard
    */
   readonly copyAs?: "text" | "file" | "image"
@@ -30,9 +25,14 @@ export class ToolComponent<T = any, B = any> {
   readonly pasteFrom?: "text"
 
   /**
-   * Acceptable cliboard content
+   * Acceptable upload mime types
    */
-  readonly pasteFromFileMimes?: string[]
+  readonly readFileMimes?: string[]
+
+  /**
+   * Type of context will be read when dropping files
+   */
+  readonly readFileAs?: "text" | "file"
 
   /**
    * ToolComponent constructor
@@ -42,18 +42,18 @@ export class ToolComponent<T = any, B = any> {
   constructor(options: {
     component: T
     batchComponent?: B
-    mimes?: string[]
     copyAs?: "text" | "file" | "image"
     saveAs?: "text" | "image"
     pasteFrom?: "text"
-    pasteFromFileMimes?: string[]
+    readFileMimes?: string[]
+    readFileAs?: "text" | "file"
   }) {
     this.component = options.component
     this.batchComponent = options.batchComponent
-    this.mimes = options.mimes
     this.copyAs = options.copyAs
     this.saveAs = options.saveAs
     this.pasteFrom = options.pasteFrom
-    this.pasteFromFileMimes = options.pasteFromFileMimes
+    this.readFileMimes = options.readFileMimes
+    this.readFileAs = options.readFileAs
   }
 }

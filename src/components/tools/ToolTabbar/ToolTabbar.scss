@@ -88,7 +88,7 @@
   }
 
   &:hover {
-    background-color: var(--button-hover-color);
+    background-color: var(--button-background-color-hover);
   }
 }
 
@@ -97,5 +97,9 @@
 
   .simplebar-content {
     display: flex;
+
+    .menu-trigger {
+      display: flex;
+    }
   }
 }

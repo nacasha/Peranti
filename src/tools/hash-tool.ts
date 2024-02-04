@@ -4,6 +4,7 @@ import hashMd5 from "md5"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { type ToolConstructor } from "src/types/ToolConstructor"
+import { generateRandomString, stringEntries } from "src/utils/generateRandomString"
 
 interface InputFields {
   input: InputFieldsType.Text
@@ -61,6 +62,13 @@ const hashTool: ToolConstructor<InputFields, OutputFields> = {
       component: "Text",
       allowBatch: true
     }
+  ],
+  samples: [
+    { input: "admin" },
+    { input: "admin12345" },
+    { input: "password" },
+    { input: "string-with-symbols" },
+    () => ({ input: "random-" + generateRandomString(10, stringEntries.smallAz) })
   ],
   action: (inputParams) => {
     const { input } = inputParams

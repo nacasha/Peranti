@@ -3,6 +3,7 @@ import BackspaceFill from "src/assets/icons/backspace-fill.svg"
 import Box from "src/assets/icons/box.svg"
 import Clean from "src/assets/icons/clean.svg"
 import Close from "src/assets/icons/close.svg"
+import Documents from "src/assets/icons/documents.svg"
 import Download from "src/assets/icons/download.svg"
 import Gear from "src/assets/icons/gear.svg"
 import Hash from "src/assets/icons/hash.svg"
@@ -28,6 +29,7 @@ import Untrash from "src/assets/icons/untrash.svg"
 
 export const Icons = {
   Back,
+  Documents,
   Trash,
   Untrash,
   BackspaceFill,

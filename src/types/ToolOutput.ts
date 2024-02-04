@@ -1,8 +1,11 @@
-import { type toolOutputComponents } from "src/services/toolOutputComponents.ts"
+import { type ToolComponent } from "src/models/ToolComponent.ts"
+import { type toolComponentService } from "src/services/toolComponentService.ts"
 
 import { type OutputComponentProps } from "./OutputComponentProps.ts"
 
-type ExtractOutputComponentProps<T> = T extends React.FC<infer P> ? Omit<P, keyof OutputComponentProps> : never
+type ExtractOutputComponentProps<T> = T extends ToolComponent<React.FC<infer P>>
+  ? Omit<P, keyof OutputComponentProps>
+  : never
 
 export type ToolOutput<K extends Record<string, string> = any> = {
   /**
@@ -21,29 +24,29 @@ export type ToolOutput<K extends Record<string, string> = any> = {
   allowBatch?: boolean
 } & ({
   component: "Text"
-  props?: ExtractOutputComponentProps<typeof toolOutputComponents.Text.component>
+  props?: ExtractOutputComponentProps<typeof toolComponentService.outputs.Text>
 } | {
   component: "TextArea"
-  props?: ExtractOutputComponentProps<typeof toolOutputComponents.TextArea.component>
+  props?: ExtractOutputComponentProps<typeof toolComponentService.outputs.TextArea>
 } | {
   component: "GridStat"
-  props?: ExtractOutputComponentProps<typeof toolOutputComponents.GridStat.component>
+  props?: ExtractOutputComponentProps<typeof toolComponentService.outputs.GridStat>
 } | {
   component: "Diff"
-  props?: ExtractOutputComponentProps<typeof toolOutputComponents.Diff.component>
+  props?: ExtractOutputComponentProps<typeof toolComponentService.outputs.Diff>
 } | {
   component: "Image"
-  props?: ExtractOutputComponentProps<typeof toolOutputComponents.Image.component>
+  props?: ExtractOutputComponentProps<typeof toolComponentService.outputs.Image>
 } | {
   component: "File"
-  props?: ExtractOutputComponentProps<typeof toolOutputComponents.File.component>
+  props?: ExtractOutputComponentProps<typeof toolComponentService.outputs.File>
 } | {
   component: "Code"
-  props?: ExtractOutputComponentProps<typeof toolOutputComponents.Code.component>
+  props?: ExtractOutputComponentProps<typeof toolComponentService.outputs.Code>
 } | {
   component: "Markdown"
-  props?: ExtractOutputComponentProps<typeof toolOutputComponents.Markdown.component>
+  props?: ExtractOutputComponentProps<typeof toolComponentService.outputs.Markdown>
 } | {
   component: "IFrame"
-  props?: ExtractOutputComponentProps<typeof toolOutputComponents.IFrame.component>
+  props?: ExtractOutputComponentProps<typeof toolComponentService.outputs.IFrame>
 })

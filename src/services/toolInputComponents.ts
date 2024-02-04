@@ -9,42 +9,69 @@ import { TextInput } from "src/components/inputs/TextInput"
 import { ToolComponent } from "src/models/ToolComponent"
 
 export const toolInputComponents = {
+  /**
+   * Checkbox input
+   */
   Checkbox: new ToolComponent({
     component: CheckboxInput
   }),
 
+  /**
+   * Basic Text area input
+   */
   TextArea: new ToolComponent({
     component: TextAreaInput,
     copyAs: "text",
-    pasteFromFileMimes: ["txt"]
+    readFileMimes: ["text/*", "application/json"],
+    readFileAs: "text"
   }),
 
+  /**
+   * Single line text input
+   */
   Text: new ToolComponent({
     component: TextInput,
-    batchComponent: CodeInput,
-    copyAs: "text",
-    pasteFromFileMimes: ["txt"]
+    batchComponent: "Code",
+    copyAs: "text"
   }),
 
+  /**
+   * Select option input
+   */
   Select: new ToolComponent({
     component: SelectInput
   }),
 
+  /**
+   * Switch true and false input
+   */
   Switch: new ToolComponent({
     component: SwitchInput
   }),
 
+  /**
+   * Button to run active tool manually
+   */
   Run: new ToolComponent({
     component: RunInput
   }),
 
+  /**
+   * File input
+   */
   File: new ToolComponent({
-    component: FileInput
+    component: FileInput,
+    readFileMimes: ["*"],
+    readFileAs: "file"
   }),
 
+  /**
+   * Code editor input
+   */
   Code: new ToolComponent({
     component: CodeInput,
     copyAs: "text",
-    pasteFromFileMimes: ["txt"]
+    readFileMimes: ["text/*", "application/json"],
+    readFileAs: "text"
   })
 }

@@ -1,8 +1,11 @@
-import { type toolInputComponents } from "src/services/toolInputComponents.ts"
+import { type ToolComponent } from "src/models/ToolComponent.ts"
+import { type toolComponentService } from "src/services/toolComponentService.ts"
 
 import { type InputComponentProps } from "./InputComponentProps.ts"
 
-type ExtractInputComponentProps<T> = T extends React.FC<infer P> ? Omit<P, keyof InputComponentProps> : never
+type ExtractInputComponentProps<T> = T extends ToolComponent<React.FC<infer P>>
+  ? Omit<P, keyof InputComponentProps>
+  : never
 
 export type ToolInput<K extends Record<string, string> = any> = {
   /**
@@ -31,26 +34,26 @@ export type ToolInput<K extends Record<string, string> = any> = {
   skipValidateHasValue?: boolean
 } & ({
   component: "Text"
-  props?: ExtractInputComponentProps<typeof toolInputComponents.Text.component>
+  props?: ExtractInputComponentProps<typeof toolComponentService.inputs.Text>
 } | {
   component: "TextArea"
-  props?: ExtractInputComponentProps<typeof toolInputComponents.TextArea.component>
+  props?: ExtractInputComponentProps<typeof toolComponentService.inputs.TextArea>
 } | {
   component: "Switch"
-  props?: ExtractInputComponentProps<typeof toolInputComponents.Switch.component>
+  props?: ExtractInputComponentProps<typeof toolComponentService.inputs.Switch>
 } | {
   component: "Run"
-  props?: ExtractInputComponentProps<typeof toolInputComponents.Run.component>
+  props?: ExtractInputComponentProps<typeof toolComponentService.inputs.Run>
 } | {
   component: "Checkbox"
-  props?: ExtractInputComponentProps<typeof toolInputComponents.Checkbox.component>
+  props?: ExtractInputComponentProps<typeof toolComponentService.inputs.Checkbox>
 } | {
   component: "Select"
-  props?: ExtractInputComponentProps<typeof toolInputComponents.Select.component>
+  props?: ExtractInputComponentProps<typeof toolComponentService.inputs.Select>
 } | {
   component: "File"
-  props?: ExtractInputComponentProps<typeof toolInputComponents.File.component>
+  props?: ExtractInputComponentProps<typeof toolComponentService.inputs.File>
 } | {
   component: "Code"
-  props?: ExtractInputComponentProps<typeof toolInputComponents.Code.component>
+  props?: ExtractInputComponentProps<typeof toolComponentService.inputs.Code>
 })

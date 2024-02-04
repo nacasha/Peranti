@@ -40,6 +40,12 @@ const cronReadableTool: ToolConstructor<InputFields, OutputFields> = {
       allowBatch: true
     }
   ],
+  samples: [
+    { input: "* * * * * *" },
+    { input: "* * * * *" },
+    { input: "0 0/30 * * * *" },
+    { input: "0 0 * * * *" }
+  ],
   action: (inputParams) => {
     const { input } = inputParams
     if (input.trim().length === 0) {
@@ -50,7 +56,7 @@ const cronReadableTool: ToolConstructor<InputFields, OutputFields> = {
 
     const outputLines = inputLines.map((line) => {
       try {
-        return cronstrue.toString(line, { locale: "id" })
+        return cronstrue.toString(line)
       } catch {
         return "Invalid CRON Format"
       }

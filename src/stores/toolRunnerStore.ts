@@ -101,6 +101,26 @@ class ToolRunnerStore {
     activeTool.resetInputAndOutputValues()
     activeTool.forceRerender()
   }
+
+  fillInputValuesWithSample() {
+    const activeTool = this.getActiveTool()
+    const { samples } = activeTool
+
+    if (samples.length > 0) {
+      const sampleIndex = activeTool.sampleIndex
+      const sample = samples[sampleIndex]
+
+      if (typeof sample === "function") {
+        activeTool.setInputValues(sample())
+      } else {
+        activeTool.setInputValues(sample)
+      }
+
+      const newSampleIndex = sampleIndex + 1
+      activeTool.setSampleIndex(newSampleIndex > (samples.length - 1) ? 0 : newSampleIndex)
+      activeTool.forceRerender()
+    }
+  }
 }
 
 export const toolRunnerStore = new ToolRunnerStore()

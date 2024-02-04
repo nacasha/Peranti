@@ -1,10 +1,12 @@
 import { Command } from "@tauri-apps/api/shell"
 import fastDeepEqual from "fast-deep-equal"
+import mimeMatch from "mime-match"
 import { observable, action, makeObservable, toJS } from "mobx"
 import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, pausePersisting, startPersisting, stopPersisting } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys"
 import { ToolType } from "src/enums/ToolType"
+import { toolComponentService } from "src/services/toolComponentService"
 import { ToolStorageManager } from "src/services/toolStorageManager"
 import { toolSessionStore } from "src/stores/toolSessionStore"
 import { toolStore } from "src/stores/toolStore"
@@ -175,13 +177,26 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
    */
   readonly metadata?: ToolExtensionMetadata
 
+  readonly samples: Array<IF | (() => IF)> = []
+
+  @observable sampleIndex: number = 0
+
+  @action
+  setSampleIndex(index: number) {
+    this.sampleIndex = index
+  }
+
+  getHasSamples() {
+    return this.samples.length > 0
+  }
+
   /**
    * Tool sessionId generator
    *
    * @returns
    */
-  static generateSessionId() {
-    return generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm")
+  static generateSessionId(toolId: string) {
+    return toolId.concat(generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm"))
   }
 
   /**
@@ -261,7 +276,7 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
     /**
      * Base tool constructor
      */
-    params: ToolConstructor<IF, OF>,
+    toolConstructor: ToolConstructor<IF, OF>,
 
     /**
      * Additional options
@@ -278,31 +293,18 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
       disablePersistence?: boolean
     } = {}
   ) {
-    const {
-      action,
-      category,
-      toolId,
-      inputFields,
-      outputFields,
-      name,
-      metadata,
-      pipelines = [],
-      autoRun = true,
-      layoutSetting = {},
-      type = ToolType.Tool
-    } = params
-
-    this.toolId = toolId
-    this.sessionId = toolId === "" ? "" : toolId.concat("|", Tool.generateSessionId())
-    this.name = name
-    this.action = action
-    this.category = category
-    this.inputFields = inputFields
-    this.outputFields = outputFields
-    this.pipelines = pipelines
-    this.autoRun = autoRun
-    this.type = type
-    this.metadata = metadata
+    this.toolId = toolConstructor.toolId
+    this.sessionId = toolConstructor.toolId === "" ? "" : Tool.generateSessionId(toolConstructor.toolId)
+    this.name = toolConstructor.name
+    this.action = toolConstructor.action
+    this.category = toolConstructor.category
+    this.inputFields = toolConstructor.inputFields
+    this.outputFields = toolConstructor.outputFields
+    this.pipelines = toolConstructor.pipelines ?? []
+    this.autoRun = toolConstructor.autoRun ?? true
+    this.type = toolConstructor.type ?? ToolType.Tool
+    this.metadata = toolConstructor.metadata
+    this.samples = toolConstructor.samples ?? []
 
     if (this.autoRun) {
       this.isAutoRunAndFirstTime = true
@@ -317,7 +319,7 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
       gridTemplate: "1fr 1fr",
       inputAreaDirection: "vertical",
       outputAreaDirection: "vertical",
-      ...layoutSetting
+      ...toolConstructor.layoutSetting
     }
 
     /**
@@ -542,6 +544,49 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
       return this.inputFields(this.inputValues)
     }
     return this.inputFields
+  }
+
+  getInputFieldsWithMime(mimeType: string): [Array<ToolInput<IF>>, boolean] {
+    /**
+     * Filter normal operation input fields
+     */
+    let hasAllowBatch = false
+    const filteredInputFields = this.getInputFields().filter((inputField) => {
+      if (inputField.allowBatch) {
+        hasAllowBatch = true
+      }
+
+      const inputToCompare = toolComponentService.getInputComponent(inputField.component)
+
+      return inputToCompare.readFileMimes?.some((mime) => {
+        return mimeMatch(mimeType, mime)
+      })
+    })
+
+    /**
+     * No matching input fields with provided mimeType and
+     * has no fields with allowBatch enabled
+     */
+    if (filteredInputFields.length === 0 && !hasAllowBatch) {
+      return [[], false]
+    }
+
+    /**
+     * Check batch fields that match with the provided mimeType
+     */
+    const filteredBatchInputFields = this.getInputFields().filter((inputField) => {
+      if (inputField.allowBatch) {
+        hasAllowBatch = true
+      }
+
+      const inputToCompare = toolComponentService.getInputComponent(inputField.component, true)
+
+      return inputToCompare.readFileMimes?.some((mime) => {
+        return mimeMatch(mimeType, mime)
+      })
+    })
+
+    return [filteredBatchInputFields, true]
   }
 
   /**

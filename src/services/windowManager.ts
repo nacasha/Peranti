@@ -21,4 +21,8 @@ export class windowManager {
   static async close() {
     await appWindow.close()
   }
+
+  static async setFocus() {
+    await appWindow.setFocus()
+  }
 }

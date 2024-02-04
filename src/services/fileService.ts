@@ -1,5 +1,5 @@
 import { save, open } from "@tauri-apps/api/dialog"
-import { BaseDirectory, createDir, exists, readDir, readTextFile, writeBinaryFile } from "@tauri-apps/api/fs"
+import { BaseDirectory, createDir, exists, readBinaryFile, readDir, readTextFile, writeBinaryFile } from "@tauri-apps/api/fs"
 import { appDataDir, resolve } from "@tauri-apps/api/path"
 import { invoke } from "@tauri-apps/api/tauri"
 import * as base64 from "js-base64"
@@ -44,6 +44,10 @@ export class FileService {
    */
   static async readFileAsText(filePath: string) {
     return await readTextFile(filePath)
+  }
+
+  static async readFileAsBinary(filePath: string) {
+    return await readBinaryFile(filePath)
   }
 
   /**

@@ -123,6 +123,6 @@ $border-radius: 20px;
 
 .AppRoot.dark {
   .Switch .switch:not(:checked) {
-    background-color: var(--button-color);
+    background-color: var(--button-background-color);
   }
 }

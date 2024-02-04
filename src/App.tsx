@@ -1,16 +1,17 @@
 import clsx from "clsx"
 
-import { ActivityBar } from "src/components/activity-bar/ActivityBar"
-import { AppRoute, AppRouteListener } from "src/components/app/AppRoute"
-import { AppStatusbar } from "src/components/app/AppStatusbar"
-import { AppTitlebar } from "src/components/app/AppTitlebar"
-import { PrimarySidebar } from "src/components/sidebar/PrimarySidebar/PrimarySidebar.tsx"
-import { WindowResizeEventListener } from "src/components/window/WindowResizeEventListener"
-import { WindowSizeListener } from "src/components/window/WindowSizeListener"
-import { useSelector } from "src/hooks/useSelector.ts"
-import { withProviders } from "src/providers/index.ts"
-import { interfaceStore } from "src/stores/interfaceStore.ts"
-import "src/styles/root.scss"
+import { ActivityBar } from "./components/activity-bar/ActivityBar"
+import { AppRoute, AppRouteListener } from "./components/app/AppRoute"
+import { AppStatusbar } from "./components/app/AppStatusbar"
+import { AppTitlebar } from "./components/app/AppTitlebar"
+import { FileDropArea } from "./components/filedrop/FileDropArea"
+import { PrimarySidebar } from "./components/sidebar/PrimarySidebar"
+import { WindowResizeEventListener } from "./components/window/WindowResizeEventListener"
+import { WindowSizeListener } from "./components/window/WindowSizeListener"
+import { useSelector } from "./hooks/useSelector.ts"
+import { withProviders } from "./providers/index.ts"
+import { interfaceStore } from "./stores/interfaceStore.ts"
+import "./styles/root.scss"
 
 /**
  * App
@@ -26,6 +27,8 @@ export const AppMain = () => {
 
       <WindowResizeEventListener />
       <WindowSizeListener />
+
+      <FileDropArea />
 
       <AppTitlebar />
       <div className="AppContainer">

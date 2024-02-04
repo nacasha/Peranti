@@ -15,8 +15,8 @@ import fileToBase64Tool from "src/tools/file-to-base-64-tool"
 import generateRandomStringTool from "src/tools/generate-random-string.ts"
 import generateUuidTool from "src/tools/generate-uuid-tool.ts"
 import hashTool from "src/tools/hash-tool.ts"
-import jfsGetThTool from "src/tools/jfs-get-th-tool.ts"
-import jsonCrackTool from "src/tools/json-crack-tool.ts"
+// import jfsGetThTool from "src/tools/jfs-get-th-tool.ts"
+// import jsonCrackTool from "src/tools/json-crack-tool.ts"
 import jsonDiffTool from "src/tools/json-diff-tool"
 import jsonFormatter from "src/tools/json-formatter-tool.ts"
 import jsonataTool from "src/tools/jsonata-tool"
@@ -70,16 +70,16 @@ class ToolStore {
         prefix: "'",
         suffix: "',"
       }
-    },
-    {
-      toolId: "jsonata",
-      presetId: "jsonata-get-rs-outstanding",
-      name: "Get RS Outstanding",
-      category: "JFS",
-      inputValues: {
-        expression: "$.data.{\n\t\"loanApplicationId\": loanApplicationId,\n\t\"outstanding\": $sum(repaymentSchedule.amountDetail.(expected - paid))\n}"
-      }
     }
+    // {
+    //   toolId: "jsonata",
+    //   presetId: "jsonata-get-rs-outstanding",
+    //   name: "Get RS Outstanding",
+    //   category: "JFS",
+    //   inputValues: {
+    //     expression: "$.data.{\n\t\"loanApplicationId\": loanApplicationId,\n\t\"outstanding\": $sum(repaymentSchedule.amountDetail.(expected - paid))\n}"
+    //   }
+    // }
   ]
 
   /**
@@ -109,10 +109,8 @@ class ToolStore {
     [jsonataTool.toolId]: jsonataTool,
     [fileToBase64Tool.toolId]: fileToBase64Tool,
     [base64ToFileTool.toolId]: base64ToFileTool,
-    [jfsGetThTool.toolId]: jfsGetThTool,
     [markdownParserTool.toolId]: markdownParserTool,
-    [dateToMillisecondsTool.toolId]: dateToMillisecondsTool,
-    [jsonCrackTool.toolId]: jsonCrackTool
+    [dateToMillisecondsTool.toolId]: dateToMillisecondsTool
   }
 
   /**

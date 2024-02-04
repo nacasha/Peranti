@@ -1,0 +1,22 @@
+.FileDropArea {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,0.7);
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  flex-direction: column;
+  border-radius: var(--border-radius);
+}
+
+.FileDropArea-body {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+}
+
+.FileDropArea-text {
+  font-size: 30px;
+}

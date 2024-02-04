@@ -4,7 +4,7 @@ import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { useSelector } from "src/hooks/useSelector"
-import { toolInputComponents } from "src/services/toolInputComponents"
+import { toolComponentService } from "src/services/toolComponentService"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 import { type ToolInput } from "src/types/ToolInput"
@@ -31,8 +31,8 @@ export const ToolInputRenderer: FC<ToolInputRendererProps> = (props) => {
   const isBatchModeEnabled = useSelector(() => activeTool.isBatchModeEnabled)
   const batchModeInputKey = useSelector(() => activeTool.batchModeInputKey)
 
-  const outputComponent = toolInputComponents[toolInput.component]
-  const Component: FC<InputComponentProps<any>> = outputComponent[isBatchModeEnabled ? "batchComponent" : "component"]
+  const inputComponent = toolComponentService.getInputComponent(toolInput.component, isBatchModeEnabled)
+  const Component: FC<InputComponentProps<any>> = inputComponent.component
 
   const handleSUbmit = (val: unknown) => {
     activeTool.setInputValue(toolInput.key, val)
@@ -43,18 +43,22 @@ export const ToolInputRenderer: FC<ToolInputRendererProps> = (props) => {
   }
 
   const handleContextMenu = (event: any) => {
+    if (activeTool.isDeleted) {
+      return
+    }
+
     show({
       event,
       id: ContextMenuKeys.ToolOutput,
       props: {
         toolInput: toJS(toolInput),
-        component: outputComponent
+        component: inputComponent
       }
     })
   }
 
   /**
-   * Only pass editor state props to some components that handle it,
+   * Only pass editor state props to selected components that handle it,
    * This is needed to suppress `Unknown event handler property` warning on console
    */
   const additionalProps: Record<string, any> = {}

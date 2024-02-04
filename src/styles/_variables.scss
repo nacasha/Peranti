@@ -19,7 +19,7 @@
 
   // Tool
   --tool-header-height: 45px;
-  --tool-tabbar-height: 35px;
+  --tool-tabbar-height: 40px;
 
   // Animations
   --transition-speed: 0s;
@@ -39,6 +39,17 @@
     width: 7px;
     height: 7px;
   }
+
+  // Plugins
+  --contexify-menu-shadow: none;
+  --contexify-menu-minWidth: 250px;
+  --contexify-menu-padding: 5px;
+  --contexify-itemContent-padding: 6px 10px;
+  --contexify-menu-radius: var(--border-radius);
+
+  .contexify {
+    border: 1px solid var(--border-color);
+  }
 }
 
 .AppRoot.light {
@@ -48,9 +59,12 @@
   --icon-color: invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%);
 
   // Button
-  --button-color: linear-gradient(0deg, #f7f7f7 0%, #ffffff 100%);
-  --button-hover-color: #efefef;
-  --button-active-color: #ececec;
+  --button-background-color: linear-gradient(0deg, #f7f7f7 0%, #ffffff 100%);
+  --button-background-color-hover: #efefef;
+  --button-background-color-active: #ececec;
+  --button-border-color: #cbcccd;
+  --button-border-color-hover: #cbcccd;
+  --button-border-color-active: #cbcccd;
 
   // App Content
   --background-color-main: #ffffff;
@@ -68,6 +82,7 @@
   --input-output-background-color: #ffffff;
   --input-output-border-color: var(--border-color);
   --input-output-border-color-hover: color-mix(in srgb, var(--border-color), var(--opposite-color) 50%);
+  --input-output-border-color-active: var(--input-output-border-color-hover);
 
   // Tool component styles
   --tool-header-background-color: #ffffff;
@@ -113,9 +128,12 @@
   --icon-color: invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%);
 
   // Button
-  --button-color: #3c3c3c;
-  --button-hover-color: #26282a;
-  --button-active-color: #1a1c1e;
+  --button-background-color: #262626;
+  --button-background-color-hover: #26282a;
+  --button-background-color-active: #1a1c1e;
+  --button-border-color: #3e3e3e;
+  --button-border-color-hover: #3e3e3e;
+  --button-border-color-active: #3e3e3e;
 
   // App Content
   --background-color-main: #1a1b1d;
@@ -133,6 +151,7 @@
   --input-output-background-color: #1e1e1e;
   --input-output-border-color: var(--border-color);
   --input-output-border-color-hover: color-mix(in srgb, var(--border-color), var(--opposite-color) 7%);
+  --input-output-border-color-active: var(--input-output-border-color-hover);
 
   // Tool component styles
   --tool-header-background-color: #181818;

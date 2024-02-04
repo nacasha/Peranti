@@ -57,6 +57,11 @@ export interface ToolConstructor<IF extends Record<string, any> = any, OF extend
   type?: ToolType
 
   /**
+   * List of sample for tool
+   */
+  samples?: Array<IF | (() => IF)>
+
+  /**
    * Additional data for tool based on tool type
    */
   metadata?: any

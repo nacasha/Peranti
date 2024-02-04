@@ -1,3 +1,4 @@
+import { observer } from "mobx-react"
 import { type FC } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
@@ -10,7 +11,7 @@ import { ToolSidebarItem } from "../ToolSidebarItem"
 
 import "./ClosedEditorSidebar.scss"
 
-export const ClosedEditorSidebar: FC = () => {
+export const ClosedEditorSidebar: FC = observer(() => {
   const activeSessionId = useSelector(() => toolRunnerStore.getActiveTool().sessionId)
   const closedEditorList = useSelector(() => toolHistoryStore.histories)
 
@@ -42,4 +43,4 @@ export const ClosedEditorSidebar: FC = () => {
       </div>
     </div>
   )
-}
+})

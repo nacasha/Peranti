@@ -34,5 +34,6 @@
 
   &:focus-within {
     border: 1px solid var(--accent-color);
+    border-color: var(--input-output-border-color-active);
   }
 }

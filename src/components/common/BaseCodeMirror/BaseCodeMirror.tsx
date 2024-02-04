@@ -2,7 +2,7 @@ import { jsonLanguage } from "@codemirror/lang-json"
 import { markdownLanguage } from "@codemirror/lang-markdown"
 import { githubLight } from "@uiw/codemirror-theme-github"
 import { monokaiDimmed } from "@uiw/codemirror-theme-monokai-dimmed"
-import CodeMirror, { EditorView, type ReactCodeMirrorRef, type ReactCodeMirrorProps, type ViewUpdate } from "@uiw/react-codemirror"
+import CodeMirror, { EditorView, type ReactCodeMirrorRef, type ReactCodeMirrorProps, type ViewUpdate, EditorSelection } from "@uiw/react-codemirror"
 import { useRef, type FC, useEffect, useState } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
@@ -36,13 +36,14 @@ export const BaseCodeMirror: FC<Props> = (props) => {
     onChange,
     onStateChange,
     initialStateCodeMirror,
+    value,
     ...codeMirrorProps
   } = props
 
   const isDarkMode = useSelector(() => interfaceStore.isThemeDarkMode)
   const textAreaWordWrapEnabled = useSelector(() => interfaceStore.textAreaWordWrap)
 
-  const editorRef = useRef<ReactCodeMirrorRef>(null)
+  const editorComponentRef = useRef<ReactCodeMirrorRef>(null)
   const editorStateRef = useRef(null)
   const scrollStateRef = useRef<InitialStateCodeMirror["scroll"]>(
     initialStateCodeMirror?.scroll ?? { left: 0, top: 0 }
@@ -88,32 +89,44 @@ export const BaseCodeMirror: FC<Props> = (props) => {
   }
 
   const handleCreateEditor = (view: EditorView) => {
+    if (initialStateCodeMirror?.editor?.doc) {
+      editorComponentRef.current?.view?.dispatch({
+        selection: EditorSelection.create([
+          EditorSelection.range(0, 0)
+        ])
+      })
+    }
+
     /**
      * Delay a bit for layout to be ready based on content
      */
     setTimeout(() => {
-      view.scrollDOM.scrollTop = Number(scrollStateRef.current.top)
-      view.scrollDOM.scrollLeft = Number(scrollStateRef.current.left)
+      const initialTop = Number(initialStateCodeMirror?.scroll.top ?? 0)
+      const initialLeft = Number(initialStateCodeMirror?.scroll.left ?? 0)
+
+      view.scrollDOM.scrollTo({ top: initialTop, left: initialLeft })
+      scrollStateRef.current = { top: initialTop, left: initialLeft }
+
       setReady(true)
-    }, 10)
+    }, 50)
   }
 
   const handleScroll = () => {
-    if (editorRef.current?.state && editorRef.current?.view?.scrollDOM?.scrollTop !== undefined) {
+    if (editorComponentRef.current?.state && editorComponentRef.current?.view?.scrollDOM?.scrollTop !== undefined) {
       scrollStateRef.current = {
-        top: editorRef.current?.view?.scrollDOM?.scrollTop ?? 0,
-        left: editorRef.current?.view?.scrollDOM?.scrollLeft ?? 0
+        top: editorComponentRef.current?.view?.scrollDOM?.scrollTop ?? 0,
+        left: editorComponentRef.current?.view?.scrollDOM?.scrollLeft ?? 0
       }
     }
   }
 
   useEffect(() => {
-    if (editorRef.current?.view) {
+    if (editorComponentRef.current?.view) {
       setReady(true)
     } else {
       setReady(false)
     }
-  }, [editorRef.current?.view])
+  }, [editorComponentRef.current?.view])
 
   useEffect(() => {
     return () => {
@@ -127,7 +140,8 @@ export const BaseCodeMirror: FC<Props> = (props) => {
     <div className="CodeMirrorContainer">
       <CodeMirror
         {...codeMirrorProps}
-        ref={editorRef}
+        ref={editorComponentRef}
+        value={value}
         theme={isDarkMode ? monokaiDimmed : githubLight}
         extensions={getExtensions()}
         initialState={initialState}

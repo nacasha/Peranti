@@ -1,7 +1,5 @@
-import { appWindow } from "@tauri-apps/api/window"
 import { useEffect } from "react"
 
-import { fileDropStore } from "src/stores/fileDropStore"
 import { toolStore } from "src/stores/toolStore"
 
 export const withAppBootstrap = (component: () => React.ReactNode) => () => {
@@ -26,19 +24,6 @@ export const withAppBootstrap = (component: () => React.ReactNode) => () => {
     }
 
     disableContextMenu()
-  })
-
-  useEffect((): any => {
-    return async() => await appWindow.onFileDropEvent((event) => {
-      if (event.payload.type === "hover") {
-        fileDropStore.setIsDroppingFile(true)
-      } else if (event.payload.type === "drop") {
-        fileDropStore.setIsDroppingFile(false)
-        fileDropStore.callListeners(event.payload.paths)
-      } else {
-        fileDropStore.setIsDroppingFile(false)
-      }
-    })
   }, [])
 
   return component()

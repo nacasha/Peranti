@@ -5,7 +5,7 @@ import "react-contexify/ReactContexify.css"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { useSelector } from "src/hooks/useSelector"
-import { toolOutputComponents } from "src/services/toolOutputComponents"
+import { toolComponentService } from "src/services/toolComponentService"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
 import { type ToolOutput } from "src/types/ToolOutput"
@@ -28,14 +28,18 @@ export const ToolOutputRenderer: FC<ToolOutputRendererProps> = (props) => {
 
   const initialState = activeTool.outputFieldsState[toolOutput.key]
 
-  const outputComponent = toolOutputComponents[toolOutput.component]
-  const Component: FC<OutputComponentProps<any>> = outputComponent[isBatchModeEnabled ? "batchComponent" : "component"]
+  const outputComponent = toolComponentService.getOutputComponent(toolOutput.component, isBatchModeEnabled)
+  const Component: FC<OutputComponentProps<any>> = outputComponent.component
 
   const handleStateChange = (state: unknown) => {
     activeTool.setOutputFieldState(toolOutput.key, state)
   }
 
   const handleContextMenu = (event: any) => {
+    if (activeTool.isDeleted) {
+      return
+    }
+
     show({
       event,
       id: ContextMenuKeys.ToolOutput,
@@ -47,7 +51,7 @@ export const ToolOutputRenderer: FC<ToolOutputRendererProps> = (props) => {
   }
 
   /**
-   * Only pass editor state props to some components that handle it,
+   * Only pass editor state props to selected components that handle it,
    * This is needed to suppress `Unknown event handler property` warning on console
    */
   const additionalProps: Record<string, any> = {}
