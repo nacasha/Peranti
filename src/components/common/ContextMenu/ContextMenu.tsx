@@ -10,6 +10,7 @@ export const ContextMenu: FC<ComponentProps<typeof Menu>> = (menuProps) => {
   return (
     <Menu
       {...menuProps}
+      animation=""
       theme={currentTheme}
     />
   )

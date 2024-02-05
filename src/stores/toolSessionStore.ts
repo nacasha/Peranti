@@ -216,6 +216,7 @@ class ToolSessionStore {
      */
     this.pushIntoSessionList(tool.toSession(), placeSessionAtTheEnd)
     this.activateTool(tool)
+    return tool
   }
 
   /**
@@ -715,7 +716,7 @@ class ToolSessionStore {
    * @param newSessionName
    */
   async renameSession(toolSession: ToolSession, newSessionName: string) {
-    void this.detachSessionSequence(toolSession)
+    await this.detachSessionSequence(toolSession)
 
     /**
      * Set session name to actual tool
@@ -723,28 +724,20 @@ class ToolSessionStore {
     const retrievedTool = await ToolStorageManager.getToolFromStorage(toolSession.sessionId)
     if (retrievedTool) {
       retrievedTool.setSessionName(newSessionName)
-      void retrievedTool.hydrateStore()
+      retrievedTool.setSessionSequenceNumber(undefined)
+      await retrievedTool.hydrateStore()
     }
 
     /**
-     * Set session name to tool session
+     * Set session name to tool session and replace in session list
      */
-    this.setSessionName(toolSession, newSessionName)
-
-    /**
-     * Switch session order to itself for react to be able pickup the new state
-     */
-    this.switchSessionPosition(toolSession.sessionId, toolSession.sessionId)
+    toolSession.sessionName = newSessionName
+    this.replaceToolSession(toolSession)
   }
 
-  /**
-   * Set session name of tool session
-   *
-   * @param toolSession
-   * @param sessionName
-   */
-  private setSessionName(toolSession: ToolSession, sessionName: string) {
-    toolSession.sessionName = sessionName
+  replaceToolSession(toolSession: ToolSession) {
+    const sessionIndex = this.sessions.findIndex((session) => session.sessionId === toolSession.sessionId)
+    this.sessions[sessionIndex] = toolSession
   }
 }
 

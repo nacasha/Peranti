@@ -20,6 +20,8 @@
   // Tool
   --tool-header-height: 45px;
   --tool-tabbar-height: 40px;
+  --tool-tabbar-item-max-width: 200px;
+
 
   // Animations
   --transition-speed: 0s;
@@ -31,6 +33,7 @@
 
   // Input and output component styles
   --input-output-fields-spacing: 15px;
+  --input-output-label-height: 13px;
   --input-output-label-spacing: 10px;
   --input-output-padding: 7px;
   --input-output-font-size: 14px;
@@ -44,11 +47,11 @@
   --contexify-menu-shadow: none;
   --contexify-menu-minWidth: 250px;
   --contexify-menu-padding: 5px;
-  --contexify-itemContent-padding: 6px 10px;
   --contexify-menu-radius: var(--border-radius);
+  --contexify-itemContent-padding: 5px 10px;
 
   .contexify {
-    border: 1px solid var(--border-color);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
   }
 }
 
@@ -57,6 +60,12 @@
   --border-color: #cbcccd;
   --text-color: #0f0f0f;
   --icon-color: invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%);
+
+  // Theme color
+  --opposite-color: #939393;
+
+  // Main text color
+  color: var(--text-color);
 
   // Button
   --button-background-color: linear-gradient(0deg, #f7f7f7 0%, #ffffff 100%);
@@ -86,23 +95,15 @@
 
   // Tool component styles
   --tool-header-background-color: #ffffff;
-
   --tool-area-background-color: #f9f9fc;
-
   --tool-tabbar-text-color: #585858;
   --tool-tabbar-text-color-active: #000000;
-
   --tool-sidebar-text-color: #212418;
   --tool-sidebar-text-color-active: #ffffff;
   --tool-sidebar-icon-color: invert(11%) sepia(7%) saturate(1891%) hue-rotate(34deg) brightness(98%) contrast(92%);
   --tool-sidebar-icon-color-active: invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%);
 
-  // Theme color
-  --opposite-color: #939393;
-
-  // Main text color
-  color: var(--text-color);
-
+  // Scrollbar
   ::-webkit-scrollbar-track {
     background: #ffffff;
   }
@@ -116,8 +117,25 @@
     }
   }
 
+  // Simplebar
   .simplebar-scrollbar:before {
     background: rgba(0,0,0,0.5);
+  }
+
+  // Context menu
+  .contexify {
+    border: 1px solid #cacaca;
+
+    .contexify_itemContent {
+      color: #3b3b3b;
+    }
+
+    .contexify_item:not(.contexify_item-disabled):focus>.contexify_itemContent,
+    .contexify_item:not(.contexify_item-disabled):hover>.contexify_itemContent,
+    .contexify_submenu-isOpen, .contexify_submenu-isOpen>.contexify_itemContent {
+      background-color: #e8e8e8;
+      color: #1d1d1d;
+    }
   }
 }
 
@@ -126,6 +144,12 @@
   --border-color: #313131;
   --text-color: #e0e0e0;
   --icon-color: invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%);
+
+  // Theme color
+  --opposite-color: #ffffff;
+
+  // Main text color
+  color: var(--text-color);
 
   // Button
   --button-background-color: #262626;
@@ -155,30 +179,23 @@
 
   // Tool component styles
   --tool-header-background-color: #181818;
-
   --tool-area-background-color: #202124;
-
   --tool-tabbar-background-color: #1a1b1d;
   --tool-tabbar-color: #1a1b1d;
   --tool-tabbar-color-hover: #1f2022;
   --tool-tabbar-text-color: #939393;
   --tool-tabbar-text-color-active: white;
-
   --tool-sidebar-text-color: #cfcfcf;
   --tool-sidebar-text-color-active: #ffffff;
   --tool-sidebar-icon-color: invert(99%) sepia(3%) saturate(156%) hue-rotate(232deg) brightness(106%) contrast(62%);
   --tool-sidebar-icon-color-active: invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%);
 
-  // Theme color
-  --opposite-color: #ffffff;
-
-  // Main text color
-  color: var(--text-color);
-
+  // HTML Input
   input, textarea, select, option {
     color: var(--text-color);
   }
 
+  // Scrollbar
   ::-webkit-scrollbar-track {
     background: transparent;
   }
@@ -192,7 +209,25 @@
     }
   }
 
+  // Simplebar
   .simplebar-scrollbar:before {
     background: rgba(255,255,255,0.2);
+  }
+
+  // Context menu
+  .contexify {
+    border: 1px solid #313131;
+    background-color: #1e1f22;
+
+    .contexify_itemContent {
+      color: #e0e0e0;
+    }
+
+    .contexify_item:not(.contexify_item-disabled):focus>.contexify_itemContent,
+    .contexify_item:not(.contexify_item-disabled):hover>.contexify_itemContent,
+    .contexify_submenu-isOpen, .contexify_submenu-isOpen>.contexify_itemContent {
+      background-color: #323232;
+      color: #ffffff;
+    }
   }
 }

@@ -1,0 +1,22 @@
+.FileDropTarget {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--border-radius);
+  z-index: 1;
+  background-color: rgba(0,0,0,0.3);
+  top: calc(var(--input-output-label-spacing) + var(--input-output-label-height));
+  display: flex;
+  border: 1px solid transparent;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid var(--input-output-border-color-hover);
+  }
+}
+
+.FileDropTarget-text {
+  margin: auto;
+  font-size: 18px;
+  user-select: none;
+}

@@ -51,6 +51,16 @@
     }
   }
 
+  .ToolTabbar-item-label {
+    max-width: var(--tool-tabbar-item-max-width);
+    overflow: hidden;
+
+    &[contenteditable="false"] {
+      text-overflow: ellipsis;
+    }
+  }
+
+
   &.active {
     color: var(--tool-tabbar-text-color-active);
     background-color: var(--tool-header-background-color);

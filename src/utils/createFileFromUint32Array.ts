@@ -1,5 +1,7 @@
 import mime from "mime"
 
+import { getFileNameFromPath } from "./getFileNameFromPath.js"
+
 const defaultType = "application/octet-stream"
 
 export function createFileFromUint32Array(uint32Array: Uint8Array, filePath: string) {
@@ -10,7 +12,7 @@ export function createFileFromUint32Array(uint32Array: Uint8Array, filePath: str
   const blob = new Blob([uint8Array], { type: mime.getType(filePath) ?? defaultType })
 
   // Create a File from the Blob
-  const fileName = filePath.replace(/^.*[\\/]/, "")
+  const fileName = getFileNameFromPath(filePath)
   const file = new File([blob], fileName, { type: mime.getType(filePath) ?? defaultType })
 
   return file

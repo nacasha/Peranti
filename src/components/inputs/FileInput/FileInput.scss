@@ -9,6 +9,8 @@
   background-color: var(--input-output-background-color);
   padding: 20px;
   margin-bottom: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 
   &:hover {
     cursor: pointer;

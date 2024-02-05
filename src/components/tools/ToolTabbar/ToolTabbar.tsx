@@ -309,6 +309,7 @@ const TabItem: FC<TabItemProps> = memo((props) => {
       >
         <div
           ref={tabLabelRef}
+          className="ToolTabbar-item-label"
           contentEditable={isRenamingSession}
           onBlur={handleSessionNameInputBlur}
           suppressContentEditableWarning

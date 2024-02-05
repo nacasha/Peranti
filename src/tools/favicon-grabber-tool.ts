@@ -50,7 +50,7 @@ const faviconGrabberTool: ToolConstructor<InputFields, OutputFields> = {
   outputFields: [
     {
       key: "output",
-      label: "Output",
+      label: "Favicon",
       component: "Image",
       props: {
         width: 150

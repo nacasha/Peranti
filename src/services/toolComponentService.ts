@@ -20,6 +20,7 @@ import { TextOutput } from "src/components/outputs/TextOutput"
 import { ToolComponent } from "src/models/ToolComponent"
 import { convertCRLFtoLF } from "src/utils/convertCRLFtoLF"
 import { createFileFromUint32Array } from "src/utils/createFileFromUint32Array"
+import { getFileNameFromPath } from "src/utils/getFileNameFromPath.js"
 
 import { FileService } from "./fileService.js"
 
@@ -144,7 +145,7 @@ class ToolComponentService {
       return convertCRLFtoLF(fileContent)
     } else if (readFileAs === "file") {
       const file = await FileService.readFileAsBinary(filePath)
-      return createFileFromUint32Array(file, filePath.replace(/^.*[\\/]/, ""))
+      return createFileFromUint32Array(file, getFileNameFromPath(filePath))
     }
   }
 

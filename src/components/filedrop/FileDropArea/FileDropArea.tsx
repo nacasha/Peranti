@@ -1,121 +1,113 @@
-import mime from "mime"
 import { useEffect, type FC, useState } from "react"
 
 import { Button } from "src/components/common/Button"
 import { useSelector } from "src/hooks/useSelector"
-import { toolComponentService } from "src/services/toolComponentService"
 import { windowManager } from "src/services/windowManager"
-import { fileDropStore } from "src/stores/fileDropStore"
+import { FileDropAction, fileDropStore } from "src/stores/fileDropStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
 import "./FileDropArea.scss"
 
 export const FileDropArea: FC = () => {
-  const [isChoosingInput, setIsChoosingInput] = useState(false)
-  const [, setFields] = useState<string[]>([])
+  const [isChooshingAction, setIsChoosingAction] = useState(false)
 
-  const isHovering = useSelector(() => fileDropStore.isHovering)
-  const droppedFilePaths = useSelector(() => fileDropStore.droppedFilePaths)
   const activeTool = useSelector(() => toolRunnerStore.getActiveTool())
-  const { isBatchModeEnabled } = activeTool
+  const isHoveringFile = useSelector(() => fileDropStore.isHoveringFile)
+  const isDroppingFile = useSelector(() => fileDropStore.isDroppingFile)
+  const droppedFilePaths = useSelector(() => fileDropStore.droppedFilePaths)
+  const fileDropAction = useSelector(() => fileDropStore.fileDropAction)
 
   const handleFileDrop = async(filePaths: string[]) => {
-    /**
-     * Clear dropped file paths on store
-     */
-    fileDropStore.setDroppedFilePaths([])
-
     if (filePaths.length > 0) {
-      /**
-       * Set focus to window after dropping the file(s)
-       */
-      setIsChoosingInput(true)
       void windowManager.setFocus()
 
-      const filePath = filePaths[0]
-      const mimeType = mime.getType(filePath)
-
-      /**
-       * Exit when app unable to recognize mime type of file
-       */
-      if (mimeType === null) {
-        setIsChoosingInput(false)
-        return
-      }
-
-      /**
-       * Filter supported input fields that matches the mime types
-       */
-      const [inputFields, isAvailableOnBatchMode] = activeTool.getInputFieldsWithMime(mimeType)
-
-      /**
-       * Switch to batch mode if the tool has batch fields with matching mimeType
-       */
-      if (isAvailableOnBatchMode) {
-        activeTool.setBatchMode(true)
-      }
-
-      /**
-       * No supported mimes for currently active tool input fields
-       */
-      if (inputFields.length === 0) {
-        setIsChoosingInput(false)
-        return
-      }
-
-      try {
-        if (inputFields.length === 1) {
-          const { key: inputFieldKey, component } = inputFields[0]
-          const inputComponent = toolComponentService.getInputComponent(component, isBatchModeEnabled)
-          const fileContent = await toolComponentService.readFileFromToolComponent(inputComponent, filePath)
-
-          if (fileContent) {
-            activeTool.setInputValue(inputFieldKey, fileContent)
-            activeTool.resetInputAndOutputFieldsState()
-            activeTool.forceRerender()
-          }
-        }
-
-        if (inputFields.length > 1) {
-          setFields(inputFields.map((inputField) => inputField.key))
-        }
-
-        setIsChoosingInput(false)
-      } catch (exception) {
-        console.log(exception)
-        setIsChoosingInput(false)
+      if (fileDropAction === FileDropAction.AskEveryTime) {
+        setIsChoosingAction(true)
+      } else {
+        setIsChoosingAction(false)
+        await fileDropStore.proceedFileDropBasedOnAction()
       }
     }
   }
 
   const handleClickCancel = () => {
-    setIsChoosingInput(false)
-    fileDropStore.setDroppedFilePaths([])
+    setIsChoosingAction(false)
+    fileDropStore.resetState()
+  }
+
+  const handleReplaceCurrentTool = () => {
+    setIsChoosingAction(false)
+    void fileDropStore.replaceCurrentTool()
+  }
+
+  const handleReplaceCurrentToolAndOpen = () => {
+    setIsChoosingAction(false)
+    void fileDropStore.replaceCurrentToolAndOpenNew()
+  }
+
+  const handleOpenNewSession = () => {
+    setIsChoosingAction(false)
+    void fileDropStore.openInNewSession()
   }
 
   useEffect(() => {
-    if (droppedFilePaths.length > 0) {
+    if (isDroppingFile && droppedFilePaths.length > 0) {
       void handleFileDrop(droppedFilePaths)
     }
-  }, [droppedFilePaths])
+  }, [droppedFilePaths, isDroppingFile])
 
-  if (!isHovering && !isChoosingInput) {
+  if (!isHoveringFile && !isChooshingAction) {
     return null
   }
+
+  const activeToolName = activeTool.name
+  const hasMultipleFiles = droppedFilePaths.length > 1
 
   return (
     <div className="FileDropArea">
       <div className="FileDropArea-body">
-        {!isChoosingInput && (
+        {!isChooshingAction && (
           <div className="FileDropArea-text">
-            Drop file here
+            Drop {droppedFilePaths.length} file{(droppedFilePaths.length > 1) && "s"}
           </div>
         )}
 
-        {isChoosingInput && (
-          <Button onClick={handleClickCancel}>
-            Cancel
-          </Button>
+        {isChooshingAction && (
+          <div className="FileDropArea-prompt">
+            <div className="FileDropArea-prompt-text">
+              You have dropped <strong>{droppedFilePaths.length}</strong> file{hasMultipleFiles && "s"}
+            </div>
+
+            <div className="FileDropArea-prompt-selection">
+              {droppedFilePaths.length === 1
+                ? (
+                  <div
+                    className="FileDropArea-prompt-item"
+                    onClick={handleReplaceCurrentTool}
+                  >
+                    Replace current <strong>{activeToolName}</strong>
+                  </div>
+                )
+                : (
+                  <div
+                    className="FileDropArea-prompt-item"
+                    onClick={handleReplaceCurrentToolAndOpen}
+                  >
+                    Replace current <strong>{activeToolName}</strong> and
+                    {" "} open {droppedFilePaths.length - 1} in new editor(s)
+                  </div>
+                )}
+              <div
+                className="FileDropArea-prompt-item"
+                onClick={handleOpenNewSession}
+              >
+                Open in {droppedFilePaths.length} new editor(s) of <strong>{activeToolName}</strong>
+              </div>
+            </div>
+            <Button onClick={handleClickCancel}>
+              Cancel
+            </Button>
+          </div>
         )}
       </div>
     </div>

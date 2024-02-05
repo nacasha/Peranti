@@ -12,15 +12,20 @@ export const withFileDropListener = (component: () => React.ReactNode) => () => 
         }
 
         fileDropStore.setIsHovering(true)
+        fileDropStore.setIsDroppingFile(false)
+        fileDropStore.setDroppedFilePaths(event.payload.paths)
       } else if (event.payload.type === "drop") {
         if (event.payload.paths.length === 0) {
           return
         }
 
         fileDropStore.setIsHovering(false)
+        fileDropStore.setIsDroppingFile(true)
         fileDropStore.setDroppedFilePaths(event.payload.paths)
       } else {
         fileDropStore.setIsHovering(false)
+        fileDropStore.setIsDroppingFile(false)
+        fileDropStore.setDroppedFilePaths([])
       }
     })
 

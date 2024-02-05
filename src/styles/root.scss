@@ -20,6 +20,7 @@ html, body {
   line-height: 1;
   margin-bottom: var(--input-output-label-spacing);
   user-select: none;
+  height: var(--input-output-label-height);
 
   &:empty {
     display: none;
@@ -75,4 +76,9 @@ html, body {
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+
+.NotificationContainer {
+  inset: 10px !important;
+  bottom: 35px !important;
 }

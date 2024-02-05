@@ -1,6 +1,6 @@
 import { Command } from "@tauri-apps/api/shell"
 import fastDeepEqual from "fast-deep-equal"
-import mimeMatch from "mime-match"
+// import mimeMatch from "mime-match"
 import { observable, action, makeObservable, toJS } from "mobx"
 import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, pausePersisting, startPersisting, stopPersisting } from "mobx-persist-store"
 
@@ -335,8 +335,8 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
       this.sessionId = initialState.sessionId ?? this.sessionId
       this.sessionName = initialState.sessionName ?? this.sessionName
       this.sessionSequenceNumber = initialState.sessionSequenceNumber ?? this.sessionSequenceNumber
-      this.inputValues = initialState.inputValues ?? this.inputValues
-      this.outputValues = initialState.outputValues ?? this.outputValues
+      this.inputValues = Object.assign(this.inputValues, initialState.inputValues)
+      this.outputValues = Object.assign(this.outputValues, initialState.outputValues)
       this.isBatchModeEnabled = initialState.isBatchModeEnabled ?? this.isBatchModeEnabled
       this.batchModeInputKey = initialState.batchModeInputKey ?? this.batchModeInputKey
       this.batchModeOutputKey = initialState.batchModeOutputKey ?? this.batchModeOutputKey
@@ -552,7 +552,7 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
    * @param mimeType
    * @returns
    */
-  getInputFieldsWithMime(mimeType: string): [Array<ToolInput<IF>>, boolean] {
+  getInputFieldsWithMime(): [Array<ToolInput<IF>>, boolean] {
     const inputFields = this.getInputFields()
 
     /**
@@ -566,9 +566,11 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
 
       const inputToCompare = toolComponentService.getInputComponent(inputField.component)
 
-      return inputToCompare.readFileMimes?.some((mime) => {
-        return mimeMatch(mimeType, mime)
-      })
+      return !!inputToCompare.readFileAs
+
+      // return inputToCompare.readFileMimes?.some((mime) => {
+      //   return mimeMatch(mimeType, mime)
+      // })
     })
 
     /**
@@ -592,9 +594,11 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
     const filteredBatchInputFields = inputFields.filter((inputField) => {
       const inputToCompare = toolComponentService.getInputComponent(inputField.component, true)
 
-      return inputToCompare.readFileMimes?.some((mime) => {
-        return mimeMatch(mimeType, mime)
-      })
+      return !!inputToCompare.readFileAs
+
+      // return inputToCompare.readFileMimes?.some((mime) => {
+      //   return mimeMatch(mimeType, mime)
+      // })
     })
 
     return [filteredBatchInputFields, true]
