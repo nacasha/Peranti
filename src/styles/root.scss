@@ -81,4 +81,20 @@ html, body {
 .NotificationContainer {
   inset: 10px !important;
   bottom: 35px !important;
+
+  .Notification-item {
+    background: #1e1f22;
+    font-family: "Inter";
+    font-size: 13px;
+    border: 1px solid #303133;
+    border-radius: 4px;
+    padding: 7px;
+    padding-left: 10px;
+    color: #bcbec4;
+    animation: none;
+
+    div[role="status"] {
+      word-break: break-all;
+    }
+  }
 }

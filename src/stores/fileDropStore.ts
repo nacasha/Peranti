@@ -64,9 +64,9 @@ class FileDropStore {
 
     const { key: inputFieldKey, component } = inputFields[0]
     const inputComponent = toolComponentService.getInputComponent(component, isAvailableOnBatchMode)
+    const fileName = getFileNameFromPath(filePath)
 
     try {
-      const fileName = getFileNameFromPath(filePath)
       const fileContent = await toolComponentService.readFileFromToolComponent(inputComponent, filePath)
 
       if (fileContent) {
@@ -102,8 +102,7 @@ class FileDropStore {
         }
       }
     } catch (exception) {
-      console.log("Unable to read file as text")
-      toast.error("Unable to read file as text")
+      toast.error(`Unable to read ${fileName} file as text`)
     }
   }
 
