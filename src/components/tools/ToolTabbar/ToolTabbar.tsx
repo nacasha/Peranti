@@ -2,10 +2,11 @@ import { useStore } from "@nanostores/react"
 import clsx from "clsx"
 import { observer } from "mobx-react"
 import { atom } from "nanostores"
-import { ContextMenuTrigger, ContextMenu, ContextMenuItem } from "rctx-contextmenu"
 import { type MouseEventHandler, type FC, useEffect, useRef, memo, type FocusEventHandler, useMemo } from "react"
+import { type ItemParams, useContextMenu, Item, Separator } from "react-contexify"
 import SimpleBar from "simplebar-react"
 
+import { ContextMenu } from "src/components/common/ContextMenu"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { Icons } from "src/constants/icons"
 import { useDragAndDropJS } from "src/hooks/useDragAndDropJS"
@@ -19,7 +20,6 @@ import { type ToolSession } from "src/types/ToolSession"
 
 import "./ToolTabbar.scss"
 
-const $selectedSession = atom<ToolSession | undefined>()
 const $renamingSessionId = atom<string>("")
 
 export const ToolTabbar: FC = observer(() => {
@@ -134,38 +134,65 @@ interface TabItemProps {
   active: boolean
 }
 
-const TabbarContextMenu: FC = () => {
-  const selectedSession = useStore($selectedSession)
+interface MenuParams {
+  toolSession: ToolSession
+}
 
+type TabbarContextMenuItemParams = ItemParams<MenuParams>
+
+const TabbarContextMenu: FC = () => {
   const handleCloseAllSession = () => {
     toolSessionStore.closeAllSession()
   }
 
-  const handleCloseSession = () => {
-    if (selectedSession) {
-      void toolSessionStore.closeSession(selectedSession)
+  const handleCloseSession = (itemParams: TabbarContextMenuItemParams) => {
+    const { toolSession } = itemParams.props ?? {}
+    if (toolSession) {
+      void toolSessionStore.closeSession(toolSession)
     }
   }
 
-  const handleCloseOtherSession = () => {
-    if (selectedSession) {
-      void toolSessionStore.closeOtherSession(selectedSession)
+  const handleCloseOtherSession = (itemParams: TabbarContextMenuItemParams) => {
+    const { toolSession } = itemParams.props ?? {}
+    if (toolSession) {
+      void toolSessionStore.closeOtherSession(toolSession)
     }
   }
 
-  const handleRenameSession = () => {
-    if (selectedSession) {
-      $renamingSessionId.set(selectedSession.sessionId)
+  const handleRenameSession = (itemParams: TabbarContextMenuItemParams) => {
+    const { toolSession } = itemParams.props ?? {}
+    if (toolSession) {
+      $renamingSessionId.set(toolSession.sessionId)
     }
   }
 
   return (
     <ContextMenu id={ContextMenuKeys.ToolTabbar}>
-      <ContextMenuItem onClick={handleCloseSession}>Close</ContextMenuItem>
-      <ContextMenuItem onClick={handleCloseOtherSession}>Close Others</ContextMenuItem>
-      <ContextMenuItem onClick={handleCloseAllSession}>Close All</ContextMenuItem>
-      <div className="contextmenu__divider"></div>
-      <ContextMenuItem onClick={handleRenameSession}>Rename</ContextMenuItem>
+      <Item
+        id="copy"
+        onClick={handleCloseSession}
+      >
+        Close
+      </Item>
+      <Item
+        id="paste"
+        onClick={handleCloseOtherSession}
+      >
+        Close Others
+      </Item>
+      <Item
+        id="pick-from-file"
+        onClick={handleCloseAllSession}
+      >
+        Close All
+      </Item>
+      <Separator />
+      <Item
+        id="save-to-file"
+        onClick={handleRenameSession}
+      >
+        Raname
+      </Item>
     </ContextMenu>
   )
 }
@@ -176,6 +203,8 @@ const TabItem: FC<TabItemProps> = memo((props) => {
   const renamingSessionId = useStore($renamingSessionId)
   const isRenamingSession = useMemo(() => renamingSessionId === sessionId, [renamingSessionId])
   const tabLabelRef = useRef<HTMLDivElement>(null)
+
+  const { show } = useContextMenu()
 
   const getSessionName = () => {
     if (sessionName) return sessionName
@@ -204,9 +233,15 @@ const TabItem: FC<TabItemProps> = memo((props) => {
   const handleMouseUp: MouseEventHandler = (event) => {
     if (event.button === 1) {
       void toolSessionStore.closeSession(toolSession)
-    } else if (event.button === 2) {
-      $selectedSession.set(toolSession)
     }
+  }
+
+  const handleContextMenu: MouseEventHandler = (event) => {
+    show({
+      event,
+      id: ContextMenuKeys.ToolTabbar,
+      props: { toolSession }
+    })
   }
 
   const handleCloseTab: MouseEventHandler = (event) => {
@@ -294,8 +329,9 @@ const TabItem: FC<TabItemProps> = memo((props) => {
   })
 
   return (
-    <ContextMenuTrigger
+    <div
       id={ContextMenuKeys.ToolTabbar}
+      className="ToolTabbar-item-container"
       key={toolSession.sessionId.concat(toolSession.sessionName ?? "")}
     >
       <div ref={draggableElementPlaceholderRef}></div>
@@ -306,6 +342,7 @@ const TabItem: FC<TabItemProps> = memo((props) => {
         data-session-id={toolSession.sessionId}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
+        onContextMenu={handleContextMenu}
       >
         <div
           ref={tabLabelRef}
@@ -321,7 +358,7 @@ const TabItem: FC<TabItemProps> = memo((props) => {
           <img src={Icons.Close} alt="Close Tab" />
         </div>
       </div>
-    </ContextMenuTrigger>
+    </div>
   )
 }, (prevProps, nextProps) => {
   return prevProps.active === nextProps.active &&

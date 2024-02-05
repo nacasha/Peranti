@@ -96,7 +96,7 @@ export const ToolContextMenu: FC = () => {
   }
 
   return (
-    <ContextMenu id={ContextMenuKeys.ToolOutput} hidden={false}>
+    <ContextMenu id={ContextMenuKeys.ToolOutput}>
       <Item
         id="copy"
         onClick={handleClickCopy}
