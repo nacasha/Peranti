@@ -1,6 +1,5 @@
 import { Command } from "@tauri-apps/api/shell"
 import fastDeepEqual from "fast-deep-equal"
-// import mimeMatch from "mime-match"
 import { observable, action, makeObservable, toJS } from "mobx"
 import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, pausePersisting, startPersisting, stopPersisting } from "mobx-persist-store"
 
@@ -10,14 +9,14 @@ import { toolComponentService } from "src/services/toolComponentService"
 import { ToolStorageManager } from "src/services/toolStorageManager"
 import { sessionStore } from "src/stores/sessionStore"
 import { toolStore } from "src/stores/toolStore"
+import { type LayoutSetting } from "src/types/LayoutSetting"
+import { type Session } from "src/types/Session"
+import { type SessionHistory } from "src/types/SessionHistory"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolExtensionMetadata } from "src/types/ToolExtensionMetadata"
-import { type ToolHistory } from "src/types/ToolHistory"
 import { type ToolInput } from "src/types/ToolInput"
-import { type ToolLayoutSetting } from "src/types/ToolLayoutSetting"
 import { type ToolOutput } from "src/types/ToolOutput"
 import { type ToolPreset } from "src/types/ToolPreset"
-import { type ToolSession } from "src/types/ToolSession"
 import { type ToolState } from "src/types/ToolState"
 import { generateRandomString } from "src/utils/generateRandomString"
 
@@ -50,7 +49,7 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
   /***
    * Tool layout setting
    */
-  readonly layoutSetting: ToolLayoutSetting
+  readonly layoutSetting: LayoutSetting
 
   /**
    * Should tools is auto run when user made changes on inputs, default is true
@@ -477,13 +476,13 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
    *
    * @returns
    */
-  toSession(): ToolSession {
+  toSession(): Session {
     const { sessionId, sessionName, sessionSequenceNumber, toolId } = this
 
     return { sessionId, sessionName, sessionSequenceNumber, toolId }
   }
 
-  toHistory(): ToolHistory {
+  toHistory(): SessionHistory {
     const { sessionId, sessionName, toolId } = this
     const deletedAt = new Date().getTime()
 

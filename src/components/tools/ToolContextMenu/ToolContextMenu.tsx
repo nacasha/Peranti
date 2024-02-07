@@ -7,7 +7,7 @@ import { type ToolComponent } from "src/models/ToolComponent"
 import { ClipboardService } from "src/services/clipboardService"
 import { FileService } from "src/services/fileService"
 import { toolComponentService } from "src/services/toolComponentService"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 import { type ToolInput } from "src/types/ToolInput"
 import { type ToolOutput } from "src/types/ToolOutput"
 
@@ -23,10 +23,10 @@ export const ToolContextMenu: FC = () => {
   const getValue = (itemParams: ToolContextMenuItemParams) => {
     const { toolInput, toolOutput } = itemParams.props ?? {}
     if (toolOutput) {
-      return toolRunnerStore.getActiveTool().getOutputValue(toolOutput.key)
+      return activeSessionStore.getActiveTool().getOutputValue(toolOutput.key)
     }
     if (toolInput) {
-      return toolRunnerStore.getActiveTool().getInputValue(toolInput.key)
+      return activeSessionStore.getActiveTool().getInputValue(toolInput.key)
     }
   }
 
@@ -89,8 +89,8 @@ export const ToolContextMenu: FC = () => {
       const fileContent = await toolComponentService.openFileAndReadFromToolComponent(component)
 
       if (fileContent) {
-        toolRunnerStore.getActiveTool().setInputValue(toolInput.key, fileContent)
-        toolRunnerStore.getActiveTool().forceRerender()
+        activeSessionStore.getActiveTool().setInputValue(toolInput.key, fileContent)
+        activeSessionStore.getActiveTool().forceRerender()
       }
     }
   }

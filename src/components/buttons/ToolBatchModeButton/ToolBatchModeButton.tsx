@@ -3,16 +3,16 @@ import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
 import { Icons } from "src/constants/icons"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 
 export const ToolBatchModeButton: FC = observer(() => {
-  const activeTool = toolRunnerStore.getActiveTool()
+  const activeTool = activeSessionStore.getActiveTool()
 
   const onClickButton = () => {
-    toolRunnerStore.toggleBatchMode()
+    activeSessionStore.toggleBatchMode()
   }
 
-  if (!toolRunnerStore.toolHasBatchOutput || activeTool.isDeleted) {
+  if (!activeSessionStore.toolHasBatchOutput || activeTool.isDeleted) {
     return null
   }
 

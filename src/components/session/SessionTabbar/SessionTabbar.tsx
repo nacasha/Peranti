@@ -10,32 +10,31 @@ import { ContextMenu } from "src/components/common/ContextMenu"
 import { WindowControls } from "src/components/window/WindowControls"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { Icons } from "src/constants/icons"
+import { AppTitleBarStyle } from "src/enums/AppTitleBarStyle"
 import { useDragAndDropJS } from "src/hooks/useDragAndDropJS"
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 import { hotkeysStore } from "src/stores/hotkeysStore"
-import { toolHistoryStore } from "src/stores/toolHistoryStore"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { interfaceStore } from "src/stores/interfaceStore"
 import { sessionStore } from "src/stores/sessionStore"
+import { sessionHistoryStore } from "src/stores/sessionHistoryStore"
 import { toolStore } from "src/stores/toolStore"
-import { type ToolSession } from "src/types/ToolSession"
+import { type Session } from "src/types/Session"
 
 import "./SessionTabbar.scss"
-
-import { interfaceStore } from "src/stores/interfaceStore"
-import { AppTitleBarStyle } from "src/enums/AppTitleBarStyle"
 
 const $renamingSessionId = atom<string>("")
 
 export const SessionTabbar: FC = observer(() => {
-  const activeTool = toolRunnerStore.getActiveTool()
+  const activeTool = activeSessionStore.getActiveTool()
   const sessions = sessionStore.getRunningSessions(activeTool.toolId)
   const activeIndex = sessions.findIndex((tab) => tab.sessionId === activeTool.sessionId)
   const appTitlebarStyle = interfaceStore.appTitlebarStyle
 
   const ref = useRef<HTMLDivElement>(null)
 
-  const isToolActive = (toolSession: ToolSession) => (
-    toolSession.sessionId === activeTool.sessionId
+  const isToolActive = (session: Session) => (
+    session.sessionId === activeTool.sessionId
   )
 
   const onClickAddTab = () => {
@@ -80,7 +79,7 @@ export const SessionTabbar: FC = observer(() => {
 
   useHotkeysModified(hotkeysStore.keys.RESTORE_CLOSED_TAB, (event) => {
     event?.preventDefault()
-    void toolHistoryStore.restoreLastHistory()
+    void sessionHistoryStore.restoreLastHistory()
   })
 
   useHotkeysModified(hotkeysStore.keys.RENAME_ACTIVE_TAB, (event) => {
@@ -139,12 +138,12 @@ export const SessionTabbar: FC = observer(() => {
 })
 
 interface TabItemProps {
-  toolSession: ToolSession
+  toolSession: Session
   active: boolean
 }
 
 interface MenuParams {
-  toolSession: ToolSession
+  toolSession: Session
 }
 
 type TabbarContextMenuItemParams = ItemParams<MenuParams>

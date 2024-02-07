@@ -4,14 +4,14 @@ import { Button } from "src/components/common/Button"
 import { useSelector } from "src/hooks/useSelector"
 import { windowManager } from "src/services/windowManager"
 import { FileDropAction, fileDropStore } from "src/stores/fileDropStore"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 
 import "./FileDropArea.scss"
 
 export const FileDropArea: FC = () => {
   const [isChooshingAction, setIsChoosingAction] = useState(false)
 
-  const activeTool = useSelector(() => toolRunnerStore.getActiveTool())
+  const activeTool = useSelector(() => activeSessionStore.getActiveTool())
   const isHoveringFile = useSelector(() => fileDropStore.isHoveringFile)
   const isDroppingFile = useSelector(() => fileDropStore.isDroppingFile)
   const droppedFilePaths = useSelector(() => fileDropStore.droppedFilePaths)

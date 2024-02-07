@@ -1,13 +1,13 @@
 import React, { type FC } from "react"
 
 import { Input } from "src/components/common/Input"
-import { toolHistoryStore } from "src/stores/toolHistoryStore.ts"
+import { sessionHistoryStore } from "src/stores/sessionHistoryStore"
 
 export const MaxHistoryInput: FC = () => {
-  const { numberOfMaximumHistory } = toolHistoryStore
+  const { numberOfMaximumHistory } = sessionHistoryStore
 
   const onChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
-    toolHistoryStore.numberOfMaximumHistory = Number(event.target.value)
+    sessionHistoryStore.numberOfMaximumHistory = Number(event.target.value)
   }
 
   return (

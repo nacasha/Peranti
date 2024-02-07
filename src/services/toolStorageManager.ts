@@ -2,8 +2,8 @@ import localforage from "localforage"
 
 import { StorageKeys } from "src/constants/storage-keys"
 import { Tool } from "src/models/Tool"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { sessionStore } from "src/stores/sessionStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolState } from "src/types/ToolState"
 
@@ -80,7 +80,7 @@ export class ToolStorageManager {
     /**
      * Return from active tool if it's current active
      */
-    const activeTool = toolRunnerStore.getActiveTool()
+    const activeTool = activeSessionStore.getActiveTool()
     if (activeTool.sessionId === sessionId) {
       return activeTool
     }

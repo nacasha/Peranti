@@ -5,7 +5,7 @@ import { useContextMenu } from "react-contexify"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { useSelector } from "src/hooks/useSelector"
 import { toolComponentService } from "src/services/toolComponentService"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 import { type ToolInput } from "src/types/ToolInput"
 
@@ -25,7 +25,7 @@ export const ToolInputRenderer: FC<ToolInputRendererProps> = (props) => {
   const { readOnly, toolInput } = props
   const { show } = useContextMenu()
 
-  const activeTool = toolRunnerStore.getActiveTool()
+  const activeTool = activeSessionStore.getActiveTool()
   const defaultValue = activeTool.inputValues[toolInput.key] ?? toolInput.defaultValue
   const initialState = activeTool.inputFieldsState[toolInput.key]
   const isBatchModeEnabled = useSelector(() => activeTool.isBatchModeEnabled)

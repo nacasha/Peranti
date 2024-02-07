@@ -1,7 +1,7 @@
 import { type ToolType } from "src/enums/ToolType.ts"
 
+import { type LayoutSetting } from "./LayoutSetting.ts"
 import { type ToolInput } from "./ToolInput.ts"
-import { type ToolLayoutSetting } from "./ToolLayoutSetting.ts"
 import { type ToolOutput } from "./ToolOutput.ts"
 
 export interface ToolConstructor<IF extends Record<string, any> = any, OF extends Record<string, any> = any> {
@@ -39,7 +39,7 @@ export interface ToolConstructor<IF extends Record<string, any> = any, OF extend
   /**
    * Tool layout setting
    */
-  layoutSetting?: ToolLayoutSetting
+  layoutSetting?: LayoutSetting
 
   /**
    * Pipelines

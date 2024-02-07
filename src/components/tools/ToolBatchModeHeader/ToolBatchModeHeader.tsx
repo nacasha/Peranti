@@ -2,12 +2,12 @@ import { clsx } from "clsx"
 import { observer } from "mobx-react"
 
 import { SelectInput } from "src/components/inputs/SelectInput"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 
 import "./ToolBatchModeHeader.scss"
 
 export const ToolBatchModeHeader = observer(() => {
-  const activeTool = toolRunnerStore.getActiveTool()
+  const activeTool = activeSessionStore.getActiveTool()
   const { isBatchModeEnabled, batchModeOutputKey, batchModeInputKey } = activeTool
 
   const isToolReadOnly = activeTool.isDeleted

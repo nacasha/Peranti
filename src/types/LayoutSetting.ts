@@ -1,4 +1,4 @@
-export interface ToolLayoutSetting {
+export interface LayoutSetting {
   /**
    * Switch position between input area and output area, default is false
    */

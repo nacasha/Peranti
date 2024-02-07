@@ -2,10 +2,10 @@ import { observer } from "mobx-react"
 import { useEffect, type FC, useRef } from "react"
 
 import { type Tool } from "src/models/Tool"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 
-export const ToolRunner: FC = observer(() => {
-  const activeTool = toolRunnerStore.getActiveTool()
+export const ActiveSessionStateListener: FC = observer(() => {
+  const activeTool = activeSessionStore.getActiveTool()
   const previousTool = useRef<Tool | null>(null)
 
   useEffect(() => {
@@ -17,13 +17,13 @@ export const ToolRunner: FC = observer(() => {
        * New created session that hasn't been run at least once
        */
       if (isToolChanged && toolIsAutoRunAndFirstTime) {
-        toolRunnerStore.runActiveTool()
+        activeSessionStore.runActiveTool()
 
       /**
        * Tool remains opened and has input values modified
        */
       } else if (!isToolChanged && isInputValuesModified) {
-        toolRunnerStore.runActiveTool()
+        activeSessionStore.runActiveTool()
       }
     }
   }, [activeTool.inputValues])

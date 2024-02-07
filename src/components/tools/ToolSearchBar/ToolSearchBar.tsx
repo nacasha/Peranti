@@ -4,8 +4,8 @@ import useOnclickOutside from "react-cool-onclickoutside"
 
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { useSelector } from "src/hooks/useSelector"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 import { hotkeysStore } from "src/stores/hotkeysStore"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { sessionStore } from "src/stores/sessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
@@ -13,7 +13,7 @@ import { type ToolConstructor } from "src/types/ToolConstructor"
 import "./ToolSearchBar.scss"
 
 export const ToolSearchBar = () => {
-  const activeToolName = useSelector(() => toolRunnerStore.getActiveTool().name)
+  const activeToolName = useSelector(() => activeSessionStore.getActiveTool().name)
 
   const [isOpen, setIsOpen] = useState(false)
 

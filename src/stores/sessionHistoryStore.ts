@@ -5,13 +5,13 @@ import { makePersistable } from "mobx-persist-store"
 import { StorageKeys } from "src/constants/storage-keys.ts"
 import { type Tool } from "src/models/Tool.ts"
 import { ToolStorageManager } from "src/services/toolStorageManager.ts"
-import { type ToolHistory } from "src/types/ToolHistory.ts"
+import { type SessionHistory } from "src/types/SessionHistory.ts"
 
-import { toolRunnerStore } from "./toolRunnerStore.ts"
+import { activeSessionStore } from "./activeSessionStore.ts"
 import { sessionStore } from "./sessionStore.ts"
 
-class ToolHistoryStore {
-  histories: ToolHistory[] = []
+class SessionHistoryStore {
+  histories: SessionHistory[] = []
 
   numberOfMaximumHistory = 100
 
@@ -68,7 +68,7 @@ class ToolHistoryStore {
    *
    * @param toolHistory
    */
-  async openHistory(toolHistory: ToolHistory) {
+  async openHistory(toolHistory: SessionHistory) {
     const retrievedTool = await ToolStorageManager.getToolFromStorage(toolHistory.sessionId, {
       /**
        * There are some known bug where `isDeleted` has value `true` even already
@@ -80,7 +80,7 @@ class ToolHistoryStore {
     })
 
     if (retrievedTool) {
-      toolRunnerStore.setActiveTool(retrievedTool)
+      activeSessionStore.setActiveTool(retrievedTool)
     }
   }
 
@@ -98,7 +98,7 @@ class ToolHistoryStore {
     this.histories = this.histories.filter((history) => history.sessionId !== sessionId)
     void ToolStorageManager.removeToolStateFromStorage(sessionId)
 
-    if (toolRunnerStore.getActiveTool().sessionId === sessionId) {
+    if (activeSessionStore.getActiveTool().sessionId === sessionId) {
       void sessionStore.openLastActiveSession()
     }
   }
@@ -127,4 +127,4 @@ class ToolHistoryStore {
   }
 }
 
-export const toolHistoryStore = new ToolHistoryStore()
+export const sessionHistoryStore = new SessionHistoryStore()

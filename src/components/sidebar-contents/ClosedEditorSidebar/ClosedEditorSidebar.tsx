@@ -2,21 +2,21 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
-import { toolHistoryStore } from "src/stores/toolHistoryStore"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
+import { sessionHistoryStore } from "src/stores/sessionHistoryStore"
 import { toolStore } from "src/stores/toolStore"
-import { type ToolHistory } from "src/types/ToolHistory"
+import { type SessionHistory } from "src/types/SessionHistory"
 
 import { ToolSidebarItem } from "../ToolSidebarItem"
 
 import "./ClosedEditorSidebar.scss"
 
 export const ClosedEditorSidebar: FC = observer(() => {
-  const activeSessionId = useSelector(() => toolRunnerStore.getActiveTool().sessionId)
-  const closedEditorList = useSelector(() => toolHistoryStore.histories)
+  const activeSessionId = useSelector(() => activeSessionStore.getActiveTool().sessionId)
+  const closedEditorList = useSelector(() => sessionHistoryStore.histories)
 
-  const onClickItem = (toolHistory: ToolHistory) => () => {
-    void toolHistoryStore.openHistory(toolHistory)
+  const onClickItem = (toolHistory: SessionHistory) => () => {
+    void sessionHistoryStore.openHistory(toolHistory)
   }
 
   return (

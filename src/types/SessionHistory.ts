@@ -1,4 +1,4 @@
-export interface ToolHistory {
+export interface SessionHistory {
   toolId: string
   sessionId: string
   sessionName?: string

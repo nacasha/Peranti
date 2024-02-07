@@ -1,6 +1,6 @@
-export interface ToolSession {
+export interface Session {
   /**
-   * Tool ID of session
+   * Tool ID
    */
   toolId: string
 

@@ -3,13 +3,13 @@ import { type FC } from "react"
 import { Button } from "src/components/common/Button"
 import { Icons } from "src/constants/icons"
 import { useSelector } from "src/hooks/useSelector"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 
 export const ToolClearButton: FC = () => {
-  const isDeleted = useSelector(() => toolRunnerStore.getActiveTool().isDeleted)
+  const isDeleted = useSelector(() => activeSessionStore.getActiveTool().isDeleted)
 
   const onClickClean = () => {
-    toolRunnerStore.cleanActiveToolState()
+    activeSessionStore.cleanActiveSessionState()
   }
 
   if (isDeleted) {

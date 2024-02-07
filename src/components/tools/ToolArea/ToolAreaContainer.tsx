@@ -3,15 +3,15 @@ import { type FC } from "react"
 
 import { useSelector } from "src/hooks/useSelector.ts"
 import { interfaceStore } from "src/stores/interfaceStore.ts"
-import { toolRunnerStore } from "src/stores/toolRunnerStore.ts"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 
 interface ToolAreaContainerProps {
   children: React.ReactNode
 }
 
 export const ToolAreaContainer: FC<ToolAreaContainerProps> = ({ children }) => {
-  const isBatchEnabled = useSelector(() => toolRunnerStore.getActiveTool().isBatchModeEnabled)
-  const layoutSetting = useSelector(() => toolRunnerStore.getActiveTool().layoutSetting)
+  const isBatchEnabled = useSelector(() => activeSessionStore.getActiveTool().isBatchModeEnabled)
+  const layoutSetting = useSelector(() => activeSessionStore.getActiveTool().layoutSetting)
   const textAreaWordWrap = useSelector(() => interfaceStore.textAreaWordWrap)
 
   const { direction, reversed, gridTemplate } = layoutSetting

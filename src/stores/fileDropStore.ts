@@ -6,8 +6,8 @@ import { toolComponentService } from "src/services/toolComponentService"
 import { getUserSettings, watchUserSettings } from "src/utils/decorators.js"
 import { getFileNameFromPath } from "src/utils/getFileNameFromPath"
 
-import { toolRunnerStore } from "./toolRunnerStore.js"
 import { sessionStore } from "./sessionStore.js"
+import { activeSessionStore } from "./activeSessionStore.js"
 import { toolStore } from "./toolStore.js"
 
 export enum FileDropAction {
@@ -57,7 +57,7 @@ class FileDropStore {
   }
 
   async readFileAndOpenSession(filePath: string, newSession: boolean = false) {
-    const activeTool = toolRunnerStore.getActiveTool()
+    const activeTool = activeSessionStore.getActiveTool()
 
     if (activeTool.toolId === "") {
       return

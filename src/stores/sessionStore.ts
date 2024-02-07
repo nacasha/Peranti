@@ -4,12 +4,12 @@ import { makePersistable } from "mobx-persist-store"
 import { StorageKeys } from "src/constants/storage-keys.ts"
 import { Tool } from "src/models/Tool"
 import { ToolStorageManager } from "src/services/toolStorageManager.ts"
+import { type Session } from "src/types/Session.ts"
+import { type SessionHistory } from "src/types/SessionHistory.ts"
 import { type ToolConstructor } from "src/types/ToolConstructor"
-import { type ToolHistory } from "src/types/ToolHistory.ts"
-import { type ToolSession } from "src/types/ToolSession.ts"
 
-import { toolHistoryStore } from "./toolHistoryStore.ts"
-import { toolRunnerStore } from "./toolRunnerStore.ts"
+import { activeSessionStore } from "./activeSessionStore.ts"
+import { sessionHistoryStore } from "./sessionHistoryStore.ts"
 import { toolStore } from "./toolStore.ts"
 
 class SessionStore {
@@ -52,7 +52,7 @@ class SessionStore {
   /**
    * List of tool sessions
    */
-  sessions: ToolSession[] = []
+  sessions: Session[] = []
 
   /**
    * List of tools that has running action
@@ -223,7 +223,7 @@ class SessionStore {
      * Open existing session(s)
      */
     } else {
-      const activeTool = toolRunnerStore.getActiveTool()
+      const activeTool = activeSessionStore.getActiveTool()
       const lastToolSessionId = this.activeSessionIdOfTools[toolConstructor.toolId]
 
       /**
@@ -246,8 +246,8 @@ class SessionStore {
    *
    * @param tool
    */
-  async openSession(toolSession: ToolSession) {
-    const activeTool = toolRunnerStore.getActiveTool()
+  async openSession(toolSession: Session) {
+    const activeTool = activeSessionStore.getActiveTool()
 
     /**
      * Skip action if tool is already opened
@@ -268,7 +268,7 @@ class SessionStore {
    * @param tool
    */
   async openSessionId(sessionId: string) {
-    const activeTool = toolRunnerStore.getActiveTool()
+    const activeTool = activeSessionStore.getActiveTool()
 
     /**
      * Skip action if tool is already opened
@@ -288,7 +288,7 @@ class SessionStore {
    *
    * @param toolState
    */
-  async openHistory(toolHistory: ToolHistory) {
+  async openHistory(toolHistory: SessionHistory) {
     const tool = await ToolStorageManager.getToolFromStorage(toolHistory.sessionId)
 
     if (tool) {
@@ -307,7 +307,7 @@ class SessionStore {
        * Push into session list in last position and activate tool
        */
       this.pushIntoSessionList(tool.toSession(), true)
-      toolRunnerStore.setActiveTool(tool)
+      activeSessionStore.setActiveTool(tool)
       this.setActiveToolSessionId(tool)
     }
   }
@@ -318,7 +318,7 @@ class SessionStore {
    * @param tool
    */
   activateTool(tool: Tool) {
-    const activeTool = toolRunnerStore.getActiveTool()
+    const activeTool = activeSessionStore.getActiveTool()
 
     /**
      * Skip action if tool is already opened
@@ -335,7 +335,7 @@ class SessionStore {
     /**
      * Set new tool as active tool
      */
-    toolRunnerStore.setActiveTool(tool)
+    activeSessionStore.setActiveTool(tool)
     this.setActiveToolSessionId(tool)
   }
 
@@ -380,8 +380,8 @@ class SessionStore {
    *
    * @param tool
    */
-  async closeSession(toolSession: ToolSession, skipOpenAnotherSession: boolean = false) {
-    const activeTool = toolRunnerStore.getActiveTool()
+  async closeSession(toolSession: Session, skipOpenAnotherSession: boolean = false) {
+    const activeTool = activeSessionStore.getActiveTool()
 
     /**
      * Filter sessions without closed tool
@@ -475,7 +475,7 @@ class SessionStore {
    *
    * @param toolSession
    */
-  async closeOtherSession(toolSession: ToolSession) {
+  async closeOtherSession(toolSession: Session) {
     this.sessions.forEach((session) => {
       if (session.sessionId !== toolSession.sessionId) {
         void this.closeSession(session, true)
@@ -565,7 +565,7 @@ class SessionStore {
    *
    * @param toolSession
    */
-  async detachSessionSequence(toolSession: ToolSession) {
+  async detachSessionSequence(toolSession: Session) {
     const sessions = this.sessionSequences[toolSession.toolId] ?? []
     const deletedIndex = sessions.findIndex(
       (_, index) => index === toolSession.sessionSequenceNumber
@@ -589,7 +589,7 @@ class SessionStore {
    *
    * @param tool
    */
-  setActiveToolSessionId(tool: ToolSession) {
+  setActiveToolSessionId(tool: Session) {
     this.activeSessionIdOfTools[tool.toolId] = tool.sessionId
     this.activeSessionId = tool.sessionId
   }
@@ -600,7 +600,7 @@ class SessionStore {
    *
    * @param tool
    */
-  private async proceedCloseSession(options: { toolSession?: ToolSession, tool?: Tool }) {
+  private async proceedCloseSession(options: { toolSession?: Session, tool?: Tool }) {
     const { toolSession, tool } = options
     let toBeDeletedTool: Tool | undefined
 
@@ -638,7 +638,7 @@ class SessionStore {
       /**
        * If state has been changed, insert into history and set isDeleted to true
        */
-      const isAddedToHistory = toolHistoryStore.addHistory(toBeDeletedTool)
+      const isAddedToHistory = sessionHistoryStore.addHistory(toBeDeletedTool)
 
       /**
        * If tool did not added to history, we can remove the entire data from storage
@@ -662,11 +662,11 @@ class SessionStore {
    *
    * @param tool
    */
-  pushIntoSessionList(tool: ToolSession, placeSessionAtTheEnd: boolean = false) {
+  pushIntoSessionList(tool: Session, placeSessionAtTheEnd: boolean = false) {
     if (this.placeNewSessionToLast || placeSessionAtTheEnd) {
       this.sessions.push(tool)
     } else {
-      const activeTool = toolRunnerStore.getActiveTool()
+      const activeTool = activeSessionStore.getActiveTool()
 
       const indexOfActiveTool = this.sessions.findIndex((session) => (
         session.sessionId === activeTool.sessionId
@@ -722,7 +722,7 @@ class SessionStore {
    * @param toolSession
    * @param newSessionName
    */
-  async renameSession(toolSession: ToolSession, newSessionName: string) {
+  async renameSession(toolSession: Session, newSessionName: string) {
     await this.detachSessionSequence(toolSession)
 
     /**
@@ -742,7 +742,7 @@ class SessionStore {
     this.replaceToolSession(toolSession)
   }
 
-  replaceToolSession(toolSession: ToolSession) {
+  replaceToolSession(toolSession: Session) {
     const sessionIndex = this.sessions.findIndex((session) => session.sessionId === toolSession.sessionId)
     this.sessions[sessionIndex] = toolSession
   }

@@ -3,16 +3,16 @@ import { type FC } from "react"
 import { Button } from "src/components/common/Button"
 import { Icons } from "src/constants/icons"
 import { useSelector } from "src/hooks/useSelector"
-import { toolHistoryStore } from "src/stores/toolHistoryStore"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
+import { sessionHistoryStore } from "src/stores/sessionHistoryStore"
 
 export const ToolLoadFromHistoryButton: FC = () => {
-  const sessionId = useSelector(() => toolRunnerStore.getActiveTool().sessionId)
-  const isHistory = useSelector(() => toolRunnerStore.getActiveTool().isDeleted)
+  const sessionId = useSelector(() => activeSessionStore.getActiveTool().sessionId)
+  const isHistory = useSelector(() => activeSessionStore.getActiveTool().isDeleted)
 
   const handleRestoreHistory = () => {
     if (isHistory) {
-      void toolHistoryStore.restoreHistory(sessionId)
+      void sessionHistoryStore.restoreHistory(sessionId)
     }
   }
 

@@ -58,42 +58,42 @@ const textTransformTool: ToolConstructor<InputFields, OutputFields> = {
   action({ input, type }) {
     let output: string = input
     switch (type.toLowerCase()) {
-      case "lowercase":
-        output = input.toLowerCase()
-        break
-      case "uppercase":
-        output = input.toUpperCase()
-        break
-      case "titlecase":
-        output = input.replace(/\b\w/g, match => match.toUpperCase())
-        break
-      case "camelcase":
-        output = input.replace(/[-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : "")
-        break
-      case "pascalcase":
-        output = input.replace(/[-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : "").replace(/^\w/, c => c.toUpperCase())
-        break
-      case "snakecase":
-        output = input.replace(/\s/g, "_").toLowerCase()
-        break
-      case "kebabcase":
-        output = input.replace(/\s/g, "-").toLowerCase()
-        break
-      case "sentencecase":
-        output = input.toLowerCase().replace(/(^\w|\.\s*\w)/g, match => match.toUpperCase())
-        break
-      case "startcase":
-        output = input.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(" ")
-        break
-      case "togglecase":
-        output = input.split("").map(char => (char === char.toLowerCase()) ? char.toUpperCase() : char.toLowerCase()).join("")
-        break
-      case "invertedcase":
-        output = input.split("").map(char => (char === char.toLowerCase()) ? char.toUpperCase() : char.toLowerCase()).join("")
-        break
-      case "randomcase":
-        output = input.split("").map(char => (Math.random() < 0.5) ? char.toUpperCase() : char.toLowerCase()).join("")
-        break
+    case "lowercase":
+      output = input.toLowerCase()
+      break
+    case "uppercase":
+      output = input.toUpperCase()
+      break
+    case "titlecase":
+      output = input.replace(/\b\w/g, match => match.toUpperCase())
+      break
+    case "camelcase":
+      output = input.replace(/[-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : "")
+      break
+    case "pascalcase":
+      output = input.replace(/[-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : "").replace(/^\w/, c => c.toUpperCase())
+      break
+    case "snakecase":
+      output = input.replace(/\s/g, "_").toLowerCase()
+      break
+    case "kebabcase":
+      output = input.replace(/\s/g, "-").toLowerCase()
+      break
+    case "sentencecase":
+      output = input.toLowerCase().replace(/(^\w|\.\s*\w)/g, match => match.toUpperCase())
+      break
+    case "startcase":
+      output = input.split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(" ")
+      break
+    case "togglecase":
+      output = input.split("").map(char => (char === char.toLowerCase()) ? char.toUpperCase() : char.toLowerCase()).join("")
+      break
+    case "invertedcase":
+      output = input.split("").map(char => (char === char.toLowerCase()) ? char.toUpperCase() : char.toLowerCase()).join("")
+      break
+    case "randomcase":
+      output = input.split("").map(char => (Math.random() < 0.5) ? char.toUpperCase() : char.toLowerCase()).join("")
+      break
     }
 
     return { output }

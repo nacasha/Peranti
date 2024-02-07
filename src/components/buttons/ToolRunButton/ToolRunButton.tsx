@@ -2,15 +2,15 @@ import { observer } from "mobx-react"
 
 import { Button } from "src/components/common/Button"
 import { Icons } from "src/constants/icons"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 
 import "./ToolRunButton.scss"
 
 export const ToolRunButton = observer(() => {
-  const activeTool = toolRunnerStore.getActiveTool()
+  const activeTool = activeSessionStore.getActiveTool()
 
   const onClickRun = () => {
-    toolRunnerStore.runActiveTool()
+    activeSessionStore.runActiveTool()
   }
 
   if (activeTool.isDeleted) {

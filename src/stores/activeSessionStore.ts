@@ -5,16 +5,11 @@ import { makePersistable } from "mobx-persist-store"
 import { StorageKeys } from "src/constants/storage-keys"
 import { Tool } from "src/models/Tool.ts"
 
-class ToolRunnerStore {
-  /**
-   * Indicates history panel is opened or closed
-   */
-  _isHistoryPanelOpen = false
-
+class ActiveSessionStore {
   /**
    * Store active tool that currently used
    */
-  private _activeTool?: Tool = undefined
+  private _activeSession?: Tool = undefined
 
   /**
    * Make this class observable
@@ -30,7 +25,7 @@ class ToolRunnerStore {
    */
   setupPersistence() {
     void makePersistable(this, {
-      name: StorageKeys.ToolRunnerStore,
+      name: StorageKeys.ActiveSessionStore,
       storage: localforage,
       stringify: false,
       properties: []
@@ -45,19 +40,12 @@ class ToolRunnerStore {
   }
 
   /**
-   * Indicates history panel is opened
-   */
-  get isHistoryPanelOpen() {
-    return this._isHistoryPanelOpen
-  }
-
-  /**
    * Set active tool
    *
    * @param tool
    */
   setActiveTool(tool: Tool) {
-    this._activeTool = tool
+    this._activeSession = tool
   }
 
   /**
@@ -66,7 +54,7 @@ class ToolRunnerStore {
    * @returns Tool
    */
   getActiveTool() {
-    const activeTool = this._activeTool
+    const activeTool = this._activeSession
 
     if (activeTool) {
       return activeTool
@@ -81,7 +69,7 @@ class ToolRunnerStore {
    * @param tool
    * @returns
    */
-  isToolActiveBySessionId(sessionId: string) {
+  isSessionActiveById(sessionId: string) {
     return this.getActiveTool().sessionId === sessionId
   }
 
@@ -90,13 +78,6 @@ class ToolRunnerStore {
    */
   runActiveTool() {
     void this.getActiveTool().run()
-  }
-
-  /**
-   * Toggle open and close history panel
-   */
-  toggleHistoryPanel() {
-    this._isHistoryPanelOpen = !this._isHistoryPanelOpen
   }
 
   /**
@@ -110,7 +91,7 @@ class ToolRunnerStore {
   /**
    * Clean current active tool editor input and output state
    */
-  cleanActiveToolState() {
+  cleanActiveSessionState() {
     const activeTool = this.getActiveTool()
 
     activeTool.resetInputAndOutputValues()
@@ -141,4 +122,4 @@ class ToolRunnerStore {
   }
 }
 
-export const toolRunnerStore = new ToolRunnerStore()
+export const activeSessionStore = new ActiveSessionStore()

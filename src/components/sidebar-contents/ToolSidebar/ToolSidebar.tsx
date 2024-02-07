@@ -4,8 +4,8 @@ import { type ReactNode, type FC } from "react"
 import { Icons } from "src/constants/icons"
 import { SidebarMode } from "src/enums/SidebarMode"
 import { useSelector } from "src/hooks/useSelector"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 import { interfaceStore } from "src/stores/interfaceStore"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
 import { sessionStore } from "src/stores/sessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
@@ -42,8 +42,8 @@ export const ToolSidebar: FC = () => {
 
 const ToolSidebarInnerItem: FC<{ tool: ToolConstructor, children: ReactNode }> = ({ tool }) => {
   const isActive = useSelector(() => (
-    toolRunnerStore.getActiveTool().toolId === tool.toolId &&
-    !toolRunnerStore.getActiveTool().isDeleted
+    activeSessionStore.getActiveTool().toolId === tool.toolId &&
+    !activeSessionStore.getActiveTool().isDeleted
   ))
 
   const onClickSidebarItem = (tool: ToolConstructor) => () => {

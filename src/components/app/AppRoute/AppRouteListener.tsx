@@ -3,11 +3,11 @@ import { useLocation } from "wouter"
 
 import { useSelector } from "src/hooks/useSelector"
 import { Tool } from "src/models/Tool"
-import { toolRunnerStore } from "src/stores/toolRunnerStore"
+import { activeSessionStore } from "src/stores/activeSessionStore"
 
 export const AppRouteListener = () => {
   const [location, setLocation] = useLocation()
-  const sessionId = useSelector(() => toolRunnerStore.getActiveTool().sessionId)
+  const sessionId = useSelector(() => activeSessionStore.getActiveTool().sessionId)
 
   useEffect(() => {
     if (Tool.getToolIdFromSessionId(sessionId) === "") {
