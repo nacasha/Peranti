@@ -27,25 +27,6 @@ $padding: 10px;
     }
   }
 
-  .AppTitlebar-control {
-    .titlebar-button {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      width: 50px;
-      height: var(--app-titlebar-height);
-
-      img {
-        width: 14px;
-        filter: var(--icon-color);
-      }
-    }
-
-    .titlebar-button:hover {
-      background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%);
-    }
-  }
-
   .AppTitlebarSearch {
     position: absolute;
     left: 0;
@@ -131,12 +112,5 @@ $padding: 10px;
         }
       }
     }
-  }
-
-  &.TitlebarWithTabbar {
-    position: fixed;
-    right: 0;
-    top: 0;
-    z-index: 10;
   }
 }

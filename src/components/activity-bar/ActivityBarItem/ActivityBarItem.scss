@@ -4,7 +4,7 @@
   align-items: center;
   border-radius: var(--border-radius);
   padding: 5px;
-  height: var(--sidebar-item-height);
+  height: var(--activitybar-item-height);
   position: relative;
 
   &::before {
@@ -19,12 +19,12 @@
   }
 
   &:hover {
-    background-color: var(--sidebar-item-background-color-hover);
+    background-color: var(--activitybar-item-background-color-hover);
     cursor: pointer;
   }
 
   &.active {
-    background-color: var(--sidebar-item-background-color-active);
+    background-color: var(--activitybar-item-background-color-active);
 
     &::before {
       opacity: 1;
@@ -43,7 +43,7 @@
   .tooltip {
     display: none;
     position: fixed;
-    margin-left: calc(var(--sidebar-width) - 3px);
+    margin-left: calc(var(--activitybar-width) - 3px);
     padding: 2px 5px;
     background-color: var(--background-color-main);
     color: var(--text-color);

@@ -1,4 +1,5 @@
 import { Icons } from "src/constants/icons.ts"
+import settingsTool from "src/tools/settings-tool"
 
 import { ActivityBarItem } from "../ActivityBarItem"
 
@@ -33,7 +34,7 @@ export const ActivityBar = () => {
           icon={Icons.Gear}
           label="Settings"
           menuId="settings"
-          href="/settings"
+          toolConstructor={settingsTool}
         />
       </div>
     </div>

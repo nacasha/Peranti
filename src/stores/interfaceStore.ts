@@ -3,9 +3,9 @@ import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys"
-import { AppTitleBarStyle } from "src/enums/AppTitleBarStyle"
+import { AppTitleBarStyle as AppTitlebarStyle } from "src/enums/AppTitleBarStyle"
 import { SidebarMode } from "src/enums/SidebarMode"
-import { Theme } from "src/enums/ThemeEnum.ts"
+import { Theme } from "src/enums/Theme"
 import { UserSettingsKeys } from "src/enums/UserSettingsKeys"
 import { watchUserSettings, getUserSettings } from "src/utils/decorators"
 import { getWindowSize } from "src/utils/getWindowSize"
@@ -29,7 +29,7 @@ class InterfaceStore {
    * Style of app window title bar
    */
   @watchUserSettings(UserSettingsKeys.titlebarStyle)
-  titlebarStyle = getUserSettings(UserSettingsKeys.titlebarStyle, AppTitleBarStyle.Tabbar)
+  appTitlebarStyle = getUserSettings(UserSettingsKeys.titlebarStyle, AppTitlebarStyle.Commandbar)
 
   /**
    * Show the sidebar
@@ -53,20 +53,21 @@ class InterfaceStore {
    *
    * @configurable
    */
-  textAreaWordWrap = false
+  @watchUserSettings(UserSettingsKeys.textAreaWordWrap)
+  textAreaWordWrap = getUserSettings(UserSettingsKeys.textAreaWordWrap, false)
 
   /**
    * State of window size
    */
   windowSize = { width: 0, height: 0 }
 
+  isWindowMaximized: boolean = false
+
   constructor() {
     makeAutoObservable(this)
 
     this.recalculateWindowSize()
     this.setupPersistence()
-
-    console.log("Create InterfaceStoress")
   }
 
   /**
@@ -80,9 +81,7 @@ class InterfaceStore {
       properties: [
         "isFloatingSidebar",
         "isSidebarShow",
-        "_sidebarMode",
-        "textAreaWordWrap",
-        "theme"
+        "_sidebarMode"
       ]
     })
   }
@@ -114,6 +113,10 @@ class InterfaceStore {
 
   toggleSidebarAlwaysFloating() {
     this.isFloatingSidebar = !this.isFloatingSidebar
+
+    if (!this.isFloatingSidebar) {
+      this.isSidebarShow = true
+    }
   }
 
   setSidebarMenuId(menuId: string) {
@@ -122,6 +125,14 @@ class InterfaceStore {
 
   setTheme(theme: any) {
     this.theme = theme
+  }
+
+  setAppTitlebarStyle(style: AppTitlebarStyle) {
+    this.appTitlebarStyle = style
+  }
+
+  setIsWindowMaximized(value: boolean) {
+    this.isWindowMaximized = value
   }
 }
 

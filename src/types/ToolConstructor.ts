@@ -34,7 +34,7 @@ export interface ToolConstructor<IF extends Record<string, any> = any, OF extend
    * Action of tool.
    * Input always comes in form of Map as well as the returned value
    */
-  action: (input: IF) => OF | Promise<OF> | undefined
+  action?: (input: IF) => OF | Promise<OF> | undefined
 
   /**
    * Tool layout setting
@@ -65,4 +65,11 @@ export interface ToolConstructor<IF extends Record<string, any> = any, OF extend
    * Additional data for tool based on tool type
    */
   metadata?: any
+
+  /**
+   * Maximum session to be created
+   */
+  disableMultipleSession?: boolean
+
+  hideOnSidebar?: boolean
 }

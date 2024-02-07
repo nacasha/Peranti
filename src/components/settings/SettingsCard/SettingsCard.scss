@@ -3,6 +3,7 @@
   max-width: 700px;
 
   .SettingsCard-title {
+    font-weight: 600;
     font-size: 20px;
     margin-bottom: 15px;
     margin-left: 5px;
@@ -22,4 +23,19 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
+
+  .SettingsCardItem-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    line-height: 14px;
+  }
+
+  .SettingsCardItem-label {
+    font-weight: 500;
+  }
+
+  .SettingsCardItem-description {
+    font-size: 12px;
+  }
 }

@@ -18,6 +18,7 @@ import { MarkdownOutput } from "src/components/outputs/MarkdownOutput"
 import { TextAreaOutput } from "src/components/outputs/TextAreaOutput"
 import { TextOutput } from "src/components/outputs/TextOutput"
 import { ToolComponent } from "src/models/ToolComponent"
+import { SettingsPage } from "src/pages/SettingsPage/SettingsPage"
 import { convertCRLFtoLF } from "src/utils/convertCRLFtoLF"
 import { createFileFromUint32Array } from "src/utils/createFileFromUint32Array"
 import { getFileNameFromPath } from "src/utils/getFileNameFromPath.js"
@@ -120,6 +121,10 @@ class ToolComponentService {
       batchComponent: "Code",
       copyAs: "text",
       saveAs: "text"
+    }),
+
+    Settings: new ToolComponent({
+      component: SettingsPage
     })
   }
 

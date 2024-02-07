@@ -1,6 +1,7 @@
 .ToolTabbar {
   position: relative;
   background-color: var(--tool-tabbar-background-color);
+  min-height: var(--tool-tabbar-height);
   height: var(--tool-tabbar-height);
 
   .simplebar-track.simplebar-horizontal {
@@ -73,8 +74,8 @@
     color: var(--tool-tabbar-text-color-active);
     background-color: var(--tool-header-background-color);
     z-index: 1;
-    border-bottom: 1px solid var(--tool-header-background-color);
-    border-top: 2px solid var(--accent-color  );
+    border-bottom: 2px solid var(--tool-header-background-color);
+    border-top: 3px solid var(--accent-color);
   }
 
   &.new {
@@ -131,6 +132,14 @@
 
 .AppRoot.TitlebarWithTabbar {
   .ToolTabbar {
-    margin-right: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: space-between;
   }
+
+  .ToolTabbar-inner {
+    right: 150px;
+  }
+
 }

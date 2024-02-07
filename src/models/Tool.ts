@@ -172,6 +172,10 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
    */
   readonly disablePersistence: boolean = false
 
+  readonly disableMultipleSession: boolean = false
+
+  readonly hideOnSidebar: boolean = false
+
   /**
    * Additional data of tool based on type
    */
@@ -296,7 +300,7 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
     this.toolId = toolConstructor.toolId
     this.sessionId = toolConstructor.toolId === "" ? "" : Tool.generateSessionId(toolConstructor.toolId)
     this.name = toolConstructor.name
-    this.action = toolConstructor.action
+    this.action = toolConstructor.action ?? (() => ({}))
     this.category = toolConstructor.category
     this.inputFields = toolConstructor.inputFields
     this.outputFields = toolConstructor.outputFields
@@ -305,6 +309,8 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
     this.type = toolConstructor.type ?? ToolType.Tool
     this.metadata = toolConstructor.metadata
     this.samples = toolConstructor.samples ?? []
+    this.disableMultipleSession = toolConstructor.disableMultipleSession ?? false
+    this.hideOnSidebar = toolConstructor.hideOnSidebar ?? false
 
     if (this.autoRun) {
       this.isAutoRunAndFirstTime = true
@@ -347,6 +353,10 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
       this.inputFieldsState = initialState.inputFieldsState ?? this.inputFieldsState
       this.outputFieldsState = initialState.outputFieldsState ?? this.outputFieldsState
       this.isAutoRunAndFirstTime = initialState.isAutoRunAndFirstTime ?? this.isAutoRunAndFirstTime
+    }
+
+    if (this.disableMultipleSession) {
+      this.sessionName = toolStore.mapOfLoadedTools[this.toolId].name
     }
 
     this.disablePersistence = disablePersistence

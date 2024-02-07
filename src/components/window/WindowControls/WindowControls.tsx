@@ -17,21 +17,21 @@ export const WindowControls: FC = () => {
   }
 
   return (
-    <div className="AppTitlebar-control">
+    <div className="WindowControls">
       <div
-        className="titlebar-button"
+        className="WindowControls-button"
         onClick={handleClickMinimize}
       >
         <img src={Icons.Minimize} alt="Minimize" />
       </div>
       <div
-        className="titlebar-button"
+        className="WindowControls-button"
         onClick={handleClickMaximize}
       >
         <img src={Icons.Box} alt="Maximize" />
       </div>
       <div
-        className="titlebar-button"
+        className="WindowControls-button"
         onClick={handleClickClose}
       >
         <img src={Icons.Close} alt="Close" />

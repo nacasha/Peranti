@@ -7,6 +7,7 @@ import { type ItemParams, useContextMenu, Item, Separator } from "react-contexif
 import SimpleBar from "simplebar-react"
 
 import { ContextMenu } from "src/components/common/ContextMenu"
+import { WindowControls } from "src/components/window/WindowControls"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { Icons } from "src/constants/icons"
 import { useDragAndDropJS } from "src/hooks/useDragAndDropJS"
@@ -20,12 +21,16 @@ import { type ToolSession } from "src/types/ToolSession"
 
 import "./ToolTabbar.scss"
 
+import { interfaceStore } from "src/stores/interfaceStore"
+import { AppTitleBarStyle } from "src/enums/AppTitleBarStyle"
+
 const $renamingSessionId = atom<string>("")
 
 export const ToolTabbar: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
   const sessions = toolSessionStore.getRunningSessions(activeTool.toolId)
   const activeIndex = sessions.findIndex((tab) => tab.sessionId === activeTool.sessionId)
+  const appTitlebarStyle = interfaceStore.appTitlebarStyle
 
   const ref = useRef<HTMLDivElement>(null)
 
@@ -101,7 +106,7 @@ export const ToolTabbar: FC = observer(() => {
 
   return (
     <>
-      <div className="ToolTabbar">
+      <div className="ToolTabbar" data-tauri-drag-region>
         <div className="ToolTabbar-inner">
           <SimpleBar
             className="ToolTabbar-inner-simplebar"
@@ -115,13 +120,17 @@ export const ToolTabbar: FC = observer(() => {
               />
             ))}
 
-            <div onClick={onClickAddTab} className="ToolTabbar-item new">
-              <div className="ToolTabbar-icon">
-                <img src={Icons.Plus} alt="Add Tab" />
+            {!(activeTool.toolId === "") && (
+              <div onClick={onClickAddTab} className="ToolTabbar-item new">
+                <div className="ToolTabbar-icon">
+                  <img src={Icons.Plus} alt="Add Tab" />
+                </div>
               </div>
-            </div>
+            )}
           </SimpleBar>
         </div>
+
+        {appTitlebarStyle === AppTitleBarStyle.Tabbar && <WindowControls />}
       </div>
 
       <TabbarContextMenu />

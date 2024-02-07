@@ -24,6 +24,7 @@ import mathEvaluatorTool from "src/tools/math-evaluator-tool.ts"
 import millisecondsToDate from "src/tools/milliseconds-to-date-tool.ts"
 import prefixSuffixLines from "src/tools/prefix-suffix-lines-tool.ts"
 import removeDuplicateList from "src/tools/remove-duplicate-lines-tool.ts"
+import settingsTool from "src/tools/settings-tool.ts"
 import sortList from "src/tools/sort-list-tool.ts"
 import testPipelines from "src/tools/test-pipelines-tool.ts"
 import textEditorTool from "src/tools/text-editor-tool.ts"
@@ -109,7 +110,8 @@ class ToolStore {
     [fileToBase64Tool.toolId]: fileToBase64Tool,
     [base64ToFileTool.toolId]: base64ToFileTool,
     [markdownParserTool.toolId]: markdownParserTool,
-    [dateToMillisecondsTool.toolId]: dateToMillisecondsTool
+    [dateToMillisecondsTool.toolId]: dateToMillisecondsTool,
+    [settingsTool.toolId]: settingsTool
   }
 
   /**
@@ -267,6 +269,10 @@ class ToolStore {
      * Put each tools on its category
      */
     [...toolStore.listOfLoadedTools].forEach((tool) => {
+      if (tool.hideOnSidebar) {
+        return
+      }
+
       if (this.groupToolsByCategory) {
         listOfCategoriesAndTools[tool.category].push(tool)
       } else {
@@ -295,6 +301,12 @@ class ToolStore {
         })
       )
     }
+
+    listOfCategoriesAndTools = Object.fromEntries(
+      Object.entries(listOfCategoriesAndTools).filter(([, tools]) => {
+        return tools.length > 0
+      })
+    )
 
     this.listOfCategoriesAndTools = listOfCategoriesAndTools
   }

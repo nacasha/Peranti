@@ -4,6 +4,8 @@ import { useLocation } from "wouter"
 
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/stores/interfaceStore"
+import { toolSessionStore } from "src/stores/toolSessionStore"
+import { type ToolConstructor } from "src/types/ToolConstructor"
 
 import "./ActivityBarItem.scss"
 
@@ -12,14 +14,20 @@ interface ActivityBarItemProps {
   icon: string
   menuId: string
   href?: string
+  toolConstructor?: ToolConstructor
 }
 
 export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
-  const { icon, label, menuId, href } = props
+  const { icon, label, menuId, href, toolConstructor } = props
   const [, setLocation] = useLocation()
   const isActive = useSelector(() => interfaceStore.sidebarActiveMenuId === menuId)
 
   const onClickItem = () => () => {
+    if (toolConstructor) {
+      toolSessionStore.findOrCreateSession(toolConstructor)
+      return
+    }
+
     if (interfaceStore.sidebarActiveMenuId !== menuId) {
       interfaceStore.setSidebarMenuId(menuId)
       interfaceStore.showSidebar()

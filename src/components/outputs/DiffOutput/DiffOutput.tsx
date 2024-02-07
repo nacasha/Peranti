@@ -2,7 +2,7 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 import ReactDiffViewer, { type DiffMethod } from "react-diff-viewer"
 
-import { Theme } from "src/enums/ThemeEnum"
+import { Theme } from "src/enums/Theme"
 import { interfaceStore } from "src/stores/interfaceStore"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 

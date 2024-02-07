@@ -1,6 +1,6 @@
 .ActivityBar {
   width: 100%;
-  max-width: var(--sidebar-width);
+  max-width: var(--activitybar-width);
   overflow: auto;
   background-color: var(--background-color-main);
   z-index: 3;
@@ -8,7 +8,7 @@
   flex-direction: column;
   padding-block: 5px;
   padding-left: 1px;
-  border-top: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
 }
 
 .ActivityBar-main {

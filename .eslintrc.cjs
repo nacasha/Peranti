@@ -47,7 +47,18 @@ module.exports = {
     "react/display-name": "off",
     "react/prop-types": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/indent": ["error", 2],
+    "@typescript-eslint/indent": [
+      "error",
+      2,
+      {
+        "MemberExpression": 1,
+        "ignoredNodes": [
+          "FunctionExpression > .params[decorators.length > 0]",
+          "FunctionExpression > .params > :matches(Decorator, :not(:first-child))",
+          "ClassBody.body > PropertyDefinition[decorators.length > 0] > .key",
+        ],
+      }
+    ],
     "@typescript-eslint/quotes": ["error", "double"],
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/space-before-function-paren": ["error", "never"],

@@ -171,6 +171,12 @@ class ToolSessionStore {
       return
     }
 
+    if (toolConstructor.disableMultipleSession) {
+      if (this.getRunningSessionsFromTool(toolConstructor.toolId).length > 0) {
+        return
+      }
+    }
+
     /**
      * Create sessionName for tool
      */

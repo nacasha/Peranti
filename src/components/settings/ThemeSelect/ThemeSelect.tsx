@@ -1,7 +1,7 @@
 import { type FC } from "react"
 
 import { SelectInput } from "src/components/inputs/SelectInput"
-import { Theme } from "src/enums/ThemeEnum.ts"
+import { Theme } from "src/enums/Theme"
 import { interfaceStore } from "src/stores/interfaceStore.ts"
 
 export const ThemeSelect: FC = () => {

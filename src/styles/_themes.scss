@@ -16,6 +16,8 @@ body {
 
   // App Titlebar
   --app-titlebar-height: 37px;
+  --window-control-button-width: 50px;
+  --window-control-button-height: 36px;
 
   // Tool
   --tool-header-height: 45px;
@@ -26,9 +28,9 @@ body {
   --transition-speed: 0s;
 
   // Sidebar
-  --sidebar-width: 50px;
-  --sidebar-item-height: 30px;
-  --sidebar-content-width: 250px;
+  --activitybar-width: 50px;
+  --activitybar-item-height: 30px;
+  --primary-sidebar-width: 250px;
 
   // Input and output component styles
   --input-output-fields-spacing: 15px;
@@ -81,9 +83,9 @@ body.light {
   --background-color-content: #ffffff;
 
   // App Sidebar
-  --sidebar-content-background-color: #f6f8fa;
-  --sidebar-item-background-color-hover: #dfdddd;
-  --sidebar-item-background-color-active: #d6d6d6;
+  --primary-sidebar-background-color: #f6f8fa;
+  --activitybar-item-background-color-hover: #dfdddd;
+  --activitybar-item-background-color-active: #d6d6d6;
 
   // App Statusbar
   --statusbar-background-color: #f6f6f6;
@@ -171,9 +173,9 @@ body.dark {
   --background-color-content: #222429;
 
   // App Sidebar
-  --sidebar-content-background-color: #222429;
-  --sidebar-item-background-color-hover: #5a5b5e;
-  --sidebar-item-background-color-active: #434549;
+  --primary-sidebar-background-color: #222429;
+  --activitybar-item-background-color-hover: #5a5b5e;
+  --activitybar-item-background-color-active: #434549;
 
   // App Statusbar
   --statusbar-background-color: #181818;

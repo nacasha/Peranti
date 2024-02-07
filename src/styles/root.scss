@@ -40,7 +40,6 @@ html, body {
   font-size: var(--font-size);
   line-height: 24px;
   font-weight: 400;
-  //background-color: #f6f6f6;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -61,12 +60,9 @@ html, body {
 .AppContent {
   width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   position: relative;
-  overflow-x: hidden;
-  // TODO: Watch changes, from auto
-  overflow-y: hidden;
-  border-left: 1px solid var(--border-color);
+  overflow: hidden;
   background-color: var(--background-color-content);
 }
 
@@ -93,6 +89,14 @@ html, body {
 
     div[role="status"] {
       word-break: break-all;
+    }
+  }
+}
+
+.AppRoot.TitlebarWithTabbar {
+  .ToolTabbar {
+    .WindowControls {
+      border-bottom: 1px solid var(--border-color);
     }
   }
 }

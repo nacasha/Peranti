@@ -62,4 +62,14 @@ export class AppDataService {
       return {} as any
     }
   }
+
+  static async writeSettingsFile(settings: any) {
+    await AppDataService.prepareSettingsJSONFile()
+
+    try {
+      await writeTextFile("settings.json", JSON.stringify(settings, undefined, 2), { dir: BaseDirectory.AppData })
+    } catch (exception) {
+      console.log("Failed to write settings.json")
+    }
+  }
 }

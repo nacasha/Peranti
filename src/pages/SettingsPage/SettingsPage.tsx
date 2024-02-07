@@ -2,6 +2,7 @@ import localforage from "localforage"
 import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
+import { AppTitleBarStyleSelect } from "src/components/settings/AppTitlebarStyleSelect"
 import { SettingsCard, SettingsCardItem } from "src/components/settings/SettingsCard"
 import { SidebarMode } from "src/components/settings/SidebarMode"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
@@ -25,6 +26,10 @@ export const SettingsPage: FC = () => {
           <ThemeSelect />
         </SettingsCardItem>
 
+        <SettingsCardItem label="Title Bar Style">
+          <AppTitleBarStyleSelect />
+        </SettingsCardItem>
+
         <SettingsCardItem label="Floating Sidebar">
           <SidebarMode />
         </SettingsCardItem>
@@ -34,7 +39,7 @@ export const SettingsPage: FC = () => {
         </SettingsCardItem>
       </SettingsCard>
 
-      <SettingsCard title="App Data">
+      <SettingsCard title="Application Data">
         <SettingsCardItem label="Extensions">
           <Button>Show Folder</Button>
         </SettingsCardItem>
@@ -43,12 +48,27 @@ export const SettingsPage: FC = () => {
           <Button>Show File</Button>
         </SettingsCardItem>
 
-        <SettingsCardItem label="Reset">
+        <SettingsCardItem
+          label="App Data"
+          description="Data related to opened sessions, closed editors, and application state"
+        >
           <div
             className="SettingsPage-item-value"
             onClick={handleClickResetAppData}
           >
             <Button>Reset App Data</Button>
+          </div>
+        </SettingsCardItem>
+
+        <SettingsCardItem
+          label="User Settings"
+          description="Data related to user customization for application"
+        >
+          <div
+            className="SettingsPage-item-value"
+            onClick={handleClickResetAppData}
+          >
+            <Button>Reset User Settings</Button>
           </div>
         </SettingsCardItem>
       </SettingsCard>
