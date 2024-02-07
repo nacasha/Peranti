@@ -1,8 +1,8 @@
 import { type FC } from "react"
 
 import { SelectInput } from "src/components/inputs/SelectInput"
-import { Theme } from "src/enums/Theme"
-import { interfaceStore } from "src/stores/interfaceStore.ts"
+import { Theme } from "src/enums/theme"
+import { interfaceStore } from "src/services/interface-store"
 
 export const ThemeSelect: FC = () => {
   const { theme } = interfaceStore

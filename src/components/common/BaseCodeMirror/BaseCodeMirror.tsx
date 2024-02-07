@@ -5,9 +5,9 @@ import { monokaiDimmed } from "@uiw/codemirror-theme-monokai-dimmed"
 import CodeMirror, { EditorView, type ReactCodeMirrorRef, type ReactCodeMirrorProps, type ViewUpdate, EditorSelection } from "@uiw/react-codemirror"
 import { useRef, type FC, useEffect, useState } from "react"
 
-import { Theme } from "src/enums/Theme"
+import { Theme } from "src/enums/theme"
 import { useSelector } from "src/hooks/useSelector"
-import { interfaceStore } from "src/stores/interfaceStore.ts"
+import { interfaceStore } from "src/services/interface-store"
 
 import "./BaseCodeMirror.scss"
 

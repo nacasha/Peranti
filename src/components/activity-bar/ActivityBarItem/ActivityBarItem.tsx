@@ -3,9 +3,9 @@ import { type FC } from "react"
 import { useLocation } from "wouter"
 
 import { useSelector } from "src/hooks/useSelector"
-import { interfaceStore } from "src/stores/interfaceStore"
-import { sessionStore } from "src/stores/sessionStore"
-import { type ToolConstructor } from "src/types/ToolConstructor"
+import { interfaceStore } from "src/services/interface-store"
+import { sessionStore } from "src/services/session-store"
+import { type AppletConstructor } from "src/types/AppletConstructor"
 
 import "./ActivityBarItem.scss"
 
@@ -14,17 +14,17 @@ interface ActivityBarItemProps {
   icon: string
   menuId: string
   href?: string
-  toolConstructor?: ToolConstructor
+  appletConstructor?: AppletConstructor
 }
 
 export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
-  const { icon, label, menuId, href, toolConstructor } = props
+  const { icon, label, menuId, href, appletConstructor } = props
   const [, setLocation] = useLocation()
   const isActive = useSelector(() => interfaceStore.sidebarActiveMenuId === menuId)
 
   const onClickItem = () => () => {
-    if (toolConstructor) {
-      sessionStore.findOrCreateSession(toolConstructor)
+    if (appletConstructor) {
+      sessionStore.findOrCreateSession(appletConstructor)
       return
     }
 

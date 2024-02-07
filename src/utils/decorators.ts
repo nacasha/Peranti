@@ -1,13 +1,13 @@
 import { spy } from "mobx"
 
-import { type UserSettingsKeys } from "src/enums/UserSettingsKeys"
-import { AppDataService } from "src/services/AppDataService"
-import { userSettingsStore } from "src/stores/userSettingsStore"
+import { type UserSettingsKeys } from "src/enums/user-settings-keys"
+import { AppDataService } from "src/services/app-data-service"
+import { userSettingsService } from "src/services/user-settings-service"
 
 const watchedUserSettings: Record<string, Record<string, string>> = {}
 
 export function getUserSettings(settingKey: UserSettingsKeys, defaultValue: any) {
-  const userSettingValue = userSettingsStore.values[settingKey]
+  const userSettingValue = userSettingsService.values[settingKey]
   return userSettingValue ?? defaultValue
 }
 

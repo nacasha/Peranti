@@ -1,0 +1,50 @@
+.AppletHeader {
+  display: flex;
+  gap: 0px;
+  padding: 0 10px;
+  align-items: center;
+  min-height: var(--tool-header-height);
+  border-bottom: 1px solid var(--border-color);
+  justify-content: space-between;
+  background-color: var(--tool-header-background-color);
+  position: sticky;
+  z-index: 1;
+  top: 0;
+
+  .AppletHeader-title {
+    font-weight: 500;
+  }
+
+  .AppletHeader-button-list {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+
+  .toolbar-button {
+    border: 1px solid var(--border-color);
+    background: transparent;
+    border-radius: var(--border-radius);
+    padding: 2px 8px;
+    user-select: none;
+    cursor: pointer;
+    font-family: var(--font-family);
+    display: flex;
+    align-items: center;
+    font-size: var(--font-size);
+
+    &:hover {
+      background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%);
+    }
+
+    &:active {
+      background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 7%);
+    }
+
+    img {
+      width: 12px;
+      margin-right: 5px;
+      filter: var(--icon-color);
+    }
+  }
+}

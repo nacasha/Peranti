@@ -133,7 +133,7 @@ const ImageShow = (props: any) => {
   return (
     <>
       {showControl && (
-        <div className="tools">
+        <div className="ImageOutput-actions">
           <Button onClick={() => { zoomIn() }}>
               Zoom In
           </Button>

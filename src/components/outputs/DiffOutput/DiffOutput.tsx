@@ -2,8 +2,8 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 import ReactDiffViewer, { type DiffMethod } from "react-diff-viewer"
 
-import { Theme } from "src/enums/Theme"
-import { interfaceStore } from "src/stores/interfaceStore"
+import { Theme } from "src/enums/theme"
+import { interfaceStore } from "src/services/interface-store"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import "./DiffOutput.scss"

@@ -1,7 +1,7 @@
 import React, { type FC } from "react"
 
 import { Input } from "src/components/common/Input"
-import { sessionHistoryStore } from "src/stores/sessionHistoryStore"
+import { sessionHistoryStore } from "src/services/session-history-store"
 
 export const MaxHistoryInput: FC = () => {
   const { numberOfMaximumHistory } = sessionHistoryStore

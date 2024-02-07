@@ -8,6 +8,8 @@ import { SidebarMode } from "src/components/settings/SidebarMode"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
 
+import { FileDropActionSelect } from "../FileDropActionSelect"
+
 import "./SettingsView.scss"
 
 export const SettingsView: FC = () => {
@@ -36,6 +38,12 @@ export const SettingsView: FC = () => {
 
         <SettingsCardItem label="Text Area Word Wrap">
           <TextAreaWordWrapSwitch />
+        </SettingsCardItem>
+      </SettingsCard>
+
+      <SettingsCard title="Drag and Drop">
+        <SettingsCardItem label="Action">
+          <FileDropActionSelect />
         </SettingsCardItem>
       </SettingsCard>
 

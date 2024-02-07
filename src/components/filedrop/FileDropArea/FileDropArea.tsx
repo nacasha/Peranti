@@ -1,21 +1,22 @@
 import { useEffect, type FC, useState } from "react"
 
 import { Button } from "src/components/common/Button"
+import { FileDropAction } from "src/enums/file-drop-action"
 import { useSelector } from "src/hooks/useSelector"
-import { windowManager } from "src/services/windowManager"
-import { FileDropAction, fileDropStore } from "src/stores/fileDropStore"
-import { activeSessionStore } from "src/stores/activeSessionStore"
+import { activeAppletStore } from "src/services/active-applet-store"
+import { fileDropService } from "src/services/file-drop-service"
+import { windowManager } from "src/services/window-manager"
 
 import "./FileDropArea.scss"
 
 export const FileDropArea: FC = () => {
   const [isChooshingAction, setIsChoosingAction] = useState(false)
 
-  const activeTool = useSelector(() => activeSessionStore.getActiveTool())
-  const isHoveringFile = useSelector(() => fileDropStore.isHoveringFile)
-  const isDroppingFile = useSelector(() => fileDropStore.isDroppingFile)
-  const droppedFilePaths = useSelector(() => fileDropStore.droppedFilePaths)
-  const fileDropAction = useSelector(() => fileDropStore.fileDropAction)
+  const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
+  const isHoveringFile = useSelector(() => fileDropService.isHoveringFile)
+  const isDroppingFile = useSelector(() => fileDropService.isDroppingFile)
+  const droppedFilePaths = useSelector(() => fileDropService.droppedFilePaths)
+  const fileDropAction = useSelector(() => fileDropService.fileDropAction)
 
   const handleFileDrop = async(filePaths: string[]) => {
     if (filePaths.length > 0) {
@@ -25,29 +26,29 @@ export const FileDropArea: FC = () => {
         setIsChoosingAction(true)
       } else {
         setIsChoosingAction(false)
-        await fileDropStore.proceedFileDropBasedOnAction()
+        await fileDropService.proceedFileDropBasedOnAction()
       }
     }
   }
 
   const handleClickCancel = () => {
     setIsChoosingAction(false)
-    fileDropStore.resetState()
+    fileDropService.resetState()
   }
 
-  const handleReplaceCurrentTool = () => {
+  const handleReplaceCurrentSession = () => {
     setIsChoosingAction(false)
-    void fileDropStore.replaceCurrentTool()
+    void fileDropService.replaceCurrentSession()
   }
 
-  const handleReplaceCurrentToolAndOpen = () => {
+  const handleReplaceCurrentSessionAndOpen = () => {
     setIsChoosingAction(false)
-    void fileDropStore.replaceCurrentToolAndOpenNew()
+    void fileDropService.replaceCurrentSessionAndOpenNew()
   }
 
   const handleOpenNewSession = () => {
     setIsChoosingAction(false)
-    void fileDropStore.openInNewSession()
+    void fileDropService.openInNewSession()
   }
 
   useEffect(() => {
@@ -60,7 +61,7 @@ export const FileDropArea: FC = () => {
     return null
   }
 
-  const activeToolName = activeTool.name
+  const activeAppletName = activeApplet.name
   const hasMultipleFiles = droppedFilePaths.length > 1
 
   return (
@@ -83,17 +84,17 @@ export const FileDropArea: FC = () => {
                 ? (
                   <div
                     className="FileDropArea-prompt-item"
-                    onClick={handleReplaceCurrentTool}
+                    onClick={handleReplaceCurrentSession}
                   >
-                    Replace current <strong>{activeToolName}</strong>
+                    Replace current <strong>{activeAppletName}</strong>
                   </div>
                 )
                 : (
                   <div
                     className="FileDropArea-prompt-item"
-                    onClick={handleReplaceCurrentToolAndOpen}
+                    onClick={handleReplaceCurrentSessionAndOpen}
                   >
-                    Replace current <strong>{activeToolName}</strong> and
+                    Replace current <strong>{activeAppletName}</strong> and
                     {" "} open {droppedFilePaths.length - 1} in new editor(s)
                   </div>
                 )}
@@ -101,7 +102,7 @@ export const FileDropArea: FC = () => {
                 className="FileDropArea-prompt-item"
                 onClick={handleOpenNewSession}
               >
-                Open in {droppedFilePaths.length} new editor(s) of <strong>{activeToolName}</strong>
+                Open in {droppedFilePaths.length} new editor(s) of <strong>{activeAppletName}</strong>
               </div>
             </div>
             <Button onClick={handleClickCancel}>

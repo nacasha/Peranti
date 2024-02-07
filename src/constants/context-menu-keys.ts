@@ -1,4 +1,4 @@
 export const ContextMenuKeys = {
-  SessionTabbar: "tool-tabbar-context-menu",
-  ToolOutput: "output-context-menu"
+  SessionTabbar: "session-tabbar-context-menu",
+  AppletComponent: "applet-component-context-menu"
 }

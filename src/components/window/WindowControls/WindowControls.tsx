@@ -1,7 +1,7 @@
 import { type FC } from "react"
 
 import { Icons } from "src/constants/icons"
-import { windowManager } from "src/services/windowManager"
+import { windowManager } from "src/services/window-manager"
 
 import "./WindowControls.scss"
 

@@ -1,0 +1,72 @@
+$padding: var(--input-output-fields-spacing);
+
+.AppletComponentArea {
+  flex: 1;
+  display: grid;
+  padding: $padding;
+  background: var(--tool-area-background-color);
+
+  &.horizontal {
+    grid-template-columns: 1fr 1fr;
+    column-gap: $padding;
+  }
+
+  &.vertical {
+    grid-template-rows: 1fr 1fr;
+    row-gap: $padding;
+  }
+
+  &.horizontal-batch {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: none !important;
+    column-gap: $padding;
+  }
+
+  &.separated-input-output {
+    padding: unset;
+    column-gap: unset;
+    row-gap: unset;
+
+    .AppletComponentAreaInput, .AppletComponentAreaOutput {
+      padding: $padding;
+    }
+
+    &.horizontal {
+      .AppletComponentAreaInput {
+        border-right: 1px solid var(--border-color);
+      }
+    }
+
+    &.vertical {
+      .AppletComponentAreaInput {
+        border-bottom: 1px solid var(--border-color);
+      }
+    }
+  }
+
+  &.reversed {
+    .AppletComponentAreaInput {
+      order: 1;
+    }
+  }
+
+  .AppletComponentAreaInput, .AppletComponentAreaOutput {
+    overflow: hidden;
+    position: relative;
+    flex: 1;
+    display: flex;
+    gap: $padding;
+
+    &.horizontal {
+      flex-direction: row;
+    }
+
+    &.vertical {
+      flex-direction: column;
+    }
+
+    &.hidden {
+      display: none;
+    }
+  }
+}

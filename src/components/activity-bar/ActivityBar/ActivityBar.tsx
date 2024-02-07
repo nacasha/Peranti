@@ -1,5 +1,5 @@
+import settingsTool from "src/applets/pages/settings-applet.ts"
 import { Icons } from "src/constants/icons.ts"
-import settingsTool from "src/tools/settings-tool"
 
 import { ActivityBarItem } from "../ActivityBarItem"
 
@@ -34,7 +34,7 @@ export const ActivityBar = () => {
           icon={Icons.Gear}
           label="Settings"
           menuId="settings"
-          toolConstructor={settingsTool}
+          appletConstructor={settingsTool}
         />
       </div>
     </div>

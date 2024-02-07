@@ -1,7 +1,7 @@
 export const StorageKeys = {
-  ActiveSessionStore: "active-session-store",
+  ActiveAppletStore: "active-applet-store",
+  AppletState: "applet-state|",
   InterfaceStore: "interface-store",
   SessionHistoryStore: "session-history-store",
-  SessionStore: "session-store",
-  ToolState: "tool-state|"
+  SessionStore: "session-store"
 }

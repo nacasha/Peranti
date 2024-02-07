@@ -1,8 +1,8 @@
 import { type FC } from "react"
 
 import { SelectInput } from "src/components/inputs/SelectInput"
-import { AppTitleBarStyle } from "src/enums/AppTitleBarStyle"
-import { interfaceStore } from "src/stores/interfaceStore"
+import { AppTitleBarStyle } from "src/enums/app-titlebar-style"
+import { interfaceStore } from "src/services/interface-store"
 
 export const AppTitleBarStyleSelect: FC = () => {
   const { appTitlebarStyle } = interfaceStore

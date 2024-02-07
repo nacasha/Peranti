@@ -1,8 +1,8 @@
 import { observer } from "mobx-react"
 import { type FC, useEffect } from "react"
 
-import { SidebarMode } from "src/enums/SidebarMode"
-import { interfaceStore } from "src/stores/interfaceStore"
+import { SidebarMode } from "src/enums/sidebar-mode"
+import { interfaceStore } from "src/services/interface-store"
 
 export const WindowSizeListener: FC = observer(() => {
   const { windowSize, sidebarMode, isFloatingSidebar } = interfaceStore

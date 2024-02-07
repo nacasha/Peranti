@@ -1,10 +1,10 @@
 import { type FC } from "react"
 
-import { ToolSearchBar } from "src/components/tools/ToolSearchBar"
+import { AppletSearchBar } from "src/components/applet/AppletSearchBar"
 import { WindowControls } from "src/components/window/WindowControls"
-import { AppTitleBarStyle } from "src/enums/AppTitleBarStyle"
+import { AppTitleBarStyle } from "src/enums/app-titlebar-style"
 import { useSelector } from "src/hooks/useSelector"
-import { interfaceStore } from "src/stores/interfaceStore"
+import { interfaceStore } from "src/services/interface-store"
 
 import "./AppTitlebar.scss"
 
@@ -23,7 +23,7 @@ export const AppTitlebar: FC = () => {
       {!showSessionTabbar && (
         <>
           <div />
-          <ToolSearchBar />
+          <AppletSearchBar />
         </>
       )}
 

@@ -7,9 +7,9 @@ import { useLocation } from "wouter"
 
 import { ClosedEditorSidebar } from "src/components/sidebar-contents/ClosedEditorSidebar"
 import { ToolSidebar } from "src/components/sidebar-contents/ToolSidebar"
-import { SidebarMode } from "src/enums/SidebarMode.ts"
+import { SidebarMode } from "src/enums/sidebar-mode"
 import { useSelector } from "src/hooks/useSelector"
-import { interfaceStore } from "src/stores/interfaceStore"
+import { interfaceStore } from "src/services/interface-store"
 
 import "./PrimarySidebar.scss"
 

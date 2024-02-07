@@ -2,12 +2,12 @@ import { toJS } from "mobx"
 import { type FC } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
-import { activeSessionStore } from "src/stores/activeSessionStore"
+import { activeAppletStore } from "src/services/active-applet-store"
 
 import "./DevToolsSidebar.scss"
 
 export const DevToolsSidebar: FC = () => {
-  const activeSessionStoreData = useSelector(() => activeSessionStore)
+  const activeSessionStoreData = useSelector(() => activeAppletStore)
 
   return (
     <div className="DevToolsSidebar">

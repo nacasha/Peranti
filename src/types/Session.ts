@@ -1,14 +1,8 @@
 export interface Session {
-
-  toolId: string
-
+  appletId: string
   sessionId: string
-
   sessionName?: string
-
   sessionSequenceNumber?: number
-
   isActionRunning?: boolean
-
   isKeepAlive?: boolean
 }

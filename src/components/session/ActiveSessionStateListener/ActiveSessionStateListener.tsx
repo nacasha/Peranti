@@ -1,31 +1,31 @@
 import { observer } from "mobx-react"
 import { useEffect, type FC, useRef } from "react"
 
-import { type Tool } from "src/models/Tool"
-import { activeSessionStore } from "src/stores/activeSessionStore"
+import { type Applet } from "src/models/Applet"
+import { activeAppletStore } from "src/services/active-applet-store"
 
 export const ActiveSessionStateListener: FC = observer(() => {
-  const activeTool = activeSessionStore.getActiveTool()
-  const previousTool = useRef<Tool | null>(null)
+  const activeApplet = activeAppletStore.getActiveApplet()
+  const previousApplet = useRef<Applet | null>(null)
 
   useEffect(() => {
-    if (activeTool.autoRun) {
-      const isToolChanged = previousTool.current?.sessionId !== activeTool.sessionId
-      const { isInputValuesModified, isAutoRunAndFirstTime: toolIsAutoRunAndFirstTime } = activeTool
+    if (activeApplet.autoRun) {
+      const isAppletChanged = previousApplet.current?.sessionId !== activeApplet.sessionId
+      const { isInputValuesModified, isAutoRunAndFirstTime } = activeApplet
 
-      if (isToolChanged && toolIsAutoRunAndFirstTime) {
-        activeSessionStore.runActiveTool()
-      } else if (!isToolChanged && isInputValuesModified) {
-        activeSessionStore.runActiveTool()
+      if (isAppletChanged && isAutoRunAndFirstTime) {
+        activeAppletStore.run()
+      } else if (!isAppletChanged && isInputValuesModified) {
+        activeAppletStore.run()
       }
     }
-  }, [activeTool.inputValues])
+  }, [activeApplet.inputValues])
 
   useEffect(() => {
-    if (activeTool.sessionId !== previousTool.current?.sessionId) {
-      previousTool.current = activeTool
+    if (activeApplet.sessionId !== previousApplet.current?.sessionId) {
+      previousApplet.current = activeApplet
     }
-  }, [activeTool.sessionId])
+  }, [activeApplet.sessionId])
 
   return null
 })

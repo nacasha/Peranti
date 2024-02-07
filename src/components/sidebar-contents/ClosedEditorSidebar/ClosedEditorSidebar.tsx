@@ -2,9 +2,9 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
-import { activeSessionStore } from "src/stores/activeSessionStore"
-import { sessionHistoryStore } from "src/stores/sessionHistoryStore"
-import { toolStore } from "src/stores/toolStore"
+import { activeAppletStore } from "src/services/active-applet-store"
+import { appletStore } from "src/services/applet-store"
+import { sessionHistoryStore } from "src/services/session-history-store"
 import { type SessionHistory } from "src/types/SessionHistory"
 
 import { ToolSidebarItem } from "../ToolSidebarItem"
@@ -12,11 +12,11 @@ import { ToolSidebarItem } from "../ToolSidebarItem"
 import "./ClosedEditorSidebar.scss"
 
 export const ClosedEditorSidebar: FC = observer(() => {
-  const activeSessionId = useSelector(() => activeSessionStore.getActiveTool().sessionId)
+  const activeSessionId = useSelector(() => activeAppletStore.getActiveApplet().sessionId)
   const closedEditorList = useSelector(() => sessionHistoryStore.histories)
 
-  const onClickItem = (toolHistory: SessionHistory) => () => {
-    void sessionHistoryStore.openHistory(toolHistory)
+  const onClickItem = (sessionHistory: SessionHistory) => () => {
+    void sessionHistoryStore.openHistory(sessionHistory)
   }
 
   return (
@@ -35,7 +35,7 @@ export const ClosedEditorSidebar: FC = observer(() => {
                 {toolHistory.sessionName ?? "Untitled"}
               </div>
               <div className="subtitle">
-                {toolStore.mapOfLoadedToolsName[toolHistory.toolId]}
+                {appletStore.mapOfLoadedAppletsName[toolHistory.toolId]}
               </div>
             </div>
           </ToolSidebarItem>

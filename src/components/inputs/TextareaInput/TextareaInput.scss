@@ -2,6 +2,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  flex: 1;
 
   textarea {
     flex: 1;
@@ -27,14 +28,8 @@
   }
 }
 
-.ToolArea.text-area-word-wrap {
+.AppRoot.TextAreaWordWrap {
   .TextAreaInput textarea {
     text-wrap: wrap;
-  }
-}
-
-.ToolAreaInput.horizontal {
-  .TextAreaInput {
-    flex: 1;
   }
 }

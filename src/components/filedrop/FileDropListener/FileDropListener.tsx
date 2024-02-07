@@ -1,7 +1,7 @@
 import { appWindow } from "@tauri-apps/api/window"
 import { type FC, useEffect } from "react"
 
-import { fileDropStore } from "src/stores/fileDropStore.ts"
+import { fileDropService } from "src/services/file-drop-service"
 
 export const FileDropListener: FC = () => {
   const registerListener = async() => {
@@ -11,21 +11,21 @@ export const FileDropListener: FC = () => {
           return
         }
 
-        fileDropStore.setIsHovering(true)
-        fileDropStore.setIsDroppingFile(false)
-        fileDropStore.setDroppedFilePaths(event.payload.paths)
+        fileDropService.setIsHovering(true)
+        fileDropService.setIsDroppingFile(false)
+        fileDropService.setDroppedFilePaths(event.payload.paths)
       } else if (event.payload.type === "drop") {
         if (event.payload.paths.length === 0) {
           return
         }
 
-        fileDropStore.setIsHovering(false)
-        fileDropStore.setIsDroppingFile(true)
-        fileDropStore.setDroppedFilePaths(event.payload.paths)
+        fileDropService.setIsHovering(false)
+        fileDropService.setIsDroppingFile(true)
+        fileDropService.setDroppedFilePaths(event.payload.paths)
       } else {
-        fileDropStore.setIsHovering(false)
-        fileDropStore.setIsDroppingFile(false)
-        fileDropStore.setDroppedFilePaths([])
+        fileDropService.setIsHovering(false)
+        fileDropService.setIsDroppingFile(false)
+        fileDropService.setDroppedFilePaths([])
       }
     })
 

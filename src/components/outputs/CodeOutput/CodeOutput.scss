@@ -3,10 +3,5 @@
   position: relative;
   display: flex;
   flex-direction: column;
-}
-
-.ToolAreaOutput.horizontal {
-  .CodeOutput {
-    flex: 1;
-  }
+  flex: 1;
 }
