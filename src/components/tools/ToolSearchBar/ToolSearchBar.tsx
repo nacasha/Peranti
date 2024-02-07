@@ -6,7 +6,7 @@ import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { useSelector } from "src/hooks/useSelector"
 import { hotkeysStore } from "src/stores/hotkeysStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
-import { toolSessionStore } from "src/stores/toolSessionStore"
+import { sessionStore } from "src/stores/sessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
@@ -92,7 +92,7 @@ const SearchComponent: FC<SearchComponentProps> = (props) => {
   }
 
   const onClickItem = (tool: ToolConstructor) => () => {
-    toolSessionStore.findOrCreateSession(tool)
+    sessionStore.findOrCreateSession(tool)
     onClickOutside()
   }
 

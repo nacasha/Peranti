@@ -23,6 +23,8 @@ export type ToolOutput<K extends Record<string, string> = any> = {
    */
   allowBatch?: boolean
 } & ({
+  component: "Settings"
+} | {
   component: "Text"
   props?: ExtractOutputComponentProps<typeof toolComponentService.outputs.Text>
 } | {

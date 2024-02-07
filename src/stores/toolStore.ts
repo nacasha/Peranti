@@ -34,7 +34,7 @@ import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolPreset } from "src/types/ToolPreset"
 import { mergeToolConstructorWithPreset } from "src/utils/mergeToolConstructorWithPreset.ts"
 
-import { toolSessionStore } from "./toolSessionStore.ts"
+import { sessionStore } from "./sessionStore.ts"
 
 class ToolStore {
   /**
@@ -191,7 +191,7 @@ class ToolStore {
     /**
      * Call setup persistence of tool session to load previous session(s)
      */
-    toolSessionStore.setupPersistence()
+    sessionStore.setupPersistence()
   }
 
   private buildTools() {

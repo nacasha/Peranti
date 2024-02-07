@@ -6,7 +6,7 @@ import { SidebarMode } from "src/enums/SidebarMode"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/stores/interfaceStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
-import { toolSessionStore } from "src/stores/toolSessionStore"
+import { sessionStore } from "src/stores/sessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
@@ -47,7 +47,7 @@ const ToolSidebarInnerItem: FC<{ tool: ToolConstructor, children: ReactNode }> =
   ))
 
   const onClickSidebarItem = (tool: ToolConstructor) => () => {
-    toolSessionStore.findOrCreateSession(tool)
+    sessionStore.findOrCreateSession(tool)
     if (interfaceStore.sidebarMode === SidebarMode.FloatUnpinned) {
       interfaceStore.hideSidebar()
     }

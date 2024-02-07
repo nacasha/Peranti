@@ -1,0 +1,9 @@
+.SettingsView {
+  flex: 1;
+  background-color: var(--settings-background-color);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+  overflow: auto;
+}

@@ -4,7 +4,7 @@ import { useLocation } from "wouter"
 
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/stores/interfaceStore"
-import { toolSessionStore } from "src/stores/toolSessionStore"
+import { sessionStore } from "src/stores/sessionStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 
 import "./ActivityBarItem.scss"
@@ -24,7 +24,7 @@ export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
 
   const onClickItem = () => () => {
     if (toolConstructor) {
-      toolSessionStore.findOrCreateSession(toolConstructor)
+      sessionStore.findOrCreateSession(toolConstructor)
       return
     }
 

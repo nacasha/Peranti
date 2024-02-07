@@ -1,17 +1,17 @@
 import clsx from "clsx"
 import { type FC, type ReactNode } from "react"
 
-import { ActivityBar } from "./components/activity-bar/ActivityBar/index.ts"
-import { AppRouteListener } from "./components/app/AppRoute/index.ts"
-import { AppStatusbar } from "./components/app/AppStatusbar/index.ts"
+import { ActivityBar } from "./components/activity-bar/ActivityBar"
+import { AppRouteListener } from "./components/app/AppRoute"
+import { AppStatusbar } from "./components/app/AppStatusbar"
 import { AppThemeListener } from "./components/app/AppThemeListener/AppThemeListener.tsx"
-import { AppTitlebar } from "./components/app/AppTitlebar/index.ts"
-import { FileDropArea } from "./components/filedrop/FileDropArea/index.ts"
+import { AppTitlebar } from "./components/app/AppTitlebar"
+import { FileDropArea } from "./components/filedrop/FileDropArea"
 import { FileDropListener } from "./components/filedrop/FileDropListener"
-import { PrimarySidebar } from "./components/sidebar/PrimarySidebar/index.ts"
-import { ToolTabbar } from "./components/tools/ToolTabbar/ToolTabbar.tsx"
-import { WindowResizeEventListener } from "./components/window/WindowResizeEventListener/index.ts"
-import { WindowSizeListener } from "./components/window/WindowSizeListener/index.ts"
+import { SessionTabbar } from "./components/session/SessionTabbar"
+import { PrimarySidebar } from "./components/sidebar/PrimarySidebar"
+import { WindowResizeEventListener } from "./components/window/WindowResizeEventListener"
+import { WindowSizeListener } from "./components/window/WindowSizeListener"
 import { useSelector } from "./hooks/useSelector.ts"
 import { ToolPage } from "./pages/ToolPage/ToolPage.tsx"
 import { interfaceStore } from "./stores/interfaceStore.ts"
@@ -54,7 +54,7 @@ export const AppMain = () => {
         <PrimarySidebar />
 
         <div className="AppContent">
-          <ToolTabbar />
+          <SessionTabbar />
           <div style={{ display: "flex", flex: 1, flexDirection: "row", overflow: "hidden" }}>
             <ToolPage />
           </div>

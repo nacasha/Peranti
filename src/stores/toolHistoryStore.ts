@@ -8,7 +8,7 @@ import { ToolStorageManager } from "src/services/toolStorageManager.ts"
 import { type ToolHistory } from "src/types/ToolHistory.ts"
 
 import { toolRunnerStore } from "./toolRunnerStore.ts"
-import { toolSessionStore } from "./toolSessionStore.ts"
+import { sessionStore } from "./sessionStore.ts"
 
 class ToolHistoryStore {
   histories: ToolHistory[] = []
@@ -90,7 +90,7 @@ class ToolHistoryStore {
 
     if (toolHistory) {
       this.removeHistoryEntry(sessionId)
-      void toolSessionStore.openHistory(toolHistory)
+      void sessionStore.openHistory(toolHistory)
     }
   }
 
@@ -99,7 +99,7 @@ class ToolHistoryStore {
     void ToolStorageManager.removeToolStateFromStorage(sessionId)
 
     if (toolRunnerStore.getActiveTool().sessionId === sessionId) {
-      void toolSessionStore.openLastActiveSession()
+      void sessionStore.openLastActiveSession()
     }
   }
 

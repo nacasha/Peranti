@@ -10,9 +10,9 @@ import "./AppTitlebar.scss"
 
 export const AppTitlebar: FC = () => {
   const titlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
-  const showToolTabbar = titlebarStyle === AppTitleBarStyle.Tabbar
+  const showSessionTabbar = titlebarStyle === AppTitleBarStyle.Tabbar
 
-  if (showToolTabbar) {
+  if (showSessionTabbar) {
     return null
   }
 
@@ -20,7 +20,7 @@ export const AppTitlebar: FC = () => {
     <div className="AppTitlebar" data-tauri-drag-region>
       <div style={{ flex: 1, height: "100%" }} data-tauri-drag-region></div>
 
-      {!showToolTabbar && (
+      {!showSessionTabbar && (
         <>
           <div />
           <ToolSearchBar />

@@ -79,7 +79,6 @@ class InterfaceStore {
       storage: localforage,
       stringify: false,
       properties: [
-        "isFloatingSidebar",
         "isSidebarShow",
         "_sidebarMode"
       ]

@@ -17,8 +17,8 @@ import { ImageOutput } from "src/components/outputs/ImageOutput"
 import { MarkdownOutput } from "src/components/outputs/MarkdownOutput"
 import { TextAreaOutput } from "src/components/outputs/TextAreaOutput"
 import { TextOutput } from "src/components/outputs/TextOutput"
+import { SettingsView } from "src/components/settings/SettingsView"
 import { ToolComponent } from "src/models/ToolComponent"
-import { SettingsPage } from "src/pages/SettingsPage/SettingsPage"
 import { convertCRLFtoLF } from "src/utils/convertCRLFtoLF"
 import { createFileFromUint32Array } from "src/utils/createFileFromUint32Array"
 import { getFileNameFromPath } from "src/utils/getFileNameFromPath.js"
@@ -124,7 +124,7 @@ class ToolComponentService {
     }),
 
     Settings: new ToolComponent({
-      component: SettingsPage
+      component: SettingsView
     })
   }
 

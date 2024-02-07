@@ -21,8 +21,8 @@ body {
 
   // Tool
   --tool-header-height: 45px;
-  --tool-tabbar-height: 37px;
-  --tool-tabbar-item-max-width: 200px;
+  --session-tabbar-height: 37px;
+  --session-tabbar-item-max-width: 200px;
 
   // Animations
   --transition-speed: 0s;
@@ -99,10 +99,10 @@ body.light {
   // Tool component styles
   --tool-header-background-color: #ffffff;
   --tool-area-background-color: #f9f9fc;
-  --tool-tabbar-color: #ffffff;
-  --tool-tabbar-color-hover: #f6f8fa;
-  --tool-tabbar-text-color: #585858;
-  --tool-tabbar-text-color-active: #000000;
+  --session-tabbar-color: #ffffff;
+  --session-tabbar-color-hover: #f6f8fa;
+  --session-tabbar-text-color: #585858;
+  --session-tabbar-text-color-active: #000000;
   --tool-sidebar-text-color: #212418;
   --tool-sidebar-text-color-active: #ffffff;
   --tool-sidebar-icon-color: invert(11%) sepia(7%) saturate(1891%) hue-rotate(34deg) brightness(98%) contrast(92%);
@@ -189,11 +189,11 @@ body.dark {
   // Tool component styles
   --tool-header-background-color: #181818;
   --tool-area-background-color: #202124;
-  --tool-tabbar-background-color: #1a1b1d;
-  --tool-tabbar-color: #1a1b1d;
-  --tool-tabbar-color-hover: #1f2022;
-  --tool-tabbar-text-color: #939393;
-  --tool-tabbar-text-color-active: white;
+  --session-tabbar-background-color: #1a1b1d;
+  --session-tabbar-color: #1a1b1d;
+  --session-tabbar-color-hover: #1f2022;
+  --session-tabbar-text-color: #939393;
+  --session-tabbar-text-color-active: white;
   --tool-sidebar-text-color: #cfcfcf;
   --tool-sidebar-text-color-active: #ffffff;
   --tool-sidebar-icon-color: invert(99%) sepia(3%) saturate(156%) hue-rotate(232deg) brightness(106%) contrast(62%);

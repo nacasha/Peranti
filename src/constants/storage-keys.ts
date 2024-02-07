@@ -1,7 +1,7 @@
 export const StorageKeys = {
-  InterfaceStore: "store-interface",
-  ToolRunnerStore: "store-tool-runner",
-  ToolHistoryStore: "store-tool-history",
-  ToolSessionStore: "store-tool-session",
+  InterfaceStore: "interface-store",
+  ToolRunnerStore: "tool-runner-store",
+  ToolHistoryStore: "tool-history-store",
+  SessionStore: "session-store",
   ToolState: "tool-state|"
 }

@@ -3,7 +3,7 @@ import localforage from "localforage"
 import { StorageKeys } from "src/constants/storage-keys"
 import { Tool } from "src/models/Tool"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
-import { toolSessionStore } from "src/stores/toolSessionStore"
+import { sessionStore } from "src/stores/sessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolState } from "src/types/ToolState"
 
@@ -89,7 +89,7 @@ export class ToolStorageManager {
      * Try to retrieve tool from running tools when exists to get
      * same reference from mobx store
      */
-    const runningTool = toolSessionStore.runningTools[sessionId]
+    const runningTool = sessionStore.runningTools[sessionId]
     if (runningTool && runningTool !== undefined) {
       return runningTool
     }

@@ -12,7 +12,7 @@ import { toolHistoryStore } from "./toolHistoryStore.ts"
 import { toolRunnerStore } from "./toolRunnerStore.ts"
 import { toolStore } from "./toolStore.ts"
 
-class ToolSessionStore {
+class SessionStore {
   /**
    * The store has been initialized
    */
@@ -88,7 +88,7 @@ class ToolSessionStore {
    */
   setupPersistence() {
     void makePersistable(this, {
-      name: StorageKeys.ToolSessionStore,
+      name: StorageKeys.SessionStore,
       stringify: false,
       properties: [
         "sessionSequences",
@@ -748,4 +748,4 @@ class ToolSessionStore {
   }
 }
 
-export const toolSessionStore = new ToolSessionStore()
+export const sessionStore = new SessionStore()

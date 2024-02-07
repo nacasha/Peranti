@@ -25,7 +25,7 @@ export function watchUserSettings(userSettingKey: string) {
 const updateSetting = async(key: string, value: string) => {
   const settings = await AppDataService.readSettingsFile()
 
-  if (key && value) {
+  if (key && (value !== undefined)) {
     const newSettings = { ...settings, [key]: value }
     void AppDataService.writeSettingsFile(newSettings)
   }

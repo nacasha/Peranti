@@ -7,7 +7,7 @@ import { getUserSettings, watchUserSettings } from "src/utils/decorators.js"
 import { getFileNameFromPath } from "src/utils/getFileNameFromPath"
 
 import { toolRunnerStore } from "./toolRunnerStore.js"
-import { toolSessionStore } from "./toolSessionStore.js"
+import { sessionStore } from "./sessionStore.js"
 import { toolStore } from "./toolStore.js"
 
 export enum FileDropAction {
@@ -77,7 +77,7 @@ class FileDropStore {
 
         if (newSession) {
           const toolConstructor = toolStore.mapOfLoadedTools[activeTool.toolId]
-          const createdSession = toolSessionStore.createSession(toolConstructor, {
+          const createdSession = sessionStore.createSession(toolConstructor, {
             initialState: {
               sessionName,
               inputValues: { [inputFieldKey]: fileContent }
@@ -89,7 +89,7 @@ class FileDropStore {
           }
         } else {
           if (sessionName) {
-            await toolSessionStore.renameSession(activeTool.toSession(), sessionName)
+            await sessionStore.renameSession(activeTool.toSession(), sessionName)
           }
 
           /**

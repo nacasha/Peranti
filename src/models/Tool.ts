@@ -8,7 +8,7 @@ import { StorageKeys } from "src/constants/storage-keys"
 import { ToolType } from "src/enums/ToolType"
 import { toolComponentService } from "src/services/toolComponentService"
 import { ToolStorageManager } from "src/services/toolStorageManager"
-import { toolSessionStore } from "src/stores/toolSessionStore"
+import { sessionStore } from "src/stores/sessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolExtensionMetadata } from "src/types/ToolExtensionMetadata"
@@ -775,7 +775,7 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
   @action
   private setIsActionRunning(value: boolean) {
     this.isActionRunning = value
-    toolSessionStore.keepAliveSession(this.sessionId, value)
+    sessionStore.keepAliveSession(this.sessionId, value)
   }
 
   /**

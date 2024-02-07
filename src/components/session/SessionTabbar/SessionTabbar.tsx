@@ -15,20 +15,20 @@ import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { hotkeysStore } from "src/stores/hotkeysStore"
 import { toolHistoryStore } from "src/stores/toolHistoryStore"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
-import { toolSessionStore } from "src/stores/toolSessionStore"
+import { sessionStore } from "src/stores/sessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type ToolSession } from "src/types/ToolSession"
 
-import "./ToolTabbar.scss"
+import "./SessionTabbar.scss"
 
 import { interfaceStore } from "src/stores/interfaceStore"
 import { AppTitleBarStyle } from "src/enums/AppTitleBarStyle"
 
 const $renamingSessionId = atom<string>("")
 
-export const ToolTabbar: FC = observer(() => {
+export const SessionTabbar: FC = observer(() => {
   const activeTool = toolRunnerStore.getActiveTool()
-  const sessions = toolSessionStore.getRunningSessions(activeTool.toolId)
+  const sessions = sessionStore.getRunningSessions(activeTool.toolId)
   const activeIndex = sessions.findIndex((tab) => tab.sessionId === activeTool.sessionId)
   const appTitlebarStyle = interfaceStore.appTitlebarStyle
 
@@ -39,12 +39,12 @@ export const ToolTabbar: FC = observer(() => {
   )
 
   const onClickAddTab = () => {
-    toolSessionStore.createSession(activeTool, undefined, true)
+    sessionStore.createSession(activeTool, undefined, true)
   }
 
   useHotkeysModified(hotkeysStore.keys.TAB_NEW_EDITOR, (event) => {
     event.preventDefault()
-    toolSessionStore.createSession(activeTool, undefined)
+    sessionStore.createSession(activeTool, undefined)
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_NEXT, (event) => {
@@ -57,7 +57,7 @@ export const ToolTabbar: FC = observer(() => {
       toolSession = sessions[nextActiveIndex]
     }
 
-    void toolSessionStore.openSession(toolSession)
+    void sessionStore.openSession(toolSession)
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_PREV, (event) => {
@@ -70,12 +70,12 @@ export const ToolTabbar: FC = observer(() => {
       toolSession = sessions[nextActiveIndex]
     }
 
-    void toolSessionStore.openSession(toolSession)
+    void sessionStore.openSession(toolSession)
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CLOSE, (event) => {
     event.preventDefault()
-    void toolSessionStore.closeSession(activeTool.toSession())
+    void sessionStore.closeSession(activeTool.toSession())
   })
 
   useHotkeysModified(hotkeysStore.keys.RESTORE_CLOSED_TAB, (event) => {
@@ -106,10 +106,10 @@ export const ToolTabbar: FC = observer(() => {
 
   return (
     <>
-      <div className="ToolTabbar" data-tauri-drag-region>
-        <div className="ToolTabbar-inner">
+      <div className="SessionTabbar" data-tauri-drag-region>
+        <div className="SessionTabbar-inner">
           <SimpleBar
-            className="ToolTabbar-inner-simplebar"
+            className="SessionTabbar-inner-simplebar"
             scrollableNodeProps={{ ref }}
           >
             {sessions.map((toolSession) => (
@@ -121,8 +121,8 @@ export const ToolTabbar: FC = observer(() => {
             ))}
 
             {!(activeTool.toolId === "") && (
-              <div onClick={onClickAddTab} className="ToolTabbar-item new">
-                <div className="ToolTabbar-icon">
+              <div onClick={onClickAddTab} className="SessionTabbar-item new">
+                <div className="SessionTabbar-icon">
                   <img src={Icons.Plus} alt="Add Tab" />
                 </div>
               </div>
@@ -151,20 +151,20 @@ type TabbarContextMenuItemParams = ItemParams<MenuParams>
 
 const TabbarContextMenu: FC = () => {
   const handleCloseAllSession = () => {
-    toolSessionStore.closeAllSession()
+    sessionStore.closeAllSession()
   }
 
   const handleCloseSession = (itemParams: TabbarContextMenuItemParams) => {
     const { toolSession } = itemParams.props ?? {}
     if (toolSession) {
-      void toolSessionStore.closeSession(toolSession)
+      void sessionStore.closeSession(toolSession)
     }
   }
 
   const handleCloseOtherSession = (itemParams: TabbarContextMenuItemParams) => {
     const { toolSession } = itemParams.props ?? {}
     if (toolSession) {
-      void toolSessionStore.closeOtherSession(toolSession)
+      void sessionStore.closeOtherSession(toolSession)
     }
   }
 
@@ -176,7 +176,7 @@ const TabbarContextMenu: FC = () => {
   }
 
   return (
-    <ContextMenu id={ContextMenuKeys.ToolTabbar}>
+    <ContextMenu id={ContextMenuKeys.SessionTabbar}>
       <Item
         id="copy"
         onClick={handleCloseSession}
@@ -227,13 +227,13 @@ const TabItem: FC<TabItemProps> = memo((props) => {
        */
       const clickedElement = event.target as HTMLDivElement
       if (clickedElement.tagName.toLowerCase() === "img" ||
-        clickedElement.classList.contains("ToolTabbar-icon")) {
+        clickedElement.classList.contains("SessionTabbar-icon")) {
         event.stopPropagation()
         event.preventDefault()
         return
       }
 
-      void toolSessionStore.openSession(toolSession)
+      void sessionStore.openSession(toolSession)
     } else if (event.button === 1) {
       event.preventDefault()
     }
@@ -241,21 +241,21 @@ const TabItem: FC<TabItemProps> = memo((props) => {
 
   const handleMouseUp: MouseEventHandler = (event) => {
     if (event.button === 1) {
-      void toolSessionStore.closeSession(toolSession)
+      void sessionStore.closeSession(toolSession)
     }
   }
 
   const handleContextMenu: MouseEventHandler = (event) => {
     show({
       event,
-      id: ContextMenuKeys.ToolTabbar,
+      id: ContextMenuKeys.SessionTabbar,
       props: { toolSession }
     })
   }
 
   const handleCloseTab: MouseEventHandler = (event) => {
     event.stopPropagation()
-    void toolSessionStore.closeSession(toolSession)
+    void sessionStore.closeSession(toolSession)
   }
 
   /**
@@ -316,7 +316,7 @@ const TabItem: FC<TabItemProps> = memo((props) => {
       const tabLabel = tabLabelRef.current.innerText
 
       if (tabLabel !== getSessionName()) {
-        void toolSessionStore.renameSession(toolSession, tabLabel)
+        void sessionStore.renameSession(toolSession, tabLabel)
       }
     }
   }
@@ -325,13 +325,13 @@ const TabItem: FC<TabItemProps> = memo((props) => {
     onMouseUp: (event) => {
       const elementBelowMouse = document.elementsFromPoint(event.clientX, event.clientY)
       const otherTabbar = elementBelowMouse.find((element) => (
-        element.classList.contains("ToolTabbar-item") && !element.classList.contains("active")
+        element.classList.contains("SessionTabbar-item") && !element.classList.contains("active")
       ))
 
       if (otherTabbar) {
         const targetSessionId = (otherTabbar as HTMLDivElement).getAttribute("data-session-id")
         if (targetSessionId) {
-          toolSessionStore.switchSessionPosition(sessionId, targetSessionId)
+          sessionStore.switchSessionPosition(sessionId, targetSessionId)
         }
       }
     }
@@ -339,15 +339,15 @@ const TabItem: FC<TabItemProps> = memo((props) => {
 
   return (
     <div
-      id={ContextMenuKeys.ToolTabbar}
-      className="ToolTabbar-item-container"
+      id={ContextMenuKeys.SessionTabbar}
+      className="SessionTabbar-item-container"
       key={toolSession.sessionId.concat(toolSession.sessionName ?? "")}
     >
       <div ref={draggableElementPlaceholderRef}></div>
       <div
         ref={draggableElementRef}
         key={toolSession.sessionId}
-        className={clsx("ToolTabbar-item", { active })}
+        className={clsx("SessionTabbar-item", { active })}
         data-session-id={toolSession.sessionId}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
@@ -355,7 +355,7 @@ const TabItem: FC<TabItemProps> = memo((props) => {
       >
         <div
           ref={tabLabelRef}
-          className="ToolTabbar-item-label"
+          className="SessionTabbar-item-label"
           contentEditable={isRenamingSession}
           onBlur={handleSessionNameInputBlur}
           suppressContentEditableWarning
@@ -363,7 +363,7 @@ const TabItem: FC<TabItemProps> = memo((props) => {
           {getSessionName()}
           {isActionRunning ? " ..." : ""}
         </div>
-        <div className="ToolTabbar-icon" onClickCapture={handleCloseTab}>
+        <div className="SessionTabbar-icon" onClickCapture={handleCloseTab}>
           <img src={Icons.Close} alt="Close Tab" />
         </div>
       </div>

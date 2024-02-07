@@ -1,8 +1,8 @@
-.ToolTabbar {
+.SessionTabbar {
   position: relative;
-  background-color: var(--tool-tabbar-background-color);
-  min-height: var(--tool-tabbar-height);
-  height: var(--tool-tabbar-height);
+  background-color: var(--session-tabbar-background-color);
+  min-height: var(--session-tabbar-height);
+  height: var(--session-tabbar-height);
 
   .simplebar-track.simplebar-horizontal {
     height: 5px;
@@ -20,7 +20,7 @@
   }
 }
 
-.ToolTabbar-inner {
+.SessionTabbar-inner {
   display: flex;
   position: absolute;
   inset: 0;
@@ -28,22 +28,22 @@
   overflow-y: hidden;
 }
 
-.ToolTabbar-item-container {
+.SessionTabbar-item-container {
   &:nth-last-child(2) {
-    .ToolTabbar-item {
+    .SessionTabbar-item {
       border-right: none;
     }
   }
 }
 
-.ToolTabbar-item {
-  background-color: var(--tool-tabbar-color);
+.SessionTabbar-item {
+  background-color: var(--session-tabbar-color);
   padding: 5px 10px;
   padding-right: 5px;
   padding-top: 3px;
   border-right: 1px solid var(--border-color);
   user-select: none;
-  color: var(--tool-tabbar-text-color);
+  color: var(--session-tabbar-text-color);
   display: flex;
   align-items: center;
   gap: 5px;
@@ -52,16 +52,16 @@
   white-space: nowrap;
 
   &:hover {
-    background-color: var(--tool-tabbar-color-hover);
+    background-color: var(--session-tabbar-color-hover);
     cursor: pointer;
 
-    .ToolTabbar-icon {
+    .SessionTabbar-icon {
       opacity: 1;
     }
   }
 
-  .ToolTabbar-item-label {
-    max-width: var(--tool-tabbar-item-max-width);
+  .SessionTabbar-item-label {
+    max-width: var(--session-tabbar-item-max-width);
     overflow: hidden;
 
     &[contenteditable="false"] {
@@ -71,7 +71,7 @@
 
 
   &.active {
-    color: var(--tool-tabbar-text-color-active);
+    color: var(--session-tabbar-text-color-active);
     background-color: var(--tool-header-background-color);
     z-index: 1;
     border-bottom: 2px solid var(--tool-header-background-color);
@@ -79,20 +79,20 @@
   }
 
   &.new {
-    background-color: var(--tool-tabbar-color);
+    background-color: var(--session-tabbar-color);
     padding-inline: 5px;
-    height: calc(var(--tool-tabbar-height) - 11px);
+    height: calc(var(--session-tabbar-height) - 11px);
     position: sticky;
     right: 0;
     border-left: 1px solid var(--border-color);
     z-index: 2;
 
     &:hover {
-      background-color: var(--tool-tabbar-color-hover);
+      background-color: var(--session-tabbar-color-hover);
       cursor: pointer;
     }
 
-    .ToolTabbar-icon {
+    .SessionTabbar-icon {
       opacity: 1;
 
       &:hover {
@@ -102,7 +102,7 @@
   }
 }
 
-.ToolTabbar-icon {
+.SessionTabbar-icon {
   display: flex;
   border-radius: var(--border-radius);
   padding: 3px;
@@ -118,27 +118,27 @@
   }
 }
 
-.ToolTabbar-inner-simplebar {
+.SessionTabbar-inner-simplebar {
   width: 100%;
 
   .simplebar-content {
     display: flex;
 
-    .ToolTabbar-item-container {
+    .SessionTabbar-item-container {
       display: flex;
     }
   }
 }
 
 .AppRoot.TitlebarWithTabbar {
-  .ToolTabbar {
+  .SessionTabbar {
     display: flex;
     flex-direction: column;
     align-items: end;
     justify-content: space-between;
   }
 
-  .ToolTabbar-inner {
+  .SessionTabbar-inner {
     right: 150px;
   }
 

@@ -8,9 +8,9 @@ import { SidebarMode } from "src/components/settings/SidebarMode"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
 
-import "./SettingsPage.scss"
+import "./SettingsView.scss"
 
-export const SettingsPage: FC = () => {
+export const SettingsView: FC = () => {
   const handleClickResetAppData = () => {
     localStorage.clear()
 
@@ -20,7 +20,7 @@ export const SettingsPage: FC = () => {
   }
 
   return (
-    <div className="SettingsPage">
+    <div className="SettingsView">
       <SettingsCard title="Appearance">
         <SettingsCardItem label="Theme">
           <ThemeSelect />
@@ -53,7 +53,7 @@ export const SettingsPage: FC = () => {
           description="Data related to opened sessions, closed editors, and application state"
         >
           <div
-            className="SettingsPage-item-value"
+            className="SettingsView-item-value"
             onClick={handleClickResetAppData}
           >
             <Button>Reset App Data</Button>
@@ -65,7 +65,7 @@ export const SettingsPage: FC = () => {
           description="Data related to user customization for application"
         >
           <div
-            className="SettingsPage-item-value"
+            className="SettingsView-item-value"
             onClick={handleClickResetAppData}
           >
             <Button>Reset User Settings</Button>
