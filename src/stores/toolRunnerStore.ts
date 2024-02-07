@@ -9,7 +9,7 @@ class ToolRunnerStore {
   /**
    * Indicates history panel is opened or closed
    */
-  private _isHistoryPanelOpen = false
+  _isHistoryPanelOpen = false
 
   /**
    * Store active tool that currently used
@@ -17,22 +17,18 @@ class ToolRunnerStore {
   private _activeTool?: Tool = undefined
 
   /**
-   * Determine whether current active tool has batch operations
-   */
-  get toolHasBatchOutput() {
-    return this.getActiveTool().getInputFields().some((output) => output.allowBatch)
-  }
-
-  get isHistoryPanelOpen() {
-    return this._isHistoryPanelOpen
-  }
-
-  /**
    * Make this class observable
    */
   constructor() {
     makeAutoObservable(this)
 
+    this.setupPersistence()
+  }
+
+  /**
+   * Setup store persistence
+   */
+  setupPersistence() {
     void makePersistable(this, {
       name: StorageKeys.ToolRunnerStore,
       storage: localforage,
@@ -41,6 +37,25 @@ class ToolRunnerStore {
     })
   }
 
+  /**
+   * Determine whether current active tool has batch operations
+   */
+  get toolHasBatchOutput() {
+    return this.getActiveTool().getInputFields().some((output) => output.allowBatch)
+  }
+
+  /**
+   * Indicates history panel is opened
+   */
+  get isHistoryPanelOpen() {
+    return this._isHistoryPanelOpen
+  }
+
+  /**
+   * Set active tool
+   *
+   * @param tool
+   */
   setActiveTool(tool: Tool) {
     this._activeTool = tool
   }
@@ -102,6 +117,9 @@ class ToolRunnerStore {
     activeTool.forceRerender()
   }
 
+  /**
+   * Fill current input tool with sample data
+   */
   fillInputValuesWithSample() {
     const activeTool = this.getActiveTool()
     const { samples } = activeTool

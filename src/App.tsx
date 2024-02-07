@@ -1,47 +1,21 @@
-import clsx from "clsx"
+import { lazy } from "react"
 
-import { ActivityBar } from "./components/activity-bar/ActivityBar"
-import { AppRoute, AppRouteListener } from "./components/app/AppRoute"
-import { AppStatusbar } from "./components/app/AppStatusbar"
-import { AppTitlebar } from "./components/app/AppTitlebar"
-import { FileDropArea } from "./components/filedrop/FileDropArea"
-import { PrimarySidebar } from "./components/sidebar/PrimarySidebar"
-import { WindowResizeEventListener } from "./components/window/WindowResizeEventListener"
-import { WindowSizeListener } from "./components/window/WindowSizeListener"
 import { useSelector } from "./hooks/useSelector.ts"
 import { withProviders } from "./providers/index.ts"
-import { interfaceStore } from "./stores/interfaceStore.ts"
-import "./styles/root.scss"
+import { userSettingsStore } from "./stores/userSettingsStore.ts"
 
 /**
- * App
+ * Lazy load the Main App, this is done to hold initialize stores until
+ * the user settings completely loaded from file
  *
- * @returns ReactNode
+ * Because once we import the store files, the class will be initialized
+ * into the variable
  */
-export const AppMain = () => {
-  const theme = useSelector(() => interfaceStore.theme)
+const AppMain = lazy(async() => await import("./AppMain.tsx"))
 
-  return (
-    <div className={clsx("AppRoot", theme)}>
-      <AppRouteListener />
-
-      <WindowResizeEventListener />
-      <WindowSizeListener />
-
-      <FileDropArea />
-
-      <AppTitlebar />
-      <div className="AppContainer">
-        <ActivityBar />
-        <div className="AppContent">
-          <PrimarySidebar />
-          <AppRoute />
-        </div>
-      </div>
-
-      <AppStatusbar />
-    </div>
-  )
+export const DefferedApp = () => {
+  const isLoaded = useSelector(() => userSettingsStore.isLoaded)
+  return isLoaded ? <AppMain /> : null
 }
 
-export const App = withProviders(AppMain)
+export const App = withProviders(DefferedApp)

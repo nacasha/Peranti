@@ -21,7 +21,7 @@ export const FileDropArea: FC = () => {
     if (filePaths.length > 0) {
       void windowManager.setFocus()
 
-      if (fileDropAction === FileDropAction.AskEveryTime) {
+      if (fileDropAction === FileDropAction.AlwaysAsk) {
         setIsChoosingAction(true)
       } else {
         setIsChoosingAction(false)

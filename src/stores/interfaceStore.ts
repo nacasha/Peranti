@@ -3,8 +3,11 @@ import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys"
+import { AppTitleBarStyle } from "src/enums/AppTitleBarStyle"
 import { SidebarMode } from "src/enums/SidebarMode"
 import { Theme } from "src/enums/ThemeEnum.ts"
+import { UserSettingsKeys } from "src/enums/UserSettingsKeys"
+import { watchUserSettings, getUserSettings } from "src/utils/decorators"
 import { getWindowSize } from "src/utils/getWindowSize"
 
 class InterfaceStore {
@@ -13,12 +16,25 @@ class InterfaceStore {
    *
    * @configurable
    */
-  theme: Theme = Theme.Dark
+  @watchUserSettings(UserSettingsKeys.theme)
+  theme: Theme = getUserSettings(UserSettingsKeys.theme, Theme.Dark)
+
+  /**
+   * Make App Sidebar alaways floating (hide on click outside)
+   */
+  @watchUserSettings(UserSettingsKeys.floatingSidebar)
+  isFloatingSidebar = getUserSettings(UserSettingsKeys.floatingSidebar, false)
+
+  /**
+   * Style of app window title bar
+   */
+  @watchUserSettings(UserSettingsKeys.titlebarStyle)
+  titlebarStyle = getUserSettings(UserSettingsKeys.titlebarStyle, AppTitleBarStyle.Tabbar)
 
   /**
    * Show the sidebar
    */
-  _isSidebarShow = true
+  isSidebarShow = true
 
   /**
    * App Sidebar mode
@@ -26,16 +42,6 @@ class InterfaceStore {
    * @configurable
    */
   _sidebarMode: SidebarMode = SidebarMode.DockPinned
-
-  /**
-   * Save last tool and input state
-   */
-  _restoreLastToolInputAndOutput = false
-
-  /**
-   * Make App Sidebar alaways floating (hide on click outside)
-   */
-  isFloatingSidebar = false
 
   /**
    * Currently active menu id
@@ -52,44 +58,37 @@ class InterfaceStore {
   /**
    * State of window size
    */
-  windowSize = {
-    width: 0,
-    height: 0
-  }
+  windowSize = { width: 0, height: 0 }
 
   constructor() {
-    this.recalculateWindowSize()
     makeAutoObservable(this)
 
+    this.recalculateWindowSize()
+    this.setupPersistence()
+
+    console.log("Create InterfaceStoress")
+  }
+
+  /**
+   * Setup store persistence
+   */
+  setupPersistence() {
     void makePersistable(this, {
       name: StorageKeys.InterfaceStore,
       storage: localforage,
       stringify: false,
       properties: [
         "isFloatingSidebar",
-        "_isSidebarShow",
+        "isSidebarShow",
         "_sidebarMode",
         "textAreaWordWrap",
-        "theme",
-        "_restoreLastToolInputAndOutput"
+        "theme"
       ]
     })
   }
 
   recalculateWindowSize() {
     this.windowSize = getWindowSize()
-  }
-
-  get isSidebarShow() {
-    return this._isSidebarShow
-  }
-
-  get restoreLastToolInputAndOutput() {
-    return this._restoreLastToolInputAndOutput
-  }
-
-  get isThemeDarkMode() {
-    return this.theme === Theme.Dark
   }
 
   get sidebarMode() {
@@ -102,15 +101,15 @@ class InterfaceStore {
   }
 
   toggleSidebar() {
-    this._isSidebarShow = !this._isSidebarShow
+    this.isSidebarShow = !this.isSidebarShow
   }
 
   hideSidebar() {
-    this._isSidebarShow = false
+    this.isSidebarShow = false
   }
 
   showSidebar() {
-    this._isSidebarShow = true
+    this.isSidebarShow = true
   }
 
   toggleSidebarAlwaysFloating() {
@@ -121,8 +120,8 @@ class InterfaceStore {
     this.sidebarActiveMenuId = menuId
   }
 
-  setRestoreLastToolInputAndOutput(value: boolean) {
-    this._restoreLastToolInputAndOutput = value
+  setTheme(theme: any) {
+    this.theme = theme
   }
 }
 

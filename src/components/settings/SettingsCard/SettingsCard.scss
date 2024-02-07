@@ -1,0 +1,25 @@
+.SettingsCard {
+  width: 100%;
+  max-width: 700px;
+
+  .SettingsCard-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+    margin-left: 5px;
+  }
+
+  .SettingsCard-body {
+    background-color: var(--settings-card-background-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+  }
+}
+
+.SettingsCardItem {
+  display: flex;
+  gap: 5px;
+  padding: 15px;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}

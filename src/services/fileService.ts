@@ -1,53 +1,30 @@
-import { save, open } from "@tauri-apps/api/dialog"
-import { BaseDirectory, createDir, exists, readBinaryFile, readDir, readTextFile, writeBinaryFile } from "@tauri-apps/api/fs"
-import { appDataDir, resolve } from "@tauri-apps/api/path"
+import { save } from "@tauri-apps/api/dialog"
+import { BaseDirectory, readBinaryFile, readTextFile, writeBinaryFile } from "@tauri-apps/api/fs"
+import { resolve } from "@tauri-apps/api/path"
 import { invoke } from "@tauri-apps/api/tauri"
 import * as base64 from "js-base64"
 
-import { Folders } from "src/constants/folders"
 import { removeBase64Header } from "src/utils/base64"
 
 export class FileService {
   /**
-   * Create extensions folder in user AppData if not exists
-   */
-  static async createExtensionsFolder() {
-    const baseFolder = await appDataDir()
-
-    try {
-      if (!(await exists(baseFolder))) {
-        await createDir(baseFolder)
-      }
-
-      if (!(await exists(Folders.Extensions, { dir: Folders.BaseAppFolder }))) {
-        await createDir(Folders.Extensions, { dir: Folders.BaseAppFolder })
-      }
-    } catch (err: any) {
-      console.log(err)
-    }
-  }
-
-  static async readExtensionsFolder() {
-    const entries = await readDir(Folders.Extensions, {
-      dir: BaseDirectory.AppData,
-      recursive: true
-    })
-
-    return entries
-  }
-
-  /**
-   * Read file as text string
+   * Read given file path as text file
    *
    * @param filePath
    * @returns
    */
-  static async readFileAsText(filePath: string) {
-    return await readTextFile(filePath)
+  static async readFileAsText(filePath: string, appData?: boolean) {
+    return await readTextFile(filePath, appData ? { dir: BaseDirectory.AppData } : undefined)
   }
 
-  static async readFileAsBinary(filePath: string) {
-    return await readBinaryFile(filePath)
+  /**
+   * Read given file path as binary file
+   *
+   * @param filePath
+   * @returns
+   */
+  static async readFileAsBinary(filePath: string, appData?: boolean) {
+    return await readBinaryFile(filePath, appData ? { dir: BaseDirectory.AppData } : undefined)
   }
 
   /**
@@ -108,13 +85,5 @@ export class FileService {
    */
   static async openPathInFileManager(path: string) {
     await invoke("reveal_file_manager", { path })
-  }
-
-  static async openAndReadFile() {
-    const selectedFilePath = await open()
-
-    if (selectedFilePath && !Array.isArray(selectedFilePath)) {
-      return await readTextFile(selectedFilePath)
-    }
   }
 }

@@ -2,7 +2,7 @@ import { makeAutoObservable } from "mobx"
 
 import { Files } from "src/constants/files.ts"
 import { ToolType } from "src/enums/ToolType.ts"
-import { Tool } from "src/models/Tool"
+import { AppDataService } from "src/services/AppDataService.ts"
 import { FileService } from "src/services/fileService.ts"
 import base64EncodeDecodeTool from "src/tools/base64-encode-decode-tool.ts"
 import base64ToFileTool from "src/tools/base64-to-file-tool.ts"
@@ -15,8 +15,6 @@ import fileToBase64Tool from "src/tools/file-to-base-64-tool"
 import generateRandomStringTool from "src/tools/generate-random-string.ts"
 import generateUuidTool from "src/tools/generate-uuid-tool.ts"
 import hashTool from "src/tools/hash-tool.ts"
-// import jfsGetThTool from "src/tools/jfs-get-th-tool.ts"
-// import jsonCrackTool from "src/tools/json-crack-tool.ts"
 import jsonDiffTool from "src/tools/json-diff-tool"
 import jsonFormatter from "src/tools/json-formatter-tool.ts"
 import jsonataTool from "src/tools/jsonata-tool"
@@ -33,6 +31,7 @@ import textTransformTool from "src/tools/text-transform-tool.ts"
 import uriEncodeDecodeTool from "src/tools/uri-encode-decode-tool.ts"
 import { type ToolConstructor } from "src/types/ToolConstructor"
 import { type ToolPreset } from "src/types/ToolPreset"
+import { mergeToolConstructorWithPreset } from "src/utils/mergeToolConstructorWithPreset.ts"
 
 import { toolSessionStore } from "./toolSessionStore.ts"
 
@@ -167,24 +166,33 @@ class ToolStore {
    */
   constructor() {
     makeAutoObservable(this)
+    void this.setupTools()
   }
 
   /**
    * Setup built-in tools and preset
    */
   async setupTools() {
-    /**
-     * Load tool presets
-     */
     this.loadToolPresets()
-
-    /**
-     * Load tool extensions
-     */
     await this.loadToolExtensions()
 
-    // TODO separate
+    /**
+     * Build tools after all presets and extensions has been loaded
+     */
+    this.buildTools()
 
+    /**
+     * Setup tools to be showed on sidebar
+     */
+    this.setupToolsForSidebar()
+
+    /**
+     * Call setup persistence of tool session to load previous session(s)
+     */
+    toolSessionStore.setupPersistence()
+  }
+
+  private buildTools() {
     /**
      * Get values only of mapOfTools (without categorized)
      */
@@ -196,18 +204,6 @@ class ToolStore {
     this.mapOfLoadedToolsName = Object.fromEntries(
       Object.entries(this.mapOfLoadedTools).map(([toolId, tool]) => [toolId, tool.name])
     )
-
-    // TODO end separate
-
-    /**
-     * Setup tools for sidebar
-     */
-    this.setupToolsForSidebar()
-
-    /**
-     * Call setup persistence of tool session to load previous session(s)
-     */
-    toolSessionStore.setupPersistence()
   }
 
   private loadToolPresets() {
@@ -216,7 +212,7 @@ class ToolStore {
      */
     const mapOfPresets = Object.fromEntries(this._toolPresets.map((preset) => {
       const toolConstructor = this._builtInTools[preset.toolId]
-      const tool = Tool.mergeWithPreset(toolConstructor, preset)
+      const tool = mergeToolConstructorWithPreset(toolConstructor, preset)
 
       return [tool.toolId, tool]
     }))
@@ -228,10 +224,8 @@ class ToolStore {
   }
 
   private async loadToolExtensions() {
-    await FileService.createExtensionsFolder()
-
     const extensions = []
-    const entries = await FileService.readExtensionsFolder()
+    const entries = await AppDataService.readExtensionsFolder()
 
     for (const entry of entries) {
       if (entry.children) {

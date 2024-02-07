@@ -2,6 +2,7 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 import ReactDiffViewer, { type DiffMethod } from "react-diff-viewer"
 
+import { Theme } from "src/enums/ThemeEnum"
 import { interfaceStore } from "src/stores/interfaceStore"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
@@ -34,7 +35,7 @@ export const DiffOutput: FC<DiffOutputProps> = observer((props) => {
           rightTitle={rightTitle}
           splitView={splitView}
           showDiffOnly={false}
-          useDarkTheme={interfaceStore.isThemeDarkMode}
+          useDarkTheme={interfaceStore.theme === Theme.Dark}
         />
       </div>
     </div>

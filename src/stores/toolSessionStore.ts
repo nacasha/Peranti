@@ -14,11 +14,6 @@ import { toolStore } from "./toolStore.ts"
 
 class ToolSessionStore {
   /**
-   * The store has been persisted
-   */
-  private _isPersisted: boolean = false
-
-  /**
    * The store has been initialized
    */
   isInitialized: boolean = false
@@ -92,12 +87,6 @@ class ToolSessionStore {
    * @returns
    */
   setupPersistence() {
-    if (this._isPersisted) {
-      return
-    }
-
-    this.setIsPersisted(true)
-
     void makePersistable(this, {
       name: StorageKeys.ToolSessionStore,
       stringify: false,
@@ -145,15 +134,6 @@ class ToolSessionStore {
    */
   private setIsInitialized(value: boolean) {
     this.isInitialized = value
-  }
-
-  /**
-   * Set value of isPersisted
-   *
-   * @param value
-   */
-  private setIsPersisted(value: boolean) {
-    this._isPersisted = value
   }
 
   /**
@@ -277,6 +257,27 @@ class ToolSessionStore {
   }
 
   /**
+   * Open tool session and set active
+   *
+   * @param tool
+   */
+  async openSessionId(sessionId: string) {
+    const activeTool = toolRunnerStore.getActiveTool()
+
+    /**
+     * Skip action if tool is already opened
+     */
+    if (activeTool.sessionId === sessionId) {
+      return
+    }
+
+    const tool = await ToolStorageManager.getToolFromStorage(sessionId)
+    if (tool) {
+      this.activateTool(tool)
+    }
+  }
+
+  /**
    * Create session from tool history
    *
    * @param toolState
@@ -314,7 +315,7 @@ class ToolSessionStore {
     const activeTool = toolRunnerStore.getActiveTool()
 
     /**
-     * Skip action if tool is already opened and has same isHistory state
+     * Skip action if tool is already opened
      */
     if (activeTool.sessionId === tool.sessionId) {
       return

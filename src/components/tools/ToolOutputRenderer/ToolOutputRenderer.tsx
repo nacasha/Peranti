@@ -1,7 +1,6 @@
 import { toJS } from "mobx"
 import { type FC } from "react"
 import { useContextMenu } from "react-contexify"
-import "react-contexify/ReactContexify.css"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { useSelector } from "src/hooks/useSelector"

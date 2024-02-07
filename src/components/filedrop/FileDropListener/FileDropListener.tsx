@@ -1,9 +1,9 @@
 import { appWindow } from "@tauri-apps/api/window"
-import { useEffect } from "react"
+import { type FC, useEffect } from "react"
 
 import { fileDropStore } from "src/stores/fileDropStore.ts"
 
-export const withFileDropListener = (component: () => React.ReactNode) => () => {
+export const FileDropListener: FC = () => {
   const registerListener = async() => {
     const unlisten = await appWindow.onFileDropEvent((event) => {
       if (event.payload.type === "hover") {
@@ -40,5 +40,5 @@ export const withFileDropListener = (component: () => React.ReactNode) => () => 
     }
   }, [])
 
-  return component()
+  return null
 }

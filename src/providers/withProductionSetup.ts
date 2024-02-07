@@ -1,13 +1,6 @@
 import { useEffect } from "react"
 
-import { toolStore } from "src/stores/toolStore"
-
-export const withAppBootstrap = (component: () => React.ReactNode) => () => {
-  /**
-   * Setup tools
-   */
-  void toolStore.setupTools()
-
+export const withProductionSetup = (component: () => React.ReactNode) => () => {
   /**
    * Disable context menu on production
    */

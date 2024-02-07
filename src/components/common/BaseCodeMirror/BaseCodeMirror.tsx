@@ -5,6 +5,7 @@ import { monokaiDimmed } from "@uiw/codemirror-theme-monokai-dimmed"
 import CodeMirror, { EditorView, type ReactCodeMirrorRef, type ReactCodeMirrorProps, type ViewUpdate, EditorSelection } from "@uiw/react-codemirror"
 import { useRef, type FC, useEffect, useState } from "react"
 
+import { Theme } from "src/enums/ThemeEnum"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/stores/interfaceStore.ts"
 
@@ -27,7 +28,7 @@ interface Props extends BaseCodeMirrorProps, Omit<ReactCodeMirrorProps, "theme" 
   initialStateCodeMirror?: InitialStateCodeMirror
 }
 
-// TODO: If history has many changes, IndexedDB will really slow to store the data
+// TODO: If history contains many changes, IndexedDB will really slow to store the data
 // const stateFields = { history: historyField }
 
 export const BaseCodeMirror: FC<Props> = (props) => {
@@ -40,7 +41,7 @@ export const BaseCodeMirror: FC<Props> = (props) => {
     ...codeMirrorProps
   } = props
 
-  const isDarkMode = useSelector(() => interfaceStore.isThemeDarkMode)
+  const isDarkMode = useSelector(() => interfaceStore.theme === Theme.Dark)
   const textAreaWordWrapEnabled = useSelector(() => interfaceStore.textAreaWordWrap)
 
   const editorComponentRef = useRef<ReactCodeMirrorRef>(null)
@@ -150,6 +151,10 @@ export const BaseCodeMirror: FC<Props> = (props) => {
         onCreateEditor={handleCreateEditor}
         onScrollCapture={handleScroll}
         style={{ opacity: ready ? "1" : "0" }}
+        basicSetup={{
+          highlightActiveLine: false,
+          highlightActiveLineGutter: false
+        }}
       />
     </div>
   )

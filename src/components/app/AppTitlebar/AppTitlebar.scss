@@ -7,6 +7,7 @@ $padding: 10px;
   justify-content: space-between;
   align-items: center;
   background-color: var(--background-color-main);
+  border-bottom: 1px solid var(--border-color);
 
   .AppTitlebar-main {
     padding: 0 7px;
@@ -130,5 +131,12 @@ $padding: 10px;
         }
       }
     }
+  }
+
+  &.TitlebarWithTabbar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 10;
   }
 }

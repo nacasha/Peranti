@@ -552,7 +552,7 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
    * @param mimeType
    * @returns
    */
-  getInputFieldsWithMime(): [Array<ToolInput<IF>>, boolean] {
+  getInputFieldsWithReadableFile(): [Array<ToolInput<IF>>, boolean] {
     const inputFields = this.getInputFields()
 
     /**
@@ -565,12 +565,7 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
       }
 
       const inputToCompare = toolComponentService.getInputComponent(inputField.component)
-
       return !!inputToCompare.readFileAs
-
-      // return inputToCompare.readFileMimes?.some((mime) => {
-      //   return mimeMatch(mimeType, mime)
-      // })
     })
 
     /**
@@ -595,10 +590,6 @@ export class Tool<IF extends Record<string, any> = any, OF extends Record<string
       const inputToCompare = toolComponentService.getInputComponent(inputField.component, true)
 
       return !!inputToCompare.readFileAs
-
-      // return inputToCompare.readFileMimes?.some((mime) => {
-      //   return mimeMatch(mimeType, mime)
-      // })
     })
 
     return [filteredBatchInputFields, true]

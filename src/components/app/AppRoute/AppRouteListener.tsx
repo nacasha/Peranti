@@ -6,7 +6,7 @@ import { Tool } from "src/models/Tool"
 import { toolRunnerStore } from "src/stores/toolRunnerStore"
 
 export const AppRouteListener = () => {
-  const [, setLocation] = useLocation()
+  const [location, setLocation] = useLocation()
   const sessionId = useSelector(() => toolRunnerStore.getActiveTool().sessionId)
 
   useEffect(() => {
@@ -16,6 +16,12 @@ export const AppRouteListener = () => {
       setLocation("/", { replace: true })
     }
   }, [sessionId])
+
+  useEffect(() => {
+    if (location === "/" && Tool.getToolIdFromSessionId(sessionId) === "") {
+      setLocation("/welcome", { replace: true })
+    }
+  }, [location, sessionId])
 
   return null
 }

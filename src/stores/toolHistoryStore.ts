@@ -20,6 +20,13 @@ class ToolHistoryStore {
   constructor() {
     makeAutoObservable(this)
 
+    this.setupPersistence()
+  }
+
+  /**
+   * Setup store persistence
+   */
+  setupPersistence() {
     void makePersistable(this, {
       name: StorageKeys.ToolHistoryStore,
       storage: localforage,

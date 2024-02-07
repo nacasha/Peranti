@@ -1,7 +1,9 @@
 import { makeAutoObservable } from "mobx"
 import toast from "react-hot-toast"
 
+import { UserSettingsKeys } from "src/enums/UserSettingsKeys.js"
 import { toolComponentService } from "src/services/toolComponentService"
+import { getUserSettings, watchUserSettings } from "src/utils/decorators.js"
 import { getFileNameFromPath } from "src/utils/getFileNameFromPath"
 
 import { toolRunnerStore } from "./toolRunnerStore.js"
@@ -9,16 +11,17 @@ import { toolSessionStore } from "./toolSessionStore.js"
 import { toolStore } from "./toolStore.js"
 
 export enum FileDropAction {
-  ReplaceCurrentTool,
-  OpenInNewEditor,
-  AskEveryTime,
+  ReplaceCurrentTool = "replace-current-tool",
+  OpenInNewEditor = "open-in-new-editor",
+  AlwaysAsk = "always-ask",
 }
 
 class FileDropStore {
-  /**
-   * @configurable
-   */
-  fileDropAction: FileDropAction = FileDropAction.AskEveryTime
+  @watchUserSettings(UserSettingsKeys.fileDropAction)
+  fileDropAction: FileDropAction = getUserSettings(
+    UserSettingsKeys.fileDropAction,
+    FileDropAction.AlwaysAsk
+  )
 
   /**
    * @configurable
@@ -60,7 +63,7 @@ class FileDropStore {
       return
     }
 
-    const [inputFields, isAvailableOnBatchMode] = activeTool.getInputFieldsWithMime()
+    const [inputFields, isAvailableOnBatchMode] = activeTool.getInputFieldsWithReadableFile()
 
     const { key: inputFieldKey, component } = inputFields[0]
     const inputComponent = toolComponentService.getInputComponent(component, isAvailableOnBatchMode)

@@ -1,6 +1,6 @@
 @import url("_fonts.scss");
 @import url("_context-menu.scss");
-@import url("_variables.scss");
+@import url("_themes.scss");
 
 $padding: 10px;
 
@@ -66,9 +66,7 @@ html, body {
   overflow-x: hidden;
   // TODO: Watch changes, from auto
   overflow-y: hidden;
-  border: 1px solid var(--border-color);
-  border-right: 0;
-  border-bottom: 0;
+  border-left: 1px solid var(--border-color);
   background-color: var(--background-color-content);
 }
 

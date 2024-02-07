@@ -8,7 +8,7 @@ export const ThemeSelect: FC = () => {
   const { theme } = interfaceStore
 
   const onChange = (value: Theme) => {
-    interfaceStore.theme = value
+    interfaceStore.setTheme(value)
   }
 
   return (

@@ -27,6 +27,14 @@
   overflow-y: hidden;
 }
 
+.ToolTabbar-item-container {
+  &:nth-last-child(2) {
+    .ToolTabbar-item {
+      border-right: none;
+    }
+  }
+}
+
 .ToolTabbar-item {
   background-color: var(--tool-tabbar-color);
   padding: 5px 10px;
@@ -70,11 +78,18 @@
   }
 
   &.new {
+    background-color: var(--tool-tabbar-color);
     padding-inline: 5px;
     height: calc(var(--tool-tabbar-height) - 11px);
     position: sticky;
     right: 0;
-    z-index: 1;
+    border-left: 1px solid var(--border-color);
+    z-index: 2;
+
+    &:hover {
+      background-color: var(--tool-tabbar-color-hover);
+      cursor: pointer;
+    }
 
     .ToolTabbar-icon {
       opacity: 1;
@@ -111,5 +126,11 @@
     .ToolTabbar-item-container {
       display: flex;
     }
+  }
+}
+
+.AppRoot.TitlebarWithTabbar {
+  .ToolTabbar {
+    margin-right: 150px;
   }
 }

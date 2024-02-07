@@ -1,13 +1,15 @@
 import compose from "compose-function"
 
-import { withAppBootstrap } from "./withAppBootstrap.ts"
-import { withFileDropListener } from "./withFileDropListener.ts"
-import { withPluginsSetup } from "./withPluginsSetup.ts"
+import { withMobxStore } from "./withMobxStore.ts"
+import { withProductionSetup } from "./withProductionSetup.ts"
 import { withReactHotToast } from "./withReactHotToast.tsx"
+import { withThemes } from "./withThemes.ts"
+import { withUserSettingStore } from "./withUserSettingStore.ts"
 
 export const withProviders = compose(
-  withAppBootstrap,
-  withPluginsSetup,
-  withFileDropListener,
+  withThemes,
+  withMobxStore,
+  withUserSettingStore,
+  withProductionSetup,
   withReactHotToast
 )

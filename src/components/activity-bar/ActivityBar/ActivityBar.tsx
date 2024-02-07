@@ -12,16 +12,19 @@ export const ActivityBar = () => {
           icon={Icons.Thunder}
           label="Tools"
           menuId="tools"
+          href="/"
         />
         <ActivityBarItem
           icon={Icons.ThreeLineVertical}
           label="Pipelines"
           menuId="pipelines"
+          href="/"
         />
         <ActivityBarItem
           icon={Icons.History}
           label="Closed Editor"
           menuId="history"
+          href="/"
         />
       </div>
 
@@ -30,6 +33,7 @@ export const ActivityBar = () => {
           icon={Icons.Gear}
           label="Settings"
           menuId="settings"
+          href="/settings"
         />
       </div>
     </div>

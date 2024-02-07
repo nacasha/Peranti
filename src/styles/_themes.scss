@@ -1,4 +1,4 @@
-.AppRoot {
+body {
   // Colors
   --accent-color: #275efe;
   --accent-color-light-20: color-mix(in srgb, var(--accent-color), #ffffff 20%);
@@ -19,9 +19,8 @@
 
   // Tool
   --tool-header-height: 45px;
-  --tool-tabbar-height: 40px;
+  --tool-tabbar-height: 37px;
   --tool-tabbar-item-max-width: 200px;
-
 
   // Animations
   --transition-speed: 0s;
@@ -53,9 +52,11 @@
   .contexify {
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
   }
+
+  background-color: var(--background-color-main);
 }
 
-.AppRoot.light {
+body.light {
   // General
   --border-color: #cbcccd;
   --text-color: #0f0f0f;
@@ -96,12 +97,18 @@
   // Tool component styles
   --tool-header-background-color: #ffffff;
   --tool-area-background-color: #f9f9fc;
+  --tool-tabbar-color: #ffffff;
+  --tool-tabbar-color-hover: #f6f8fa;
   --tool-tabbar-text-color: #585858;
   --tool-tabbar-text-color-active: #000000;
   --tool-sidebar-text-color: #212418;
   --tool-sidebar-text-color-active: #ffffff;
   --tool-sidebar-icon-color: invert(11%) sepia(7%) saturate(1891%) hue-rotate(34deg) brightness(98%) contrast(92%);
   --tool-sidebar-icon-color-active: invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%);
+
+  // Settings page
+  --settings-background-color: #f9f9fc;
+  --settings-card-background-color: #ffffff;
 
   // Scrollbar
   ::-webkit-scrollbar-track {
@@ -139,7 +146,7 @@
   }
 }
 
-.AppRoot.dark {
+body.dark {
   // General
   --border-color: #313131;
   --text-color: #e0e0e0;
@@ -190,6 +197,10 @@
   --tool-sidebar-icon-color: invert(99%) sepia(3%) saturate(156%) hue-rotate(232deg) brightness(106%) contrast(62%);
   --tool-sidebar-icon-color-active: invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%);
 
+  // Settings page
+  --settings-background-color: #202124;
+  --settings-card-background-color: #1f2023;
+
   // HTML Input
   input, textarea, select, option {
     color: var(--text-color);
@@ -201,7 +212,7 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: #393a3f;
     border-radius: 4px;
 
     &:hover {
