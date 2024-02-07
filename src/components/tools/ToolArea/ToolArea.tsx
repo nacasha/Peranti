@@ -13,17 +13,9 @@ import "./ToolArea.scss"
 export const ToolArea: FC = () => {
   const activeTool = useSelector(() => activeSessionStore.getActiveTool())
 
-  /**
-   * These properties are observable, meaning the value can change at anytime
-   * and component need to rerender the output
-   */
   const isDeleted = useSelector(() => activeSessionStore.getActiveTool().isDeleted)
   const renderCounter = useSelector(() => activeSessionStore.getActiveTool().renderCounter)
 
-  /**
-   * These properties are readonly, meaning the value will not be updated while showing the tool
-   * No need to use `useSelector`
-   */
   const { layoutSetting, sessionId } = activeTool
   const { inputAreaDirection, outputAreaDirection } = layoutSetting
 

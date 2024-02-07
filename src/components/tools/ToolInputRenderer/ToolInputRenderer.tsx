@@ -10,14 +10,7 @@ import { type InputComponentProps } from "src/types/InputComponentProps"
 import { type ToolInput } from "src/types/ToolInput"
 
 interface ToolInputRendererProps {
-  /**
-   * Tool input definition
-   */
   toolInput: ToolInput
-
-  /**
-   * Indicates the field is read only, used when viewing a deleted session
-   */
   readOnly?: boolean
 }
 
@@ -57,10 +50,6 @@ export const ToolInputRenderer: FC<ToolInputRendererProps> = (props) => {
     })
   }
 
-  /**
-   * Only pass editor state props to selected components that handle it,
-   * This is needed to suppress `Unknown event handler property` warning on console
-   */
   const additionalProps: Record<string, any> = {}
   if (["Code"].includes(toolInput.component)) {
     additionalProps.initialState = initialState

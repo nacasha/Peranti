@@ -6,8 +6,8 @@ import { toolComponentService } from "src/services/toolComponentService"
 import { getUserSettings, watchUserSettings } from "src/utils/decorators.js"
 import { getFileNameFromPath } from "src/utils/getFileNameFromPath"
 
-import { sessionStore } from "./sessionStore.js"
 import { activeSessionStore } from "./activeSessionStore.js"
+import { sessionStore } from "./sessionStore.js"
 import { toolStore } from "./toolStore.js"
 
 export enum FileDropAction {
@@ -23,9 +23,6 @@ class FileDropStore {
     FileDropAction.AlwaysAsk
   )
 
-  /**
-   * @configurable
-   */
   droppedFileReplaceSessionName: boolean = true
 
   droppedFilePaths: string[] = []
@@ -92,9 +89,6 @@ class FileDropStore {
             await sessionStore.renameSession(activeTool.toSession(), sessionName)
           }
 
-          /**
-           * Switch to batch mode if the tool has batch fields with matching mimeType
-           */
           if (!activeTool.isBatchModeEnabled && isAvailableOnBatchMode) {
             activeTool.setBatchMode(true)
           }

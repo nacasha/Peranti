@@ -1,6 +1,3 @@
-/**
- * Tool properties to put into storage
- */
 export interface ToolState {
   toolId: string
   sessionId: string

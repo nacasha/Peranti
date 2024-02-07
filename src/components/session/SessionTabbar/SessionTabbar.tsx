@@ -16,8 +16,8 @@ import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { activeSessionStore } from "src/stores/activeSessionStore"
 import { hotkeysStore } from "src/stores/hotkeysStore"
 import { interfaceStore } from "src/stores/interfaceStore"
-import { sessionStore } from "src/stores/sessionStore"
 import { sessionHistoryStore } from "src/stores/sessionHistoryStore"
+import { sessionStore } from "src/stores/sessionStore"
 import { toolStore } from "src/stores/toolStore"
 import { type Session } from "src/types/Session"
 
@@ -221,9 +221,6 @@ const TabItem: FC<TabItemProps> = memo((props) => {
 
   const handleMouseDown: MouseEventHandler = (event) => {
     if (event.button === 0) {
-      /**
-       * Dont open the session when user click on close button
-       */
       const clickedElement = event.target as HTMLDivElement
       if (clickedElement.tagName.toLowerCase() === "img" ||
         clickedElement.classList.contains("SessionTabbar-icon")) {
@@ -257,18 +254,12 @@ const TabItem: FC<TabItemProps> = memo((props) => {
     void sessionStore.closeSession(toolSession)
   }
 
-  /**
-   * Scroll tool tabbar to this tab when active
-   */
   useEffect(() => {
     if (active && draggableElementRef.current) {
       draggableElementRef.current.scrollIntoView()
     }
   }, [active])
 
-  /**
-   * Select all text when starting to rename this tab
-   */
   useEffect(() => {
     if (isRenamingSession) {
       if (tabLabelRef.current) {
@@ -285,9 +276,6 @@ const TabItem: FC<TabItemProps> = memo((props) => {
     }
   }, [isRenamingSession])
 
-  /**
-   * Blur the input for renaming tab when user hit Enter
-   */
   useEffect(() => {
     const { current: tabLabelInput } = tabLabelRef
 
@@ -305,9 +293,6 @@ const TabItem: FC<TabItemProps> = memo((props) => {
     }
   }, [tabLabelRef.current])
 
-  /**
-   * Rename session when rename tab input get blur event
-   */
   const handleSessionNameInputBlur: FocusEventHandler<HTMLDivElement> = () => {
     $renamingSessionId.set("")
 

@@ -10,9 +10,6 @@ import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
 import { type ToolOutput } from "src/types/ToolOutput"
 
 interface ToolOutputRendererProps {
-  /**
-   * Tool output definition
-   */
   toolOutput: ToolOutput
 }
 
@@ -49,10 +46,6 @@ export const ToolOutputRenderer: FC<ToolOutputRendererProps> = (props) => {
     })
   }
 
-  /**
-   * Only pass editor state props to selected components that handle it,
-   * This is needed to suppress `Unknown event handler property` warning on console
-   */
   const additionalProps: Record<string, any> = {}
   if (["Code"].includes(toolOutput.component)) {
     additionalProps.initialState = initialState

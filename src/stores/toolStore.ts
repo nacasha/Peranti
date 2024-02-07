@@ -37,30 +37,12 @@ import { mergeToolConstructorWithPreset } from "src/utils/mergeToolConstructorWi
 import { sessionStore } from "./sessionStore.ts"
 
 class ToolStore {
-  /**
-   * Groups the toos by it's categories
-   *
-   * @configurable
-   */
   groupToolsByCategory: boolean = true
 
-  /**
-   * Sort tools by name A-Z
-   *
-   * @configurable
-   */
   sortToolAZ: boolean = true
 
-  /**
-   * Sort tool categories by name A-Z
-   *
-   * @configurable
-   */
   sortCategoryAZ: boolean = true
 
-  /**
-   * List of tool presets
-   */
   private readonly _toolPresets: ToolPreset[] = [
     {
       toolId: "prefix-suffix-lines",
@@ -82,9 +64,6 @@ class ToolStore {
     // }
   ]
 
-  /**
-   * Map of built-in tools
-   */
   private readonly _builtInTools: Record<string, ToolConstructor> = {
     [removeDuplicateList.toolId]: removeDuplicateList,
     [sortList.toolId]: sortList,
@@ -114,104 +93,43 @@ class ToolStore {
     [settingsTool.toolId]: settingsTool
   }
 
-  /**
-   * Pair of toolId and tool constructor, default value is built in tools
-   */
   mapOfLoadedTools: Record<string, ToolConstructor> = {
     ...this._builtInTools
   }
 
-  /**
-   * List of all tools without categorized
-   *
-   * Example value:
-   * ```
-   * [compare-list-tool, text-transform-tool, generate-uuid-tool]
-   * ```
-   */
   listOfLoadedTools: Array<ToolConstructor<any, any>> = []
 
-  /**
-   * Pair of toolId and tool name
-   *
-   * Example value:
-   * ```
-   * {
-   *     "text-transform": "Text Transform",
-   *     "math-evaluator": "Math Evaluator",
-   *     "compare-list": "Compare List",
-   * }
-   * ```
-   */
   mapOfLoadedToolsName: Record<string, string> = {}
 
-  /**
-   * Pair of category name and list of tools
-   *
-   * Example value:
-   * ```
-   * {
-   *    List: [compare-list, sort-list, remove-duplicate-list],
-   *    Text: [word-counter, text-transform]
-   * }
-   * ```
-   */
   listOfCategoriesAndTools: Record<string, ToolConstructor[]> = {}
 
-  /**
-   * Indicates tool store has been initialized
-   */
   isToolsInitialized: boolean = false
 
-  /**
-   * ToolSessionStore constructor
-   */
   constructor() {
     makeAutoObservable(this)
     void this.setupTools()
   }
 
-  /**
-   * Setup built-in tools and preset
-   */
   async setupTools() {
     this.loadToolPresets()
     await this.loadToolExtensions()
 
-    /**
-     * Build tools after all presets and extensions has been loaded
-     */
     this.buildTools()
 
-    /**
-     * Setup tools to be showed on sidebar
-     */
     this.setupToolsForSidebar()
 
-    /**
-     * Call setup persistence of tool session to load previous session(s)
-     */
     sessionStore.setupPersistence()
   }
 
   private buildTools() {
-    /**
-     * Get values only of mapOfTools (without categorized)
-     */
     this.listOfLoadedTools = Object.values(this.mapOfLoadedTools)
 
-    /**
-     * Map tools with its name
-     */
     this.mapOfLoadedToolsName = Object.fromEntries(
       Object.entries(this.mapOfLoadedTools).map(([toolId, tool]) => [toolId, tool.name])
     )
   }
 
   private loadToolPresets() {
-    /**
-     * Prepare tool presets
-     */
     const mapOfPresets = Object.fromEntries(this._toolPresets.map((preset) => {
       const toolConstructor = this._builtInTools[preset.toolId]
       const tool = mergeToolConstructorWithPreset(toolConstructor, preset)
@@ -219,9 +137,6 @@ class ToolStore {
       return [tool.toolId, tool]
     }))
 
-    /**
-     * Put presets into loaded tools
-     */
     this.mapOfLoadedTools = { ...this.mapOfLoadedTools, ...mapOfPresets }
   }
 
@@ -248,15 +163,9 @@ class ToolStore {
       return [extension.toolId, extension]
     }))
 
-    /**
-     * Put extensions into loaded tools
-     */
     this.mapOfLoadedTools = { ...this.mapOfLoadedTools, ...mapOfExtensions }
   }
 
-  /**
-   * Prepare tools for categorized
-   */
   private setupToolsForSidebar() {
     let listOfCategoriesAndTools: Record<string, ToolConstructor[]> = { General: [] }
     if (this.groupToolsByCategory) {
@@ -265,9 +174,6 @@ class ToolStore {
       ))
     }
 
-    /**
-     * Put each tools on its category
-     */
     [...toolStore.listOfLoadedTools].forEach((tool) => {
       if (tool.hideOnSidebar) {
         return
@@ -280,9 +186,6 @@ class ToolStore {
       }
     })
 
-    /**
-     * Sort all tools by name
-     */
     if (this.sortToolAZ) {
       listOfCategoriesAndTools = Object.fromEntries(
         Object.entries(listOfCategoriesAndTools).map(([category, tools]) => {
@@ -291,9 +194,6 @@ class ToolStore {
       )
     }
 
-    /**
-     * Sort categories name
-     */
     if (this.sortCategoryAZ) {
       listOfCategoriesAndTools = Object.fromEntries(
         Object.entries(listOfCategoriesAndTools).sort(([categoryA], [categoryB]) => {

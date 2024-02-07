@@ -23,12 +23,9 @@ class SessionHistoryStore {
     this.setupPersistence()
   }
 
-  /**
-   * Setup store persistence
-   */
   setupPersistence() {
     void makePersistable(this, {
-      name: StorageKeys.ToolHistoryStore,
+      name: StorageKeys.SessionHistoryStore,
       storage: localforage,
       stringify: false,
       properties: ["histories", "numberOfMaximumHistory", "autoSaveDelayInSeconds"]
@@ -36,23 +33,14 @@ class SessionHistoryStore {
   }
 
   addHistory(tool: Tool) {
-    /**
-     * Skip save tool because it's already exists
-     */
     if (this.histories.findIndex((history) => history.sessionId === tool.sessionId) > -1) {
       return true
     }
 
-    /**
-     * Save tool state to history only if tool has input or output modified
-     */
     const isToolValuesModified = (tool.isInputValuesModified || tool.isOutputValuesModified)
     if (tool.actionRunCount > 0 && isToolValuesModified && tool.getIsInputOrOutputHasValues()) {
       this.histories.unshift(tool.toHistory())
 
-      /**
-       * Delete old history if exceeding allowed maximum history
-       */
       if (this.histories.length > this.numberOfMaximumHistory) {
         this.histories = this.histories.slice(0, this.numberOfMaximumHistory)
       }
@@ -63,17 +51,9 @@ class SessionHistoryStore {
     return false
   }
 
-  /**
-   * Open tool history entry and set as readonly active tool
-   *
-   * @param toolHistory
-   */
   async openHistory(toolHistory: SessionHistory) {
     const retrievedTool = await ToolStorageManager.getToolFromStorage(toolHistory.sessionId, {
-      /**
-       * There are some known bug where `isDeleted` has value `true` even already
-       * included in tool history store, so we're just gonna force it here
-       */
+
       initialState: {
         isDeleted: true
       }
@@ -111,11 +91,6 @@ class SessionHistoryStore {
     }
   }
 
-  /**
-   * Get specific history list of tool by its toolId
-   *
-   * @param toolId
-   */
   getHistoryOfToolId(toolId: string) {
     return this.histories.filter((history) => history.toolId === toolId)
   }

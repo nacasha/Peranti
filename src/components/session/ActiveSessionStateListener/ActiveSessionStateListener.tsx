@@ -13,15 +13,8 @@ export const ActiveSessionStateListener: FC = observer(() => {
       const isToolChanged = previousTool.current?.sessionId !== activeTool.sessionId
       const { isInputValuesModified, isAutoRunAndFirstTime: toolIsAutoRunAndFirstTime } = activeTool
 
-      /**
-       * New created session that hasn't been run at least once
-       */
       if (isToolChanged && toolIsAutoRunAndFirstTime) {
         activeSessionStore.runActiveTool()
-
-      /**
-       * Tool remains opened and has input values modified
-       */
       } else if (!isToolChanged && isInputValuesModified) {
         activeSessionStore.runActiveTool()
       }
@@ -29,9 +22,6 @@ export const ActiveSessionStateListener: FC = observer(() => {
   }, [activeTool.inputValues])
 
   useEffect(() => {
-    /**
-     * Keep track of last active tool
-     */
     if (activeTool.sessionId !== previousTool.current?.sessionId) {
       previousTool.current = activeTool
     }

@@ -8,19 +8,10 @@ type ExtractOutputComponentProps<T> = T extends ToolComponent<React.FC<infer P>>
   : never
 
 export type ToolOutput<K extends Record<string, string> = any> = {
-  /**
-   * Output field key
-   */
   key: Extract<keyof K, string>
 
-  /**
-   * Label of field
-   */
   label: string
 
-  /**
-   * Allow this field to have batch mode
-   */
   allowBatch?: boolean
 } & ({
   component: "Settings"

@@ -50,9 +50,6 @@ const jsonataTool: ToolConstructor<InputFields, OutputFields> = {
   action: async(inputParams) => {
     const { jsonString, expression } = inputParams
 
-    /**
-     * Return empty output if one of the inputs are empty
-     */
     if (jsonString.trim().length === 0 || expression.trim().length === 0) {
       return { output: "" }
     }

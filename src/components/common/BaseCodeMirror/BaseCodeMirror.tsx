@@ -98,9 +98,6 @@ export const BaseCodeMirror: FC<Props> = (props) => {
       })
     }
 
-    /**
-     * Delay a bit for layout to be ready based on content
-     */
     setTimeout(() => {
       const initialTop = Number(initialStateCodeMirror?.scroll.top ?? 0)
       const initialLeft = Number(initialStateCodeMirror?.scroll.left ?? 0)

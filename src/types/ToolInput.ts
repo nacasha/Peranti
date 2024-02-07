@@ -8,29 +8,15 @@ type ExtractInputComponentProps<T> = T extends ToolComponent<React.FC<infer P>>
   : never
 
 export type ToolInput<K extends Record<string, string> = any> = {
-  /**
-   * Input field key
-   */
+
   key: Extract<keyof K, string>
 
-  /**
-   * Label of field
-   */
   label: string
 
-  /**
-   * Default value of input
-   */
   defaultValue: any
 
-  /**
-   * Allow this field to have batch mode
-   */
   allowBatch?: boolean
 
-  /**
-   * Skip this field's value when determining tool has inputValues or not
-   */
   skipValidateHasValue?: boolean
 } & ({
   component: "Text"

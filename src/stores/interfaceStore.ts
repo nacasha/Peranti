@@ -11,54 +11,24 @@ import { watchUserSettings, getUserSettings } from "src/utils/decorators"
 import { getWindowSize } from "src/utils/getWindowSize"
 
 class InterfaceStore {
-  /**
-   * Currently active theme
-   *
-   * @configurable
-   */
   @watchUserSettings(UserSettingsKeys.theme)
   theme: Theme = getUserSettings(UserSettingsKeys.theme, Theme.Dark)
 
-  /**
-   * Make App Sidebar alaways floating (hide on click outside)
-   */
   @watchUserSettings(UserSettingsKeys.floatingSidebar)
   isFloatingSidebar = getUserSettings(UserSettingsKeys.floatingSidebar, false)
 
-  /**
-   * Style of app window title bar
-   */
   @watchUserSettings(UserSettingsKeys.titlebarStyle)
   appTitlebarStyle = getUserSettings(UserSettingsKeys.titlebarStyle, AppTitlebarStyle.Commandbar)
 
-  /**
-   * Show the sidebar
-   */
   isSidebarShow = true
 
-  /**
-   * App Sidebar mode
-   *
-   * @configurable
-   */
   _sidebarMode: SidebarMode = SidebarMode.DockPinned
 
-  /**
-   * Currently active menu id
-   */
   sidebarActiveMenuId = "tools"
 
-  /**
-   * Make text area and code component text wrap
-   *
-   * @configurable
-   */
   @watchUserSettings(UserSettingsKeys.textAreaWordWrap)
   textAreaWordWrap = getUserSettings(UserSettingsKeys.textAreaWordWrap, false)
 
-  /**
-   * State of window size
-   */
   windowSize = { width: 0, height: 0 }
 
   isWindowMaximized: boolean = false
@@ -70,9 +40,6 @@ class InterfaceStore {
     this.setupPersistence()
   }
 
-  /**
-   * Setup store persistence
-   */
   setupPersistence() {
     void makePersistable(this, {
       name: StorageKeys.InterfaceStore,

@@ -11,6 +11,8 @@
   font-size: var(--font-size);
   height: 30px;
   color: var(--text-color);
+  word-break: keep-all;
+  white-space: nowrap;
 
   &:hover {
     border-color: var(--button-border-color-hover);

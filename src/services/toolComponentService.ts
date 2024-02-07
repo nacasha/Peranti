@@ -26,9 +26,6 @@ import { getFileNameFromPath } from "src/utils/getFileNameFromPath.js"
 import { FileService } from "./fileService.js"
 
 class ToolComponentService {
-  /**
-   * List of input components
-   */
   readonly inputs = {
     Checkbox: new ToolComponent({
       component: CheckboxInput
@@ -73,9 +70,6 @@ class ToolComponentService {
     })
   }
 
-  /**
-   * List of output components
-   */
   readonly outputs = {
     Code: new ToolComponent({
       component: CodeOutput,
@@ -128,13 +122,6 @@ class ToolComponentService {
     })
   }
 
-  /**
-   * Get input component definition based on isBatchComponent
-   *
-   * @param componentName
-   * @param isBatchComponent
-   * @returns
-   */
   getInputComponent(componentName: keyof typeof this.inputs, isBatchComponent: boolean = false) {
     const inputComponent = this.inputs[componentName]
     const batchInputComponent = this.inputs[inputComponent.batchComponent as keyof typeof this.inputs]
@@ -162,13 +149,6 @@ class ToolComponentService {
     }
   }
 
-  /**
-   * Get output component definition based on isBatchComponent
-   *
-   * @param componentName
-   * @param isBatchComponent
-   * @returns
-   */
   getOutputComponent(componentName: keyof typeof this.outputs, isBatchComponent: boolean = false) {
     const outputComponent = this.outputs[componentName]
     const batchOutputComponent = this.outputs[outputComponent.batchComponent as keyof typeof this.outputs]

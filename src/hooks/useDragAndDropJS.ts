@@ -18,11 +18,6 @@ export function useDragAndDropJS(options: Options = {}) {
   const draggableElementRef = useRef<HTMLDivElement>(null)
   const draggableElementPlaceholderRef = useRef<HTMLDivElement>(null)
 
-  /**
-   * Start move the element based on mouse position
-   *
-   * @param event
-   */
   const startDragging = (event: MouseEvent) => {
     const root = document.querySelector<HTMLDivElement>(".AppRoot")
     if (draggableElementRef.current && draggableElementPlaceholderRef.current && root) {
@@ -48,9 +43,6 @@ export function useDragAndDropJS(options: Options = {}) {
     }
   }
 
-  /**
-   * Stop dragging the element and return to original position
-   */
   const stopDragging = () => {
     const root = document.querySelector<HTMLDivElement>(".AppRoot")
     if (draggableElementRef.current && draggableElementPlaceholderRef.current && root) {
@@ -73,9 +65,6 @@ export function useDragAndDropJS(options: Options = {}) {
     }
   }
 
-  /**
-   * Register event listener MouseUp and MouseMove when holding the mouse
-   */
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
       if (mouseMovePosition) {
@@ -137,9 +126,6 @@ export function useDragAndDropJS(options: Options = {}) {
     }
   }, [isDragging])
 
-  /**
-   * Register event listener MouseDown when draggable element is exist
-   */
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
       if (event.button === 0) {

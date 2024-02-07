@@ -31,11 +31,6 @@ const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-/**
- * App
- *
- * @returns ReactNode
- */
 export const AppMain = () => {
   return (
     <AppRoot>

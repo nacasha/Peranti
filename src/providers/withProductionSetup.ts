@@ -1,9 +1,6 @@
 import { useEffect } from "react"
 
 export const withProductionSetup = (component: () => React.ReactNode) => () => {
-  /**
-   * Disable context menu on production
-   */
   useEffect(() => {
     const disableContextMenu = () => {
       if (window.location.hostname !== "tauri.localhost") {
