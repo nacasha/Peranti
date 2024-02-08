@@ -5,9 +5,9 @@ import { Icons } from "src/constants/icons"
 import { SidebarMode } from "src/enums/sidebar-mode"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
-import { appletStore } from "src/services/applet-store"
 import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
+import { toolSidebarService } from "src/services/tool-sidebar-service"
 import { type AppletConstructor } from "src/types/AppletConstructor"
 
 import { ToolSidebarItem } from "../ToolSidebarItem"
@@ -15,13 +15,13 @@ import { ToolSidebarItem } from "../ToolSidebarItem"
 import "./ToolSidebar.scss"
 
 export const ToolSidebar: FC = () => {
-  const listOfCategoriesAndApplets = useSelector(() => appletStore.listOfCategoriesAndApplets)
-  const groupByCategory = useSelector(() => appletStore.groupByCategory)
+  const groupByCategory = useSelector(() => toolSidebarService.groupByCategory)
+  const items = useSelector(() => toolSidebarService.items)
 
   return (
     <div className="ToolSidebar">
       <div className="PrimarySidebar-title">Tools</div>
-      {Object.entries(listOfCategoriesAndApplets).map(([category, applets]) => (
+      {Object.entries(items).map(([category, applets]) => (
         <div className="ToolSidebar-section" key={category}>
           <div className={clsx("ToolSidebar-section-title", groupByCategory && "show")}>
             {category}

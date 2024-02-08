@@ -1,19 +1,21 @@
 @import url("_fonts.scss");
 @import url("_context-menu.scss");
 @import url("_themes.scss");
+@import url("_cmdk.scss");
 
 $padding: 10px;
-
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
 
 :root {
   --font-family: "Inter", serif;
   --font-family-mono: "Consolas", monospace, serif;
   --font-size: 13px;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: var(--font-family);
 }
 
 .InputOutputLabel {
@@ -88,7 +90,7 @@ html, body {
     animation: none;
 
     div[role="status"] {
-      word-break: break-all;
+      word-break: normal;
     }
   }
 }

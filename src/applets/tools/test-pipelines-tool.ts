@@ -21,7 +21,7 @@ const testPipelines: AppletConstructor = {
   ],
   pipelines: [
     {
-      toolId: "generate-uuid",
+      appletId: "generate-uuid",
       fields: [
         {
           inputKey: "numberOfGenerated",
@@ -30,7 +30,7 @@ const testPipelines: AppletConstructor = {
       ]
     },
     {
-      toolId: "sort-list",
+      appletId: "sort-list",
       fields: [
         {
           inputKey: "input",
@@ -39,7 +39,7 @@ const testPipelines: AppletConstructor = {
       ]
     },
     {
-      toolId: "text-transform",
+      appletId: "text-transform",
       fields: [
         {
           inputKey: "input",

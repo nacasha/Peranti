@@ -61,6 +61,14 @@ class FileDropService {
 
     const [inputFields, isAvailableOnBatchMode] = activeApplet.getInputFieldsWithReadableFile()
 
+    console.log(inputFields, isAvailableOnBatchMode)
+
+    if (inputFields.length === 0) {
+      toast.error(`Current tool ${activeApplet.name} does not support file drop`)
+      this.resetState()
+      return
+    }
+
     const { key: inputFieldKey, component } = inputFields[0]
     const inputComponent = componentService.getInputComponent(component, isAvailableOnBatchMode)
     const fileName = getFileNameFromPath(filePath)
@@ -143,6 +151,10 @@ class FileDropService {
 
   setFileDropAction(value: FileDropAction) {
     this.fileDropAction = value
+  }
+
+  setDroppedFileReplaceSessionName(value: boolean) {
+    this.droppedFileReplaceSessionName = value
   }
 }
 

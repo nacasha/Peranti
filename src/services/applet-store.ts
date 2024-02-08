@@ -34,27 +34,18 @@ import { type Preset } from "src/types/Preset.ts"
 import { mergeAppletConstructorWithPreset } from "src/utils/merge-applet-constructor-with-preset.ts"
 
 import { appDataService } from "./app-data-service.ts"
+import { commandbarService } from "./commandbar-service.ts"
 import { sessionStore } from "./session-store.ts"
+import { toolSidebarService } from "./tool-sidebar-service.ts"
 
+/**
+ * This AppletStore resposible to load all built-in applets, user applets,
+ * and extensions from app data folder. Merge all of them and put into `loaded` state.
+ */
 class AppletStore {
-  groupByCategory: boolean = true
-
-  private readonly sortNameAZ: boolean = true
-
-  private readonly sortCategoryAZ: boolean = true
-
-  private readonly presets: Preset[] = [
-    {
-      appletId: "prefix-suffix-lines",
-      presetId: "sql-where-query",
-      name: "SQL Where Query",
-      inputValues: {
-        prefix: "'",
-        suffix: "',"
-      }
-    }
-  ]
-
+  /**
+   * List of buildit applets
+   */
   private readonly builtInApplets: Record<string, AppletConstructor> = {
     [removeDuplicateList.appletId]: removeDuplicateList,
     [sortList.appletId]: sortList,
@@ -84,43 +75,70 @@ class AppletStore {
     [settingsTool.appletId]: settingsTool
   }
 
+  /**
+   * List of builtin preset
+   */
+  private readonly builtInPresets: Preset[] = [
+    {
+      appletId: "prefix-suffix-lines",
+      presetId: "sql-where-query",
+      name: "SQL Where Query",
+      inputValues: {
+        prefix: "'",
+        suffix: "',"
+      }
+    }
+  ]
+
+  /**
+   * Map of all loaded applets, builtint, preset and extensions
+   */
   mapOfLoadedApplets: Record<string, AppletConstructor> = {
     ...this.builtInApplets
   }
 
+  /**
+   * Map of all loaded applets, key value of appletId and appletName
+   */
   mapOfLoadedAppletsName: Record<string, string> = {}
 
+  /**
+   * Flat array that contains all loaded applets
+   */
   listOfLoadedApplets: Array<AppletConstructor<any, any>> = []
 
-  listOfCategoriesAndApplets: Record<string, AppletConstructor[]> = {}
-
-  isInitialized: boolean = false
-
+  /**
+   * Applet store constructor
+   */
   constructor() {
     makeAutoObservable(this)
     void this.setupAppletStore()
   }
 
+  /**
+   * Setup applet store
+   */
   async setupAppletStore() {
+    /**
+     * Load applets preset and extensions, and build into map and list
+     */
     this.loadPresets()
     await this.loadExtensions()
-
     this.buildApplets()
-    this.setupForSidebar()
+
+    /**
+     * Setup service that depends on applets
+     */
     sessionStore.setupPersistence()
+    toolSidebarService.setupItems()
+    commandbarService.setupItems()
   }
 
-  private buildApplets() {
-    this.listOfLoadedApplets = Object.values(this.mapOfLoadedApplets)
-    this.mapOfLoadedAppletsName = Object.fromEntries(
-      Object.entries(this.mapOfLoadedApplets).map((
-        [appletId, applet]) => [appletId, applet.name
-      ])
-    )
-  }
-
+  /**
+   * Load applets with type of Preset
+   */
   private loadPresets() {
-    const mapOfPresets = Object.fromEntries(this.presets.map((preset) => {
+    const mapOfPresets = Object.fromEntries(this.builtInPresets.map((preset) => {
       const mainAppletConstructor = this.builtInApplets[preset.appletId]
       const appletConstructor = mergeAppletConstructorWithPreset(mainAppletConstructor, preset)
 
@@ -130,6 +148,9 @@ class AppletStore {
     this.mapOfLoadedApplets = { ...this.mapOfLoadedApplets, ...mapOfPresets }
   }
 
+  /**
+   * Load applets from extension folder
+   */
   private async loadExtensions() {
     const extensions = []
     const entries = await appDataService.readExtensionsFolder()
@@ -156,50 +177,16 @@ class AppletStore {
     this.mapOfLoadedApplets = { ...this.mapOfLoadedApplets, ...mapOfExtensions }
   }
 
-  private setupForSidebar() {
-    let listOfCategoriesAndApplets: Record<string, AppletConstructor[]> = { General: [] }
-
-    if (this.groupByCategory) {
-      listOfCategoriesAndApplets = Object.fromEntries(appletStore.listOfLoadedApplets.map(
-        (applet) => [applet.category, [] as AppletConstructor[]]
-      ))
-    }
-
-    [...appletStore.listOfLoadedApplets].forEach((applet) => {
-      if (applet.type === AppletType.Page) {
-        return
-      }
-
-      if (this.groupByCategory) {
-        listOfCategoriesAndApplets[applet.category].push(applet)
-      } else {
-        listOfCategoriesAndApplets.General.push(applet)
-      }
-    })
-
-    if (this.sortNameAZ) {
-      listOfCategoriesAndApplets = Object.fromEntries(
-        Object.entries(listOfCategoriesAndApplets).map(([category, applets]) => {
-          return [category, applets.sort((a, b) => a.name < b.name ? -1 : 0)]
-        })
-      )
-    }
-
-    if (this.sortCategoryAZ) {
-      listOfCategoriesAndApplets = Object.fromEntries(
-        Object.entries(listOfCategoriesAndApplets).sort(([categoryA], [categoryB]) => {
-          return categoryA < categoryB ? -1 : 0
-        })
-      )
-    }
-
-    listOfCategoriesAndApplets = Object.fromEntries(
-      Object.entries(listOfCategoriesAndApplets).filter(([, applets]) => {
-        return applets.length > 0
-      })
+  /**
+   * Build loaded applets into map and list
+   */
+  private buildApplets() {
+    this.listOfLoadedApplets = Object.values(this.mapOfLoadedApplets)
+    this.mapOfLoadedAppletsName = Object.fromEntries(
+      Object.entries(this.mapOfLoadedApplets).map((
+        [appletId, applet]) => [appletId, applet.name
+      ])
     )
-
-    this.listOfCategoriesAndApplets = listOfCategoriesAndApplets
   }
 }
 

@@ -5,7 +5,6 @@
   position: fixed;
   z-index: 10;
   inset: 0;
-  top: var(--app-titlebar-height);
   flex-direction: column;
   backdrop-filter: blur(3px);
   border-radius: var(--border-radius);

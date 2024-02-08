@@ -15,14 +15,20 @@ interface ActivityBarItemProps {
   menuId: string
   href?: string
   appletConstructor?: AppletConstructor
+  onClick?: () => any
 }
 
 export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
-  const { icon, label, menuId, href, appletConstructor } = props
+  const { icon, label, menuId, href, appletConstructor, onClick } = props
   const [, setLocation] = useLocation()
   const isActive = useSelector(() => interfaceStore.sidebarActiveMenuId === menuId)
 
   const onClickItem = () => () => {
+    if (onClick) {
+      onClick()
+      return
+    }
+
     if (appletConstructor) {
       sessionStore.findOrCreateSession(appletConstructor)
       return

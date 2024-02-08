@@ -1,5 +1,6 @@
 import settingsTool from "src/applets/pages/settings-applet.ts"
 import { Icons } from "src/constants/icons.ts"
+import { commandbarService } from "src/services/commandbar-service"
 
 import { ActivityBarItem } from "../ActivityBarItem"
 
@@ -30,6 +31,14 @@ export const ActivityBar = () => {
       </div>
 
       <div className="ActivityBar-bottom">
+        <ActivityBarItem
+          icon={Icons.Search}
+          label="Search"
+          menuId="search"
+          onClick={() => {
+            commandbarService.open()
+          }}
+        />
         <ActivityBarItem
           icon={Icons.Gear}
           label="Settings"

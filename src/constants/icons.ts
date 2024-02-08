@@ -20,6 +20,7 @@ import Reset from "src/assets/icons/reset.svg"
 import Restore from "src/assets/icons/restore.svg"
 import RunFilled from "src/assets/icons/run-filled.svg"
 import Run from "src/assets/icons/run.svg"
+import Search from "src/assets/icons/search.svg"
 import Settings from "src/assets/icons/settings.svg"
 import ThreeLineHorizontal from "src/assets/icons/three-line-horizontal.svg"
 import ThreeLineVertical from "src/assets/icons/three-line-vertical.svg"
@@ -29,6 +30,7 @@ import Untrash from "src/assets/icons/untrash.svg"
 
 export const Icons = {
   Back,
+  Search,
   Documents,
   Trash,
   Untrash,

@@ -1,7 +1,7 @@
 class HotkeysStore {
   private readonly defaultKeys = {
     ESCAPE: "escape",
-    OPEN_SEARCH: "ctrl+k, ctrl+p",
+    OPEN_COMMANDBAR: "ctrl+k, ctrl+p",
     TAB_NEW_EDITOR: "ctrl+n",
     TAB_CLOSE: "ctrl+w",
     TAB_CYCLE_NEXT: "ctrl+tab",

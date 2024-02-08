@@ -3,6 +3,6 @@ export interface Pipeline {
   fields: Array<{
     inputKey: string
     previousOutputKey?: string
-    key?: string
+    value?: string
   }>
 }

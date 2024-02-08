@@ -9,6 +9,7 @@ import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrap
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
 
 import { FileDropActionSelect } from "../FileDropActionSelect"
+import { FileDropFillTabbarName } from "../FileDropFillTabbarName"
 
 import "./SettingsView.scss"
 
@@ -41,15 +42,18 @@ export const SettingsView: FC = () => {
         </SettingsCardItem>
       </SettingsCard>
 
-      <SettingsCard title="Drag and Drop">
+      <SettingsCard title="File Drop">
         <SettingsCardItem label="Action">
           <FileDropActionSelect />
+        </SettingsCardItem>
+        <SettingsCardItem label="Dropped File Replace Tabbar Name">
+          <FileDropFillTabbarName />
         </SettingsCardItem>
       </SettingsCard>
 
       <SettingsCard title="Application Data">
-        <SettingsCardItem label="Extensions">
-          <Button>Show Folder</Button>
+        <SettingsCardItem label="App Data Folder">
+          <Button>Open Folder</Button>
         </SettingsCardItem>
 
         <SettingsCardItem label="Settings JSON File">

@@ -3,6 +3,7 @@ import { type AppletType } from "src/enums/applet-type.ts"
 import { type AppletInput } from "./AppletInput.ts"
 import { type AppletOutput } from "./AppletOutput.ts"
 import { type LayoutSetting } from "./LayoutSetting.ts"
+import { type Pipeline } from "./Pipeline.ts"
 
 export interface AppletConstructor<IF extends Record<string, any> = any, OF extends Record<string, any> = any> {
   appletId: string
@@ -12,7 +13,7 @@ export interface AppletConstructor<IF extends Record<string, any> = any, OF exte
   outputFields: Array<AppletOutput<OF>> | ((outputParams: OF) => Array<AppletOutput<OF>>)
   action?: (input: IF) => OF | Promise<OF> | undefined
   layoutSetting?: LayoutSetting
-  pipelines?: any[]
+  pipelines?: Pipeline[]
   autoRun?: boolean
   type?: AppletType
   samples?: Array<IF | (() => IF)>
