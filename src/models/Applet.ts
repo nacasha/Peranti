@@ -15,6 +15,7 @@ import { type AppletOutput } from "src/types/AppletOutput"
 import { type AppletState } from "src/types/AppletState"
 import { type ExtensionMetadata } from "src/types/ExtensionMetadata"
 import { type LayoutSetting } from "src/types/LayoutSetting"
+import { type Pipeline } from "src/types/Pipeline"
 import { type Session } from "src/types/Session"
 import { type SessionHistory } from "src/types/SessionHistory"
 import { generateRandomString } from "src/utils/generate-random-string"
@@ -36,7 +37,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
   isAutoRunAndFirstTime: boolean = false
 
-  readonly pipelines: any[] = []
+  readonly pipelines: Pipeline[] = []
 
   private canRunPipeline = true
 
@@ -78,7 +79,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
   @observable renderCounter: number = 0
 
-  readonly toolState?: AppletState = undefined
+  readonly state?: AppletState = undefined
 
   readonly disablePersistence: boolean = false
 
@@ -101,14 +102,6 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
     return this.samples.length > 0
   }
 
-  static generateSessionId(toolId: string) {
-    return toolId.concat(generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm"))
-  }
-
-  static getToolIdFromSessionId(sessionId: string) {
-    return sessionId.split("|")[0]
-  }
-
   static empty() {
     return new Applet({
       name: "",
@@ -121,26 +114,28 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
   }
 
   constructor(
-    toolConstructor: AppletConstructor<IF, OF>,
+    appletConstructor: AppletConstructor<IF, OF>,
     options: {
       initialState?: Partial<AppletState>
       disablePersistence?: boolean
     } = {}
   ) {
-    this.appletId = toolConstructor.appletId
-    this.sessionId = toolConstructor.appletId === "" ? "" : Applet.generateSessionId(toolConstructor.appletId)
-    this.name = toolConstructor.name
-    this.action = toolConstructor.action ?? (() => ({}))
-    this.category = toolConstructor.category
-    this.inputFields = toolConstructor.inputFields
-    this.outputFields = toolConstructor.outputFields
-    this.pipelines = toolConstructor.pipelines ?? []
-    this.autoRun = toolConstructor.autoRun ?? true
-    this.type = toolConstructor.type ?? AppletType.Tool
-    this.metadata = toolConstructor.metadata
-    this.samples = toolConstructor.samples ?? []
-    this.disableMultipleSession = toolConstructor.disableMultipleSession ?? false
-    this.hideOnSidebar = toolConstructor.hideOnSidebar ?? false
+    this.appletId = appletConstructor.appletId
+    this.sessionId = appletConstructor.appletId === ""
+      ? ""
+      : this.appletId.concat(generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm"))
+    this.name = appletConstructor.name
+    this.action = appletConstructor.action ?? (() => ({}))
+    this.category = appletConstructor.category
+    this.inputFields = appletConstructor.inputFields
+    this.outputFields = appletConstructor.outputFields
+    this.pipelines = appletConstructor.pipelines ?? []
+    this.autoRun = appletConstructor.autoRun ?? true
+    this.type = appletConstructor.type ?? AppletType.Tool
+    this.metadata = appletConstructor.metadata
+    this.samples = appletConstructor.samples ?? []
+    this.disableMultipleSession = appletConstructor.disableMultipleSession ?? false
+    this.hideOnSidebar = appletConstructor.hideOnSidebar ?? false
     this.inputValues = this.getInputValuesWithDefault()
 
     if (this.autoRun) {
@@ -153,7 +148,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
       gridTemplate: "1fr 1fr",
       inputAreaDirection: "vertical",
       outputAreaDirection: "vertical",
-      ...toolConstructor.layoutSetting
+      ...appletConstructor.layoutSetting
     }
 
     const { initialState, disablePersistence = false } = options
@@ -202,12 +197,12 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
         name: StorageKeys.AppletState.concat(this.sessionId),
         properties: [
           {
-            key: "toolState",
+            key: "state",
             serialize: () => {
               return this.toState()
             },
             deserialize: () => {
-              return this.toolState
+              return this.state
             }
           }
         ]
@@ -220,11 +215,11 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
   toState(): AppletState {
     const {
-      batchModeInputKey: batchInputKey,
-      batchModeOutputKey: batchOutputKey,
+      batchModeInputKey,
+      batchModeOutputKey,
       inputFieldsState,
       inputValues,
-      isBatchModeEnabled: isBatchEnabled,
+      isBatchModeEnabled,
       isDeleted,
       isInputValuesModified,
       isOutputValuesModified,
@@ -234,19 +229,19 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
       sessionId,
       sessionName,
       sessionSequenceNumber,
-      appletId: toolId,
+      appletId,
       isAutoRunAndFirstTime
     } = this
 
     const createdAt = new Date().getTime()
 
     return {
-      batchModeInputKey: batchInputKey,
-      batchModeOutputKey: batchOutputKey,
+      batchModeInputKey,
+      batchModeOutputKey,
       createdAt,
       inputFieldsState: toJS(inputFieldsState),
       inputValues: toJS(inputValues),
-      isBatchModeEnabled: isBatchEnabled,
+      isBatchModeEnabled,
       isDeleted,
       isInputValuesModified,
       isOutputValuesModified,
@@ -256,22 +251,22 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
       sessionId,
       sessionName,
       sessionSequenceNumber,
-      appletId: toolId,
+      appletId,
       isAutoRunAndFirstTime
     }
   }
 
   toSession(): Session {
-    const { sessionId, sessionName, sessionSequenceNumber, appletId: toolId } = this
+    const { sessionId, sessionName, sessionSequenceNumber, appletId } = this
 
-    return { sessionId, sessionName, sessionSequenceNumber, appletId: toolId }
+    return { sessionId, sessionName, sessionSequenceNumber, appletId }
   }
 
   toHistory(): SessionHistory {
-    const { sessionId, sessionName, appletId: toolId } = this
+    const { sessionId, sessionName, appletId } = this
     const deletedAt = new Date().getTime()
 
-    return { deletedAt, sessionId, sessionName, toolId }
+    return { deletedAt, sessionId, sessionName, appletId }
   }
 
   @action
@@ -527,7 +522,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
         const result = await command.execute()
         this.setOutputValues(JSON.parse(result.stdout))
       } catch (exception) {
-        console.log("Tool failed to run")
+        console.log("Failed to run applet")
       }
 
       this.setIsActionRunning(false)
@@ -542,31 +537,31 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
   private async runPipeline() {
     const { pipelines = [] } = this
     const pipelineResults = []
-    const pipelineTools = [this, ...pipelines, this]
+    const mergedPipelines = [this, ...pipelines, this]
 
-    for (let i = 0; i < pipelineTools.length; i++) {
-      const pipeline = pipelineTools[i]
+    for (let index = 0; index < mergedPipelines.length; index++) {
+      const pipeline = mergedPipelines[index]
 
-      if (i === 0) {
-        pipelineResults.push(pipeline.inputValues)
-      } else if (i === pipelineTools.length - 1) {
-        this.setOutputValues(pipelineResults[i - 1])
+      if (index === 0) {
+        pipelineResults.push((pipeline as this).inputValues)
+      } else if (index === mergedPipelines.length - 1) {
+        this.setOutputValues(pipelineResults[index - 1])
       } else {
-        const toolConstructor = appletStore.mapOfLoadedApplets[pipeline.toolId]
-        const tool = new Applet(toolConstructor)
-        tool.canRunPipeline = false
+        const appletConstructor = appletStore.mapOfLoadedApplets[pipeline.appletId]
+        const applet = new Applet(appletConstructor)
+        applet.canRunPipeline = false
 
-        const previousResult = pipelineResults[i - 1]
-        pipeline.fields.forEach((field: any) => {
+        const previousResult = pipelineResults[index - 1];
+        (pipeline as Pipeline).fields.forEach((field: any) => {
           if (field.previousOutputKey) {
-            tool.setInputValue(field.inputKey, previousResult[field.previousOutputKey])
+            applet.setInputValue(field.inputKey, previousResult[field.previousOutputKey])
           } else if (field.value) {
-            tool.setInputValue(field.inputKey, field.value)
+            applet.setInputValue(field.inputKey, field.value)
           }
         })
 
-        await tool.run()
-        pipelineResults.push(tool.outputValues)
+        await applet.run()
+        pipelineResults.push(applet.outputValues)
       }
     }
   }
@@ -603,7 +598,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
     this.renderCounter += 1
   }
 
-  getToolHasIframe() {
+  getHasIframe() {
     return this.getOutputFields().some((field) => field.component === "IFrame")
   }
 

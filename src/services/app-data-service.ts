@@ -8,7 +8,7 @@ import { type UserSettingsKeys } from "src/enums/user-settings-keys.js"
 import { FileService } from "./file-service.js"
 
 export class AppDataService {
-  static async prepareAppDirectory() {
+  async prepareAppDirectory() {
     const baseFolder = await appDataDir()
 
     try {
@@ -20,8 +20,8 @@ export class AppDataService {
     }
   }
 
-  static async prepareExtensionsFolder() {
-    await AppDataService.prepareAppDirectory()
+  async prepareExtensionsFolder() {
+    await this.prepareAppDirectory()
 
     try {
       if (!(await exists(Folders.Extensions, { dir: BaseDirectory.AppData }))) {
@@ -32,7 +32,7 @@ export class AppDataService {
     }
   }
 
-  static async prepareSettingsJSONFile() {
+  async prepareSettingsJSONFile() {
     try {
       if (!(await exists(FileNames.UserSettings, { dir: BaseDirectory.AppData }))) {
         await writeTextFile(FileNames.UserSettings, "{}", { dir: BaseDirectory.AppData })
@@ -42,8 +42,8 @@ export class AppDataService {
     }
   }
 
-  static async readExtensionsFolder() {
-    await AppDataService.prepareExtensionsFolder()
+  async readExtensionsFolder() {
+    await this.prepareExtensionsFolder()
 
     const entries = await readDir(Folders.Extensions, {
       dir: BaseDirectory.AppData,
@@ -53,8 +53,8 @@ export class AppDataService {
     return entries
   }
 
-  static async readSettingsFile() {
-    await AppDataService.prepareSettingsJSONFile()
+  async readSettingsFile() {
+    await this.prepareSettingsJSONFile()
 
     try {
       const userSettingsRaw = await FileService.readFileAsText(FileNames.UserSettings, true)
@@ -64,8 +64,8 @@ export class AppDataService {
     }
   }
 
-  static async writeSettingsFile(settings: any) {
-    await AppDataService.prepareSettingsJSONFile()
+  async writeSettingsFile(settings: any) {
+    await this.prepareSettingsJSONFile()
 
     try {
       await writeTextFile(FileNames.UserSettings, JSON.stringify(settings, undefined, 2), { dir: BaseDirectory.AppData })
@@ -74,3 +74,5 @@ export class AppDataService {
     }
   }
 }
+
+export const appDataService = new AppDataService()

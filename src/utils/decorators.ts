@@ -1,7 +1,7 @@
 import { spy } from "mobx"
 
 import { type UserSettingsKeys } from "src/enums/user-settings-keys"
-import { AppDataService } from "src/services/app-data-service"
+import { appDataService } from "src/services/app-data-service"
 import { userSettingsService } from "src/services/user-settings-service"
 
 const watchedUserSettings: Record<string, Record<string, string>> = {}
@@ -23,11 +23,11 @@ export function watchUserSettings(userSettingKey: string) {
 }
 
 const updateSetting = async(key: string, value: string) => {
-  const settings = await AppDataService.readSettingsFile()
+  const settings = await appDataService.readSettingsFile()
 
   if (key && (value !== undefined)) {
     const newSettings = { ...settings, [key]: value }
-    void AppDataService.writeSettingsFile(newSettings)
+    void appDataService.writeSettingsFile(newSettings)
   }
 }
 

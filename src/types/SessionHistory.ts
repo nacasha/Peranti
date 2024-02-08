@@ -1,5 +1,5 @@
 export interface SessionHistory {
-  toolId: string
+  appletId: string
   sessionId: string
   sessionName?: string
   deletedAt: number

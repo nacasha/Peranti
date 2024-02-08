@@ -2,6 +2,7 @@ import { makeAutoObservable, toJS } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys.ts"
+import { AppletType } from "src/enums/applet-type.ts"
 import { Applet } from "src/models/Applet.ts"
 import { StorageManager } from "src/services/storage-manager.ts"
 import { type AppletConstructor } from "src/types/AppletConstructor.ts"
@@ -26,7 +27,7 @@ class SessionStore {
 
   sessionSequences: Record<string, boolean[]> = {}
 
-  activeSessionIdOfTools: Record<string, string> = {}
+  activeSessionIdOfApplets: Record<string, string> = {}
 
   activeSessionId: string = ""
 
@@ -41,7 +42,7 @@ class SessionStore {
       properties: [
         "sessionSequences",
         "enableMultipleSession",
-        "activeSessionIdOfTools",
+        "activeSessionIdOfApplets",
         "activeSessionId",
         "sessions"
       ]
@@ -56,13 +57,12 @@ class SessionStore {
   }
 
   async openLastActiveSession() {
-    const toolSession = this.sessions.find((session) => session.sessionId === this.activeSessionId)
+    const session = this.sessions.find((session) => session.sessionId === this.activeSessionId)
 
-    if (toolSession) {
-      const tool = await StorageManager.getAppletFromStorage(toolSession.sessionId)
-
-      if (tool) {
-        this.activateApplet(tool)
+    if (session) {
+      const applet = await StorageManager.getAppletFromStorage(session.sessionId)
+      if (applet) {
+        this.activateApplet(applet)
       }
     } else {
       this.activateApplet(Applet.empty())
@@ -86,80 +86,71 @@ class SessionStore {
   }
 
   createSession(
-    toolConstructor: AppletConstructor,
-    toolOptions: ConstructorParameters<typeof Applet>["1"] = {},
+    appletConstructor: AppletConstructor,
+    appletOptions: ConstructorParameters<typeof Applet>["1"] = {},
     placeSessionAtTheEnd: boolean = false
   ) {
-    if (toolConstructor.appletId === "") {
+    if (appletConstructor.appletId === "") {
       return
     }
 
-    if (toolConstructor.disableMultipleSession) {
-      if (this.getRunningSessionsFromTool(toolConstructor.appletId).length > 0) {
+    /**
+     * Applet with type page can only have 1 session at time,
+     * exit process if there is already created session for the applet
+     */
+    if (appletConstructor.type === AppletType.Page) {
+      if (this.getRunningSessionsFromAppletId(appletConstructor.appletId).length > 0) {
         return
       }
     }
 
-    const newOptions: typeof toolOptions = {
-      ...toolOptions,
-      initialState: toolOptions?.initialState ?? {}
+    const newOptions: typeof appletOptions = {
+      ...appletOptions,
+      initialState: appletOptions?.initialState ?? {}
     }
 
     if (newOptions.initialState && !newOptions.initialState?.sessionName) {
-      newOptions.initialState.sessionSequenceNumber = this.attachSessionSequence(toolConstructor.appletId)
+      newOptions.initialState.sessionSequenceNumber = this.attachSessionSequence(appletConstructor.appletId)
     }
 
-    const tool = new Applet(toolConstructor, newOptions)
+    const applet = new Applet(appletConstructor, newOptions)
 
-    this.pushIntoSessionList(tool.toSession(), placeSessionAtTheEnd)
-    this.activateApplet(tool)
-    return tool
+    this.pushIntoSessionList(applet.toSession(), placeSessionAtTheEnd)
+    this.activateApplet(applet)
+    return applet
   }
 
-  findOrCreateSession(toolConstructor: AppletConstructor) {
-    const runningSessions = this.getRunningSessionsFromTool(toolConstructor.appletId)
+  findOrCreateSession(appletConstructor: AppletConstructor) {
+    const runningSessions = this.getRunningSessionsFromAppletId(appletConstructor.appletId)
 
     if (runningSessions.length === 0) {
-      this.createSession(toolConstructor)
+      this.createSession(appletConstructor)
     } else {
-      const activeTool = activeAppletStore.getActiveApplet()
-      const lastToolSessionId = this.activeSessionIdOfTools[toolConstructor.appletId]
+      const activeApplet = activeAppletStore.getActiveApplet()
+      const lastSessionId = this.activeSessionIdOfApplets[appletConstructor.appletId]
 
-      if (activeTool.sessionId === lastToolSessionId) {
+      if (activeApplet.sessionId === lastSessionId) {
         return
       }
 
-      const lastToolSession = runningSessions.find(
-        (toolSession) => toolSession.sessionId === lastToolSessionId
+      const lastSession = runningSessions.find(
+        (session) => session.sessionId === lastSessionId
       )
 
-      void this.openSession(lastToolSession ?? runningSessions[0])
+      void this.openSession(lastSession ?? runningSessions[0])
     }
   }
 
-  async openSession(toolSession: Session) {
-    const activeTool = activeAppletStore.getActiveApplet()
+  async openSession(session: Session) {
+    const activeApplet = activeAppletStore.getActiveApplet()
 
-    if (activeTool.sessionId === toolSession.sessionId) {
+    if (activeApplet.sessionId === session.sessionId) {
       return
     }
 
-    const tool = await StorageManager.getAppletFromStorage(toolSession.sessionId)
-    if (tool) {
-      this.activateApplet(tool)
-    }
-  }
-
-  async openSessionId(sessionId: string) {
-    const activeTool = activeAppletStore.getActiveApplet()
-
-    if (activeTool.sessionId === sessionId) {
-      return
-    }
-
-    const tool = await StorageManager.getAppletFromStorage(sessionId)
-    if (tool) {
-      this.activateApplet(tool)
+    const applet = await StorageManager.getAppletFromStorage(session.sessionId)
+    if (applet) {
+      this.activateApplet(applet)
     }
   }
 
@@ -169,7 +160,7 @@ class SessionStore {
     if (applet) {
       const isDeleted = false
       const sessionSequenceNumber = !applet.sessionName
-        ? this.attachSessionSequence(sessionHistory.toolId)
+        ? this.attachSessionSequence(sessionHistory.appletId)
         : undefined
 
       applet.setIsDeleted(isDeleted)
@@ -188,18 +179,18 @@ class SessionStore {
       return
     }
 
-    void this.deactivateTool(activeApplet)
+    void this.deactivateApplet(activeApplet)
 
     activeAppletStore.setActiveApplet(applet)
     this.setActiveSessionId(applet.appletId, applet.sessionId)
   }
 
-  private async deactivateTool(tool: Applet) {
-    if (tool.isActionRunning) {
-      this.runningApplets[tool.sessionId] = tool
+  private async deactivateApplet(applet: Applet) {
+    if (applet.isActionRunning) {
+      this.runningApplets[applet.sessionId] = applet
     } else {
-      if (this.runningApplets[tool.sessionId]) {
-        this.runningApplets[tool.sessionId] = undefined
+      if (this.runningApplets[applet.sessionId]) {
+        this.runningApplets[applet.sessionId] = undefined
       }
     }
   }
@@ -217,33 +208,32 @@ class SessionStore {
     return removedSessionIndex
   }
 
-  async closeSession(toolSession: Session, skipOpenAnotherSession: boolean = false) {
-    const activeTool = activeAppletStore.getActiveApplet()
+  async closeSession(session: Session, skipOpenAnotherSession: boolean = false) {
+    const activeApplet = activeAppletStore.getActiveApplet()
+    const closedSessionIndex = this.removeSessionBySessionId(session.sessionId)
 
-    const closedSessionIndex = this.removeSessionBySessionId(toolSession.sessionId)
+    if (!skipOpenAnotherSession && (activeApplet.sessionId === session.sessionId)) {
+      const newSessions = this.getRunningSessions(session.appletId)
 
-    if (!skipOpenAnotherSession && (activeTool.sessionId === toolSession.sessionId)) {
-      const newSessionsOfTool = this.getRunningSessions(toolSession.appletId)
-
-      if (newSessionsOfTool.length === 0) {
-        this.resetToolSessionSequence(toolSession.appletId)
+      if (newSessions.length === 0) {
+        this.resetSessionSequence(session.appletId)
         this.activateApplet(Applet.empty())
       } else if (closedSessionIndex > -1) {
         let newSessionToBeOpened
-        if (closedSessionIndex <= newSessionsOfTool.length - 1) {
-          newSessionToBeOpened = newSessionsOfTool[closedSessionIndex]
+        if (closedSessionIndex <= newSessions.length - 1) {
+          newSessionToBeOpened = newSessions[closedSessionIndex]
         } else {
-          newSessionToBeOpened = newSessionsOfTool[closedSessionIndex - 1]
+          newSessionToBeOpened = newSessions[closedSessionIndex - 1]
         }
 
         void this.openSession(newSessionToBeOpened)
       }
     }
 
-    if (activeTool.sessionId === toolSession.sessionId) {
-      await this.proceedCloseSession({ tool: activeTool })
+    if (activeApplet.sessionId === session.sessionId) {
+      await this.proceedCloseSession({ applet: activeApplet })
     } else {
-      await this.proceedCloseSession({ toolSession })
+      await this.proceedCloseSession({ session })
     }
   }
 
@@ -259,43 +249,43 @@ class SessionStore {
     this.activateApplet(Applet.empty())
   }
 
-  async closeOtherSession(toolSession: Session) {
+  async closeOtherSession(keepOpenSession: Session) {
     this.sessions.forEach((session) => {
-      if (session.sessionId !== toolSession.sessionId) {
+      if (session.sessionId !== keepOpenSession.sessionId) {
         void this.closeSession(session, true)
       }
     })
 
-    this.sessions = [toolSession]
+    this.sessions = [keepOpenSession]
 
     this.sessionSequences = {}
-    this.sessionSequences[toolSession.appletId] = [true]
-    if (toolSession.sessionSequenceNumber) {
-      this.sessionSequences[toolSession.appletId][toolSession.sessionSequenceNumber] = true
+    this.sessionSequences[keepOpenSession.appletId] = [true]
+    if (keepOpenSession.sessionSequenceNumber) {
+      this.sessionSequences[keepOpenSession.appletId][keepOpenSession.sessionSequenceNumber] = true
     }
 
-    const tool = await StorageManager.getAppletFromStorage(toolSession.sessionId)
-    if (tool) {
-      this.activateApplet(tool)
+    const applet = await StorageManager.getAppletFromStorage(keepOpenSession.sessionId)
+    if (applet) {
+      this.activateApplet(applet)
     }
   }
 
-  resetToolSessionSequence(toolId: string) {
-    this.sessionSequences[toolId] = [true]
+  resetSessionSequence(appletId: string) {
+    this.sessionSequences[appletId] = [true]
   }
 
-  attachSessionSequence(toolId: string) {
-    if (!this.sessionSequences[toolId]) {
-      this.resetToolSessionSequence(toolId)
+  attachSessionSequence(appletId: string) {
+    if (!this.sessionSequences[appletId]) {
+      this.resetSessionSequence(appletId)
     }
 
-    if (this.sessionSequences[toolId].length === 1) {
-      this.sessionSequences[toolId][1] = true
+    if (this.sessionSequences[appletId].length === 1) {
+      this.sessionSequences[appletId][1] = true
       return 1
     }
 
     let nextIndex
-    const sessionSequences = toJS(this.sessionSequences[toolId])
+    const sessionSequences = toJS(this.sessionSequences[appletId])
     const smallestIndex = sessionSequences.findIndex((e) => !e || e === undefined)
 
     if (smallestIndex === -1) {
@@ -305,100 +295,98 @@ class SessionStore {
     }
 
     if (nextIndex === 1) {
-      const runningSessions = this.getRunningSessionsFromTool(toolId)
+      const runningSessions = this.getRunningSessionsFromAppletId(appletId)
 
       if (runningSessions.length === 1 && runningSessions[0].sessionSequenceNumber === nextIndex) {
-        this.sessionSequences[toolId][1] = true
+        this.sessionSequences[appletId][1] = true
         nextIndex = nextIndex + 1
       }
     }
 
-    this.sessionSequences[toolId][nextIndex] = true
+    this.sessionSequences[appletId][nextIndex] = true
     return nextIndex
   }
 
-  async detachSessionSequence(toolSession: Session) {
-    const sessions = this.sessionSequences[toolSession.appletId] ?? []
+  async detachSessionSequence(session: Session) {
+    const sessions = this.sessionSequences[session.appletId] ?? []
     const deletedIndex = sessions.findIndex(
-      (_, index) => index === toolSession.sessionSequenceNumber
+      (_, index) => index === session.sessionSequenceNumber
     )
 
     if (deletedIndex >= 0) {
-      this.sessionSequences[toolSession.appletId][deletedIndex] = false
+      this.sessionSequences[session.appletId][deletedIndex] = false
     }
 
     if (sessions.filter((e) => e).length === 1) {
-      this.resetToolSessionSequence(toolSession.appletId)
+      this.resetSessionSequence(session.appletId)
     }
 
-    await StorageManager.updateAppletStatePropertyInStorage(toolSession.sessionId, {
+    await StorageManager.updateAppletStatePropertyInStorage(session.sessionId, {
       sessionSequenceNumber: undefined
     })
   }
 
   setActiveSessionId(appletId: string, sessionId: string) {
-    this.activeSessionIdOfTools[appletId] = sessionId
+    this.activeSessionIdOfApplets[appletId] = sessionId
     this.activeSessionId = sessionId
   }
 
-  private async proceedCloseSession(options: { toolSession?: Session, tool?: Applet }) {
-    const { toolSession, tool } = options
-    let toBeDeletedTool: Applet | undefined
+  private async proceedCloseSession(options: { session?: Session, applet?: Applet }) {
+    const { session, applet } = options
+    let toBeDeleted: Applet | undefined
 
-    if (tool) {
-      toBeDeletedTool = tool
-
-      toBeDeletedTool.stopStore()
-    } else if (toolSession) {
-      toBeDeletedTool = await StorageManager.getAppletFromStorage(toolSession.sessionId, {
+    if (applet) {
+      toBeDeleted = applet
+      toBeDeleted.stopStore()
+    } else if (session) {
+      toBeDeleted = await StorageManager.getAppletFromStorage(session.sessionId, {
         disablePersistence: true
       })
     }
 
-    if (toBeDeletedTool) {
-      if (toBeDeletedTool.isDeleted) {
+    if (toBeDeleted) {
+      if (toBeDeleted.isDeleted) {
         void this.openLastActiveSession()
         return
       }
 
-      await this.detachSessionSequence(toBeDeletedTool.toSession())
+      await this.detachSessionSequence(toBeDeleted.toSession())
 
-      const isAddedToHistory = sessionHistoryStore.addHistory(toBeDeletedTool)
+      const isAddedToHistory = sessionHistoryStore.addHistory(toBeDeleted)
 
       if (isAddedToHistory) {
-        void toBeDeletedTool.markAsDeleted()
+        void toBeDeleted.markAsDeleted()
       } else {
         setTimeout(() => {
-          void StorageManager.removeAppletStateFromStorage(toBeDeletedTool!.sessionId)
+          void StorageManager.removeAppletStateFromStorage(toBeDeleted!.sessionId)
         }, 500)
       }
     }
   }
 
-  pushIntoSessionList(tool: Session, placeSessionAtTheEnd: boolean = false) {
+  pushIntoSessionList(session: Session, placeSessionAtTheEnd: boolean = false) {
     if (this.placeNewSessionToLast || placeSessionAtTheEnd) {
-      this.sessions.push(tool)
+      this.sessions.push(session)
     } else {
-      const activeTool = activeAppletStore.getActiveApplet()
-
-      const indexOfActiveTool = this.sessions.findIndex((session) => (
-        session.sessionId === activeTool.sessionId
+      const activeApplet = activeAppletStore.getActiveApplet()
+      const indexOfActiveSession = this.sessions.findIndex((session) => (
+        session.sessionId === activeApplet.sessionId
       ))
 
-      this.sessions.splice(indexOfActiveTool + 1, 0, tool)
+      this.sessions.splice(indexOfActiveSession + 1, 0, session)
     }
   }
 
-  getRunningSessionsFromTool(toolId: string) {
-    return this.sessions.filter((session) => session.appletId === toolId)
+  getRunningSessionsFromAppletId(appletId: string) {
+    return this.sessions.filter((session) => session.appletId === appletId)
   }
 
-  getRunningSessions(toolId: string) {
+  getRunningSessions(appletId: string) {
     if (this.unifiedSession) {
       return this.sessions
     }
 
-    return this.getRunningSessionsFromTool(toolId)
+    return this.getRunningSessionsFromAppletId(appletId)
   }
 
   switchSessionPosition(fromSessionId: string, toSessionId: string) {
@@ -412,23 +400,23 @@ class SessionStore {
     this.sessions.splice(toIndex, 0, removedItem)
   }
 
-  async renameSession(toolSession: Session, newSessionName: string) {
-    await this.detachSessionSequence(toolSession)
+  async renameSession(session: Session, newSessionName: string) {
+    await this.detachSessionSequence(session)
 
-    const retrievedTool = await StorageManager.getAppletFromStorage(toolSession.sessionId)
-    if (retrievedTool) {
-      retrievedTool.setSessionName(newSessionName)
-      retrievedTool.setSessionSequenceNumber(undefined)
-      await retrievedTool.hydrateStore()
+    const storedApplet = await StorageManager.getAppletFromStorage(session.sessionId)
+    if (storedApplet) {
+      storedApplet.setSessionName(newSessionName)
+      storedApplet.setSessionSequenceNumber(undefined)
+      await storedApplet.hydrateStore()
     }
 
-    toolSession.sessionName = newSessionName
-    this.replaceToolSession(toolSession)
+    session.sessionName = newSessionName
+    this.updateSession(session)
   }
 
-  replaceToolSession(toolSession: Session) {
-    const sessionIndex = this.sessions.findIndex((session) => session.sessionId === toolSession.sessionId)
-    this.sessions[sessionIndex] = toolSession
+  updateSession(updatedSession: Session) {
+    const sessionIndex = this.sessions.findIndex((session) => session.sessionId === updatedSession.sessionId)
+    this.sessions[sessionIndex] = updatedSession
   }
 }
 

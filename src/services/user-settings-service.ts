@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx"
 
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
-import { AppDataService } from "src/services/app-data-service"
+import { appDataService } from "src/services/app-data-service"
 
 class UserSettingsService {
   values: Record<string, any> = {}
@@ -11,7 +11,7 @@ class UserSettingsService {
   constructor() {
     makeAutoObservable(this)
 
-    void AppDataService.readSettingsFile().then((userSettings) => {
+    void appDataService.readSettingsFile().then((userSettings) => {
       this.values = Object.assign(this.values, userSettings)
       window.document.body.className = (userSettings[UserSettingsKeys.theme] ?? "dark").toString()
 

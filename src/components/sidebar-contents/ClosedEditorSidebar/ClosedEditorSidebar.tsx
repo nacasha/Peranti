@@ -35,7 +35,7 @@ export const ClosedEditorSidebar: FC = observer(() => {
                 {toolHistory.sessionName ?? "Untitled"}
               </div>
               <div className="subtitle">
-                {appletStore.mapOfLoadedAppletsName[toolHistory.toolId]}
+                {appletStore.mapOfLoadedAppletsName[toolHistory.appletId]}
               </div>
             </div>
           </ToolSidebarItem>

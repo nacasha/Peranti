@@ -3,7 +3,7 @@
   padding: 30px;
   display: flex;
   align-items: center;
-  background-color: var(--tool-area-background-color);
+  background-color: var(--applet-viewer-background-color);
 
   .content {
     margin: auto;
@@ -11,10 +11,6 @@
     height: 100%;
     max-width: 900px;
     max-height: 500px;
-  }
-
-  .headline {
-
   }
 
   .title {

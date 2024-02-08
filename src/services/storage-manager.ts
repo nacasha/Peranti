@@ -9,10 +9,10 @@ import { type AppletState } from "src/types/AppletState"
 
 export class StorageManager {
   static async getAppletStateFromStorage(sessionId: string) {
-    const storedToolData: { toolState: AppletState } | null = await localforage.getItem(
+    const storedAppletData: { state: AppletState } | null = await localforage.getItem(
       StorageKeys.AppletState.concat(sessionId)
     )
-    return storedToolData?.toolState
+    return storedAppletData?.state
   }
 
   static async removeAppletStateFromStorage(sessionId: string) {
@@ -21,18 +21,18 @@ export class StorageManager {
     )
   }
 
-  static async putAppletStateIntoStorage(sessionId: string, toolState: AppletState) {
+  static async putAppletStateIntoStorage(sessionId: string, appletState: AppletState) {
     await localforage.setItem(
       StorageKeys.AppletState.concat(sessionId),
-      { toolState }
+      { state: appletState }
     )
   }
 
-  static async updateAppletStatePropertyInStorage(sessionId: string, replacedToolState: Partial<AppletState>) {
-    const existingToolState = await StorageManager.getAppletStateFromStorage(sessionId)
-    if (existingToolState) {
-      const newToolState = { ...existingToolState, ...replacedToolState }
-      await StorageManager.putAppletStateIntoStorage(sessionId, newToolState)
+  static async updateAppletStatePropertyInStorage(sessionId: string, replaceAppletState: Partial<AppletState>) {
+    const existingState = await StorageManager.getAppletStateFromStorage(sessionId)
+    if (existingState) {
+      const newState = { ...existingState, ...replaceAppletState }
+      await StorageManager.putAppletStateIntoStorage(sessionId, newState)
     }
   }
 
@@ -40,22 +40,22 @@ export class StorageManager {
     disablePersistence?: boolean
     initialState?: Partial<AppletState>
   } = {}) {
-    const activeTool = activeAppletStore.getActiveApplet()
-    if (activeTool.sessionId === sessionId) {
-      return activeTool
+    const activeApplet = activeAppletStore.getActiveApplet()
+    if (activeApplet.sessionId === sessionId) {
+      return activeApplet
     }
 
-    const runningTool = sessionStore.runningApplets[sessionId]
-    if (runningTool && runningTool !== undefined) {
-      return runningTool
+    const runningApplet = sessionStore.runningApplets[sessionId]
+    if (runningApplet && runningApplet !== undefined) {
+      return runningApplet
     }
 
     const { disablePersistence = false, initialState = {} } = options
-    const toolState = await StorageManager.getAppletStateFromStorage(sessionId)
-    if (toolState) {
-      const toolConstructor = appletStore.mapOfLoadedApplets[toolState.appletId]
-      return new Applet(toolConstructor, {
-        initialState: { ...toolState, ...initialState },
+    const appletState = await StorageManager.getAppletStateFromStorage(sessionId)
+    if (appletState) {
+      const appletConstructor = appletStore.mapOfLoadedApplets[appletState.appletId]
+      return new Applet(appletConstructor, {
+        initialState: { ...appletState, ...initialState },
         disablePersistence
       })
     }

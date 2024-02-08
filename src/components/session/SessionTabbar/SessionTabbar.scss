@@ -72,9 +72,9 @@
 
   &.active {
     color: var(--session-tabbar-text-color-active);
-    background-color: var(--tool-header-background-color);
+    background-color: var(--applet-header-background-color);
     z-index: 1;
-    border-bottom: 2px solid var(--tool-header-background-color);
+    border-bottom: 2px solid var(--applet-header-background-color);
     border-top: 3px solid var(--accent-color);
   }
 

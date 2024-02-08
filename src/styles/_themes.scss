@@ -20,7 +20,7 @@ body {
   --window-control-button-height: 36px;
 
   // Tool
-  --tool-header-height: 45px;
+  --applet-header-height: 45px;
   --session-tabbar-height: 37px;
   --session-tabbar-item-max-width: 200px;
 
@@ -96,13 +96,17 @@ body.light {
   --input-output-border-color-hover: color-mix(in srgb, var(--border-color), var(--opposite-color) 50%);
   --input-output-border-color-active: var(--input-output-border-color-hover);
 
-  // Tool component styles
-  --tool-header-background-color: #ffffff;
-  --tool-area-background-color: #f9f9fc;
+  // Session tabbar
   --session-tabbar-color: #ffffff;
   --session-tabbar-color-hover: #f6f8fa;
   --session-tabbar-text-color: #585858;
   --session-tabbar-text-color-active: #000000;
+
+  // Applet
+  --applet-header-background-color: #ffffff;
+  --applet-viewer-background-color: #f9f9fc;
+
+  // Tool sidebar
   --tool-sidebar-text-color: #212418;
   --tool-sidebar-text-color-active: #ffffff;
   --tool-sidebar-icon-color: invert(11%) sepia(7%) saturate(1891%) hue-rotate(34deg) brightness(98%) contrast(92%);
@@ -186,14 +190,18 @@ body.dark {
   --input-output-border-color-hover: color-mix(in srgb, var(--border-color), var(--opposite-color) 7%);
   --input-output-border-color-active: var(--input-output-border-color-hover);
 
-  // Tool component styles
-  --tool-header-background-color: #181818;
-  --tool-area-background-color: #202124;
+  // Session
   --session-tabbar-background-color: #1a1b1d;
   --session-tabbar-color: #1a1b1d;
   --session-tabbar-color-hover: #1f2022;
   --session-tabbar-text-color: #939393;
   --session-tabbar-text-color-active: white;
+
+  // Applet
+  --applet-header-background-color: #181818;
+  --applet-viewer-background-color: #202124;
+
+  // Tool sidebar
   --tool-sidebar-text-color: #cfcfcf;
   --tool-sidebar-text-color-active: #ffffff;
   --tool-sidebar-icon-color: invert(99%) sepia(3%) saturate(156%) hue-rotate(232deg) brightness(106%) contrast(62%);

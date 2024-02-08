@@ -53,13 +53,13 @@ class FileDropService {
   }
 
   async readFileAndOpenSession(filePath: string, newSession: boolean = false) {
-    const activeTool = activeAppletStore.getActiveApplet()
+    const activeApplet = activeAppletStore.getActiveApplet()
 
-    if (activeTool.appletId === "") {
+    if (activeApplet.appletId === "") {
       return
     }
 
-    const [inputFields, isAvailableOnBatchMode] = activeTool.getInputFieldsWithReadableFile()
+    const [inputFields, isAvailableOnBatchMode] = activeApplet.getInputFieldsWithReadableFile()
 
     const { key: inputFieldKey, component } = inputFields[0]
     const inputComponent = componentService.getInputComponent(component, isAvailableOnBatchMode)
@@ -72,8 +72,8 @@ class FileDropService {
         const sessionName = this.droppedFileReplaceSessionName ? fileName : undefined
 
         if (newSession) {
-          const toolConstructor = appletStore.mapOfLoadedApplets[activeTool.appletId]
-          const createdSession = sessionStore.createSession(toolConstructor, {
+          const appletConstructor = appletStore.mapOfLoadedApplets[activeApplet.appletId]
+          const createdSession = sessionStore.createSession(appletConstructor, {
             initialState: {
               sessionName,
               inputValues: { [inputFieldKey]: fileContent }
@@ -85,16 +85,16 @@ class FileDropService {
           }
         } else {
           if (sessionName) {
-            await sessionStore.renameSession(activeTool.toSession(), sessionName)
+            await sessionStore.renameSession(activeApplet.toSession(), sessionName)
           }
 
-          if (!activeTool.isBatchModeEnabled && isAvailableOnBatchMode) {
-            activeTool.setBatchMode(true)
+          if (!activeApplet.isBatchModeEnabled && isAvailableOnBatchMode) {
+            activeApplet.setBatchMode(true)
           }
 
-          activeTool.setInputValue(inputFieldKey, fileContent)
-          activeTool.resetInputAndOutputFieldsState()
-          activeTool.forceRerender()
+          activeApplet.setInputValue(inputFieldKey, fileContent)
+          activeApplet.resetInputAndOutputFieldsState()
+          activeApplet.forceRerender()
         }
       }
     } catch (exception) {

@@ -21,17 +21,17 @@ export const ToolSidebar: FC = () => {
   return (
     <div className="ToolSidebar">
       <div className="PrimarySidebar-title">Tools</div>
-      {Object.entries(listOfCategoriesAndApplets).map(([category, tools]) => (
+      {Object.entries(listOfCategoriesAndApplets).map(([category, applets]) => (
         <div className="ToolSidebar-section" key={category}>
           <div className={clsx("ToolSidebar-section-title", groupByCategory && "show")}>
             {category}
           </div>
-          {tools.map((tool) => (
+          {applets.map((applet) => (
             <ToolSidebarInnerItem
-              key={tool.appletId}
-              tool={tool}
+              key={applet.appletId}
+              tool={applet}
             >
-              {tool.name}
+              {applet.name}
             </ToolSidebarInnerItem>
           ))}
         </div>

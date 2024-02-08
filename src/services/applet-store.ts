@@ -28,12 +28,12 @@ import textTransformTool from "src/applets/tools/text-transform-tool.ts"
 import uriEncodeDecodeTool from "src/applets/tools/uri-encode-decode-tool.ts"
 import { FileNames } from "src/constants/file-names.ts"
 import { AppletType } from "src/enums/applet-type.ts"
-import { AppDataService } from "src/services/app-data-service.ts"
 import { FileService } from "src/services/file-service.ts"
 import { type AppletConstructor } from "src/types/AppletConstructor.ts"
 import { type Preset } from "src/types/Preset.ts"
 import { mergeAppletConstructorWithPreset } from "src/utils/merge-applet-constructor-with-preset.ts"
 
+import { appDataService } from "./app-data-service.ts"
 import { sessionStore } from "./session-store.ts"
 
 class AppletStore {
@@ -132,7 +132,7 @@ class AppletStore {
 
   private async loadExtensions() {
     const extensions = []
-    const entries = await AppDataService.readExtensionsFolder()
+    const entries = await appDataService.readExtensionsFolder()
 
     for (const entry of entries) {
       if (entry.children) {
@@ -166,7 +166,7 @@ class AppletStore {
     }
 
     [...appletStore.listOfLoadedApplets].forEach((applet) => {
-      if (applet.hideOnSidebar) {
+      if (applet.type === AppletType.Page) {
         return
       }
 

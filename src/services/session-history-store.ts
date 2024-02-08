@@ -32,14 +32,14 @@ class SessionHistoryStore {
     })
   }
 
-  addHistory(tool: Applet) {
-    if (this.histories.findIndex((history) => history.sessionId === tool.sessionId) > -1) {
+  addHistory(applet: Applet) {
+    if (this.histories.findIndex((history) => history.sessionId === applet.sessionId) > -1) {
       return true
     }
 
-    const isToolValuesModified = (tool.isInputValuesModified || tool.isOutputValuesModified)
-    if (tool.actionRunCount > 0 && isToolValuesModified && tool.getIsInputOrOutputHasValues()) {
-      this.histories.unshift(tool.toHistory())
+    const isValuesModified = (applet.isInputValuesModified || applet.isOutputValuesModified)
+    if (applet.actionRunCount > 0 && isValuesModified && applet.getIsInputOrOutputHasValues()) {
+      this.histories.unshift(applet.toHistory())
 
       if (this.histories.length > this.numberOfMaximumHistory) {
         this.histories = this.histories.slice(0, this.numberOfMaximumHistory)
@@ -51,26 +51,25 @@ class SessionHistoryStore {
     return false
   }
 
-  async openHistory(toolHistory: SessionHistory) {
-    const retrievedTool = await StorageManager.getAppletFromStorage(toolHistory.sessionId, {
-
+  async openHistory(sessionHistory: SessionHistory) {
+    const storedApplet = await StorageManager.getAppletFromStorage(sessionHistory.sessionId, {
       initialState: {
         isDeleted: true
       }
     })
 
-    if (retrievedTool) {
-      activeAppletStore.setActiveApplet(retrievedTool)
+    if (storedApplet) {
+      activeAppletStore.setActiveApplet(storedApplet)
     }
   }
 
   async restoreHistory(sessionId: string) {
-    const toolHistoryIndex = this.histories.findIndex((history) => history.sessionId === sessionId)
-    const toolHistory = this.histories[toolHistoryIndex]
+    const sessionHistoryIndex = this.histories.findIndex((history) => history.sessionId === sessionId)
+    const sessionHistory = this.histories[sessionHistoryIndex]
 
-    if (toolHistory) {
+    if (sessionHistory) {
       this.removeHistoryEntry(sessionId)
-      void sessionStore.openHistory(toolHistory)
+      void sessionStore.openHistory(sessionHistory)
     }
   }
 
@@ -84,15 +83,15 @@ class SessionHistoryStore {
   }
 
   async restoreLastHistory() {
-    const toolHistory = this.histories[0]
+    const sessionHistory = this.histories[0]
 
-    if (toolHistory) {
-      void this.restoreHistory(toolHistory.sessionId)
+    if (sessionHistory) {
+      void this.restoreHistory(sessionHistory.sessionId)
     }
   }
 
-  getHistoryOfToolId(toolId: string) {
-    return this.histories.filter((history) => history.toolId === toolId)
+  getHistoryOfAppletId(appletId: string) {
+    return this.histories.filter((history) => history.appletId === appletId)
   }
 
   private removeHistoryEntry(sessionId: string) {
