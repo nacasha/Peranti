@@ -1,9 +1,10 @@
+import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 
 interface InputFields {
   input: InputFieldsType.Switch
+  space: InputFieldsType.Text
   type: InputFieldsType.Code
 }
 
@@ -15,7 +16,7 @@ const jsonFormatter: AppletConstructor<InputFields, OutputFields> = {
   appletId: "json-formatter",
   name: "JSON Formatter",
   category: "JSON",
-  inputFields: [
+  inputFields: (inputParams) => [
     {
       key: "type",
       label: "Mode",
@@ -29,6 +30,16 @@ const jsonFormatter: AppletConstructor<InputFields, OutputFields> = {
         ]
       }
     },
+    ...(inputParams.type === "pretty"
+      ? [{
+        key: "space",
+        label: "Spaces",
+        component: "Text",
+        defaultValue: "2",
+        skipValidateHasValue: true
+      }]
+      : []
+    ),
     {
       key: "input",
       label: "Input",

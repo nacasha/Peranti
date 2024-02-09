@@ -87,6 +87,19 @@ class AppletStore {
         prefix: "'",
         suffix: "',"
       }
+    },
+    {
+      appletId: "generate-random-string",
+      presetId: "generate-random-string",
+      inputValues: {
+        count: "1",
+        stringLength: "10",
+        smallAz: false,
+        capitalAz: false,
+        number: true,
+        symbol: false,
+        runner: ""
+      }
     }
   ]
 

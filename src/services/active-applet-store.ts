@@ -64,16 +64,21 @@ class ActiveAppletStore {
     if (samples.length > 0) {
       const sampleIndex = activeApplet.sampleIndex
       const sample = samples[sampleIndex]
+      const defaultInputValues = activeApplet.getInputValuesWithDefault()
 
       if (typeof sample === "function") {
-        activeApplet.setInputValues(sample())
+        activeApplet.setInputValues({ ...defaultInputValues, ...sample() })
       } else {
-        activeApplet.setInputValues(sample)
+        activeApplet.setInputValues({ ...defaultInputValues, ...sample })
       }
 
       const newSampleIndex = sampleIndex + 1
       activeApplet.setSampleIndex(newSampleIndex > (samples.length - 1) ? 0 : newSampleIndex)
       activeApplet.forceRerender()
+
+      if (!activeApplet.autoRun) {
+        void activeApplet.run()
+      }
     }
   }
 

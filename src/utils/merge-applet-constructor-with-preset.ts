@@ -22,11 +22,15 @@ export function mergeAppletConstructorWithPreset(appletConstructor: AppletConstr
 
   const mergedAppletConstructor: AppletConstructor = {
     ...appletConstructor,
-    name: preset.name,
+    name: preset.name ?? appletConstructor.name,
     appletId: preset.presetId,
     inputFields: presetInputs,
     category: preset.category ?? appletConstructor.category,
     type: AppletType.Preset
+  }
+
+  if (preset.presetId === appletConstructor.appletId) {
+    mergedAppletConstructor.hasOverriddenDefaultState = true
   }
 
   return mergedAppletConstructor

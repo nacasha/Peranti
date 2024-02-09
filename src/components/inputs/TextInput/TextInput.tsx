@@ -15,7 +15,7 @@ export const TextInput: FC<TextInputProps> = (props) => {
 
   const onInputChange: InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
     const value = event.target.value
-    onSubmit(value.trim())
+    onSubmit(value)
   }
 
   return (

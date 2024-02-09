@@ -18,8 +18,9 @@ export interface AppletConstructor<IF extends Record<string, any> = any, OF exte
   pipelines?: Pipeline[]
   autoRun?: boolean
   type?: AppletType
-  samples?: Array<IF | (() => IF)>
+  samples?: Array<Partial<IF> | (() => Partial<IF>)>
   metadata?: any
   disableMultipleSession?: boolean
   hideOnSidebar?: boolean
+  hasOverriddenDefaultState?: boolean
 }

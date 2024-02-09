@@ -1,6 +1,6 @@
+import { observer } from "mobx-react"
 import { type FC } from "react"
 
-import { useSelector } from "src/hooks/useSelector.ts"
 import { activeAppletStore } from "src/services/active-applet-store.ts"
 
 import { AppletContextMenu } from "../AppletContextMenu/index.ts"
@@ -10,13 +10,9 @@ import { AppletComponentAreaContainer } from "./AppletComponentAreaContainer.tsx
 
 import "./AppletComponentArea.scss"
 
-export const AppletComponentArea: FC = () => {
-  const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
-
-  const isDeleted = useSelector(() => activeAppletStore.getActiveApplet().isDeleted)
-  const renderCounter = useSelector(() => activeAppletStore.getActiveApplet().renderCounter)
-
-  const { layoutSetting, sessionId } = activeApplet
+export const AppletComponentArea: FC = observer(() => {
+  const activeApplet = activeAppletStore.getActiveApplet()
+  const { isDeleted, renderCounter, layoutSetting, sessionId } = activeApplet
   const { inputAreaDirection, outputAreaDirection } = layoutSetting
 
   const inputFields = activeApplet.getInputFields()
@@ -36,4 +32,4 @@ export const AppletComponentArea: FC = () => {
       />
     </AppletComponentAreaContainer>
   )
-}
+})

@@ -90,18 +90,14 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
   readonly metadata?: ExtensionMetadata
 
-  readonly samples: Array<IF | (() => IF)> = []
+  readonly samples: Array<Partial<IF> | (() => Partial<IF>)> = []
+
+  /**
+   * Indicates that the applet has input values overridden by preset
+   */
+  readonly hasOverriddenDefaultState: boolean = false
 
   @observable sampleIndex: number = 0
-
-  @action
-  setSampleIndex(index: number) {
-    this.sampleIndex = index
-  }
-
-  getHasSamples() {
-    return this.samples.length > 0
-  }
 
   static empty() {
     return new Applet({
@@ -137,6 +133,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
     this.samples = appletConstructor.samples ?? []
     this.disableMultipleSession = appletConstructor.disableMultipleSession ?? false
     this.hideOnSidebar = appletConstructor.hideOnSidebar ?? false
+    this.hasOverriddenDefaultState = appletConstructor.hasOverriddenDefaultState ?? false
     this.inputValues = this.getInputValuesWithDefault()
 
     if (this.autoRun) {
@@ -636,5 +633,14 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
         isDeleted: true
       })
     }
+  }
+
+  @action
+  setSampleIndex(index: number) {
+    this.sampleIndex = index
+  }
+
+  getHasSamples() {
+    return this.samples.length > 0
   }
 }

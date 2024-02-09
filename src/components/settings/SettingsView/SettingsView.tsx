@@ -50,7 +50,7 @@ export const SettingsView: FC = () => {
 
       <SettingsCard title="Tabbar">
         <SettingsCardItem
-          label="Separate tabbar for each tool"
+          label="Separate Tabbar For Each Tool"
           description="Enabling this will only shows tabbars related to active tool"
         >
           <SettingsItemSwitch

@@ -32,7 +32,7 @@ export const Commandbar: FC = () => {
   })
 
   return (
-    <Command.Dialog open={isOpen} onOpenChange={handleChange} onClickCapture={() => { console.log("ok") }}>
+    <Command.Dialog open={isOpen} onOpenChange={handleChange}>
       <Command.Input autoFocus placeholder="Type a command or search..." />
       <Command.List>
         <Command.Empty>No results found.</Command.Empty>

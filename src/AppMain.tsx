@@ -55,6 +55,10 @@ export const AppMain = () => {
           <SessionTabbar />
           <AppletViewer />
         </div>
+
+        {/* <div className="SecondarySidebar">
+          Hello
+        </div> */}
       </div>
 
       <AppStatusbar />

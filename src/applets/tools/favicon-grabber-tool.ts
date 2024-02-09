@@ -57,6 +57,11 @@ const faviconGrabberTool: AppletConstructor<InputFields, OutputFields> = {
       }
     }
   ],
+  samples: [
+    { websiteUrl: "google.com" },
+    { websiteUrl: "facebook.com" },
+    { websiteUrl: "youtube.com" }
+  ],
   action: async(inputParams) => {
     const { websiteUrl } = inputParams
     const result = await getFavicon(websiteUrl)

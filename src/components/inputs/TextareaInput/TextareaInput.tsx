@@ -2,7 +2,7 @@ import { type FC, useId } from "react"
 
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
-import "./TextAreaInput.scss"
+import "./TextAreaInput-2.scss"
 
 interface TextAreaInputProps extends InputComponentProps {
   autoFocus?: boolean
@@ -14,7 +14,7 @@ export const TextAreaInput: FC<TextAreaInputProps> = (props) => {
 
   const onInputChange: React.InputHTMLAttributes<HTMLTextAreaElement>["onBlur"] = (event) => {
     const value = event.target.value
-    onSubmit(value.trim())
+    onSubmit(value)
   }
 
   return (

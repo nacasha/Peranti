@@ -56,6 +56,16 @@ const compareListTool: AppletConstructor<InputFields, OutputFields> = {
       component: "Code"
     }
   ],
+  samples: [
+    {
+      listA: "Item 1\nItem 2\nItem 3\nItem 4\nItem 5",
+      listB: "Item 1\nItem 3\nItem 4\nItem 6"
+    },
+    {
+      listA: "dc72a490\ndc72a491\ndc72a492\ndc72a493\ndc72a494",
+      listB: "dc72a490\ndc72a491\ndc72a492\ndc72a493\ndc72a494"
+    }
+  ],
   action: (inputParams) => {
     const { listA, listB } = inputParams
 

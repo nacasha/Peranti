@@ -32,7 +32,7 @@ export const SessionTabbar: FC = observer(() => {
   const activeIndex = sessions.findIndex((tab) => tab.sessionId === activeApplet.sessionId)
   const appTitlebarStyle = interfaceStore.appTitlebarStyle
 
-  const ref = useRef<HTMLDivElement>(null)
+  const scrollBarRef = useRef<HTMLDivElement>(null)
 
   const isAppletActive = (session: Session) => (
     session.sessionId === activeApplet.sessionId
@@ -89,11 +89,11 @@ export const SessionTabbar: FC = observer(() => {
   })
 
   useEffect(() => {
-    if (ref.current) {
+    if (scrollBarRef.current) {
       const handleScroll = (event: WheelEvent) => {
-        if (ref.current) {
+        if (scrollBarRef.current) {
           event.preventDefault()
-          ref.current.scrollLeft += event.deltaY
+          scrollBarRef.current.scrollLeft += event.deltaY
         }
       }
 
@@ -111,15 +111,15 @@ export const SessionTabbar: FC = observer(() => {
         }
       }
 
-      ref.current.addEventListener("wheel", handleScroll)
-      ref.current.addEventListener("mousedown", handleDragWindow)
+      scrollBarRef.current.addEventListener("wheel", handleScroll)
+      scrollBarRef.current.addEventListener("mousedown", handleDragWindow)
 
       return () => {
-        ref.current?.removeEventListener("wheel", handleScroll)
-        ref.current?.removeEventListener("mousedown", handleDragWindow)
+        scrollBarRef.current?.removeEventListener("wheel", handleScroll)
+        scrollBarRef.current?.removeEventListener("mousedown", handleDragWindow)
       }
     }
-  }, [ref, appTitlebarStyle])
+  }, [scrollBarRef, appTitlebarStyle])
 
   return (
     <>
@@ -129,7 +129,7 @@ export const SessionTabbar: FC = observer(() => {
         <div className="SessionTabbar-inner">
           <SimpleBar
             className="SessionTabbar-inner-simplebar"
-            scrollableNodeProps={{ ref }}
+            scrollableNodeProps={{ ref: scrollBarRef }}
           >
             {sessions.map((session) => (
               <TabItem
