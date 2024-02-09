@@ -2,6 +2,7 @@ import { Command } from "@tauri-apps/api/shell"
 import fastDeepEqual from "fast-deep-equal"
 import { observable, action, makeObservable, toJS } from "mobx"
 import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, pausePersisting, startPersisting, stopPersisting } from "mobx-persist-store"
+import toast from "react-hot-toast"
 
 import { StorageKeys } from "src/constants/storage-keys"
 import { AppletType } from "src/enums/applet-type"
@@ -61,7 +62,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
   isOutputValuesModified: boolean = false
 
-  readonly action: (input: any) => any
+  readonly action: (input: any, activity: any) => any
 
   @observable actionRunCount: number = 0
 
@@ -488,7 +489,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
   private async runAction(actionInput: any) {
     const runResult = await new Promise<any>((resolve) => {
-      const result = this.action(actionInput)
+      const result = this.action(actionInput, { toast })
 
       if ("then" in result) {
         this.setIsActionRunning(true)

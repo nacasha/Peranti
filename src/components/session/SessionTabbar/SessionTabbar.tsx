@@ -1,4 +1,5 @@
 import { useStore } from "@nanostores/react"
+import { appWindow } from "@tauri-apps/api/window"
 import clsx from "clsx"
 import { observer } from "mobx-react"
 import { atom } from "nanostores"
@@ -89,23 +90,42 @@ export const SessionTabbar: FC = observer(() => {
 
   useEffect(() => {
     if (ref.current) {
-      const onScroll = (event: WheelEvent) => {
+      const handleScroll = (event: WheelEvent) => {
         if (ref.current) {
           event.preventDefault()
           ref.current.scrollLeft += event.deltaY
         }
       }
 
-      ref.current.addEventListener("wheel", onScroll)
+      const handleDragWindow = (event: MouseEvent) => {
+        if (appTitlebarStyle === AppTitleBarStyle.Tabbar) {
+          const target = event.target as HTMLDivElement | null
+
+          if (target?.classList.contains("simplebar-content")) {
+            void appWindow.startDragging()
+
+            if (event.detail === 2) {
+              void appWindow.toggleMaximize()
+            }
+          }
+        }
+      }
+
+      ref.current.addEventListener("wheel", handleScroll)
+      ref.current.addEventListener("mousedown", handleDragWindow)
+
       return () => {
-        ref.current?.removeEventListener("wheel", onScroll)
+        ref.current?.removeEventListener("wheel", handleScroll)
+        ref.current?.removeEventListener("mousedown", handleDragWindow)
       }
     }
-  }, [ref])
+  }, [ref, appTitlebarStyle])
 
   return (
     <>
-      <div className="SessionTabbar" data-tauri-drag-region>
+      <div className="SessionTabbar-window-drag" data-tauri-drag-region></div>
+
+      <div className="SessionTabbar">
         <div className="SessionTabbar-inner">
           <SimpleBar
             className="SessionTabbar-inner-simplebar"

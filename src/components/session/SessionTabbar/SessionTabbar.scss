@@ -141,5 +141,25 @@
   .SessionTabbar-inner {
     right: 150px;
   }
+}
 
+.SessionTabbar-window-drag {
+  background-color: var(--background-color-main);
+}
+
+.AppRoot.TitlebarWithTabbar {
+  &:not(.WindowMaximized) {
+    .SessionTabbar-window-drag {
+      height: 10px;
+    }
+
+    .WindowControls {
+      margin-top: -12px;
+      padding-bottom: 12px;
+    }
+
+    .SessionTabbar-item:not(.active) {
+      border-top: 1px solid var(--border-color);
+    }
+  }
 }

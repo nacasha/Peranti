@@ -7,14 +7,14 @@ import { SettingsCard, SettingsCardItem } from "src/components/settings/Settings
 import { SidebarMode } from "src/components/settings/SidebarMode"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
+import { sessionStore } from "src/services/session-store"
 import { toolSidebarService } from "src/services/tool-sidebar-service"
 
 import { FileDropActionSelect } from "../FileDropActionSelect"
 import { FileDropFillTabbarName } from "../FileDropFillTabbarName"
+import { SettingsItemSwitch } from "../SettingsItemSwitch"
 
 import "./SettingsView.scss"
-
-import { SettingsItemSwitch } from "../SettingsItemSwitch"
 
 export const SettingsView: FC = () => {
   const handleClickResetAppData = () => {
@@ -36,12 +36,27 @@ export const SettingsView: FC = () => {
           <AppTitleBarStyleSelect />
         </SettingsCardItem>
 
-        <SettingsCardItem label="Floating Sidebar">
+        <SettingsCardItem
+          label="Floating Sidebar"
+          description="Primary sidebar will automatically hidden after opening tool"
+        >
           <SidebarMode />
         </SettingsCardItem>
 
         <SettingsCardItem label="Text Area Word Wrap">
           <TextAreaWordWrapSwitch />
+        </SettingsCardItem>
+      </SettingsCard>
+
+      <SettingsCard title="Tabbar">
+        <SettingsCardItem
+          label="Separate tabbar for each tool"
+          description="Enabling this will only shows tabbars related to active tool"
+        >
+          <SettingsItemSwitch
+            defaultChecked={sessionStore.separateSessionForEachApplet}
+            onChange={(value) => { sessionStore.setSeparateSessionForEachApplet(value) }}
+          />
         </SettingsCardItem>
       </SettingsCard>
 

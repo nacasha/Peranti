@@ -17,7 +17,7 @@ export const WindowControls: FC = () => {
   }
 
   return (
-    <div className="WindowControls">
+    <div className="WindowControls" data-tauri-drag-region>
       <div
         className="WindowControls-button"
         onClick={handleClickMinimize}

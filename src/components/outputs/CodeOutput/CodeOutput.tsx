@@ -1,6 +1,7 @@
 import { type FC } from "react"
 
 import { BaseCodeMirror, type BaseCodeMirrorProps } from "src/components/common/BaseCodeMirror"
+import { LargeInputWarning } from "src/components/common/LargeInputWarning"
 import type { OutputComponentProps } from "src/types/OutputComponentProps.ts"
 
 import "./CodeOutput.scss"
@@ -15,12 +16,14 @@ export const CodeOutput: FC<CodeOutputProps> = (props) => {
       <label className="InputOutputLabel">
         {label}
       </label>
-      <BaseCodeMirror
-        {...baseCodeMirrorProps}
-        value={typeof value === "string" ? value : JSON.stringify(value, null, 2)}
-        initialStateCodeMirror={initialState as any}
-        readOnly
-      />
+      <LargeInputWarning input={value}>
+        <BaseCodeMirror
+          {...baseCodeMirrorProps}
+          value={typeof value === "string" ? value : JSON.stringify(value, null, 2)}
+          initialStateCodeMirror={initialState as any}
+          readOnly
+        />
+      </LargeInputWarning>
     </div>
   )
 }

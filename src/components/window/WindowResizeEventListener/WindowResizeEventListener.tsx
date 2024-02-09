@@ -10,6 +10,8 @@ export const WindowResizeEventListener: FC = () => {
   }
 
   useEffect(() => {
+    void checkWindowMaximized()
+
     const onResize = () => {
       interfaceStore.recalculateWindowSize()
       void checkWindowMaximized()

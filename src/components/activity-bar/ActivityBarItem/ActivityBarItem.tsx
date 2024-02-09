@@ -24,22 +24,20 @@ export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
   const isActive = useSelector(() => interfaceStore.sidebarActiveMenuId === menuId)
 
   const onClickItem = () => () => {
+    const oldActiveMenuId = interfaceStore.sidebarActiveMenuId
+
     if (onClick) {
       onClick()
-      return
-    }
-
-    if (appletConstructor) {
+    } else if (appletConstructor) {
       sessionStore.findOrCreateSession(appletConstructor)
-      return
-    }
-
-    if (interfaceStore.sidebarActiveMenuId !== menuId) {
+    } else if (oldActiveMenuId !== menuId) {
       interfaceStore.setSidebarMenuId(menuId)
       interfaceStore.showSidebar()
-    } else if (interfaceStore.sidebarActiveMenuId === menuId && interfaceStore.isFloatingSidebar) {
-      interfaceStore.toggleSidebar()
-    } else {
+    }
+
+    if (oldActiveMenuId !== interfaceStore.sidebarActiveMenuId) {
+      interfaceStore.showSidebar()
+    } else if (oldActiveMenuId === interfaceStore.sidebarActiveMenuId && oldActiveMenuId === menuId) {
       interfaceStore.toggleSidebar()
     }
 

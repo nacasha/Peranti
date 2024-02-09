@@ -3,11 +3,13 @@ import { makePersistable } from "mobx-persist-store"
 
 import { StorageKeys } from "src/constants/storage-keys.ts"
 import { AppletType } from "src/enums/applet-type.ts"
+import { UserSettingsKeys } from "src/enums/user-settings-keys.ts"
 import { Applet } from "src/models/Applet.ts"
 import { StorageManager } from "src/services/storage-manager.ts"
 import { type AppletConstructor } from "src/types/AppletConstructor.ts"
 import { type Session } from "src/types/Session.ts"
 import { type SessionHistory } from "src/types/SessionHistory.ts"
+import { getUserSettings, watchUserSettings } from "src/utils/decorators.ts"
 
 import { activeAppletStore } from "./active-applet-store.ts"
 import { sessionHistoryStore } from "./session-history-store.ts"
@@ -15,9 +17,17 @@ import { sessionHistoryStore } from "./session-history-store.ts"
 class SessionStore {
   isInitialized: boolean = false
 
+  /**
+   * By defaut, aach tool can have multiple sessions at once
+   * To disable this, need some works for the closed editor
+   */
   enableMultipleSession = true
 
-  unifiedSession = false
+  @watchUserSettings(UserSettingsKeys.tabbarSeparateSessionForEachTool)
+  separateSessionForEachApplet = getUserSettings(
+    UserSettingsKeys.tabbarSeparateSessionForEachTool,
+    false
+  )
 
   placeNewSessionToLast = false
 
@@ -201,7 +211,7 @@ class SessionStore {
     /**
      * Get closed session index from its appletId only if unified session is disabled
      */
-    if (!this.unifiedSession) {
+    if (this.separateSessionForEachApplet) {
       removedSessionIndex = this.getRunningSessionsFromAppletId(removedSession.appletId).findIndex(
         (session) => session.sessionId === removedSession.sessionId
       )
@@ -288,7 +298,7 @@ class SessionStore {
      * If unified session is enabled, we can directly close all session
      * and reset the session sequence
      */
-    if (this.unifiedSession) {
+    if (!this.separateSessionForEachApplet) {
       this.sessions.forEach((session) => {
         void this.closeSession(session, true)
       })
@@ -321,7 +331,7 @@ class SessionStore {
   }
 
   async closeOtherSession(keepOpenSession: Session) {
-    if (this.unifiedSession) {
+    if (!this.separateSessionForEachApplet) {
       this.sessions.forEach((session) => {
         if (session.sessionId !== keepOpenSession.sessionId) {
           void this.closeSession(session, true)
@@ -476,7 +486,7 @@ class SessionStore {
   }
 
   getRunningSessions(appletId: string) {
-    if (this.unifiedSession) {
+    if (!this.separateSessionForEachApplet) {
       return this.sessions
     }
 
@@ -511,6 +521,10 @@ class SessionStore {
   updateSession(updatedSession: Session) {
     const sessionIndex = this.sessions.findIndex((session) => session.sessionId === updatedSession.sessionId)
     this.sessions[sessionIndex] = updatedSession
+  }
+
+  setSeparateSessionForEachApplet(value: boolean) {
+    this.separateSessionForEachApplet = value
   }
 }
 

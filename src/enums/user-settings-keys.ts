@@ -12,5 +12,9 @@ export enum UserSettingsKeys {
   // Tool sidebar
   toolSidebarGroupByCategory = "toolsidebar.groupByCategory",
   toolSidebarSortToolNameAZ = "toolsidebar.sortToolNameAZ",
-  toolSidebarSortCategoryNameAZ = "toolsidebar.sortCategoryNameAZ"
+  toolSidebarSortCategoryNameAZ = "toolsidebar.sortCategoryNameAZ",
+
+  // Tool tabbar
+  tabbarEnableMultipleSession = "tabbar.enableMultipleSession",
+  tabbarSeparateSessionForEachTool = "tabbar.separateSessionForEachTool"
 }

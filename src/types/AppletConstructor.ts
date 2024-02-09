@@ -1,3 +1,5 @@
+import type toast from "react-hot-toast"
+
 import { type AppletType } from "src/enums/applet-type.ts"
 
 import { type AppletInput } from "./AppletInput.ts"
@@ -11,7 +13,7 @@ export interface AppletConstructor<IF extends Record<string, any> = any, OF exte
   category: string
   inputFields: Array<AppletInput<IF>> | ((inputParams: IF) => Array<AppletInput<IF>>)
   outputFields: Array<AppletOutput<OF>> | ((outputParams: OF) => Array<AppletOutput<OF>>)
-  action?: (input: IF) => OF | Promise<OF> | undefined
+  action?: (input: IF, activity: { toast: typeof toast }) => OF | Promise<OF> | undefined
   layoutSetting?: LayoutSetting
   pipelines?: Pipeline[]
   autoRun?: boolean
