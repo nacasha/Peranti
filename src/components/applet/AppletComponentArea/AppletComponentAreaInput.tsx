@@ -1,39 +1,46 @@
 import { clsx } from "clsx"
-import fastDeepEqual from "fast-deep-equal"
 import { memo, type FC, type FormEventHandler } from "react"
 
-import { type AppletInput } from "src/types/AppletInput"
+import { useSelector } from "src/hooks/useSelector"
+import { activeAppletStore } from "src/services/active-applet-store"
 
 import { AppletInputRenderer } from "../AppletInputRenderer"
 
 interface AppletComponentAreaInputProps {
-  appletSessionId: string
-  components: AppletInput[]
-  direction?: "horizontal" | "vertical"
-  readOnly?: boolean
   className?: string
 }
 
 export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = memo((props) => {
-  const { appletSessionId, components, direction, readOnly, className } = props
+  const { className } = props
+
+  const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
+  const inputFields = useSelector(() => activeAppletStore.getActiveApplet().getInputFields())
+  const inputAreaDirection = useSelector(() => activeAppletStore.getActiveApplet().layoutSetting.inputAreaDirection)
+  const isDeleted = useSelector(() => activeAppletStore.getActiveApplet().isDeleted)
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault()
+  }
+
+  if (inputFields.length === 0) {
+    return null
   }
 
   return (
     <form
       action="#"
       onSubmit={handleSubmit}
-      className={clsx("AppletComponentAreaInput", direction, className)}
+      className={clsx("AppletComponentAreaInput", inputAreaDirection, className)}
     >
-      {components.map((inputComponent) => (
+      {inputFields.map((inputComponent) => (
         <AppletInputRenderer
-          key={appletSessionId.concat(inputComponent.key)}
+          key={activeApplet.sessionId.concat(inputComponent.key)}
           appletInput={inputComponent}
-          readOnly={readOnly}
+          readOnly={isDeleted}
         />
       ))}
     </form>
   )
-}, fastDeepEqual)
+}, (prevProps, nextProps) => {
+  return prevProps.className === nextProps.className
+})

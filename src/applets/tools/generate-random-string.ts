@@ -72,6 +72,12 @@ const generateRandomStringTool: AppletConstructor<InputFields, OutputFields> = {
       component: "Code"
     }
   ],
+  samples: [
+    { count: "5", stringLength: "40", number: true, capitalAz: false, smallAz: false, symbol: false },
+    { count: "5", stringLength: "40", number: false, capitalAz: true, smallAz: false, symbol: false },
+    { count: "5", stringLength: "40", number: false, capitalAz: false, smallAz: true, symbol: false },
+    { count: "5", stringLength: "40", number: false, capitalAz: false, smallAz: false, symbol: true }
+  ],
   action: ({ count, stringLength, smallAz, capitalAz, number, symbol }: InputFields) => {
     let characters = ""
     if (smallAz) characters = characters.concat("abcdefghijklmnopqrstuvwxyz")

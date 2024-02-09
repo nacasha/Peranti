@@ -5,12 +5,6 @@
 
 $padding: 10px;
 
-:root {
-  --font-family: "Inter", serif;
-  --font-family-mono: "Consolas", monospace, serif;
-  --font-size: 13px;
-}
-
 html, body {
   margin: 0;
   padding: 0;
@@ -80,8 +74,8 @@ html, body {
 
   .Notification-item {
     background: #1e1f22;
-    font-family: "Inter";
-    font-size: 13px;
+    font-family: var(--font-family);
+    font-size: var(--font-size);
     border: 1px solid #303133;
     border-radius: 4px;
     padding: 7px;

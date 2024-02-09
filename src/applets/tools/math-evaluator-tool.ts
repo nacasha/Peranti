@@ -1,8 +1,8 @@
 import Mexp from "math-expression-evaluator"
 
+import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 
 interface InputFields {
   input: InputFieldsType.Code
@@ -33,6 +33,10 @@ const mathEvaluatorTool: AppletConstructor<InputFields, OutputFields> = {
       label: "Output",
       component: "Code"
     }
+  ],
+  samples: [
+    { input: "(100 * 145) + 10" },
+    { input: "1500 + 2030 * 10 - (10 * 50)" }
   ],
   action({ input }) {
     const mexp = new Mexp()
