@@ -17,7 +17,7 @@ class SessionStore {
 
   enableMultipleSession = true
 
-  unifiedSession = true
+  unifiedSession = false
 
   placeNewSessionToLast = false
 
@@ -41,7 +41,6 @@ class SessionStore {
       stringify: false,
       properties: [
         "sessionSequences",
-        "enableMultipleSession",
         "activeSessionIdOfApplets",
         "activeSessionId",
         "sessions"
@@ -95,10 +94,11 @@ class SessionStore {
     }
 
     /**
-     * Applet with type page can only have 1 session at time,
-     * exit process if there is already created session for the applet
+     * Exit process if below conditions is met
+     * - Applet with type page can only have 1 session at time
+     * - Multiple session is disabled
      */
-    if (appletConstructor.type === AppletType.Page) {
+    if (appletConstructor.type === AppletType.Page || !this.enableMultipleSession) {
       if (this.getRunningSessionsFromAppletId(appletConstructor.appletId).length > 0) {
         return
       }
@@ -195,11 +195,27 @@ class SessionStore {
     }
   }
 
-  private removeSessionBySessionId(sessionId: string) {
+  private removeSessionFromSessionList(removedSession: Session) {
     let removedSessionIndex = -1
+
+    /**
+     * Get closed session index from its appletId only if unified session is disabled
+     */
+    if (!this.unifiedSession) {
+      removedSessionIndex = this.getRunningSessionsFromAppletId(removedSession.appletId).findIndex(
+        (session) => session.sessionId === removedSession.sessionId
+      )
+    }
+
+    /**
+     * Filter session list while finding the closed session index if needed
+     */
     this.sessions = this.sessions.filter((session, index) => {
-      if (session.sessionId === sessionId) {
-        removedSessionIndex = index
+      if (session.sessionId === removedSession.sessionId) {
+        if (removedSessionIndex === -1) {
+          removedSessionIndex = index
+        }
+
         return false
       }
       return true
@@ -210,18 +226,45 @@ class SessionStore {
 
   async closeSession(session: Session, skipOpenAnotherSession: boolean = false) {
     const activeApplet = activeAppletStore.getActiveApplet()
-    const closedSessionIndex = this.removeSessionBySessionId(session.sessionId)
+    const closedSessionIndex = this.removeSessionFromSessionList(session)
 
+    /**
+     * Open another session if the closed session if the currently active session
+     */
     if (!skipOpenAnotherSession && (activeApplet.sessionId === session.sessionId)) {
       const newSessions = this.getRunningSessions(session.appletId)
 
+      console.log(closedSessionIndex)
+
+      /**
+       * Reset session sequence for related appletId
+       * if the new sessions has empty list
+       */
       if (newSessions.length === 0) {
         this.resetSessionSequence(session.appletId)
         this.activateApplet(Applet.empty())
+
+      /**
+       * Open another running session
+       *
+       * We need to check whether the closed session index is exist in the list (greater than -1)
+       * If closed session is not found on list of session, it means closeSession()
+       * was called more than once with same session, usually because holding
+       * the hotkey to close the session
+       */
       } else if (closedSessionIndex > -1) {
-        let newSessionToBeOpened
+        let newSessionToBeOpened: Session
+
+        /**
+         * Open session exactly at the closed session index if the closed
+         * session is placed at the most right in session list (right most tabbar)
+         */
         if (closedSessionIndex <= newSessions.length - 1) {
           newSessionToBeOpened = newSessions[closedSessionIndex]
+
+        /**
+         * If closed session index is placed front or in the middle of session list
+         */
         } else {
           newSessionToBeOpened = newSessions[closedSessionIndex - 1]
         }
@@ -230,6 +273,9 @@ class SessionStore {
       }
     }
 
+    /**
+     * Process to be closed session
+     */
     if (activeApplet.sessionId === session.sessionId) {
       await this.proceedCloseSession({ applet: activeApplet })
     } else {
@@ -238,28 +284,76 @@ class SessionStore {
   }
 
   closeAllSession() {
-    this.sessions.forEach((session) => {
-      void this.closeSession(session, true)
-    })
+    /**
+     * If unified session is enabled, we can directly close all session
+     * and reset the session sequence
+     */
+    if (this.unifiedSession) {
+      this.sessions.forEach((session) => {
+        void this.closeSession(session, true)
+      })
 
-    this.sessions = []
+      this.sessions = []
+      this.sessionSequences = {}
 
-    this.sessionSequences = {}
+    /**
+     * If unified disabled, get currently active applet and remove
+     * the others session with same appletId, as well as reset session
+     * sequence for that appletId only
+     */
+    } else {
+      const activeApplet = activeAppletStore.getActiveApplet()
 
+      if (activeApplet.appletId !== "") {
+        this.getRunningSessionsFromAppletId(activeApplet.appletId).forEach((session) => {
+          void this.closeSession(session, true)
+        })
+
+        this.sessions = this.sessions.filter((session) => session.appletId !== activeApplet.appletId)
+        this.sessionSequences[activeApplet.appletId] = [true]
+      }
+    }
+
+    /**
+     * Activate empty applet
+     */
     this.activateApplet(Applet.empty())
   }
 
   async closeOtherSession(keepOpenSession: Session) {
-    this.sessions.forEach((session) => {
-      if (session.sessionId !== keepOpenSession.sessionId) {
-        void this.closeSession(session, true)
-      }
-    })
+    if (this.unifiedSession) {
+      this.sessions.forEach((session) => {
+        if (session.sessionId !== keepOpenSession.sessionId) {
+          void this.closeSession(session, true)
+        }
+      })
 
-    this.sessions = [keepOpenSession]
+      this.sessions = [keepOpenSession]
 
-    this.sessionSequences = {}
+      /**
+       * Reset all session sequence regardless its appletId
+       */
+      this.sessionSequences = {}
+    } else {
+      const activeApplet = activeAppletStore.getActiveApplet()
+
+      this.getRunningSessionsFromAppletId(activeApplet.appletId).forEach((session) => {
+        if (session.sessionId !== keepOpenSession.sessionId) {
+          void this.closeSession(session, true)
+        }
+      })
+    }
+
+    /**
+     * Set initial session sequence for applet which has same appletId
+     * as the keep opened one
+     */
     this.sessionSequences[keepOpenSession.appletId] = [true]
+
+    /**
+     * If keep opened session has sequence number, mark as occupied by filling
+     * the index with value `true` in session sequences
+     */
     if (keepOpenSession.sessionSequenceNumber) {
       this.sessionSequences[keepOpenSession.appletId][keepOpenSession.sessionSequenceNumber] = true
     }

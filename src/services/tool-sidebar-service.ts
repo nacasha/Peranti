@@ -1,7 +1,9 @@
 import { makeAutoObservable } from "mobx"
 
 import { AppletType } from "src/enums/applet-type"
+import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
 import { type AppletConstructor } from "src/types/AppletConstructor"
+import { getUserSettings, watchUserSettings } from "src/utils/decorators.js"
 
 import { appletStore } from "./applet-store.js"
 
@@ -10,20 +12,32 @@ import { appletStore } from "./applet-store.js"
  */
 class ToolSidebarService {
   /**
-   * Should group applets by its category
+   * Group applets by its category
    */
-  groupByCategory: boolean = true
+  @watchUserSettings(UserSettingsKeys.toolSidebarGroupByCategory)
+  groupByCategory: boolean = getUserSettings(
+    UserSettingsKeys.toolSidebarGroupByCategory,
+    true
+  )
 
   /**
-   * Auto sort all applets by its name
+   * Sort all applets by its name
    */
-  private readonly sortNameAZ: boolean = true
+  @watchUserSettings(UserSettingsKeys.toolSidebarSortToolNameAZ)
+  sortNameAZ: boolean = getUserSettings(
+    UserSettingsKeys.toolSidebarSortToolNameAZ,
+    true
+  )
 
   /**
    * When `groupByCategory` is enabled, this value will be used to
    * sort the category name
    */
-  private readonly sortCategoryAZ: boolean = true
+  @watchUserSettings(UserSettingsKeys.toolSidebarSortCategoryNameAZ)
+  sortCategoryAZ: boolean = getUserSettings(
+    UserSettingsKeys.toolSidebarSortCategoryNameAZ,
+    true
+  )
 
   /**
    * Map key value of applet category and list of applet constructor
@@ -105,6 +119,21 @@ class ToolSidebarService {
     )
 
     this.items = listOfCategoriesAndApplets
+  }
+
+  setGroupByCategory(value: boolean) {
+    this.groupByCategory = value
+    this.setupItems()
+  }
+
+  setSortNameAZ(value: boolean) {
+    this.sortNameAZ = value
+    this.setupItems()
+  }
+
+  setSortCategoryAZ(value: boolean) {
+    this.sortCategoryAZ = value
+    this.setupItems()
   }
 }
 

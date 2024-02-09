@@ -1,4 +1,5 @@
 import { open } from "@tauri-apps/api/dialog"
+import toast from "react-hot-toast"
 
 import { RunInput } from "src/components/inputs/ButtonInput"
 import { CheckboxInput } from "src/components/inputs/CheckboxInput"
@@ -131,13 +132,18 @@ class ComponentService {
 
   async readFileFromComponent(component: Component, filePath: string) {
     const readFileAs = component.readFileAs
+    const fileName = getFileNameFromPath(filePath)
 
-    if (readFileAs === "text") {
-      const fileContent = await FileService.readFileAsText(filePath)
-      return convertCRLFtoLF(fileContent)
-    } else if (readFileAs === "file") {
-      const file = await FileService.readFileAsBinary(filePath)
-      return createFileFromUint32Array(file, getFileNameFromPath(filePath))
+    try {
+      if (readFileAs === "text") {
+        const fileContent = await FileService.readFileAsText(filePath)
+        return convertCRLFtoLF(fileContent)
+      } else if (readFileAs === "file") {
+        const file = await FileService.readFileAsBinary(filePath)
+        return createFileFromUint32Array(file, getFileNameFromPath(filePath))
+      }
+    } catch (exception) {
+      toast.error(`Unable to read ${fileName} as ${readFileAs}`)
     }
   }
 

@@ -14,7 +14,6 @@
     "lint-fix": "eslint --fix src/**"
   },
   "dependencies": {
-    "@app-elements/use-mount": "^0.1.1",
     "@codemirror/commands": "^6.3.3",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/lang-markdown": "^6.2.4",
@@ -40,7 +39,6 @@
     "hash.js": "^1.1.7",
     "js-base64": "^3.7.6",
     "jsonata": "^2.0.3",
-    "kbar": "0.1.0-beta.45",
     "localforage": "^1.10.0",
     "lorem-ipsum": "^2.0.8",
     "math-expression-evaluator": "^2.0.4",

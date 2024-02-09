@@ -15,9 +15,11 @@ export const SettingsCardItem: FC<SettingsCardItemProps> = (props) => {
         <div className="SettingsCardItem-label">
           {label}
         </div>
-        <div className="SettingsCardItem-description">
-          {description}
-        </div>
+        {description && (
+          <div className="SettingsCardItem-description">
+            {description}
+          </div>
+        )}
       </div>
       <div className="SettingsCardItem-value">
         {children}

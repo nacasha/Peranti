@@ -27,7 +27,7 @@
   .SettingsCardItem-text {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
     line-height: 14px;
   }
 
@@ -36,7 +36,9 @@
   }
 
   .SettingsCardItem-description {
+    font-weight: 200;
     font-size: 12px;
+    opacity: 0.8;
   }
 
   .SettingsCardItem-value {

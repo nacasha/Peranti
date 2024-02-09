@@ -7,11 +7,14 @@ import { SettingsCard, SettingsCardItem } from "src/components/settings/Settings
 import { SidebarMode } from "src/components/settings/SidebarMode"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
+import { toolSidebarService } from "src/services/tool-sidebar-service"
 
 import { FileDropActionSelect } from "../FileDropActionSelect"
 import { FileDropFillTabbarName } from "../FileDropFillTabbarName"
 
 import "./SettingsView.scss"
+
+import { SettingsItemSwitch } from "../SettingsItemSwitch"
 
 export const SettingsView: FC = () => {
   const handleClickResetAppData = () => {
@@ -39,6 +42,32 @@ export const SettingsView: FC = () => {
 
         <SettingsCardItem label="Text Area Word Wrap">
           <TextAreaWordWrapSwitch />
+        </SettingsCardItem>
+      </SettingsCard>
+
+      <SettingsCard title="Tool Sidebar">
+        <SettingsCardItem
+          label="Sort Tool name A-Z"
+        >
+          <SettingsItemSwitch
+            defaultChecked={toolSidebarService.sortNameAZ}
+            onChange={(value) => { toolSidebarService.setSortNameAZ(value) }}
+          />
+        </SettingsCardItem>
+        <SettingsCardItem label="Group By Category">
+          <SettingsItemSwitch
+            defaultChecked={toolSidebarService.groupByCategory}
+            onChange={(value) => { toolSidebarService.setGroupByCategory(value) }}
+          />
+        </SettingsCardItem>
+        <SettingsCardItem
+          label="Sort Category name A-Z"
+          description="No effect when Group By Category is disabled"
+        >
+          <SettingsItemSwitch
+            defaultChecked={toolSidebarService.sortCategoryAZ}
+            onChange={(value) => { toolSidebarService.setSortCategoryAZ(value) }}
+          />
         </SettingsCardItem>
       </SettingsCard>
 

@@ -18,9 +18,9 @@ class FileDropService {
     FileDropAction.AlwaysAsk
   )
 
-  @watchUserSettings(UserSettingsKeys.droppedFileReplaceSessionName)
+  @watchUserSettings(UserSettingsKeys.fileDropReplaceSessionName)
   droppedFileReplaceSessionName: boolean = getUserSettings(
-    UserSettingsKeys.droppedFileReplaceSessionName,
+    UserSettingsKeys.fileDropReplaceSessionName,
     false
   )
 
