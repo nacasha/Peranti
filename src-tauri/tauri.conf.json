@@ -27,20 +27,14 @@
       },
       "shell": {
         "all": false,
+        "execute": true,
         "open": true,
         "sidecar": true,
         "scope": [
           {
-            "name": "binaries/node",
-            "sidecar": true,
-            "args": [
-              {
-                "validator": "\\S+"
-              },
-              {
-                "validator": "\\S+"
-              }
-            ]
+            "name": "run-extension",
+            "cmd": "node",
+            "args": ["extensions-runner/runner.cjs", { "validator": "\\S+" }]
           }
         ]
       },
@@ -75,8 +69,9 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "externalBin": [
-        "binaries/node"
+      "resources": [
+        "extensions-runner/runner.cjs",
+        "extensions-runner/node_modules/*"
       ]
     },
     "security": {

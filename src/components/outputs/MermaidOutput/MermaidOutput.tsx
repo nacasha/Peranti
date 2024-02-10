@@ -58,7 +58,7 @@ export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
       </label>
       <div className="MermaidOutput-inner">
         <MermaidOutputZoomableSVG
-          initialState={initialState as any}
+          initialState={initialState}
           onStageChange={onStateChange}
         >
           <div

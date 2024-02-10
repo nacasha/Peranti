@@ -5,7 +5,7 @@ import * as base64 from "js-base64"
 
 import { removeBase64Header } from "src/utils/base-64"
 
-import { RustInvokerService } from "./rust-invoker-service.js"
+import { rustInvokerService } from "./rust-invoker-service.js"
 
 class FileService {
   async readFileAsText(filePath: string, appData?: boolean) {
@@ -54,7 +54,7 @@ class FileService {
   }
 
   async openPathInFileManager(path: string) {
-    await RustInvokerService.revealFileManager(path)
+    await rustInvokerService.revealFileManager(path)
   }
 }
 

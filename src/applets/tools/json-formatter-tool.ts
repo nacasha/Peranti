@@ -16,41 +16,42 @@ const jsonFormatter: AppletConstructor<InputFields, OutputFields> = {
   appletId: "json-formatter",
   name: "JSON Formatter",
   category: "JSON",
-  inputFields: (inputParams) => [
-    {
-      key: "type",
-      label: "Mode",
-      component: "Switch",
-      defaultValue: "pretty",
-      skipValidateHasValue: true,
-      props: {
-        options: [
-          { value: "minify", label: "Minify" },
-          { value: "pretty", label: "Pretty" }
-        ]
+  inputFields: (inputParams) => {
+    const additionalInput = {
+      key: "space",
+      label: "Spaces",
+      component: "Text",
+      defaultValue: "2",
+      skipValidateHasValue: true
+    } as any
+
+    return [
+      {
+        key: "type",
+        label: "Mode",
+        component: "Switch",
+        defaultValue: "pretty",
+        skipValidateHasValue: true,
+        props: {
+          options: [
+            { value: "minify", label: "Minify" },
+            { value: "pretty", label: "Pretty" }
+          ]
+        }
+      },
+      ...(inputParams.type === "pretty" ? [additionalInput] : []),
+      {
+        key: "input",
+        label: "Input",
+        component: "Code",
+        defaultValue: "",
+        props: {
+          language: "json",
+          autoFocus: true
+        }
       }
-    },
-    ...(inputParams.type === "pretty"
-      ? [{
-        key: "space",
-        label: "Spaces",
-        component: "Text",
-        defaultValue: "2",
-        skipValidateHasValue: true
-      }]
-      : []
-    ),
-    {
-      key: "input",
-      label: "Input",
-      component: "Code",
-      defaultValue: "",
-      props: {
-        language: "json",
-        autoFocus: true
-      }
-    }
-  ],
+    ]
+  },
   outputFields: [
     {
       key: "output",

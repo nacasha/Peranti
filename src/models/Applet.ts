@@ -1,4 +1,3 @@
-import { Command } from "@tauri-apps/api/shell"
 import fastDeepEqual from "fast-deep-equal"
 import { observable, action, makeObservable, toJS } from "mobx"
 import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, pausePersisting, startPersisting, stopPersisting } from "mobx-persist-store"
@@ -8,6 +7,7 @@ import { StorageKeys } from "src/constants/storage-keys"
 import { AppletType } from "src/enums/applet-type"
 import { appletStore } from "src/services/applet-store"
 import { componentService } from "src/services/component-manager"
+import { rustInvokerService } from "src/services/rust-invoker-service"
 import { sessionStore } from "src/services/session-store"
 import { StorageManager } from "src/services/storage-manager"
 import { type AppletConstructor } from "src/types/AppletConstructor"
@@ -466,10 +466,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
     if (this.type === AppletType.Extension) {
       void this.runExtension()
-      return
-    }
-
-    if (this.canRunPipeline && this.pipelines.length > 0) {
+    } else if (this.canRunPipeline && this.pipelines.length > 0) {
       await this.runPipeline()
     } else if (this.isBatchModeEnabled) {
       await this.runBatch()
@@ -514,16 +511,14 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
       const { actionFile } = this.metadata
 
       try {
-        /**
-         * Stringify the inputs values for command line
-         */
-        const inputParams = JSON.stringify(this.inputValues)
-        const command = Command.sidecar("binaries/node", [actionFile, inputParams])
+        const extensionResult = await rustInvokerService.runExtension({
+          builtin: [],
+          external: ["axios"],
+          file: actionFile,
+          input: this.inputValues
+        })
 
-        console.log({ inputParams, command })
-
-        const result = await command.execute()
-        this.setOutputValues(JSON.parse(result.stdout))
+        this.setOutputValues(extensionResult)
       } catch (exception) {
         console.log(exception)
         toast.error(`Failed to run ${this.name} extension`)

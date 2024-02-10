@@ -47,7 +47,7 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
   }
 
   const additionalProps: Record<string, any> = {}
-  if (["Code", "Mermaid"].includes(appletOutput.component)) {
+  if (["Code", "Mermaid", "Image"].includes(appletOutput.component)) {
     additionalProps.initialState = initialState
     additionalProps.onStateChange = handleStateChange
   }
