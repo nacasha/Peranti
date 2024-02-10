@@ -7,20 +7,20 @@ import { removeBase64Header } from "src/utils/base-64"
 
 import { RustInvokerService } from "./rust-invoker-service.js"
 
-export class FileService {
-  static async readFileAsText(filePath: string, appData?: boolean) {
+class FileService {
+  async readFileAsText(filePath: string, appData?: boolean) {
     return await readTextFile(filePath, appData ? { dir: BaseDirectory.AppData } : undefined)
   }
 
-  static async readFileAsBinary(filePath: string, appData?: boolean) {
+  async readFileAsBinary(filePath: string, appData?: boolean) {
     return await readBinaryFile(filePath, appData ? { dir: BaseDirectory.AppData } : undefined)
   }
 
-  static async resolveFilePath(...paths: string[]) {
+  async resolveFilePath(...paths: string[]) {
     return await resolve(...paths)
   }
 
-  static async saveToImageFile(base64String: string) {
+  async saveToImageFile(base64String: string) {
     const filePath = await save({
       filters: [{
         name: "Image",
@@ -30,11 +30,11 @@ export class FileService {
 
     if (filePath) {
       await writeBinaryFile(filePath, base64.toUint8Array(removeBase64Header(base64String)))
-      await FileService.openPathInFileManager(filePath)
+      await this.openPathInFileManager(filePath)
     }
   }
 
-  static async saveToTextFile(textString: string) {
+  async saveToTextFile(textString: string) {
     function stringToUint8Array(str: string) {
       const encoder = new TextEncoder()
       return encoder.encode(str)
@@ -49,11 +49,13 @@ export class FileService {
 
     if (filePath) {
       await writeBinaryFile(filePath, stringToUint8Array(textString))
-      await FileService.openPathInFileManager(filePath)
+      await this.openPathInFileManager(filePath)
     }
   }
 
-  static async openPathInFileManager(path: string) {
+  async openPathInFileManager(path: string) {
     await RustInvokerService.revealFileManager(path)
   }
 }
+
+export const fileService = new FileService()

@@ -25,7 +25,7 @@ import { convertCRLFtoLF } from "src/utils/convert-crlf-to-lf.js"
 import { createFileFromUint32Array } from "src/utils/create-file-from-uint32-array.js"
 import { getFileNameFromPath } from "src/utils/get-file-name-from-path.js"
 
-import { FileService } from "./file-service.js"
+import { fileService } from "./file-service.js"
 
 class ComponentService {
   readonly inputs = {
@@ -141,10 +141,10 @@ class ComponentService {
 
     try {
       if (readFileAs === "text") {
-        const fileContent = await FileService.readFileAsText(filePath)
+        const fileContent = await fileService.readFileAsText(filePath)
         return convertCRLFtoLF(fileContent)
       } else if (readFileAs === "file") {
-        const file = await FileService.readFileAsBinary(filePath)
+        const file = await fileService.readFileAsBinary(filePath)
         return createFileFromUint32Array(file, getFileNameFromPath(filePath))
       }
     } catch (exception) {

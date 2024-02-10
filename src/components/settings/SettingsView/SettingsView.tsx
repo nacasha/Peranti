@@ -7,6 +7,7 @@ import { SettingsCard, SettingsCardItem } from "src/components/settings/Settings
 import { SidebarMode } from "src/components/settings/SidebarMode"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
+import { appDataService } from "src/services/app-data-service"
 import { sessionStore } from "src/services/session-store"
 import { toolSidebarService } from "src/services/tool-sidebar-service"
 
@@ -23,6 +24,10 @@ export const SettingsView: FC = () => {
     void localforage.clear().then(() => {
       window.document.location.reload()
     })
+  }
+
+  const handleOpenAppDataFolder = () => {
+    void appDataService.openAppDataFolder()
   }
 
   return (
@@ -97,11 +102,7 @@ export const SettingsView: FC = () => {
 
       <SettingsCard title="Application Data">
         <SettingsCardItem label="App Data Folder">
-          <Button>Open Folder</Button>
-        </SettingsCardItem>
-
-        <SettingsCardItem label="Settings JSON File">
-          <Button>Show File</Button>
+          <Button onClick={handleOpenAppDataFolder}>Open Folder</Button>
         </SettingsCardItem>
 
         <SettingsCardItem

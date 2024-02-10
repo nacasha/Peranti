@@ -7,7 +7,7 @@ import { type Component } from "src/models/Component"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { ClipboardService } from "src/services/clipboard-service"
 import { componentService } from "src/services/component-manager"
-import { FileService } from "src/services/file-service"
+import { fileService } from "src/services/file-service"
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOutput } from "src/types/AppletOutput"
 
@@ -59,9 +59,9 @@ export const AppletContextMenu: FC = () => {
 
       if (savedValue) {
         if (saveAs === "text") {
-          void FileService.saveToTextFile(savedValue)
+          void fileService.saveToTextFile(savedValue)
         } else if (saveAs === "image") {
-          void FileService.saveToImageFile(savedValue)
+          void fileService.saveToImageFile(savedValue)
         }
       }
     }

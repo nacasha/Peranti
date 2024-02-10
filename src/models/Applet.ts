@@ -514,13 +514,19 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
       const { actionFile } = this.metadata
 
       try {
-        const inputParams = JSON.stringify({ ...this.inputValues })
+        /**
+         * Stringify the inputs values for command line
+         */
+        const inputParams = JSON.stringify(this.inputValues)
         const command = Command.sidecar("binaries/node", [actionFile, inputParams])
+
+        console.log({ inputParams, command })
 
         const result = await command.execute()
         this.setOutputValues(JSON.parse(result.stdout))
       } catch (exception) {
-        console.log("Failed to run applet")
+        console.log(exception)
+        toast.error(`Failed to run ${this.name} extension`)
       }
 
       this.setIsActionRunning(false)

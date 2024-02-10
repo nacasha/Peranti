@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx"
+import toast from "react-hot-toast"
 
 import settingsTool from "src/applets/pages/settings-applet.ts"
 import base64EncodeDecodeTool from "src/applets/tools/base64-encode-decode-tool.ts"
@@ -29,13 +30,14 @@ import textTransformTool from "src/applets/tools/text-transform-tool.ts"
 import uriEncodeDecodeTool from "src/applets/tools/uri-encode-decode-tool.ts"
 import { FileNames } from "src/constants/file-names.ts"
 import { AppletType } from "src/enums/applet-type.ts"
-import { FileService } from "src/services/file-service.ts"
 import { type AppletConstructor } from "src/types/AppletConstructor.ts"
+import { type ExtensionTool } from "src/types/ExtensionTool.ts"
 import { type Preset } from "src/types/Preset.ts"
 import { mergeAppletConstructorWithPreset } from "src/utils/merge-applet-constructor-with-preset.ts"
 
 import { appDataService } from "./app-data-service.ts"
 import { commandbarService } from "./commandbar-service.ts"
+import { fileService } from "./file-service.ts"
 import { sessionStore } from "./session-store.ts"
 import { toolSidebarService } from "./tool-sidebar-service.ts"
 
@@ -157,18 +159,47 @@ class AppletStore {
     const extensions = []
     const entries = await appDataService.readExtensionsFolder()
 
+    /**
+     * Iterate all folder in extensions folder
+     */
     for (const entry of entries) {
-      if (entry.children) {
-        const files = Object.fromEntries(entry.children.map((children) => [children.name, children.path]))
+      try {
+        if (entry.children) {
+          /**
+           * Make sure the folder has extension definition file
+           */
+          if (!entry.children.some((file) => file.name === FileNames.ExtensionDefinition)) {
+            toast.error(`Folder ${entry.name} does not have ${FileNames.ExtensionDefinition} file`)
+            continue
+          }
 
-        const appletConstructorRaw = await FileService.readFileAsText(files[FileNames.ExtensionDefinition])
-        const appletConstructor: AppletConstructor = JSON.parse(appletConstructorRaw)
-        const realActionFilePath = await FileService.resolveFilePath(entry.path, appletConstructor.metadata.actionFile)
+          const files = Object.fromEntries(entry.children.map((children) => [children.name, children.path]))
 
-        appletConstructor.type = AppletType.Extension
-        appletConstructor.metadata.actionFile = realActionFilePath
+          const extensionRaw = await fileService.readFileAsText(files[FileNames.ExtensionDefinition])
+          const extension: ExtensionTool = JSON.parse(extensionRaw)
+          const realActionFilePath = await fileService.resolveFilePath(entry.path, extension.actionFile)
 
-        extensions.push(appletConstructor)
+          const appletConstructor: AppletConstructor = {
+            appletId: extension.toolId,
+            name: extension.name,
+            category: extension.category,
+            inputFields: extension.inputFields,
+            outputFields: extension.outputFields,
+            layoutSetting: extension.layoutSetting,
+            autoRun: extension.autoRun,
+            type: AppletType.Extension,
+            samples: extension.samples,
+            disableMultipleSession: extension.disableMultipleSession,
+            metadata: {
+              actionFile: realActionFilePath
+            }
+          }
+
+          extensions.push(appletConstructor)
+        }
+      } catch (exception) {
+        toast.error(`Failed to read ${entry.name} extension`)
+        console.log(exception)
       }
     }
 

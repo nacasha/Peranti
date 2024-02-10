@@ -5,9 +5,9 @@ import { FileNames } from "src/constants/file-names.js"
 import { Folders } from "src/constants/folders"
 import { type UserSettingsKeys } from "src/enums/user-settings-keys.js"
 
-import { FileService } from "./file-service.js"
+import { fileService } from "./file-service.js"
 
-export class AppDataService {
+class AppDataService {
   async prepareAppDirectory() {
     const baseFolder = await appDataDir()
 
@@ -57,7 +57,7 @@ export class AppDataService {
     await this.prepareSettingsJSONFile()
 
     try {
-      const userSettingsRaw = await FileService.readFileAsText(FileNames.UserSettings, true)
+      const userSettingsRaw = await fileService.readFileAsText(FileNames.UserSettings, true)
       return JSON.parse(userSettingsRaw) as Record<UserSettingsKeys, string | number | undefined>
     } catch (exception) {
       return {} as any
@@ -72,6 +72,12 @@ export class AppDataService {
     } catch (exception) {
       console.log("Failed to write ".concat(FileNames.UserSettings))
     }
+  }
+
+  async openAppDataFolder() {
+    const appDataDirPath = await appDataDir()
+    const insidePath = await fileService.resolveFilePath(appDataDirPath, FileNames.UserSettings)
+    void fileService.openPathInFileManager(insidePath)
   }
 }
 
