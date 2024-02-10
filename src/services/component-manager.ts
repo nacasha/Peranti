@@ -16,6 +16,7 @@ import { GridStatOutput } from "src/components/outputs/GridStatOutput"
 import { IFrameOutput } from "src/components/outputs/IFrameOutput"
 import { ImageOutput } from "src/components/outputs/ImageOutput"
 import { MarkdownOutput } from "src/components/outputs/MarkdownOutput"
+import { MermaidOutput } from "src/components/outputs/MermaidOutput"
 import { TextAreaOutput } from "src/components/outputs/TextAreaOutput"
 import { TextOutput } from "src/components/outputs/TextOutput"
 import { SettingsView } from "src/components/settings/SettingsView"
@@ -120,6 +121,10 @@ class ComponentService {
 
     Settings: new Component({
       component: SettingsView
+    }),
+
+    Mermaid: new Component({
+      component: MermaidOutput
     })
   }
 

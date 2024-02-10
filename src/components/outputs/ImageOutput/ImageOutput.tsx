@@ -14,18 +14,15 @@ interface ImageOutputProps extends OutputComponentProps<string> {
 export const ImageOutput: FC<ImageOutputProps> = (props) => {
   const { value = "", label, showControl = false, onContextMenu } = props
 
-  const zoomFactor = 8
-
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
-
   const [containerWidth, setContainerWidth] = useState<number>(0)
   const [containerHeight, setContainerHeight] = useState<number>(0)
 
+  const [imageLoaded, setImageLoaded] = useState(true)
   const [imageNaturalWidth, setImageNaturalWidth] = useState<number>(0)
   const [imageNaturalHeight, setImageNaturalHeight] = useState<number>(0)
 
-  const [imageInitialized, setImageInitialized] = useState(true)
-  const [imageLoaded, setImageLoaded] = useState(true)
+  const zoomFactor = 8
 
   const imageScale = useMemo(() => {
     if (
@@ -53,6 +50,11 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
     imageNaturalHeight
   ])
 
+  const handleImageOnLoad = (image: HTMLImageElement) => {
+    setImageNaturalWidth(image.naturalWidth)
+    setImageNaturalHeight(image.naturalHeight)
+  }
+
   const handleResize = useCallback(() => {
     if (container !== null) {
       const rect = container.getBoundingClientRect()
@@ -63,11 +65,6 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
       setContainerHeight(0)
     }
   }, [container])
-
-  const handleImageOnLoad = (image: HTMLImageElement) => {
-    setImageNaturalWidth(image.naturalWidth)
-    setImageNaturalHeight(image.naturalHeight)
-  }
 
   useEffect(() => {
     handleResize()
@@ -99,13 +96,12 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
           className="ImageOutput-image"
           onContextMenu={onContextMenu}
         >
-          {(imageScale > 0 && imageInitialized) && (
+          {imageScale > 0 && (
             <TransformWrapper
               key={`${containerWidth}x${containerHeight}x${imageScale}`}
               initialScale={imageScale}
               minScale={imageScale}
               maxScale={imageScale * zoomFactor}
-              onInit={() => { setImageInitialized(true) }}
               centerOnInit
             >
               {({ zoomIn, zoomOut, resetTransform }) => (
@@ -135,13 +131,13 @@ const ImageShow = (props: any) => {
       {showControl && (
         <div className="ImageOutput-actions">
           <Button onClick={() => { zoomIn() }}>
-              Zoom In
+            Zoom In
           </Button>
           <Button onClick={() => { zoomOut() }}>
-              Zoom Out
+            Zoom Out
           </Button>
           <Button onClick={() => { resetTransform() }}>
-              Reset Zoom
+            Reset Zoom
           </Button>
         </div>
       )}

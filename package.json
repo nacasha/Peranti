@@ -43,6 +43,7 @@
     "lorem-ipsum": "^2.0.8",
     "math-expression-evaluator": "^2.0.4",
     "md5": "^2.3.0",
+    "mermaid": "^10.8.0",
     "mime": "^4.0.1",
     "mime-match": "^1.0.2",
     "mobx": "^6.12.0",

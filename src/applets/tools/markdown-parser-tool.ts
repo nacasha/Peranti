@@ -1,6 +1,6 @@
+import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 
 interface InputFields {
   markdown: InputFieldsType.Code
@@ -11,9 +11,9 @@ interface OutputFields {
 }
 
 const markdownParserTool: AppletConstructor<InputFields, OutputFields> = {
-  appletId: "markdown-parser",
-  name: "Markdown Parser",
-  category: "Markdown",
+  appletId: "markdown-editor",
+  name: "Markdown Editor",
+  category: "Editor",
   layoutSetting: {
     direction: "horizontal"
   },

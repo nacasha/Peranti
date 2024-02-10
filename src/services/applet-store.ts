@@ -18,6 +18,7 @@ import jsonataTool from "src/applets/tools/jsonata-tool"
 import loremIpsumGeneratorTool from "src/applets/tools/lorem-ipsum-generator-tool.ts"
 import markdownParserTool from "src/applets/tools/markdown-parser-tool.ts"
 import mathEvaluatorTool from "src/applets/tools/math-evaluator-tool.ts"
+import mermaidEditorTool from "src/applets/tools/mermaid-editor-tool.ts"
 import millisecondsToDate from "src/applets/tools/milliseconds-to-date-tool.ts"
 import prefixSuffixLines from "src/applets/tools/prefix-suffix-lines-tool.ts"
 import removeDuplicateList from "src/applets/tools/remove-duplicate-lines-tool.ts"
@@ -72,7 +73,8 @@ class AppletStore {
     [base64ToFileTool.appletId]: base64ToFileTool,
     [markdownParserTool.appletId]: markdownParserTool,
     [dateToMillisecondsTool.appletId]: dateToMillisecondsTool,
-    [settingsTool.appletId]: settingsTool
+    [settingsTool.appletId]: settingsTool,
+    [mermaidEditorTool.appletId]: mermaidEditorTool
   }
 
   /**

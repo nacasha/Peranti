@@ -18,4 +18,5 @@ export namespace OutputFieldsType {
   export type Code = ExtractType<typeof componentService.outputs.Code>
   export type Markdown = ExtractType<typeof componentService.outputs.Markdown>
   export type IFrame = ExtractType<typeof componentService.outputs.IFrame>
+  export type Mermaid = ExtractType<typeof componentService.outputs.Mermaid>
 }
