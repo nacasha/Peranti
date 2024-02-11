@@ -15,6 +15,7 @@ import { WindowResizeEventListener } from "./components/window/WindowResizeEvent
 import { WindowSizeListener } from "./components/window/WindowSizeListener"
 import { useSelector } from "./hooks/useSelector.ts"
 import { interfaceStore } from "./services/interface-store.ts"
+import { appClasses } from "./styles/app.css.ts"
 
 const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   const titlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
@@ -27,7 +28,7 @@ const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   return (
-    <div className={clsx("AppRoot", titlebarStyle, windowState)}>
+    <div className={clsx("AppRoot", appClasses.root, titlebarStyle, windowState)}>
       {children}
     </div>
   )
@@ -47,18 +48,14 @@ export const AppMain = () => {
 
       <AppTitlebar />
 
-      <div className="AppContainer">
+      <div className={appClasses.container}>
         <ActivityBar />
         <PrimarySidebar />
 
-        <div className="AppContent">
+        <div className={appClasses.content}>
           <SessionTabbar />
           <AppletViewer />
         </div>
-
-        {/* <div className="SecondarySidebar">
-          Hello
-        </div> */}
       </div>
 
       <AppStatusbar />

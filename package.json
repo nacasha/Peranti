@@ -30,6 +30,7 @@
     "@uiw/codemirror-theme-github": "^4.21.21",
     "@uiw/codemirror-theme-monokai-dimmed": "^4.21.21",
     "@uiw/react-codemirror": "^4.21.21",
+    "@vanilla-extract/css": "^1.14.1",
     "axios": "^1.6.5",
     "axios-tauri-api-adapter": "^0.2.1",
     "clsx": "^2.0.0",
@@ -67,6 +68,7 @@
     "simplebar-react": "^3.2.4",
     "tauri-plugin-clipboard-api": "^0.5.5",
     "tauri-plugin-context-menu": "^0.7.0",
+    "ts-deepmerge": "^7.0.0",
     "uuid": "^9.0.1",
     "vm2": "^3.9.19",
     "wouter": "^2.12.1"
@@ -76,6 +78,7 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@vanilla-extract/vite-plugin": "^4.0.4",
     "@vitejs/plugin-react": "^4.0.3",
     "eslint": "^8.0.1",
     "eslint-config-standard-with-typescript": "^40.0.0",

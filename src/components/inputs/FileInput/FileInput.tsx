@@ -1,5 +1,6 @@
 import { useState, type FC, type InputHTMLAttributes, useRef } from "react"
 
+import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./FileInput.scss"
@@ -26,9 +27,7 @@ export const FileInput: FC<InputFileProps> = (props) => {
 
   return (
     <div className="FileInput">
-      <div className="InputOutputLabel">
-        {label}
-      </div>
+      <ComponentLabel label={label} />
       <div>
         <div onClick={onClickChooseFile} className="FileInputPicker">
           {selectedFile?.name ?? "Click Here to Select File"}

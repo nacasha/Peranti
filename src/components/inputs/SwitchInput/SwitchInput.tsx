@@ -1,6 +1,7 @@
 import { clsx } from "clsx"
-import { type FC, useId, useState } from "react"
+import { type FC, useState } from "react"
 
+import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./SwitchInput.scss"
@@ -10,7 +11,6 @@ interface SwitchInputProps extends InputComponentProps {
 }
 
 export const SwitchInput: FC<SwitchInputProps> = (props) => {
-  const id = useId()
   const { label, options = [], onSubmit, defaultValue, readOnly } = props
   const [selectedOption, setSelectedOption] = useState<any>(defaultValue)
 
@@ -22,9 +22,7 @@ export const SwitchInput: FC<SwitchInputProps> = (props) => {
 
   return (
     <div className={clsx("SwitchInput", readOnly && "read-only")}>
-      <label className="InputOutputLabel" htmlFor={id}>
-        {label}
-      </label>
+      <ComponentLabel label={label} />
       <div className="buttons">
         {options.map((option) => (
           <div

@@ -1,6 +1,7 @@
 import { useCallback, type FC, useEffect, useMemo, useState, useRef } from "react"
 import { TransformWrapper, TransformComponent, type ReactZoomPanPinchContentRef } from "react-zoom-pan-pinch"
 
+import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { usePreviousValue } from "src/hooks/usePreviousValue"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
@@ -146,9 +147,7 @@ export const ImageOutput: FC<ImageOutputProps> = (props) => {
 
   return (
     <div className="ImageOutput">
-      <div className="InputOutputLabel">
-        {label}
-      </div>
+      <ComponentLabel label={label} />
       <div className="ImageOutput-inner">
         <div
           ref={(el: HTMLDivElement | null) => { setContainer(el) }}

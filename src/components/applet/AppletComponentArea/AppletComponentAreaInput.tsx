@@ -17,6 +17,7 @@ export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = memo(
   const inputFields = useSelector(() => activeAppletStore.getActiveApplet().getInputFields())
   const inputAreaDirection = useSelector(() => activeAppletStore.getActiveApplet().layoutSetting.inputAreaDirection)
   const isDeleted = useSelector(() => activeAppletStore.getActiveApplet().isDeleted)
+  const renderCounter = useSelector(() => activeAppletStore.getActiveApplet().renderCounter)
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault()
@@ -28,6 +29,7 @@ export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = memo(
 
   return (
     <form
+      key={activeApplet.sessionId.concat(renderCounter.toString())}
       action="#"
       onSubmit={handleSubmit}
       className={clsx("AppletComponentAreaInput", inputAreaDirection, className)}

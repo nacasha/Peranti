@@ -1,8 +1,9 @@
 import { useId, type FC } from "react"
 
+import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
-import "./TextAreaOutput.scss"
+import "./TextAreaOutput-3.scss"
 
 interface TextAreaOutputProps extends OutputComponentProps {}
 
@@ -12,9 +13,7 @@ export const TextAreaOutput: FC<TextAreaOutputProps> = (props) => {
 
   return (
     <div className="TextAreaOutput" onContextMenu={onContextMenu}>
-      <label htmlFor={id} className="InputOutputLabel">
-        {label}
-      </label>
+      <ComponentLabel label={label} />
       <textarea
         id={id}
         value={value}

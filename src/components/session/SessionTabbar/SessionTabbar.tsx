@@ -219,7 +219,7 @@ const TabbarContextMenu: FC = () => {
         id="save-to-file"
         onClick={handleRenameSession}
       >
-        Raname
+        Rename
       </Item>
     </ContextMenu>
   )

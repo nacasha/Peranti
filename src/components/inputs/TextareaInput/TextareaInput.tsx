@@ -1,8 +1,9 @@
 import { type FC, useId } from "react"
 
+import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
-import "./TextAreaInput-2.scss"
+import "./TextAreaInput.scss"
 
 interface TextAreaInputProps extends InputComponentProps {
   autoFocus?: boolean
@@ -19,9 +20,7 @@ export const TextAreaInput: FC<TextAreaInputProps> = (props) => {
 
   return (
     <div className="TextAreaInput">
-      <label className="InputOutputLabel" htmlFor={id}>
-        {label}
-      </label>
+      <ComponentLabel label={label} />
       <textarea
         id={id}
         defaultValue={defaultValue}

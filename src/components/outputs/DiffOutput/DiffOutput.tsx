@@ -2,6 +2,7 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 import ReactDiffViewer, { type DiffMethod } from "react-diff-viewer"
 
+import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { Theme } from "src/enums/theme"
 import { interfaceStore } from "src/services/interface-store"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
@@ -25,7 +26,7 @@ export const DiffOutput: FC<DiffOutputProps> = observer((props) => {
 
   return (
     <div className="DiffOutput">
-      <label className="InputOutputLabel">{label}</label>
+      <ComponentLabel label={label} />
       <div className="DiffOutput-body">
         <ReactDiffViewer
           oldValue={value.oldCode}

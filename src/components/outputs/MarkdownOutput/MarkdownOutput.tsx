@@ -2,6 +2,7 @@ import { type FC } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 
+import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import "./MarkdownOutput.scss"
@@ -13,9 +14,7 @@ export const MarkdownOutput: FC<MarkdownOutputProps> = (props) => {
 
   return (
     <div className="MarkdownOutput" onContextMenu={onContextMenu}>
-      <label className="InputOutputLabel">
-        {label}
-      </label>
+      <ComponentLabel label={label} />
       <div className="MarkdownOutput-inner">
         <div className="body">
           <Markdown remarkPlugins={[remarkGfm]}>

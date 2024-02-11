@@ -1,6 +1,7 @@
 import { type FC } from "react"
 
 import { BaseCodeMirror, type BaseCodeMirrorProps } from "src/components/common/BaseCodeMirror"
+import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./CodeInput.scss"
@@ -25,9 +26,7 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
 
   return (
     <div className="CodeInput">
-      <label className="InputOutputLabel">
-        {label}
-      </label>
+      <ComponentLabel label={label} />
       <BaseCodeMirror
         {...baseCodeMirrorProps}
         value={defaultValue}

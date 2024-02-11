@@ -1,6 +1,7 @@
 import mermaid from "mermaid"
 import { type FC, useEffect, useState, useRef } from "react"
 
+import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import { MermaidOutputZoomableSVG } from "./MermaidOutputZoomableSVG.js"
@@ -53,9 +54,7 @@ export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
 
   return (
     <div className="MermaidOutput" onContextMenu={onContextMenu}>
-      <label className="InputOutputLabel">
-        {label}
-      </label>
+      <ComponentLabel label={label} />
       <div className="MermaidOutput-inner">
         <MermaidOutputZoomableSVG
           initialState={initialState}

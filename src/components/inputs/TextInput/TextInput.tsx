@@ -1,5 +1,6 @@
 import { type FC, type InputHTMLAttributes, useId } from "react"
 
+import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./TextInput.scss"
@@ -20,9 +21,7 @@ export const TextInput: FC<TextInputProps> = (props) => {
 
   return (
     <div className="TextInput">
-      <label className="InputOutputLabel" htmlFor={id}>
-        {label}
-      </label>
+      <ComponentLabel label={label} />
       <input
         id={id}
         defaultValue={defaultValue}

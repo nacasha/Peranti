@@ -1,5 +1,7 @@
 import { Toaster } from "react-hot-toast"
 
+import { notificationClassNames } from "src/styles/libraries/notifications.css"
+
 export const withReactHotToast = (component: () => React.ReactNode) => () => {
   return (
     <>
@@ -7,11 +9,8 @@ export const withReactHotToast = (component: () => React.ReactNode) => () => {
       <Toaster
         position="bottom-right"
         gutter={5}
-        containerClassName="NotificationContainer"
-        toastOptions={{
-          duration: 5000,
-          className: "Notification-item"
-        }}
+        containerClassName={notificationClassNames.container}
+        toastOptions={{ duration: 5000, className: notificationClassNames.item }}
       />
     </>
   )

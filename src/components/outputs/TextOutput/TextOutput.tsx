@@ -1,5 +1,6 @@
 import { type FC, useId } from "react"
 
+import { ComponentLabel } from "src/components/common/ComponentLabel"
 import type { OutputComponentProps } from "src/types/OutputComponentProps.ts"
 
 import "./TextOutput.scss"
@@ -10,7 +11,7 @@ export const TextOutput: FC<OutputComponentProps> = (props) => {
 
   return (
     <div className="TextOutput" onContextMenu={onContextMenu}>
-      <label className="InputOutputLabel" htmlFor={id}>{label}</label>
+      <ComponentLabel label={label} />
       <input id={id} value={value} readOnly autoComplete="off" />
     </div>
   )
