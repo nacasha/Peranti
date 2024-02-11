@@ -14,7 +14,7 @@ export const notificationClassNames = {
     fontSize: "var(--font-size)",
     borderWidth: "1px",
     borderStyle: "solid",
-    borderColor: styleTokens.border.color,
+    borderColor: styleTokens.borderRadius,
     borderRadius: "4px",
     padding: "7px",
     paddingLeft: "10px",

@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import { type FC, type ReactNode } from "react"
+import { useEffect, type FC, type ReactNode } from "react"
 
 import { ActivityBar } from "./components/activity-bar/ActivityBar"
 import { AppStatusbar } from "./components/app/AppStatusbar"
@@ -9,6 +9,7 @@ import { AppletViewer } from "./components/applet/AppletViewer"
 import { Commandbar } from "./components/commandbar/Commandbar/Commandbar.tsx"
 import { FileDropArea } from "./components/filedrop/FileDropArea"
 import { FileDropListener } from "./components/filedrop/FileDropListener"
+import { NotificationProvider } from "./components/notification/NotificationProvider/NotificationProvider.tsx"
 import { SessionTabbar } from "./components/session/SessionTabbar"
 import { PrimarySidebar } from "./components/sidebar/PrimarySidebar"
 import { WindowResizeEventListener } from "./components/window/WindowResizeEventListener"
@@ -27,6 +28,21 @@ const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
     TextAreaWordWrap: textAreaWordWrap
   }
 
+  useEffect(() => {
+    const disableContextMenu = () => {
+      if (window.location.hostname !== "tauri.localhost") {
+        return
+      }
+
+      document.addEventListener("contextmenu", e => {
+        e.preventDefault()
+        return false
+      }, { capture: true })
+    }
+
+    disableContextMenu()
+  }, [])
+
   return (
     <div className={clsx("AppRoot", appClasses.root, titlebarStyle, windowState)}>
       {children}
@@ -37,6 +53,8 @@ const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
 export const AppMain = () => {
   return (
     <AppRoot>
+      <NotificationProvider />
+
       <AppThemeListener />
       <Commandbar />
 

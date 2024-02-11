@@ -7,7 +7,7 @@ export const componentLabelCss = style({
   marginBottom: styleTokens.inputOutputLabelSpacing,
   userSelect: "none",
   height: styleTokens.inputOutputLabelHeight,
-  fontSize: styleTokens.font.size,
+  fontSize: styleTokens.fontSize,
 
   ":empty": {
     display: "none"

@@ -7,7 +7,7 @@ import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
 import { type AppletConstructor } from "src/types/AppletConstructor"
 
-import "./ActivityBarItem.scss"
+import { activitybarItemClasses } from "./ActivityBarItem.css"
 
 interface ActivityBarItemProps {
   label: string
@@ -46,9 +46,14 @@ export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
     }
   }
 
+  const classNames = clsx([
+    activitybarItemClasses.root,
+    isActive && activitybarItemClasses.rootActive
+  ])
+
   return (
-    <div className={clsx("ActivityBarItem", isActive && "active")} onClick={onClickItem()}>
-      <div className="tooltip">
+    <div className={classNames} onClick={onClickItem()}>
+      <div className={activitybarItemClasses.tooltip}>
         {label}
       </div>
       <img src={icon} alt={label}/>

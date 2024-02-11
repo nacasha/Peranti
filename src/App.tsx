@@ -1,7 +1,8 @@
 import { lazy } from "react"
 
+import "src/bootstrap/bootstrap.ts"
+
 import { useSelector } from "./hooks/useSelector.ts"
-import { withProviders } from "./providers/index.ts"
 import { userSettingsService } from "./services/user-settings-service.ts"
 
 const AppMain = lazy(async() => await import("./AppMain.tsx"))
@@ -11,4 +12,4 @@ export const DefferedApp = () => {
   return isLoaded ? <AppMain /> : null
 }
 
-export const App = withProviders(DefferedApp)
+export const App = DefferedApp

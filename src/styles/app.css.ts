@@ -12,8 +12,8 @@ export const appClasses = {
     width: "100vw",
     height: "100vh",
 
-    fontFamily: styleTokens.font.body,
-    fontSize: styleTokens.font.size,
+    fontFamily: styleTokens.fontFamily,
+    fontSize: styleTokens.fontSize,
     lineHeight: "24px",
     fontWeight: "400",
 
@@ -29,7 +29,7 @@ export const appClasses = {
     height: "100%",
     overflowY: "auto",
     overflowX: "hidden",
-    backgroundColor: styleTokens.background.main,
+    backgroundColor: styleTokens.backgroundMain,
     position: "relative"
   }),
 
@@ -39,6 +39,6 @@ export const appClasses = {
     flexDirection: "column",
     position: "relative",
     overflow: "hidden",
-    backgroundColor: styleTokens.background.content
+    backgroundColor: styleTokens.backgroundContent
   })
 }

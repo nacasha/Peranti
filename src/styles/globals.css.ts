@@ -9,12 +9,12 @@ globalStyle("html, body", {
   margin: "0",
   padding: "0",
   overflow: "hidden",
-  fontFamily: styleTokens.font.body,
-  color: styleTokens.text.color
+  fontFamily: styleTokens.fontFamily,
+  color: styleTokens.textColor
 })
 
 globalStyle("input, text, select, option", {
-  color: styleTokens.text.color
+  color: styleTokens.textColor
 })
 
 globalStyle("::-webkit-scrollbar", {
@@ -23,42 +23,32 @@ globalStyle("::-webkit-scrollbar", {
 })
 
 globalStyle("::-webkit-scrollbar-track", {
-  background: styleTokens.scrollbar.track.background
+  background: styleTokens.scrollbarTrackBackgroundColor
 })
 
 globalStyle("::-webkit-scrollbar-thumb", {
-  background: styleTokens.scrollbar.thumb.background,
-  borderRadius: styleTokens.scrollbar.thumb.borderRadius
+  background: styleTokens.scrollbarThumbBackgroundColor,
+  borderRadius: styleTokens.scrollbarThumbBorderRadius
 })
 
 globalStyle("::-webkit-scrollbar-thumb:hover", {
-  background: styleTokens.scrollbar.thumb.backgroundHover
+  background: styleTokens.scrollbarThumbBackgroundColorHover
 })
 
 /**
  * Global variables
  */
 createGlobalTheme("body", createGlobalThemeContract(globalTokens), {
-  font: {
-    body: "'Inter', serif",
-    mono: "'Consolas', monospace, serif",
-    size: "13px"
-  },
-
-  color: {
-    accent: "#275efe"
-  },
-
-  border: {
-    radius: "4px"
-  },
+  fontFamily: "'Inter', serif",
+  fontMono: "'Consolas', monospace, serif",
+  fontSize: "13px",
 
   // Colors
+  colorAccent: "#275efe",
   accentColorLight20: "color-mix(in srgb, var(--accent-color), #ffffff 20%)",
   accentColorLight40: "color-mix(in srgb, var(--accent-color), #ffffff 40%)",
   accentColorLight60: "color-mix(in srgb, var(--accent-color), #ffffff 60%)",
   accentColorLight80: "color-mix(in srgb, var(--accent-color), #ffffff 80%)",
-
   accentColorDark20: "color-mix(in srgb, var(--accent-color), #000000 20%)",
   accentColorDark40: "color-mix(in srgb, var(--accent-color), #000000 40%)",
   accentColorDark60: "color-mix(in srgb, var(--accent-color), #000000 60%)",
@@ -92,11 +82,9 @@ createGlobalTheme("body", createGlobalThemeContract(globalTokens), {
   inputOutputPadding: "7px",
   inputOutputFontSize: "14px",
 
-  contextMenu: {
-    menuShadow: "none",
-    menuMinWidth: "250px",
-    menuPadding: "5px",
-    menuRadius: styleTokens.borderRadius,
-    itemContentPadding: "5px 10px"
-  }
+  contexifyMenuShadow: "none",
+  contexifyMenuMinWidth: "250px",
+  contexifyMenuPadding: "5px",
+  contexifyMenuRadius: styleTokens.borderRadius,
+  contexifyItemContentPadding: "5px 10px"
 })
