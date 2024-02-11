@@ -25,7 +25,11 @@ class ExtensionsService {
       samples: extension.samples,
       disableMultipleSession: extension.disableMultipleSession,
       metadata: {
-        actionFile: realActionFilePath
+        actionFile: realActionFilePath,
+        dependencies: {
+          builtin: extension.dependencies?.builtin ?? [],
+          external: extension.dependencies?.external ?? []
+        }
       }
     }
 

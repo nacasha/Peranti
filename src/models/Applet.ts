@@ -508,12 +508,12 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
     if (this.metadata) {
       this.setIsActionRunning(true)
 
-      const { actionFile } = this.metadata
+      const { actionFile, dependencies } = this.metadata
 
       try {
         const extensionResult = await rustInvokerService.runExtension({
-          builtin: [],
-          external: ["axios"],
+          builtin: dependencies.builtin,
+          external: dependencies.external,
           file: actionFile,
           input: this.inputValues
         })

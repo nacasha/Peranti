@@ -6,11 +6,15 @@ export interface ExtensionTool<IF extends Record<string, any> = any, OF extends 
   toolId: string
   name: string
   category: string
-  actionFile: string
   inputFields: Array<AppletInput<IF>> | ((inputParams: IF) => Array<AppletInput<IF>>)
   outputFields: Array<AppletOutput<OF>> | ((outputParams: OF) => Array<AppletOutput<OF>>)
   layoutSetting?: LayoutSetting
   autoRun?: boolean
   samples?: Array<Partial<IF> | (() => Partial<IF>)>
   disableMultipleSession?: boolean
+  actionFile: string
+  dependencies?: {
+    external?: string[]
+    builtin?: string[]
+  }
 }
