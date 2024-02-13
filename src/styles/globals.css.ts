@@ -1,4 +1,4 @@
-import { createGlobalTheme, createGlobalThemeContract, globalStyle } from "@vanilla-extract/css"
+import { createGlobalTheme, globalStyle } from "@vanilla-extract/css"
 
 import { globalTokens, styleTokens } from "./styleTokens.css"
 
@@ -38,9 +38,9 @@ globalStyle("::-webkit-scrollbar-thumb:hover", {
 /**
  * Global variables
  */
-createGlobalTheme("body", createGlobalThemeContract(globalTokens), {
-  fontFamily: "'Inter', serif",
-  fontMono: "'Consolas', monospace, serif",
+createGlobalTheme("body", globalTokens, {
+  fontFamily: "Inter, serif",
+  fontMono: "Consolas, monospace, serif",
   fontSize: "13px",
 
   // Colors
@@ -55,17 +55,23 @@ createGlobalTheme("body", createGlobalThemeContract(globalTokens), {
   accentColorDark80: "color-mix(in srgb, var(--accent-color), #000000 80%)",
 
   // General
-  borderRadius: "4px",
+  borderRadius: "5px",
 
   // App Titlebar
   appTitlebarHeight: "37px",
+  appTitlebarBackgroundColor: "#1a1b1d",
+
+  // Window control buttons
   windowControlButtonWidth: "50px",
   windowControlButtonHeight: "36px",
 
   // Tool
   appletHeaderHeight: "45px",
+
+  // Session tabbar
   sessionTabbarHeight: "37px",
   sessionTabbarItemMaxWidth: "200px",
+  sessionTabbarDraggableHeight: "0px",
 
   // Animations
   transitionSpeed: "0s",

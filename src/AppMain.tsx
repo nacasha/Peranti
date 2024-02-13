@@ -14,6 +14,7 @@ import { SessionTabbar } from "./components/session/SessionTabbar"
 import { PrimarySidebar } from "./components/sidebar/PrimarySidebar"
 import { WindowResizeEventListener } from "./components/window/WindowResizeEventListener"
 import { WindowSizeListener } from "./components/window/WindowSizeListener"
+import { AppTitleBarStyle } from "./enums/app-titlebar-style.ts"
 import { useSelector } from "./hooks/useSelector.ts"
 import { interfaceStore } from "./services/interface-store.ts"
 import { appClasses } from "./styles/app.css.ts"
@@ -25,8 +26,18 @@ const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
 
   const windowState = {
     WindowMaximized: isWindowMaximized,
-    TextAreaWordWrap: textAreaWordWrap
+    [appClasses.withMaximized]: isWindowMaximized,
+    [appClasses.withNotMaximized]: !isWindowMaximized,
+    TextAreaWordWrap: textAreaWordWrap,
+    [appClasses.withTextAreaWordWrap]: textAreaWordWrap
   }
+
+  const classNames = clsx(
+    "AppRoot",
+    appClasses.root,
+    (titlebarStyle === AppTitleBarStyle.Tabbar) ? appClasses.withTabbar : null,
+    windowState
+  )
 
   useEffect(() => {
     const disableContextMenu = () => {
@@ -44,7 +55,7 @@ const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   }, [])
 
   return (
-    <div className={clsx("AppRoot", appClasses.root, titlebarStyle, windowState)}>
+    <div className={classNames}>
       {children}
     </div>
   )

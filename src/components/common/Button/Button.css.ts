@@ -17,6 +17,7 @@ export const buttonCss = style({
   color: styleTokens.textColor,
   wordBreak: "keep-all",
   whiteSpace: "nowrap",
+  gap: 7,
   ":hover": {
     borderColor: styleTokens.buttonBorderColorHover,
     background: styleTokens.buttonBackgroundColorHover
@@ -30,6 +31,5 @@ export const buttonCss = style({
 
 globalStyle(`${buttonCss} img`, {
   width: "13px",
-  marginRight: "7px",
   filter: styleTokens.iconColorFilter
 })

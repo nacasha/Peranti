@@ -18,7 +18,7 @@ export const Button: FC<ButtonProps> = (props) => {
       {...restProps}
     >
       {icon && <img src={icon} alt={children?.toString()} />}
-      {children}
+      {children ?? null}
     </button>
   )
 }

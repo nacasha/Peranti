@@ -37,9 +37,10 @@
 
   .MermaidOutputZoomableSVG-actions {
     display: flex;
-    gap: 10px;
+    gap: 5px;
     padding: 10px;
     position: absolute;
+    bottom: 0;
     z-index: 1;
   }
 

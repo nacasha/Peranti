@@ -6,7 +6,7 @@ import { AppTitleBarStyle } from "src/enums/app-titlebar-style"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
 
-import "./AppTitlebar.scss"
+import { appTitlebarClasses } from "./AppTitlebar.css"
 
 export const AppTitlebar: FC = () => {
   const titlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
@@ -17,15 +17,9 @@ export const AppTitlebar: FC = () => {
   }
 
   return (
-    <div className="AppTitlebar" data-tauri-drag-region>
-      <div style={{ flex: 1, height: "100%" }} data-tauri-drag-region></div>
-
-      {!showSessionTabbar && (
-        <>
-          <div />
-          <AppletSearchBar />
-        </>
-      )}
+    <div className={appTitlebarClasses.root} data-tauri-drag-region>
+      <div />
+      <AppletSearchBar />
 
       <WindowControls />
     </div>

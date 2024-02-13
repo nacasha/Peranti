@@ -1,8 +1,8 @@
-import { createGlobalThemeContract, createTheme } from "@vanilla-extract/css"
+import { createTheme } from "@vanilla-extract/css"
 
 import { themeableTokens } from "../styleTokens.css"
 
-export const lightThemeClass = createTheme(createGlobalThemeContract(themeableTokens), {
+export const lightThemeClass = createTheme(themeableTokens, {
   borderColor: "#cbcccd",
   textColor: "#0f0f0f",
   iconColorFilter: "invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%)",

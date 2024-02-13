@@ -1,5 +1,5 @@
 import { type ClassValue, clsx } from "clsx"
-import { memo, type FC, type ReactNode } from "react"
+import { type FC, type ReactNode } from "react"
 
 import "./ToolSidebarItem.scss"
 
@@ -11,7 +11,7 @@ interface ToolSidebarItemProps {
   className?: ClassValue
 }
 
-export const ToolSidebarItem: FC<ToolSidebarItemProps> = memo((props) => {
+export const ToolSidebarItem: FC<ToolSidebarItemProps> = (props) => {
   const { children, onClick, onDoubleClick, active, className } = props
 
   return (
@@ -23,6 +23,4 @@ export const ToolSidebarItem: FC<ToolSidebarItemProps> = memo((props) => {
       {children}
     </div>
   )
-}, (prevProps, nextProps) => {
-  return prevProps.active === nextProps.active
-})
+}

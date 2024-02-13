@@ -3,7 +3,7 @@ import { type FC } from "react"
 import { Icons } from "src/constants/icons"
 import { windowManager } from "src/services/window-manager"
 
-import "./WindowControls.scss"
+import { windowControlsClasses } from "./WindowControls.css"
 
 export const WindowControls: FC = () => {
   const handleClickMinimize = () => {
@@ -17,21 +17,21 @@ export const WindowControls: FC = () => {
   }
 
   return (
-    <div className="WindowControls" data-tauri-drag-region>
+    <div className={windowControlsClasses.root} data-tauri-drag-region>
       <div
-        className="WindowControls-button"
+        className={windowControlsClasses.button}
         onClick={handleClickMinimize}
       >
         <img src={Icons.Minimize} alt="Minimize" />
       </div>
       <div
-        className="WindowControls-button"
+        className={windowControlsClasses.button}
         onClick={handleClickMaximize}
       >
         <img src={Icons.Box} alt="Maximize" />
       </div>
       <div
-        className="WindowControls-button"
+        className={windowControlsClasses.button}
         onClick={handleClickClose}
       >
         <img src={Icons.Close} alt="Close" />

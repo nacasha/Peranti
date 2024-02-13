@@ -31,6 +31,7 @@
     "@uiw/codemirror-theme-monokai-dimmed": "^4.21.21",
     "@uiw/react-codemirror": "^4.21.21",
     "@vanilla-extract/css": "^1.14.1",
+    "@vanilla-extract/dynamic": "^2.1.0",
     "axios": "^1.6.5",
     "axios-tauri-api-adapter": "^0.2.1",
     "clsx": "^2.0.0",

@@ -1,5 +1,5 @@
 import { clsx } from "clsx"
-import { memo, type FC, type FormEventHandler } from "react"
+import { type FC, type FormEventHandler } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
@@ -10,7 +10,7 @@ interface AppletComponentAreaInputProps {
   className?: string
 }
 
-export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = memo((props) => {
+export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = (props) => {
   const { className } = props
 
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
@@ -43,6 +43,4 @@ export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = memo(
       ))}
     </form>
   )
-}, (prevProps, nextProps) => {
-  return prevProps.className === nextProps.className
-})
+}

@@ -24,6 +24,14 @@ export const appClasses = {
     WebkitTextSizeAdjust: "100%"
   }),
 
+  withTabbar: style({}),
+
+  withMaximized: style({}),
+
+  withNotMaximized: style({}),
+
+  withTextAreaWordWrap: style({}),
+
   container: style({
     display: "flex",
     height: "100%",

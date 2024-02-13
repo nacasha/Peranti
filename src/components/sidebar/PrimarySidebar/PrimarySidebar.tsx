@@ -1,6 +1,6 @@
 import { clsx } from "clsx"
 import { observer } from "mobx-react"
-import { memo, type FC } from "react"
+import { type FC } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
 import SimpleBar from "simplebar-react"
 import { useLocation } from "wouter"
@@ -41,7 +41,7 @@ export const PrimarySidebar = observer(() => {
   )
 })
 
-const PrimarySidebarBody: FC = memo(() => {
+const PrimarySidebarBody: FC = () => {
   const sidebarActiveMenuId = useSelector(() => interfaceStore.sidebarActiveMenuId)
   let Component: FC | undefined
 
@@ -55,4 +55,4 @@ const PrimarySidebarBody: FC = memo(() => {
     return <Component />
   }
   return null
-}, () => true)
+}

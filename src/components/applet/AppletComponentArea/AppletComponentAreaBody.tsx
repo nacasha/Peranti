@@ -1,5 +1,4 @@
-import fastDeepEqual from "fast-deep-equal"
-import { memo, type FC } from "react"
+import { type FC } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 
 import { AppletComponentAreaInput } from "./AppletComponentAreaInput.tsx"
@@ -10,7 +9,7 @@ interface AppletComponentAreaBodyProps {
   className?: string
 }
 
-export const AppletComponentAreaBody: FC<AppletComponentAreaBodyProps> = memo((props) => {
+export const AppletComponentAreaBody: FC<AppletComponentAreaBodyProps> = (props) => {
   const { hidden, className } = props
 
   if (hidden) {
@@ -23,4 +22,4 @@ export const AppletComponentAreaBody: FC<AppletComponentAreaBodyProps> = memo((p
       <AppletComponentAreaOutput className={className} />
     </ErrorBoundary>
   )
-}, fastDeepEqual)
+}

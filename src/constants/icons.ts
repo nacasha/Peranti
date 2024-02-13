@@ -5,6 +5,7 @@ import Clean from "src/assets/icons/clean.svg"
 import Close from "src/assets/icons/close.svg"
 import Documents from "src/assets/icons/documents.svg"
 import Download from "src/assets/icons/download.svg"
+import FullScreen from "src/assets/icons/fullscreen.svg"
 import Gear from "src/assets/icons/gear.svg"
 import Hash from "src/assets/icons/hash.svg"
 import History from "src/assets/icons/history.svg"
@@ -12,6 +13,7 @@ import Home from "src/assets/icons/home.svg"
 import Layers2 from "src/assets/icons/layers-2.svg"
 import Layers from "src/assets/icons/layers.svg"
 import Minimize from "src/assets/icons/minimize.svg"
+import Minus from "src/assets/icons/minus.svg"
 import Newspaper from "src/assets/icons/newspaper.svg"
 import PanelLeft from "src/assets/icons/panel-left.svg"
 import Plus from "src/assets/icons/plus.svg"
@@ -41,6 +43,7 @@ export const Icons = {
   Download,
   Gear,
   Hash,
+  FullScreen,
   History,
   Home,
   Layers,
@@ -51,6 +54,7 @@ export const Icons = {
   Plus,
   Refresh,
   Reset,
+  Minus,
   Restore,
   Run,
   RunFilled,

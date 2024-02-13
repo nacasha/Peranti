@@ -1,5 +1,5 @@
 import { clsx } from "clsx"
-import { memo, type FC } from "react"
+import { type FC } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
@@ -10,7 +10,7 @@ interface AppletComponentAreaOutpuProps {
   className?: string
 }
 
-export const AppletComponentAreaOutput: FC<AppletComponentAreaOutpuProps> = memo((props) => {
+export const AppletComponentAreaOutput: FC<AppletComponentAreaOutpuProps> = (props) => {
   const { className } = props
 
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
@@ -31,6 +31,4 @@ export const AppletComponentAreaOutput: FC<AppletComponentAreaOutpuProps> = memo
       ))}
     </div>
   )
-}, (prevProps, nextProps) => {
-  return prevProps.className === nextProps.className
-})
+}

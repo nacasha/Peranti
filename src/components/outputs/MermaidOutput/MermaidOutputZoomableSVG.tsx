@@ -2,6 +2,7 @@ import { type FC, useEffect, useState, useMemo, useCallback, useRef } from "reac
 import { TransformWrapper, TransformComponent, type ReactZoomPanPinchContentRef } from "react-zoom-pan-pinch"
 
 import { Button } from "src/components/common/Button"
+import { Icons } from "src/constants/icons"
 
 interface TransformState {
   translateX: number | undefined
@@ -177,15 +178,9 @@ const Controls = (props: { controls: ReactZoomPanPinchContentRef, resetValue: [n
 
   return (
     <div className="MermaidOutputZoomableSVG-actions">
-      <Button onClick={handleZoomIn}>
-        Zoom In
-      </Button>
-      <Button onClick={handleZoomOut}>
-        Zoom Out
-      </Button>
-      <Button onClick={handleResetZoom}>
-        Reset Zoom
-      </Button>
+      <Button icon={Icons.Plus} onClick={handleZoomIn} />
+      <Button icon={Icons.Minus} onClick={handleZoomOut} />
+      <Button icon={Icons.FullScreen} onClick={handleResetZoom} />
     </div>
   )
 }

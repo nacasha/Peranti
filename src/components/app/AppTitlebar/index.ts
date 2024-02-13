@@ -1,1 +1,1 @@
-export { AppTitlebar } from "./AppTitlebar"
+export { AppTitlebar } from "./AppTitlebar.tsx"

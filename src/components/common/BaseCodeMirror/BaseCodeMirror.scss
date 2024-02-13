@@ -6,6 +6,7 @@
   overflow: hidden;
   transition: all var(--transition-speed);
   min-height: 150px;
+  background-color: var(--input-output-background-color);
 
   .cm-theme {
     position: absolute;

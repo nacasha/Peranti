@@ -1,6 +1,6 @@
 import { createGlobalThemeContract } from "@vanilla-extract/css"
 
-export const globalTokens = {
+const _globalTokens = {
   /**
    * General
    */
@@ -31,6 +31,7 @@ export const globalTokens = {
    * App titlebar
    */
   appTitlebarHeight: "app-titlebar-height",
+  appTitlebarBackgroundColor: "app-titlebar-background-color",
 
   /**
    * Window controls button
@@ -48,6 +49,7 @@ export const globalTokens = {
    */
   sessionTabbarHeight: "session-tabbar-height",
   sessionTabbarItemMaxWidth: "session-tabbar-item-max-width",
+  sessionTabbarDraggableHeight: "session-tabbar-draggable-height",
 
   /**
    * Activitybar
@@ -79,7 +81,7 @@ export const globalTokens = {
   contexifyItemContentPadding: "contexify-itemContent-padding"
 }
 
-export const themeableTokens = {
+const _themeableTokens = {
   /**
    * General
    */
@@ -179,4 +181,8 @@ export const themeableTokens = {
   scrollbarThumbBorderRadius: "scrollbat-thumb-border-radius"
 }
 
-export const styleTokens = createGlobalThemeContract({ ...themeableTokens, ...globalTokens })
+export const themeableTokens = createGlobalThemeContract(_themeableTokens)
+
+export const globalTokens = createGlobalThemeContract(_globalTokens)
+
+export const styleTokens = createGlobalThemeContract({ ..._themeableTokens, ..._globalTokens })
