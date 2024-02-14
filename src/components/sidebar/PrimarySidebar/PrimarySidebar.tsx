@@ -5,6 +5,7 @@ import useOnclickOutside from "react-cool-onclickoutside"
 import SimpleBar from "simplebar-react"
 import { useLocation } from "wouter"
 
+import { activityBarClasses } from "src/components/activity-bar/ActivityBar/ActivityBar.css"
 import { ClosedEditorSidebar } from "src/components/sidebar-contents/ClosedEditorSidebar"
 import { ToolSidebar } from "src/components/sidebar-contents/ToolSidebar"
 import { SidebarMode } from "src/enums/sidebar-mode"
@@ -21,7 +22,7 @@ export const PrimarySidebar = observer(() => {
       interfaceStore.hideSidebar()
     }
   }, {
-    ignoreClass: ["ActivityBar", "PrimarySidebar"]
+    ignoreClass: [activityBarClasses.root, "PrimarySidebar"]
   })
 
   const [location] = useLocation()

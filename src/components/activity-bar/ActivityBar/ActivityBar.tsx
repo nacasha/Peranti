@@ -14,19 +14,16 @@ export const ActivityBar = () => {
           icon={Icons.Thunder}
           label="Tools"
           menuId="tools"
-          href="/"
         />
         <ActivityBarItem
           icon={Icons.ThreeLineVertical}
           label="Pipelines"
           menuId="pipelines"
-          href="/"
         />
         <ActivityBarItem
           icon={Icons.History}
           label="Closed Editor"
           menuId="history"
-          href="/"
         />
       </div>
 
@@ -35,6 +32,7 @@ export const ActivityBar = () => {
           icon={Icons.Search}
           label="Search"
           menuId="search"
+          clickHideOnFloatingSidebar
           onClick={() => {
             commandbarService.open()
           }}
@@ -44,6 +42,7 @@ export const ActivityBar = () => {
           label="Settings"
           menuId="settings"
           appletConstructor={settingsTool}
+          clickHideOnFloatingSidebar
         />
       </div>
     </div>

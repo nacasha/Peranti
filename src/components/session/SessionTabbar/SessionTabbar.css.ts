@@ -35,10 +35,6 @@ const innerSimplebar = style({
   width: "100%"
 })
 
-globalStyle(`${innerSimplebar} .simplebar-content`, {
-  display: "flex"
-})
-
 const itemSession = style({
   display: "flex",
   height: styleTokens.sessionTabbarHeight,
@@ -179,6 +175,19 @@ globalStyle(`${root} .simplebar-offset::after`, {
   right: "0",
   bottom: "0",
   zIndex: 6
+})
+
+globalStyle(`${root} .simplebar-offset`, {
+  display: "flex"
+})
+
+globalStyle(`${root} .simplebar-offset .simplebar-content-wrapper`, {
+  flex: 1
+})
+
+globalStyle(`${root} .simplebar-content`, {
+  display: "flex",
+  height: "100%"
 })
 
 export const sessionTabbarClasses = {
