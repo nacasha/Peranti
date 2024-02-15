@@ -5,7 +5,7 @@ import { useContextMenu } from "react-contexify"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
-import { componentService } from "src/services/component-manager"
+import { appletComponentService } from "src/services/applet-component-service"
 import { type AppletInput } from "src/types/AppletInput"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
@@ -24,7 +24,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   const isBatchModeEnabled = useSelector(() => activeApplet.isBatchModeEnabled)
   const batchModeInputKey = useSelector(() => activeApplet.batchModeInputKey)
 
-  const inputComponent = componentService.getInputComponent(appletInput.component, isBatchModeEnabled)
+  const inputComponent = appletComponentService.getInputComponent(appletInput.component, isBatchModeEnabled)
   const Component: FC<InputComponentProps<any>> = inputComponent.component
 
   const handleSUbmit = (val: unknown) => {

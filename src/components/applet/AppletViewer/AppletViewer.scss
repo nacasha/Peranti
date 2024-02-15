@@ -72,7 +72,9 @@ $sidebar-width: 180px;
 }
 
 .AppletSidebarItem {
-  // border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .AppletSidebarItem-label {

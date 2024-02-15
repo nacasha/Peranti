@@ -1,5 +1,5 @@
 import { type Component } from "src/models/Component.ts"
-import { type componentService } from "src/services/component-manager.ts"
+import { type appletComponentService } from "src/services/applet-component-service.ts"
 
 import { type OutputComponentProps } from "./OutputComponentProps.ts"
 
@@ -16,32 +16,32 @@ export type AppletOutput<K extends Record<string, string> = any> = {
   props?: any
 } | {
   component: "Text"
-  props?: ExtractOutputComponentProps<typeof componentService.outputs.Text>
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Text>
 } | {
   component: "TextArea"
-  props?: ExtractOutputComponentProps<typeof componentService.outputs.TextArea>
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.TextArea>
 } | {
   component: "GridStat"
-  props?: ExtractOutputComponentProps<typeof componentService.outputs.GridStat>
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.GridStat>
 } | {
   component: "Diff"
-  props?: ExtractOutputComponentProps<typeof componentService.outputs.Diff>
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Diff>
 } | {
   component: "Image"
-  props?: ExtractOutputComponentProps<typeof componentService.outputs.Image>
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Image>
 } | {
   component: "File"
-  props?: ExtractOutputComponentProps<typeof componentService.outputs.File>
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.File>
 } | {
   component: "Code"
-  props?: ExtractOutputComponentProps<typeof componentService.outputs.Code>
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Code>
 } | {
   component: "Markdown"
-  props?: ExtractOutputComponentProps<typeof componentService.outputs.Markdown>
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Markdown>
 } | {
   component: "IFrame"
-  props?: ExtractOutputComponentProps<typeof componentService.outputs.IFrame>
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.IFrame>
 } | {
   component: "Mermaid"
-  props?: ExtractOutputComponentProps<typeof componentService.outputs.Mermaid>
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Mermaid>
 })

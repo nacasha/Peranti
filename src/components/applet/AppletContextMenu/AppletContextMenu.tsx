@@ -5,8 +5,8 @@ import { ContextMenu } from "src/components/common/ContextMenu"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { type Component } from "src/models/Component"
 import { activeAppletStore } from "src/services/active-applet-store"
+import { appletComponentService } from "src/services/applet-component-service"
 import { ClipboardService } from "src/services/clipboard-service"
-import { componentService } from "src/services/component-manager"
 import { fileService } from "src/services/file-service"
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOutput } from "src/types/AppletOutput"
@@ -86,7 +86,7 @@ export const AppletContextMenu: FC = () => {
     const { appletInput, component } = itemParams.props ?? {}
 
     if (appletInput && component) {
-      const fileContent = await componentService.openFileAndReadFromComponent(component)
+      const fileContent = await appletComponentService.openFileAndReadFromComponent(component)
 
       if (fileContent) {
         activeAppletStore.getActiveApplet().setInputValue(appletInput.key, fileContent)

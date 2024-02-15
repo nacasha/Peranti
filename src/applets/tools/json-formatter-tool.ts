@@ -17,42 +17,31 @@ const jsonFormatter: AppletConstructor<InputFields, OutputFields> = {
   name: "JSON Formatter",
   description: "JSON Format/Minify/Pretty/Beautify",
   category: "JSON",
-  inputFields: (inputParams) => {
-    const additionalInput = {
-      key: "space",
-      label: "Spaces",
-      component: "Text",
-      defaultValue: "2",
-      skipValidateHasValue: true
-    } as any
-
-    return [
-      {
-        key: "type",
-        label: "Mode",
-        component: "Switch",
-        defaultValue: "pretty",
-        skipValidateHasValue: true,
-        props: {
-          options: [
-            { value: "minify", label: "Minify" },
-            { value: "pretty", label: "Pretty" }
-          ]
-        }
-      },
-      ...(inputParams.type === "pretty" ? [additionalInput] : []),
-      {
-        key: "input",
-        label: "Input",
-        component: "Code",
-        defaultValue: "",
-        props: {
-          language: "json",
-          autoFocus: true
-        }
+  inputFields: [
+    {
+      key: "type",
+      label: "Mode",
+      component: "Switch",
+      defaultValue: "pretty",
+      skipValidateHasValue: true,
+      props: {
+        options: [
+          { value: "minify", label: "Minify" },
+          { value: "pretty", label: "Pretty" }
+        ]
       }
-    ]
-  },
+    },
+    {
+      key: "input",
+      label: "Input",
+      component: "Code",
+      defaultValue: "",
+      props: {
+        language: "json",
+        autoFocus: true
+      }
+    }
+  ],
   outputFields: [
     {
       key: "output",
@@ -66,13 +55,31 @@ const jsonFormatter: AppletConstructor<InputFields, OutputFields> = {
   options: [
     {
       key: "indentation",
-      label: "Indentation",
-      type: "Select"
+      label: "Pretty Indentation",
+      component: "Select",
+      props: {
+        options: [
+          { label: "Space", value: "space" },
+          { label: "Tab", value: "tab" }
+        ]
+      }
     },
     {
       key: "size",
-      label: "Size",
-      type: "Text"
+      label: "Indent Size",
+      component: "Select",
+      props: {
+        options: [
+          { label: "1", value: "1" },
+          { label: "2", value: "2" },
+          { label: "3", value: "3" },
+          { label: "4", value: "4" },
+          { label: "5", value: "5" },
+          { label: "6", value: "6" },
+          { label: "7", value: "7" },
+          { label: "8", value: "8" }
+        ]
+      }
     }
   ],
   action: (inputParams) => {

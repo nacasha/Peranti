@@ -27,7 +27,7 @@ export interface AppletConstructor<IF extends Record<string, any> = any, OF exte
   options?: Array<{
     key: string
     label: string
-    type: any
+    component: any
     props?: any
   }>
 }

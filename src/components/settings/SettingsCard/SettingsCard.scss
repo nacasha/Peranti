@@ -27,18 +27,9 @@
   .SettingsCardItem-text {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    line-height: 14px;
-  }
-
-  .SettingsCardItem-label {
-    font-weight: 500;
-    font-size: 14px;
   }
 
   .SettingsCardItem-description {
-    font-weight: 400;
-    font-size: 13px;
     opacity: 0.8;
   }
 

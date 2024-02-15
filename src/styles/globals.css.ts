@@ -42,6 +42,7 @@ createGlobalTheme("body", globalTokens, {
   fontFamily: "Inter, serif",
   fontMono: "Consolas, monospace, serif",
   fontSize: "13px",
+  fontWeight: "500",
 
   // Colors
   colorAccent: "#275efe",
@@ -82,7 +83,7 @@ createGlobalTheme("body", globalTokens, {
 
   // Input and output component styles
   inputOutputFieldsSpacing: "15px",
-  inputOutputLabelHeight: "13px",
+  inputOutputLabelHeight: "20px",
   inputOutputLabelSpacing: "10px",
   inputOutputPadding: "7px",
   inputOutputFontSize: "14px",

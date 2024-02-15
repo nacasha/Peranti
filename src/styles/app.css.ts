@@ -1,4 +1,4 @@
-import { style } from "@vanilla-extract/css"
+import { globalStyle, style } from "@vanilla-extract/css"
 
 import { styleTokens } from "./styleTokens.css"
 
@@ -15,7 +15,7 @@ export const appClasses = {
     fontFamily: styleTokens.fontFamily,
     fontSize: styleTokens.fontSize,
     lineHeight: "24px",
-    fontWeight: "400",
+    fontWeight: styleTokens.fontWeight,
 
     fontSynthesis: "none",
     textRendering: "optimizeLegibility",
@@ -50,3 +50,7 @@ export const appClasses = {
     backgroundColor: styleTokens.backgroundContent
   })
 }
+
+globalStyle(`${appClasses.root} *`, {
+  outline: "none"
+})

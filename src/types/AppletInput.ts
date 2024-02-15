@@ -1,5 +1,5 @@
 import { type Component } from "src/models/Component.ts"
-import { type componentService } from "src/services/component-manager.ts"
+import { type appletComponentService } from "src/services/applet-component-service.ts"
 
 import { type InputComponentProps } from "./InputComponentProps.ts"
 
@@ -7,7 +7,7 @@ type ExtractInputComponentProps<T> = T extends Component<React.FC<infer P>>
   ? Omit<P, keyof InputComponentProps>
   : never
 
-export type AppletInput<K extends Record<string, string> = any> = {
+export type AppletInput<K extends Record<string, string> | any = any> = {
   key: Extract<keyof K, string>
   label: string
   defaultValue: any
@@ -15,26 +15,26 @@ export type AppletInput<K extends Record<string, string> = any> = {
   skipValidateHasValue?: boolean
 } & ({
   component: "Text"
-  props?: ExtractInputComponentProps<typeof componentService.inputs.Text>
+  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Text>
 } | {
   component: "TextArea"
-  props?: ExtractInputComponentProps<typeof componentService.inputs.TextArea>
+  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.TextArea>
 } | {
   component: "Switch"
-  props?: ExtractInputComponentProps<typeof componentService.inputs.Switch>
+  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Switch>
 } | {
   component: "Run"
-  props?: ExtractInputComponentProps<typeof componentService.inputs.Run>
+  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Run>
 } | {
   component: "Checkbox"
-  props?: ExtractInputComponentProps<typeof componentService.inputs.Checkbox>
+  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Checkbox>
 } | {
   component: "Select"
-  props?: ExtractInputComponentProps<typeof componentService.inputs.Select>
+  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Select>
 } | {
   component: "File"
-  props?: ExtractInputComponentProps<typeof componentService.inputs.File>
+  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.File>
 } | {
   component: "Code"
-  props?: ExtractInputComponentProps<typeof componentService.inputs.Code>
+  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Code>
 })

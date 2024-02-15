@@ -3,7 +3,7 @@ import toast from "react-hot-toast"
 
 import { FileDropAction } from "src/enums/file-drop-action.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
-import { componentService } from "src/services/component-manager.js"
+import { appletComponentService } from "src/services/applet-component-service.js"
 import { getFileNameFromPath } from "src/utils/get-file-name-from-path.js"
 
 import { activeAppletStore } from "./active-applet-store.js"
@@ -71,11 +71,11 @@ class FileDropService {
     }
 
     const { key: inputFieldKey, component } = inputFields[0]
-    const inputComponent = componentService.getInputComponent(component, isAvailableOnBatchMode)
+    const inputComponent = appletComponentService.getInputComponent(component, isAvailableOnBatchMode)
     const fileName = getFileNameFromPath(filePath)
 
     try {
-      const fileContent = await componentService.readFileFromComponent(inputComponent, filePath)
+      const fileContent = await appletComponentService.readFileFromComponent(inputComponent, filePath)
 
       if (fileContent) {
         const sessionName = this.droppedFileReplaceSessionName ? fileName : undefined

@@ -13,6 +13,7 @@ const _globalTokens = {
   fontFamily: "font-family",
   fontMono: "font-family-mono",
   fontSize: "font-size",
+  fontWeight: "font-weight",
 
   /**
    * Colors

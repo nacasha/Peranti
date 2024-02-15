@@ -5,8 +5,8 @@ import toast from "react-hot-toast"
 
 import { StorageKeys } from "src/constants/storage-keys"
 import { AppletType } from "src/enums/applet-type"
+import { appletComponentService } from "src/services/applet-component-service"
 import { appletStore } from "src/services/applet-store"
-import { componentService } from "src/services/component-manager"
 import { rustInvokerService } from "src/services/rust-invoker-service"
 import { sessionStore } from "src/services/session-store"
 import { StorageManager } from "src/services/storage-manager"
@@ -92,7 +92,12 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
   readonly samples: Array<Partial<IF> | (() => Partial<IF>)> = []
 
-  readonly options: any[] = []
+  readonly options: Array<{
+    key: string
+    label: string
+    component: any
+    props?: any
+  }> = []
 
   readonly description: string = ""
 
@@ -327,7 +332,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
         hasAllowBatch = true
       }
 
-      const inputToCompare = componentService.getInputComponent(inputField.component)
+      const inputToCompare = appletComponentService.getInputComponent(inputField.component)
       return !!inputToCompare.readFileAs
     })
 
@@ -340,7 +345,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
     }
 
     const filteredBatchInputFields = inputFields.filter((inputField) => {
-      const inputToCompare = componentService.getInputComponent(inputField.component, true)
+      const inputToCompare = appletComponentService.getInputComponent(inputField.component, true)
 
       return !!inputToCompare.readFileAs
     })

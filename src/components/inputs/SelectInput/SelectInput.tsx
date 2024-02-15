@@ -5,8 +5,13 @@ import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./SelectInput.scss"
 
+interface Option<T = any> {
+  label: string
+  value: T
+}
+
 interface SelectInputProps<T extends string> extends InputComponentProps<T> {
-  options?: Array<{ value: T, label: string }>
+  options?: Array<Option<T>>
 }
 
 export const SelectInput: <T extends string>(props: SelectInputProps<T>) => JSX.Element = (props) => {
@@ -20,9 +25,19 @@ export const SelectInput: <T extends string>(props: SelectInputProps<T>) => JSX.
   return (
     <div className="SelectInput">
       <ComponentLabel label={label} />
-      <select disabled={readOnly} id={id} onChange={onChange} defaultValue={defaultValue}>
+      <select
+        id={id}
+        disabled={readOnly}
+        onChange={onChange}
+        defaultValue={defaultValue}
+      >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>{option.label}</option>
+          <option
+            key={option.value}
+            value={option.value}
+          >
+            {option.label}
+          </option>
         ))}
       </select>
     </div>

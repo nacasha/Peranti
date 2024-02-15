@@ -27,7 +27,10 @@ import { getFileNameFromPath } from "src/utils/get-file-name-from-path.js"
 
 import { fileService } from "./file-service.js"
 
-class ComponentService {
+class AppletComponentService {
+  /**
+   * List of input components
+   */
   readonly inputs = {
     Checkbox: new Component({
       component: CheckboxInput
@@ -72,6 +75,9 @@ class ComponentService {
     })
   }
 
+  /**
+   * List of ouptut components
+   */
   readonly outputs = {
     Code: new Component({
       component: CodeOutput,
@@ -128,6 +134,13 @@ class ComponentService {
     })
   }
 
+  /**
+   * Get input component or its batch mode component
+   *
+   * @param componentName
+   * @param isBatchComponent
+   * @returns
+   */
   getInputComponent(componentName: keyof typeof this.inputs, isBatchComponent: boolean = false) {
     const inputComponent = this.inputs[componentName]
     const batchInputComponent = this.inputs[inputComponent.batchComponent as keyof typeof this.inputs]
@@ -135,6 +148,27 @@ class ComponentService {
     return isBatchComponent ? batchInputComponent : inputComponent
   }
 
+  /**
+   * Get output component or its batch mode component
+   *
+   * @param componentName
+   * @param isBatchComponent
+   * @returns
+   */
+  getOutputComponent(componentName: keyof typeof this.outputs, isBatchComponent: boolean = false) {
+    const outputComponent = this.outputs[componentName]
+    const batchOutputComponent = this.outputs[outputComponent.batchComponent as keyof typeof this.outputs]
+
+    return isBatchComponent ? batchOutputComponent : outputComponent
+  }
+
+  /**
+   * Read file as content based on component type
+   *
+   * @param component
+   * @param filePath
+   * @returns
+   */
   async readFileFromComponent(component: Component, filePath: string) {
     const readFileAs = component.readFileAs
     const fileName = getFileNameFromPath(filePath)
@@ -152,6 +186,13 @@ class ComponentService {
     }
   }
 
+  /**
+   * Open OS file picker / manager to choose file, and open the file as content
+   * based on component type
+   *
+   * @param component
+   * @returns
+   */
   async openFileAndReadFromComponent(component: Component) {
     const selectedFilePath = await open()
 
@@ -159,13 +200,6 @@ class ComponentService {
       return await this.readFileFromComponent(component, selectedFilePath)
     }
   }
-
-  getOutputComponent(componentName: keyof typeof this.outputs, isBatchComponent: boolean = false) {
-    const outputComponent = this.outputs[componentName]
-    const batchOutputComponent = this.outputs[outputComponent.batchComponent as keyof typeof this.outputs]
-
-    return isBatchComponent ? batchOutputComponent : outputComponent
-  }
 }
 
-export const componentService = new ComponentService()
+export const appletComponentService = new AppletComponentService()

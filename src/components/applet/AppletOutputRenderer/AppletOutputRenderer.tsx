@@ -5,7 +5,7 @@ import { useContextMenu } from "react-contexify"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
-import { componentService } from "src/services/component-manager"
+import { appletComponentService } from "src/services/applet-component-service"
 import { type AppletOutput } from "src/types/AppletOutput"
 import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
 
@@ -24,7 +24,7 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
 
   const initialState = activeApplet.outputFieldsState[appletOutput.key]
 
-  const outputComponent = componentService.getOutputComponent(appletOutput.component, isBatchModeEnabled)
+  const outputComponent = appletComponentService.getOutputComponent(appletOutput.component, isBatchModeEnabled)
   const Component: FC<OutputComponentProps<any>> = outputComponent.component
 
   const handleStateChange = (state: unknown) => {
