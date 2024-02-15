@@ -92,6 +92,10 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
   readonly samples: Array<Partial<IF> | (() => Partial<IF>)> = []
 
+  readonly options: any[] = []
+
+  readonly description: string = ""
+
   /**
    * Indicates that the applet has input values overridden by preset
    */
@@ -135,6 +139,8 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
     this.hideOnSidebar = appletConstructor.hideOnSidebar ?? false
     this.hasOverriddenDefaultState = appletConstructor.hasOverriddenDefaultState ?? false
     this.inputValues = this.getInputValuesWithDefault()
+    this.options = appletConstructor.options ?? []
+    this.description = appletConstructor.description ?? ""
 
     if (this.autoRun) {
       this.isAutoRunAndFirstTime = true

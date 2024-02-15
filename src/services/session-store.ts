@@ -9,10 +9,10 @@ import { StorageManager } from "src/services/storage-manager.ts"
 import { type AppletConstructor } from "src/types/AppletConstructor.ts"
 import { type Session } from "src/types/Session.ts"
 import { type SessionHistory } from "src/types/SessionHistory.ts"
-import { getUserSettings, watchUserSettings } from "src/utils/decorators.ts"
 
 import { activeAppletStore } from "./active-applet-store.ts"
 import { sessionHistoryStore } from "./session-history-store.ts"
+import { userSettingsService } from "./user-settings-service.ts"
 
 class SessionStore {
   isInitialized: boolean = false
@@ -23,8 +23,8 @@ class SessionStore {
    */
   enableMultipleSession = true
 
-  @watchUserSettings(UserSettingsKeys.tabbarSeparateSessionForEachTool)
-  separateSessionForEachApplet = getUserSettings(
+  @userSettingsService.watch(UserSettingsKeys.tabbarSeparateSessionForEachTool)
+  separateSessionForEachApplet = userSettingsService.get(
     UserSettingsKeys.tabbarSeparateSessionForEachTool,
     false
   )
@@ -43,6 +43,7 @@ class SessionStore {
 
   constructor() {
     makeAutoObservable(this)
+    userSettingsService.watchStore(this)
   }
 
   setupPersistence() {

@@ -7,21 +7,22 @@ import { AppTitleBarStyle as AppTitlebarStyle } from "src/enums/app-titlebar-sty
 import { SidebarMode } from "src/enums/sidebar-mode"
 import { Theme } from "src/enums/theme"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
-import { watchUserSettings, getUserSettings } from "src/utils/decorators"
 import { getWindowSize } from "src/utils/get-window-size"
 
+import { userSettingsService } from "./user-settings-service.js"
+
 class InterfaceStore {
-  @watchUserSettings(UserSettingsKeys.theme)
-  theme: Theme = getUserSettings(UserSettingsKeys.theme, Theme.Dark)
+  @userSettingsService.watch(UserSettingsKeys.theme)
+  theme: Theme = userSettingsService.get(UserSettingsKeys.theme, Theme.Dark)
 
-  @watchUserSettings(UserSettingsKeys.floatingSidebar)
-  isFloatingSidebar = getUserSettings(UserSettingsKeys.floatingSidebar, false)
+  @userSettingsService.watch(UserSettingsKeys.floatingSidebar)
+  isFloatingSidebar = userSettingsService.get(UserSettingsKeys.floatingSidebar, false)
 
-  @watchUserSettings(UserSettingsKeys.titlebarStyle)
-  appTitlebarStyle = getUserSettings(UserSettingsKeys.titlebarStyle, AppTitlebarStyle.Commandbar)
+  @userSettingsService.watch(UserSettingsKeys.titlebarStyle)
+  appTitlebarStyle = userSettingsService.get(UserSettingsKeys.titlebarStyle, AppTitlebarStyle.Commandbar)
 
-  @watchUserSettings(UserSettingsKeys.textAreaWordWrap)
-  textAreaWordWrap = getUserSettings(UserSettingsKeys.textAreaWordWrap, false)
+  @userSettingsService.watch(UserSettingsKeys.textAreaWordWrap)
+  textAreaWordWrap = userSettingsService.get(UserSettingsKeys.textAreaWordWrap, false)
 
   isSidebarShow = true
 
@@ -38,6 +39,7 @@ class InterfaceStore {
 
     this.recalculateWindowSize()
     this.setupPersistence()
+    userSettingsService.watchStore(this)
   }
 
   setupPersistence() {
@@ -79,10 +81,7 @@ class InterfaceStore {
 
   toggleSidebarAlwaysFloating() {
     this.isFloatingSidebar = !this.isFloatingSidebar
-
-    if (!this.isFloatingSidebar) {
-      this.isSidebarShow = true
-    }
+    this.isSidebarShow = !this.isFloatingSidebar
   }
 
   setSidebarMenuId(menuId: string) {

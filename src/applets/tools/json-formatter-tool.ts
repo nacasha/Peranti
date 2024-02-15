@@ -15,6 +15,7 @@ interface OutputFields {
 const jsonFormatter: AppletConstructor<InputFields, OutputFields> = {
   appletId: "json-formatter",
   name: "JSON Formatter",
+  description: "JSON Format/Minify/Pretty/Beautify",
   category: "JSON",
   inputFields: (inputParams) => {
     const additionalInput = {
@@ -60,6 +61,18 @@ const jsonFormatter: AppletConstructor<InputFields, OutputFields> = {
       props: {
         language: "json"
       }
+    }
+  ],
+  options: [
+    {
+      key: "indentation",
+      label: "Indentation",
+      type: "Select"
+    },
+    {
+      key: "size",
+      label: "Size",
+      type: "Text"
     }
   ],
   action: (inputParams) => {

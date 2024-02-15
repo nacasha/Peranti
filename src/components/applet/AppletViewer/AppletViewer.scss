@@ -3,8 +3,8 @@ $sidebar-width: 180px;
 .AppletViewer {
   display: flex;
   flex: 1;
-  flex-direction: row;
   overflow: hidden;
+  background: var(--applet-viewer-background-color);
 }
 
 .AppletViewer-inner {
@@ -63,12 +63,18 @@ $sidebar-width: 180px;
     display: flex;
     flex-direction: column;
     overflow: auto;
-    width: 0;
-    min-width: 100%;
 
     .simplebar-content {
       min-height: 100%;
       display: flex;
     }
   }
+}
+
+.AppletSidebarItem {
+  // border-bottom: 1px solid var(--border-color);
+}
+
+.AppletSidebarItem-label {
+  font-weight: 600;
 }

@@ -3,10 +3,11 @@ import { createTheme } from "@vanilla-extract/css"
 import { themeableTokens } from "../styleTokens.css"
 
 export const darkThemeClass = createTheme(themeableTokens, {
-  borderColor: "#313131",
+  borderColor: "#2f2f2f",
   textColor: "#e0e0e0",
   iconColorFilter: "invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%)",
   colorOppositeColor: "#ffffff",
+  appTitlebarBackgroundColor: "#1a1b1d",
   buttonBackgroundColor: "#262626",
   buttonBackgroundColorHover: "#26282a",
   buttonBackgroundColorActive: "#1a1c1e",
@@ -19,6 +20,7 @@ export const darkThemeClass = createTheme(themeableTokens, {
   activitybarItemBackgroundColorHover: "#5a5b5e",
   activitybarItemBackgroundColorActive: "#434549",
   primarySidebarBackgroundColor: "#222429",
+  secondaySidebarBackgroundColor: "#222429",
   statusbarBackgroundColor: "#181818",
   inputOutputBackgroundColor: "#1e1e1e",
   inputOutputBorderColor: "var(--border-color)",
@@ -30,15 +32,15 @@ export const darkThemeClass = createTheme(themeableTokens, {
   sessionTabbarTextColor: "#939393",
   sessionTabbarTextColorActive: "white",
   appletHeaderBackgroundColor: "#181818",
-  appletViewerBackgroundColor: "#202124",
+  appletViewerBackgroundColor: "#1e1f22",
   toolSidebarTextColor: "#cfcfcf",
   toolSidebarTextColorActive: "#ffffff",
   toolSidebarIconColor: "invert(99%) sepia(3%) saturate(156%) hue-rotate(232deg) brightness(106%) contrast(62%)",
   toolSidebarIconColorActive: "invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%)",
   settingsViewBackgroundColor: "#202124",
-  settingsViewCardBackgroundColor: "#1f2023",
+  settingsViewCardBackgroundColor: "#202124",
   scrollbarTrackBackgroundColor: "transparent",
-  scrollbarThumbBackgroundColor: "393a3f",
+  scrollbarThumbBackgroundColor: "#393a3f",
   scrollbarThumbBackgroundColorHover: "#555",
   scrollbarThumbBorderRadius: "4px"
 })

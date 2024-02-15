@@ -7,6 +7,7 @@ export const lightThemeClass = createTheme(themeableTokens, {
   textColor: "#0f0f0f",
   iconColorFilter: "invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%)",
   colorOppositeColor: "#939393",
+  appTitlebarBackgroundColor: "#ffffff",
   buttonBackgroundColor: "linear-gradient(0deg, #f7f7f7 0%, #ffffff 100%)",
   buttonBackgroundColorHover: "#efefef",
   buttonBackgroundColorActive: "#ececec",
@@ -19,6 +20,7 @@ export const lightThemeClass = createTheme(themeableTokens, {
   activitybarItemBackgroundColorHover: "#dfdddd",
   activitybarItemBackgroundColorActive: "#d6d6d6",
   primarySidebarBackgroundColor: "#f6f8fa",
+  secondaySidebarBackgroundColor: "#ffffff",
   statusbarBackgroundColor: "#f6f6f6",
   inputOutputBackgroundColor: "#ffffff",
   inputOutputBorderColor: "var(--border-color)",
@@ -37,8 +39,8 @@ export const lightThemeClass = createTheme(themeableTokens, {
   toolSidebarIconColorActive: "invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%)",
   settingsViewBackgroundColor: "#f9f9fc",
   settingsViewCardBackgroundColor: "#ffffff",
-  scrollbarTrackBackgroundColor: "ffffff",
-  scrollbarThumbBackgroundColor: "8b8b8b",
+  scrollbarTrackBackgroundColor: "#ffffff",
+  scrollbarThumbBackgroundColor: "#8b8b8b",
   scrollbarThumbBackgroundColorHover: "#555",
   scrollbarThumbBorderRadius: "4px"
 })

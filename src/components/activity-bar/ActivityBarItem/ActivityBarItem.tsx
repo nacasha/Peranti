@@ -23,6 +23,7 @@ export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
   const { icon, label, menuId, href, appletConstructor, onClick, clickHideOnFloatingSidebar } = props
   const [, setLocation] = useLocation()
   const isActive = useSelector(() => interfaceStore.sidebarActiveMenuId === menuId)
+  const isFloatingSidebar = useSelector(() => interfaceStore.isFloatingSidebar)
 
   const onClickItem = () => () => {
     const oldActiveMenuId = interfaceStore.sidebarActiveMenuId
@@ -46,7 +47,7 @@ export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
       setLocation(href)
     }
 
-    if (clickHideOnFloatingSidebar) {
+    if (clickHideOnFloatingSidebar && isFloatingSidebar) {
       interfaceStore.hideSidebar()
     }
   }

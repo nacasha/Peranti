@@ -4,7 +4,7 @@ import { darkThemeClass } from "../themes/dark.theme.css"
 import { lightThemeClass } from "../themes/light.theme.css"
 
 globalStyle(`${lightThemeClass} .simplebar-scrollbar:before`, {
-  background: "rgba(0,0,0,0.5)"
+  background: "#878883"
 })
 
 globalStyle(`${darkThemeClass} .simplebar-scrollbar:before`, {

@@ -1,5 +1,6 @@
 import { Command } from "cmdk"
-import { type FC } from "react"
+import Fuse from "fuse.js"
+import { useState, type FC, useMemo, useEffect } from "react"
 
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { useSelector } from "src/hooks/useSelector"
@@ -8,11 +9,18 @@ import { commandbarService } from "src/services/commandbar-service"
 import { hotkeysStore } from "src/services/hotkeys-store"
 import { sessionStore } from "src/services/session-store"
 
+import "./Commandbar.css"
+
 import "./Commandbar.scss"
 
 export const Commandbar: FC = () => {
   const isOpen = useSelector(() => commandbarService.isOpen)
   const items = useSelector(() => commandbarService.items)
+
+  const [searchKeyword, setSearchKeyword] = useState("")
+  const fuse = useMemo(() => new Fuse(items, {
+    keys: ["label", "description"]
+  }), [items])
 
   const handleChange = (value: boolean) => {
     commandbarService.setIsOpen(value)
@@ -26,25 +34,42 @@ export const Commandbar: FC = () => {
     commandbarService.setIsOpen(false)
   }
 
+  const filteredItems = useMemo(() => {
+    return fuse.search(searchKeyword)
+  }, [searchKeyword, fuse])
+
   useHotkeysModified(hotkeysStore.keys.OPEN_COMMANDBAR, (event) => {
     event.preventDefault()
     commandbarService.setIsOpen(true)
   })
 
+  useEffect(() => {
+    setSearchKeyword("")
+  }, [isOpen])
+
   return (
-    <Command.Dialog open={isOpen} onOpenChange={handleChange}>
-      <Command.Input autoFocus placeholder="Type a command or search..." />
+    <Command.Dialog
+      open={isOpen}
+      onOpenChange={handleChange}
+      shouldFilter={false}
+    >
+      <Command.Input autoFocus value={searchKeyword} onValueChange={setSearchKeyword} />
       <Command.List>
         <Command.Empty>No results found.</Command.Empty>
-        {items.map(({ key, label, shortcut }) => {
+        {filteredItems.map((item) => {
+          const { key, label, description, shortcut } = item.item
+
           return (
-            <Command.Item
-              onSelect={handleSelectitem}
-              key={key}
-              value={key}
-            >
+            <Command.Item key={key} onSelect={handleSelectitem} value={key}>
               <div className="text">
-                {label}
+                <div className="title">
+                  {label}
+                </div>
+                {description && (
+                  <div className="description">
+                    {description}
+                  </div>
+                )}
               </div>
               {shortcut && (
                 <div>

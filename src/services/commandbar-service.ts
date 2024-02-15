@@ -5,7 +5,7 @@ import { appletStore } from "./applet-store.js"
 class CommandbarService {
   isOpen: boolean = false
 
-  items: Array<{ key: string, label: string, shortcut?: string[] }> = []
+  items: Array<{ key: string, label: string, description?: string, shortcut?: string[] }> = []
 
   constructor() {
     makeAutoObservable(this)
@@ -39,7 +39,8 @@ class CommandbarService {
     const items = appletStore.listOfLoadedApplets.map((appletConstructor) => {
       return {
         key: appletConstructor.appletId,
-        label: appletConstructor.name
+        label: appletConstructor.name,
+        description: appletConstructor.description
       }
     })
 

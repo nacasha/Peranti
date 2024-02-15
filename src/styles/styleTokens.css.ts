@@ -31,7 +31,6 @@ const _globalTokens = {
    * App titlebar
    */
   appTitlebarHeight: "app-titlebar-height",
-  appTitlebarBackgroundColor: "app-titlebar-background-color",
 
   /**
    * Window controls button
@@ -105,6 +104,11 @@ const _themeableTokens = {
   colorOppositeColor: "opposite-color",
 
   /**
+   * App Titlebar
+   */
+  appTitlebarBackgroundColor: "app-titlebar-background-color",
+
+  /**
    * Button
    */
   buttonBackgroundColor: "button-background-color",
@@ -125,6 +129,11 @@ const _themeableTokens = {
    * Primary sidebar
    */
   primarySidebarBackgroundColor: "primary-sidebar-background-color",
+
+  /**
+   * Secondary sidebar
+   */
+  secondaySidebarBackgroundColor: "secondary-sidebar-background-color",
 
   /**
    * Statusbar
@@ -169,16 +178,16 @@ const _themeableTokens = {
   /**
    * Settings view
    */
-  settingsViewBackgroundColor: "settings-view-background-color",
-  settingsViewCardBackgroundColor: "settings-view-card-background-color",
+  settingsViewBackgroundColor: "settings-background-color",
+  settingsViewCardBackgroundColor: "settings-card-background-color",
 
   /**
    * Srollbar
    */
   scrollbarTrackBackgroundColor: "scrollbar-track-background",
-  scrollbarThumbBackgroundColor: "scrollbat-thumb-background",
-  scrollbarThumbBackgroundColorHover: "scrollbat-thumb-background-hover",
-  scrollbarThumbBorderRadius: "scrollbat-thumb-border-radius"
+  scrollbarThumbBackgroundColor: "scrollbar-thumb-background",
+  scrollbarThumbBackgroundColorHover: "scrollbar-thumb-background-hover",
+  scrollbarThumbBorderRadius: "scrollbar-thumb-border-radius"
 }
 
 export const themeableTokens = createGlobalThemeContract(_themeableTokens)

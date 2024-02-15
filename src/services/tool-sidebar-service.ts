@@ -3,9 +3,9 @@ import { makeAutoObservable } from "mobx"
 import { AppletType } from "src/enums/applet-type"
 import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
 import { type AppletConstructor } from "src/types/AppletConstructor"
-import { getUserSettings, watchUserSettings } from "src/utils/decorators.js"
 
 import { appletStore } from "./applet-store.js"
+import { userSettingsService } from "./user-settings-service.js"
 
 /**
  * Service to manage applets with type `Tool` to be showed on tool sidebar
@@ -14,8 +14,8 @@ class ToolSidebarService {
   /**
    * Group applets by its category
    */
-  @watchUserSettings(UserSettingsKeys.toolSidebarGroupByCategory)
-  groupByCategory: boolean = getUserSettings(
+  @userSettingsService.watch(UserSettingsKeys.toolSidebarGroupByCategory)
+  groupByCategory: boolean = userSettingsService.get(
     UserSettingsKeys.toolSidebarGroupByCategory,
     true
   )
@@ -23,8 +23,8 @@ class ToolSidebarService {
   /**
    * Sort all applets by its name
    */
-  @watchUserSettings(UserSettingsKeys.toolSidebarSortToolNameAZ)
-  sortNameAZ: boolean = getUserSettings(
+  @userSettingsService.watch(UserSettingsKeys.toolSidebarSortToolNameAZ)
+  sortNameAZ: boolean = userSettingsService.get(
     UserSettingsKeys.toolSidebarSortToolNameAZ,
     true
   )
@@ -33,8 +33,8 @@ class ToolSidebarService {
    * When `groupByCategory` is enabled, this value will be used to
    * sort the category name
    */
-  @watchUserSettings(UserSettingsKeys.toolSidebarSortCategoryNameAZ)
-  sortCategoryAZ: boolean = getUserSettings(
+  @userSettingsService.watch(UserSettingsKeys.toolSidebarSortCategoryNameAZ)
+  sortCategoryAZ: boolean = userSettingsService.get(
     UserSettingsKeys.toolSidebarSortCategoryNameAZ,
     true
   )
@@ -49,6 +49,7 @@ class ToolSidebarService {
    */
   constructor() {
     makeAutoObservable(this)
+    userSettingsService.watchStore(this)
   }
 
   /**

@@ -4,22 +4,22 @@ import toast from "react-hot-toast"
 import { FileDropAction } from "src/enums/file-drop-action.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
 import { componentService } from "src/services/component-manager.js"
-import { getUserSettings, watchUserSettings } from "src/utils/decorators.js"
 import { getFileNameFromPath } from "src/utils/get-file-name-from-path.js"
 
 import { activeAppletStore } from "./active-applet-store.js"
 import { appletStore } from "./applet-store.js"
 import { sessionStore } from "./session-store.js"
+import { userSettingsService } from "./user-settings-service.js"
 
 class FileDropService {
-  @watchUserSettings(UserSettingsKeys.fileDropAction)
-  fileDropAction: FileDropAction = getUserSettings(
+  @userSettingsService.watch(UserSettingsKeys.fileDropAction)
+  fileDropAction: FileDropAction = userSettingsService.get(
     UserSettingsKeys.fileDropAction,
     FileDropAction.AlwaysAsk
   )
 
-  @watchUserSettings(UserSettingsKeys.fileDropReplaceSessionName)
-  droppedFileReplaceSessionName: boolean = getUserSettings(
+  @userSettingsService.watch(UserSettingsKeys.fileDropReplaceSessionName)
+  droppedFileReplaceSessionName: boolean = userSettingsService.get(
     UserSettingsKeys.fileDropReplaceSessionName,
     false
   )
@@ -32,6 +32,7 @@ class FileDropService {
 
   constructor() {
     makeAutoObservable(this)
+    userSettingsService.watchStore(this)
   }
 
   setIsHovering(value: boolean) {

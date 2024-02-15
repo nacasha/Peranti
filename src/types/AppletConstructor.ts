@@ -23,4 +23,11 @@ export interface AppletConstructor<IF extends Record<string, any> = any, OF exte
   disableMultipleSession?: boolean
   hideOnSidebar?: boolean
   hasOverriddenDefaultState?: boolean
+  description?: string
+  options?: Array<{
+    key: string
+    label: string
+    type: any
+    props?: any
+  }>
 }

@@ -18,8 +18,8 @@ globalStyle("input, text, select, option", {
 })
 
 globalStyle("::-webkit-scrollbar", {
-  width: 7,
-  height: 7
+  width: "7px",
+  height: "7px"
 })
 
 globalStyle("::-webkit-scrollbar-track", {
@@ -59,7 +59,6 @@ createGlobalTheme("body", globalTokens, {
 
   // App Titlebar
   appTitlebarHeight: "37px",
-  appTitlebarBackgroundColor: "#1a1b1d",
 
   // Window control buttons
   windowControlButtonWidth: "50px",
@@ -74,7 +73,7 @@ createGlobalTheme("body", globalTokens, {
   sessionTabbarDraggableHeight: "0px",
 
   // Animations
-  transitionSpeed: "0s",
+  transitionSpeed: "0.1s",
 
   // Sidebar
   activitybarWidth: "50px",

@@ -4,7 +4,6 @@ $padding: var(--input-output-fields-spacing);
   flex: 1;
   display: grid;
   padding: $padding;
-  background: var(--applet-viewer-background-color);
 
   &.horizontal {
     grid-template-columns: 1fr 1fr;

@@ -22,6 +22,8 @@ export function useDragAndDropJS(options: Options = {}) {
     const root = document.querySelector<HTMLDivElement>(".AppRoot")
     if (draggableElementRef.current && draggableElementPlaceholderRef.current && root) {
       draggableElementPlaceholderRef.current.style.width = `${draggableElementRef.current.clientWidth + 1}px`
+      draggableElementPlaceholderRef.current.style.zIndex = draggableElementRef.current.style.zIndex
+
       draggableElementRef.current.style.position = "fixed"
       draggableElementRef.current.style.pointerEvents = "none"
       draggableElementRef.current.style.zIndex = "1000"
@@ -48,13 +50,9 @@ export function useDragAndDropJS(options: Options = {}) {
     if (draggableElementRef.current && draggableElementPlaceholderRef.current && root) {
       if (draggableElementPlaceholderRef.current.parentElement) {
         draggableElementPlaceholderRef.current.parentElement.append(draggableElementRef.current)
-        draggableElementPlaceholderRef.current.style.width = "auto"
-        draggableElementRef.current.style.position = "initial"
-        draggableElementRef.current.style.pointerEvents = "auto"
-        draggableElementRef.current.style.zIndex = "auto"
-        draggableElementRef.current.style.transform = "none"
-        draggableElementRef.current.style.cursor = "pointer"
-        draggableElementRef.current.style.opacity = "1"
+
+        draggableElementRef.current.removeAttribute("style")
+        draggableElementPlaceholderRef.current.removeAttribute("style")
 
         root.style.cursor = "initial"
 
