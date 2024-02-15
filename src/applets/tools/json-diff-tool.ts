@@ -1,8 +1,8 @@
 import { DiffMethod } from "react-diff-viewer"
 
+import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 
 interface InputFields {
   inputA: InputFieldsType.Code
@@ -52,8 +52,8 @@ const jsonDiffTool: AppletConstructor<InputFields, OutputFields> = {
       }
     }
   ],
-  action: (inputParams) => {
-    const { inputA, inputB } = inputParams
+  action: ({ inputValues }) => {
+    const { inputA, inputB } = inputValues
 
     return {
       output: { newCode: inputB, oldCode: inputA }

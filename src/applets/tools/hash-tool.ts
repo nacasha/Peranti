@@ -71,8 +71,8 @@ const hashTool: AppletConstructor<InputFields, OutputFields> = {
     { input: "string-with-symbols" },
     () => ({ input: "random-" + generateRandomString(10, stringEntries.smallAz) })
   ],
-  action: (inputParams) => {
-    const { input } = inputParams
+  action: ({ inputValues }) => {
+    const { input } = inputValues
 
     if (input.trim().length === 0) {
       return { md5: "", sha1: "", sha256: "", sha512: "" }

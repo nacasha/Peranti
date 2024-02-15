@@ -35,7 +35,8 @@ const markdownParserTool: AppletConstructor<InputFields, OutputFields> = {
       component: "Markdown"
     }
   ],
-  action({ markdown }) {
+  action({ inputValues }) {
+    const { markdown } = inputValues
     return { output: markdown }
   }
 }

@@ -25,7 +25,7 @@ export const AppletHeader = () => {
 
       <div className="AppletHeader-button-list">
         <Button icon={Icons.Settings} onClick={handleClickSettings}>
-          Settings
+          Options
         </Button>
       </div>
     </div>

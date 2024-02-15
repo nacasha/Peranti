@@ -1,5 +1,5 @@
-import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type AppletConstructor } from "src/types/AppletConstructor"
+import { type InputFieldsType } from "src/types/InputFieldsType"
 
 interface InputFields {
   input: InputFieldsType.Code
@@ -23,8 +23,7 @@ const textEditorTool: AppletConstructor<InputFields> = {
       }
     }
   ],
-  outputFields: [],
-  action: () => ({})
+  outputFields: []
 }
 
 export default textEditorTool

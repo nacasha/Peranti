@@ -38,7 +38,8 @@ const mathEvaluatorTool: AppletConstructor<InputFields, OutputFields> = {
     { input: "(100 * 145) + 10" },
     { input: "1500 + 2030 * 10 - (10 * 50)" }
   ],
-  action({ input }) {
+  action({ inputValues }) {
+    const { input } = inputValues
     const mexp = new Mexp()
 
     const inputLines = input.split("\n")

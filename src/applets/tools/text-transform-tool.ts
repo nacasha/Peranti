@@ -1,6 +1,6 @@
+import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 
 interface InputFields {
   type: InputFieldsType.Switch
@@ -55,7 +55,9 @@ const textTransformTool: AppletConstructor<InputFields, OutputFields> = {
       component: "Code"
     }
   ],
-  action({ input, type }) {
+  action({ inputValues }) {
+    const { input, type } = inputValues
+
     let output: string = input
     switch (type.toLowerCase()) {
     case "lowercase":

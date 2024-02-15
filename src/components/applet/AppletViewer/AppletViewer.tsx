@@ -1,7 +1,10 @@
 import { type FC } from "react"
 import SimpleBar from "simplebar-react"
 
+import { HomePage } from "src/applets/pages/welcome-applet"
 import { ActiveSessionStateListener } from "src/components/session/ActiveSessionStateListener"
+import { useSelector } from "src/hooks/useSelector"
+import { activeAppletStore } from "src/services/active-applet-store"
 
 import { AppletBatchModeHeader } from "../AppletBatchModeHeader"
 import { AppletComponentArea } from "../AppletComponentArea"
@@ -11,6 +14,14 @@ import { AppletSidebar } from "../AppletSidebar"
 import "./AppletViewer.scss"
 
 export const AppletViewer: FC = () => {
+  const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
+
+  if (activeApplet.appletId === "") {
+    return (
+      <HomePage />
+    )
+  }
+
   return (
     <div className="AppletViewer">
       <div className="AppletViewer-inner">

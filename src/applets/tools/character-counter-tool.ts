@@ -37,7 +37,8 @@ const characterCounterTool: AppletConstructor<InputFields, OutputFields> = {
       component: "GridStat"
     }
   ],
-  action({ input }) {
+  action({ inputValues }) {
+    const { input } = inputValues
     const isInputEmpty = input.length === 0
 
     const charactersCount = isInputEmpty ? 0 : input.length

@@ -12,7 +12,12 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const jsonFormatter: AppletConstructor<InputFields, OutputFields> = {
+interface Options {
+  indentType: InputFieldsType.Select
+  indentSize: InputFieldsType.Select
+}
+
+const jsonFormatter: AppletConstructor<InputFields, OutputFields, Options> = {
   appletId: "json-formatter",
   name: "JSON Formatter",
   description: "JSON Format/Minify/Pretty/Beautify",
@@ -54,20 +59,22 @@ const jsonFormatter: AppletConstructor<InputFields, OutputFields> = {
   ],
   options: [
     {
-      key: "indentation",
+      key: "indentType",
       label: "Pretty Indentation",
       component: "Select",
+      defaultValue: "space",
       props: {
         options: [
-          { label: "Space", value: "space" },
-          { label: "Tab", value: "tab" }
+          { label: "Tab", value: "tab" },
+          { label: "Space", value: "space" }
         ]
       }
     },
     {
-      key: "size",
+      key: "indentSize",
       label: "Indent Size",
       component: "Select",
+      defaultValue: "2",
       props: {
         options: [
           { label: "1", value: "1" },
@@ -82,14 +89,26 @@ const jsonFormatter: AppletConstructor<InputFields, OutputFields> = {
       }
     }
   ],
-  action: (inputParams) => {
-    const { input, type } = inputParams
-    if (input.trim().length === 0) return { output: "" }
+  action: ({ inputValues, options }) => {
+    const { input, type } = inputValues
+    const { indentType, indentSize } = options
+
+    if (input.trim().length === 0) {
+      return { output: "" }
+    }
+
+    const isPretty = type === "pretty"
+    const indentTab = indentType === "tab"
+    const indentTabSize = new Array(Number(indentSize)).fill("\t").join("")
 
     try {
-      const isPretty = type === "pretty"
       const jsonObj = JSON.parse(input)
-      const output = JSON.stringify(jsonObj, null, isPretty ? 2 : undefined)
+      if (isPretty) {
+        const output = JSON.stringify(jsonObj, null, indentTab ? indentTabSize : Number(indentSize))
+        return { output }
+      }
+
+      const output = JSON.stringify(jsonObj)
       return { output }
     } catch (error) {
       if (error instanceof Error) {

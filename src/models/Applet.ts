@@ -10,8 +10,10 @@ import { appletStore } from "src/services/applet-store"
 import { rustInvokerService } from "src/services/rust-invoker-service"
 import { sessionStore } from "src/services/session-store"
 import { StorageManager } from "src/services/storage-manager"
+import { type AppletActionParams } from "src/types/AppletAction"
 import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type AppletInput } from "src/types/AppletInput"
+import { type AppletOption } from "src/types/AppletOption"
 import { type AppletOutput } from "src/types/AppletOutput"
 import { type AppletState } from "src/types/AppletState"
 import { type ExtensionMetadata } from "src/types/ExtensionMetadata"
@@ -21,93 +23,207 @@ import { type Session } from "src/types/Session"
 import { type SessionHistory } from "src/types/SessionHistory"
 import { generateRandomString } from "src/utils/generate-random-string"
 
-export class Applet<IF extends Record<string, any> = any, OF extends Record<string, any> = any> {
+/**
+ * Applet, a small program that performs a specific task.
+ */
+export class Applet<
+  InputFields extends Record<string, any> = any,
+  OutputFields extends Record<string, any> = any,
+  OptionKeys extends Record<string, any> = any
+> {
+  /**
+   * Unique ID of applet
+   */
   readonly appletId: string
 
+  /**
+   * Type of applet
+   */
   readonly type: AppletType
 
+  /**
+   * Applet name
+   */
   readonly name: string
 
+  /**
+   * Applet description
+   */
+  readonly description: string = ""
+
+  /**
+   * Applet category
+   */
   readonly category: string
 
-  readonly sessionId: string
-
+  /**
+   * Applet input and output layout settings
+   */
   readonly layoutSetting: LayoutSetting
 
+  /**
+   * Auto execute applet action when input values is changed
+   */
   readonly autoRun: boolean = false
 
+  /**
+   * Indicates that the applet has auto run enabled and hasn't been run
+   * for at least once
+   */
   isAutoRunAndFirstTime: boolean = false
 
+  /**
+   * Pipelines of applet
+   */
   readonly pipelines: Pipeline[] = []
 
+  /**
+   * Allow applet to run its pipeline
+   */
   private canRunPipeline = true
 
-  sessionSequenceNumber?: number
+  /**
+   * Unique ID of each created session based on this applet
+   */
+  readonly sessionId: string
 
+  /**
+   * Custom session name for created applet session
+   */
   sessionName?: string
 
-  readonly inputFields: Array<AppletInput<IF>> | ((inputValues: any) => Array<AppletInput<IF>>)
+  /**
+   * Sequence number of every applet session has been created
+   */
+  sessionSequenceNumber?: number
 
+  /**
+   * Input fields for applet
+   */
+  readonly inputFields: Array<AppletInput<InputFields>> | ((inputValues: any) => Array<AppletInput<InputFields>>)
+
+  /**
+   * Component's state of input fields (scroll position, text selection, zoom, etc)
+   */
   @observable inputFieldsState: any = {}
 
+  /**
+   * Key value pair of input keys and its values
+   */
   @observable inputValues: any = {}
 
+  /**
+   * Indicates input values has been changed
+   */
   isInputValuesModified: boolean = false
 
-  readonly outputFields: Array<AppletOutput<OF>> | ((outputValues: any) => Array<AppletOutput<OF>>)
+  /**
+   * Output fields for applet
+   */
+  readonly outputFields: Array<AppletOutput<OutputFields>> | ((outputValues: any) => Array<AppletOutput<OutputFields>>)
 
+  /**
+   * Component's state of output fields (scroll position, text selection, zoom, etc)
+   */
   @observable outputFieldsState: Record<string, any> = {}
 
+  /**
+   * Key value pair of output keys and its values
+   */
   @observable outputValues: any = {}
 
+  /**
+   * Indicates output values has been changed
+   */
   isOutputValuesModified: boolean = false
 
-  readonly action: (input: any, activity: any) => any
+  /**
+   * Applet action
+   */
+  readonly action: (actionParams: AppletActionParams<InputFields, OutputFields>) => any
 
+  /**
+   * Running count for action
+   */
   @observable actionRunCount: number = 0
 
+  /**
+   * Is action still running asynchronous
+   */
   @observable isActionRunning: boolean = false
 
-  @observable batchModeInputKey: string = ""
+  /**
+   * Input field key when batch mode enabled
+   */
+  @observable batchInputKey: string = ""
 
+  /**
+   * Output fields key when batch mode enabled
+   */
   @observable batchModeOutputKey: string = ""
 
+  /**
+   * Indicates batch mode is enabled
+   */
   @observable isBatchModeEnabled: boolean = false
 
-  isDeleting: boolean = false
-
+  /**
+   * Indicates the session has been deleted
+   */
   @observable isDeleted: boolean = false
 
+  /**
+   * Counter to force rerender applet viewer
+   */
   @observable renderCounter: number = 0
 
+  /**
+   * Key to store applet session state into storage
+   */
   readonly state?: AppletState = undefined
 
+  /**
+   * Disable persistence for applet session
+   */
   readonly disablePersistence: boolean = false
 
+  /**
+   * Disable creating session more than once for the applet
+   */
   readonly disableMultipleSession: boolean = false
 
-  readonly hideOnSidebar: boolean = false
-
+  /**
+   * Metadata used for other type of applet
+   */
   readonly metadata?: ExtensionMetadata
 
-  readonly samples: Array<Partial<IF> | (() => Partial<IF>)> = []
+  /**
+   * Applet input samples
+   */
+  readonly samples: Array<Partial<InputFields> | (() => Partial<InputFields>)> = []
 
-  readonly options: Array<{
-    key: string
-    label: string
-    component: any
-    props?: any
-  }> = []
+  /**
+   * Index of sample that has been showed on viewer
+   */
+  @observable sampleIndex: number = 0
 
-  readonly description: string = ""
+  /**
+   * Applet input and output options
+   */
+  readonly options: Array<AppletOption<OptionKeys>>
+
+  @observable optionValues: any = {}
 
   /**
    * Indicates that the applet has input values overridden by preset
    */
   readonly hasOverriddenDefaultState: boolean = false
 
-  @observable sampleIndex: number = 0
-
+  /**
+   * Empty applet
+   *
+   * @returns
+   */
   static empty() {
     return new Applet({
       name: "",
@@ -119,8 +235,14 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
     })
   }
 
+  /**
+   * Constructor
+   *
+   * @param appletConstructor
+   * @param options
+   */
   constructor(
-    appletConstructor: AppletConstructor<IF, OF>,
+    appletConstructor: AppletConstructor<InputFields, OutputFields>,
     options: {
       initialState?: Partial<AppletState>
       disablePersistence?: boolean
@@ -141,10 +263,10 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
     this.metadata = appletConstructor.metadata
     this.samples = appletConstructor.samples ?? []
     this.disableMultipleSession = appletConstructor.disableMultipleSession ?? false
-    this.hideOnSidebar = appletConstructor.hideOnSidebar ?? false
     this.hasOverriddenDefaultState = appletConstructor.hasOverriddenDefaultState ?? false
     this.inputValues = this.getInputValuesWithDefault()
     this.options = appletConstructor.options ?? []
+    this.optionValues = this.getOptionValuesWithDefault()
     this.description = appletConstructor.description ?? ""
 
     if (this.autoRun) {
@@ -168,7 +290,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
       this.inputValues = Object.assign(this.inputValues, initialState.inputValues)
       this.outputValues = Object.assign(this.outputValues, initialState.outputValues)
       this.isBatchModeEnabled = initialState.isBatchModeEnabled ?? this.isBatchModeEnabled
-      this.batchModeInputKey = initialState.batchModeInputKey ?? this.batchModeInputKey
+      this.batchInputKey = initialState.batchModeInputKey ?? this.batchInputKey
       this.batchModeOutputKey = initialState.batchModeOutputKey ?? this.batchModeOutputKey
       this.actionRunCount = initialState.actionRunCount ?? this.actionRunCount
       this.isOutputValuesModified = initialState.isOutputValuesModified ?? this.isOutputValuesModified
@@ -177,6 +299,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
       this.inputFieldsState = initialState.inputFieldsState ?? this.inputFieldsState
       this.outputFieldsState = initialState.outputFieldsState ?? this.outputFieldsState
       this.isAutoRunAndFirstTime = initialState.isAutoRunAndFirstTime ?? this.isAutoRunAndFirstTime
+      this.optionValues = initialState.optionValues ?? this.optionValues
     }
 
     if (this.disableMultipleSession) {
@@ -224,7 +347,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
   toState(): AppletState {
     const {
-      batchModeInputKey,
+      batchInputKey: batchModeInputKey,
       batchModeOutputKey,
       inputFieldsState,
       inputValues,
@@ -239,7 +362,8 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
       sessionName,
       sessionSequenceNumber,
       appletId,
-      isAutoRunAndFirstTime
+      isAutoRunAndFirstTime,
+      optionValues
     } = this
 
     const createdAt = new Date().getTime()
@@ -261,7 +385,8 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
       sessionName,
       sessionSequenceNumber,
       appletId,
-      isAutoRunAndFirstTime
+      isAutoRunAndFirstTime,
+      optionValues: toJS(optionValues)
     }
   }
 
@@ -297,8 +422,8 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
   setBatchMode(isEnabled: boolean) {
     this.isBatchModeEnabled = isEnabled
 
-    if (this.batchModeInputKey === "") {
-      this.batchModeInputKey = this.getInputFields().filter((input) => input.allowBatch)[0].key
+    if (this.batchInputKey === "") {
+      this.batchInputKey = this.getInputFields().filter((input) => input.allowBatch)[0].key
     }
 
     if (this.batchModeOutputKey === "") {
@@ -313,7 +438,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
   @action
   setBatchModeInputKey(batchInputKey: string) {
-    this.batchModeInputKey = batchInputKey
+    this.batchInputKey = batchInputKey
   }
 
   getInputFields() {
@@ -323,7 +448,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
     return this.inputFields
   }
 
-  getInputFieldsWithReadableFile(): [Array<AppletInput<IF>>, boolean] {
+  getInputFieldsWithReadableFile(): [Array<AppletInput<InputFields>>, boolean] {
     const inputFields = this.getInputFields()
 
     let hasAllowBatch = false
@@ -412,6 +537,29 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
     return this.outputValues[key]
   }
 
+  /**
+   * Set option value and re-run applet action if possible
+   *
+   * @param key
+   * @param value
+   */
+  @action
+  setOptionValue(key: string, value: unknown) {
+    this.optionValues = { ...this.optionValues, [key]: value }
+
+    /**
+     * Re-run action if input has been modified
+     */
+    if (this.isInputValuesModified) {
+      void this.run()
+    }
+  }
+
+  @action
+  setOptionValues(optionValues: any) {
+    this.optionValues = optionValues
+  }
+
   @action
   resetInputAndOutputValues() {
     this.inputValues = this.getInputValuesWithDefault()
@@ -420,6 +568,10 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
 
   getInputValuesWithDefault() {
     return Object.fromEntries(this.getInputFields().map((i) => [i.key, i.defaultValue]))
+  }
+
+  getOptionValuesWithDefault() {
+    return Object.fromEntries(this.options.map((i) => [i.key, i.defaultValue]))
   }
 
   getIsInputOrOutputHasValues(): boolean {
@@ -492,9 +644,10 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
     }
   }
 
-  private async runAction(actionInput: any) {
+  private async runAction(actionInput: any, actionOptions: any) {
     const runResult = await new Promise<any>((resolve) => {
-      const result = this.action(actionInput, { toast })
+      const actionParams = { inputValues: actionInput, toast, options: actionOptions }
+      const result = this.action(actionParams)
 
       if ("then" in result) {
         this.setIsActionRunning(true)
@@ -540,7 +693,7 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
   }
 
   private async runNormal() {
-    const runResult = await this.runAction({ ...this.inputValues })
+    const runResult = await this.runAction(this.inputValues, this.optionValues)
     this.setOutputValues(runResult)
   }
 
@@ -577,13 +730,13 @@ export class Applet<IF extends Record<string, any> = any, OF extends Record<stri
   }
 
   private async runBatch() {
-    const { inputValues, batchModeInputKey: batchInputKey } = this
+    const { inputValues, batchInputKey, optionValues } = this
     const batchInputValues = inputValues[batchInputKey]
     const inputLines = batchInputValues.split("\n")
 
     const outputs = []
     for (const inputLine of inputLines) {
-      const runResult = await this.runAction({ ...inputValues, [batchInputKey]: inputLine })
+      const runResult = await this.runAction({ ...inputValues, [batchInputKey]: inputLine }, optionValues)
       outputs.push(runResult)
     }
 

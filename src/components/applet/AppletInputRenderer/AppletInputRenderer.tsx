@@ -22,7 +22,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   const defaultValue = activeApplet.inputValues[appletInput.key] ?? appletInput.defaultValue
   const initialState = activeApplet.inputFieldsState[appletInput.key]
   const isBatchModeEnabled = useSelector(() => activeApplet.isBatchModeEnabled)
-  const batchModeInputKey = useSelector(() => activeApplet.batchModeInputKey)
+  const batchModeInputKey = useSelector(() => activeApplet.batchInputKey)
 
   const inputComponent = appletComponentService.getInputComponent(appletInput.component, isBatchModeEnabled)
   const Component: FC<InputComponentProps<any>> = inputComponent.component

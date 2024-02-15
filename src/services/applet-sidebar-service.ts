@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx"
 
 class AppletSidebarService {
-  isOpen: boolean = true
+  isOpen: boolean = false
 
   constructor() {
     makeAutoObservable(this)

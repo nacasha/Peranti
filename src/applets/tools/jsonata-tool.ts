@@ -48,8 +48,8 @@ const jsonataTool: AppletConstructor<InputFields, OutputFields> = {
       }
     }
   ],
-  action: async(inputParams) => {
-    const { jsonString, expression } = inputParams
+  action: async({ inputValues }) => {
+    const { jsonString, expression } = inputValues
 
     if (jsonString.trim().length === 0 || expression.trim().length === 0) {
       return { output: "" }

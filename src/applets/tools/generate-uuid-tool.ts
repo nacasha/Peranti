@@ -51,13 +51,15 @@ const generateUuidTool: AppletConstructor<InputFields, OutputFields> = {
       component: "Code"
     }
   ],
-  action: ({ numberOfGenerated, type }, activity) => {
+  action: ({ inputValues, toast }) => {
+    const { numberOfGenerated, type } = inputValues
+
     /**
      * Generate more than 10000 UUID(s) will decrease app performance
      * Show notification and return empty output
      */
     if (Number(numberOfGenerated) > 10000) {
-      activity.toast.error("Unable to generate more than 10000 UUID(s) at once", {
+      toast.error("Unable to generate more than 10000 UUID(s) at once", {
         id: "clipboard"
       })
 

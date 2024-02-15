@@ -1,8 +1,8 @@
 import { loremIpsum, type ILoremIpsumParams } from "lorem-ipsum"
 
+import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 
 interface InputFields {
   count: InputFieldsType.Text
@@ -60,7 +60,9 @@ const loremIpsumGeneratorTool: AppletConstructor<InputFields, OutputFields> = {
       component: "Code"
     }
   ],
-  async action({ count, type }) {
+  async action({ inputValues }) {
+    const { count, type } = inputValues
+
     const output = loremIpsum({
       count: Number(count),
       format: "plain",

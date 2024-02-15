@@ -2,12 +2,11 @@ import clsx from "clsx"
 import { type FC } from "react"
 import SimpleBar from "simplebar-react"
 
-import { Button } from "src/components/common/Button"
-import { Icons } from "src/constants/icons"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
 import { appletSidebarService } from "src/services/applet-sidebar-service"
+import { type AppletOption } from "src/types/AppletOption"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import { appletSidebarClasses } from "./AppletSidebar.css"
@@ -15,6 +14,8 @@ import { appletSidebarClasses } from "./AppletSidebar.css"
 export const AppletSidebar: FC = () => {
   const isOpen = useSelector(() => appletSidebarService.isOpen)
   const options = useSelector(() => activeAppletStore.getActiveApplet().options)
+  const activeAppletSessionId = useSelector(() => activeAppletStore.getActiveApplet().sessionId)
+  const readOnly = useSelector(() => activeAppletStore.getActiveApplet().isDeleted)
 
   const className = clsx([
     appletSidebarClasses.root,
@@ -24,32 +25,40 @@ export const AppletSidebar: FC = () => {
   ])
 
   return (
-    <SimpleBar className={className}>
+    <SimpleBar key={activeAppletSessionId} className={className}>
       <div className={appletSidebarClasses.inner}>
         {options.map((option) => (
           <div key={option.key} className="AppletSidebarItem">
-            <div className="AppletSidebarItem-label">
-              {option.label}
-            </div>
-            <div className="AppletSidebarItem-value">
-              <AppletSidebarComponent
-                component={option.component}
-                props={option.props}
-              />
-            </div>
+            <AppletSidebarComponent
+              option={option}
+              readOnly={readOnly}
+            />
           </div>
         ))}
-        <div className="AppletSidebarItem">
-          <Button icon={Icons.Check}>Apply</Button>
-        </div>
       </div>
     </SimpleBar>
   )
 }
 
-const AppletSidebarComponent = ({ component, props = {} }: { component: string, props: any }) => {
-  const inputComponent = appletComponentService.getInputComponent(component as any)
+const AppletSidebarComponent = ({ option, readOnly }: { option: AppletOption, readOnly: boolean }) => {
+  const { component, key, props } = option
+
+  const activeAppletOptionValues = useSelector(() => activeAppletStore.getActiveApplet().optionValues[key])
+  const defaultValue = activeAppletOptionValues ?? option.defaultValue
+  const inputComponent = appletComponentService.getInputComponent(component)
   const Component: FC<InputComponentProps<any>> = inputComponent.component
 
-  return <Component {...props} />
+  const handleValueChange = (value: unknown) => {
+    activeAppletStore.getActiveApplet().setOptionValue(key, value)
+  }
+
+  return (
+    <Component
+      {...props}
+      label={option.label}
+      defaultValue={defaultValue}
+      onSubmit={handleValueChange}
+      readOnly={readOnly}
+    />
+  )
 }

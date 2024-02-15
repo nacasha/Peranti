@@ -1,6 +1,6 @@
+import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 
 interface InputFields {
   input: InputFieldsType.Code
@@ -32,8 +32,8 @@ const removeDuplicateList: AppletConstructor<InputFields, OutputFields> = {
       component: "Code"
     }
   ],
-  action: (inputParams: InputFields) => {
-    const { input } = inputParams
+  action: ({ inputValues }) => {
+    const { input } = inputValues
 
     // Split the input string into an array of lines
     const lines = input.split("\n")

@@ -40,7 +40,8 @@ const fileToBase64Tool: AppletConstructor<InputFields, OutputFields> = {
       component: "Code"
     }
   ],
-  async action({ file }) {
+  async action({ inputValues }) {
+    const { file } = inputValues
     if (file) {
       const base64 = await toBase64(file)
       return { output: base64 }

@@ -46,7 +46,8 @@ const base64EncodeDecodeTool: AppletConstructor<InputFields, OutputFields> = {
       component: "Code"
     }
   ],
-  action({ input, type }) {
+  action({ inputValues }) {
+    const { input, type } = inputValues
     try {
       if (type === "encode") {
         return { output: btoa(input) }

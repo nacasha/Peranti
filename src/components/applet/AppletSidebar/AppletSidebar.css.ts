@@ -23,7 +23,7 @@ const inner = style({
   overflow: "auto",
   display: "flex",
   flexDirection: "column",
-  gap: 10
+  gap: 20
 })
 
 export const appletSidebarClasses = {

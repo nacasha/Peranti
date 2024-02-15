@@ -62,8 +62,8 @@ const faviconGrabberTool: AppletConstructor<InputFields, OutputFields> = {
     { websiteUrl: "facebook.com" },
     { websiteUrl: "youtube.com" }
   ],
-  action: async(inputParams) => {
-    const { websiteUrl } = inputParams
+  action: async({ inputValues }) => {
+    const { websiteUrl } = inputValues
     const result = await getFavicon(websiteUrl)
 
     const binaryArray = (result?.data ?? []) as number[]

@@ -32,7 +32,8 @@ const base64ToFileTool: AppletConstructor<InputFields, OutputFields> = {
       component: "File"
     }
   ],
-  async action({ input }) {
+  async action({ inputValues }) {
+    const { input } = inputValues
     if (input.trim().length === 0) {
       return { output: [] }
     }

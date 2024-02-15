@@ -66,8 +66,8 @@ const compareListTool: AppletConstructor<InputFields, OutputFields> = {
       listB: "dc72a490\ndc72a491\ndc72a492\ndc72a493\ndc72a494"
     }
   ],
-  action: (inputParams) => {
-    const { listA, listB } = inputParams
+  action: ({ inputValues }) => {
+    const { listA, listB } = inputValues
 
     const linesA = listA.split("\n")
     const linesB = listB.split("\n")

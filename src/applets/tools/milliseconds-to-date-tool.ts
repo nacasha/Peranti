@@ -1,9 +1,9 @@
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 
+import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 
 dayjs.extend(utc)
 
@@ -50,8 +50,8 @@ const millisecondsToDate: AppletConstructor<InputFields, OutputFields> = {
       allowBatch: true
     }
   ],
-  action: (inputParams) => {
-    const { milliseconds } = inputParams
+  action: ({ inputValues }) => {
+    const { milliseconds } = inputValues
     if (milliseconds.trim().length === 0) {
       return { localDateTime: "", utcDateTime: "" }
     }

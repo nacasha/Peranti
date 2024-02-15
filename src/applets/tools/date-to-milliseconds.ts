@@ -43,8 +43,8 @@ const dateToMillisecondsTool: AppletConstructor<InputFields, OutputFields> = {
       allowBatch: true
     }
   ],
-  action: (inputParams) => {
-    const { date } = inputParams
+  action: ({ inputValues }) => {
+    const { date } = inputValues
     if (date.trim().length === 0) {
       return { milliseconds: "" }
     }

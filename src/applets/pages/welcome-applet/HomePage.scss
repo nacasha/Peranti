@@ -4,6 +4,7 @@
   display: flex;
   align-items: center;
   background-color: var(--applet-viewer-background-color);
+  user-select: none;
 
   .content {
     margin: auto;

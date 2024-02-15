@@ -16,4 +16,5 @@ export interface AppletState {
   inputFieldsState: Record<string, any>
   outputFieldsState: Record<string, any>
   isAutoRunAndFirstTime: boolean
+  optionValues: any
 }

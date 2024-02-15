@@ -46,8 +46,8 @@ const cronReadableTool: AppletConstructor<InputFields, OutputFields> = {
     { input: "0 0/30 * * * *" },
     { input: "0 0 * * * *" }
   ],
-  action: (inputParams) => {
-    const { input } = inputParams
+  action: ({ inputValues }) => {
+    const { input } = inputValues
     if (input.trim().length === 0) {
       return { output: "" }
     }

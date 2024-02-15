@@ -1,6 +1,6 @@
+import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 
 interface InputFields {
   input: InputFieldsType.Code
@@ -32,7 +32,8 @@ const sortList: AppletConstructor<InputFields, OutputFields> = {
       component: "Code"
     }
   ],
-  action: ({ input }) => {
+  action: ({ inputValues }) => {
+    const { input } = inputValues
     const lines = input.split("\n").filter((line) => line.trim() !== "")
     lines.sort()
     const sortedString = lines.join("\n")

@@ -63,7 +63,9 @@ const prefixSuffixLines: AppletConstructor<InputFields, OutputFields> = {
       input: "John\nAdelle\nKarina\nRey"
     }
   ],
-  action: ({ input, prefix, suffix }: { prefix: string, suffix: string, input: string }) => {
+  action: ({ inputValues }) => {
+    const { input, prefix, suffix } = inputValues
+
     const lines = input.split("\n")
       .filter((text) => text.trim().length > 0)
       .map((text) => prefix.concat(text.concat(suffix)))

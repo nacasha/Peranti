@@ -11,7 +11,6 @@ export const AppletComponentArea: FC = () => {
   return (
     <AppletComponentAreaContainer>
       <AppletContextMenu />
-
       <AppletComponentAreaBody />
     </AppletComponentAreaContainer>
   )

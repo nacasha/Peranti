@@ -59,7 +59,8 @@ const mermaidEditorTool: AppletConstructor<InputFields, OutputFields> = {
     `
     }
   ],
-  action({ text }) {
+  action({ inputValues }) {
+    const { text } = inputValues
     return { output: text }
   }
 }
