@@ -1,8 +1,11 @@
+import clsx from "clsx"
 import { type FC, useEffect, useState, useMemo, useCallback, useRef } from "react"
 import { TransformWrapper, TransformComponent, type ReactZoomPanPinchContentRef } from "react-zoom-pan-pinch"
 
 import { Button } from "src/components/common/Button"
 import { Icons } from "src/constants/icons"
+
+import { zoomableContentClasses } from "./ZoomableContent.css"
 
 interface TransformState {
   translateX: number | undefined
@@ -10,19 +13,23 @@ interface TransformState {
   scale: number | undefined
 }
 
-interface MermaidOutputZoomableSVGProps {
+interface ZoomableContentProps {
   children?: any
   initialState?: TransformState
   onStageChange?: (state: any) => any
+  checkered?: boolean
 }
 
-export const MermaidOutputZoomableSVG: FC<MermaidOutputZoomableSVGProps> = (props) => {
-  const { children, initialState, onStageChange } = props
+export const ZoomableContent: FC<ZoomableContentProps> = (props) => {
+  const { children, initialState, checkered, onStageChange } = props
 
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState<number>(0)
   const [containerHeight, setContainerHeight] = useState<number>(0)
 
+  /**
+   * Maximum zoom factor
+   */
   const zoomFactor = 10
 
   const transformListener = useRef<MutationObserver>()
@@ -38,6 +45,9 @@ export const MermaidOutputZoomableSVG: FC<MermaidOutputZoomableSVGProps> = (prop
     return scale
   }, [containerWidth, containerHeight, children])
 
+  /**
+   * Initial position of transform
+   */
   const initialPosition = useMemo(() => {
     if (containerWidth === 0 || containerHeight === 0) {
       return { x: 0, y: 0 }
@@ -49,6 +59,9 @@ export const MermaidOutputZoomableSVG: FC<MermaidOutputZoomableSVGProps> = (prop
     }
   }, [containerWidth, containerHeight, children, imageScale])
 
+  /**
+   * Set new container size
+   */
   const handleResize = useCallback(() => {
     if (container !== null) {
       const rect = container.getBoundingClientRect()
@@ -111,6 +124,15 @@ export const MermaidOutputZoomableSVG: FC<MermaidOutputZoomableSVGProps> = (prop
   }, [handleResize])
 
   /**
+   * Listen to container change caused by toggled sidebar
+   */
+  useEffect(() => {
+    if (container) {
+      new ResizeObserver(handleResize).observe(container)
+    }
+  }, [container])
+
+  /**
    * Store last transform state to applet storage
    */
   useEffect(() => {
@@ -121,6 +143,9 @@ export const MermaidOutputZoomableSVG: FC<MermaidOutputZoomableSVGProps> = (prop
     }
   }, [])
 
+  /**
+   * Reset value of transform
+   */
   const controlsResetValue: [number, number, number] = [
     imageScale,
     initialPosition.x,
@@ -128,32 +153,30 @@ export const MermaidOutputZoomableSVG: FC<MermaidOutputZoomableSVGProps> = (prop
   ]
 
   return (
-    <div className="MermaidOutputZoomableSVG">
-      <div className="MermaidOutputZoomableSVG-inner">
+    <div className={zoomableContentClasses.root}>
+      <div className={zoomableContentClasses.body}>
         <div
           ref={(el: HTMLDivElement | null) => { setContainer(el) }}
-          className="MermaidOutputZoomableSVG-content"
+          className={clsx(zoomableContentClasses.content, { [zoomableContentClasses.checkered]: checkered })}
         >
-          {imageScale > 0 && (
-            <TransformWrapper
-              key={`${containerHeight}${containerWidth}${imageScale}`}
-              initialScale={transformState.current.scale ?? imageScale}
-              initialPositionX={transformState.current.translateX ?? initialPosition.x}
-              initialPositionY={transformState.current.translateY ?? initialPosition.y}
-              minScale={imageScale}
-              maxScale={imageScale * zoomFactor}
-              onInit={() => { listenTransformChanges() }}
-            >
-              {(controls) => (
-                <>
-                  <Controls controls={controls} resetValue={controlsResetValue} />
-                  <TransformComponent>
-                    {children}
-                  </TransformComponent>
-                </>
-              )}
-            </TransformWrapper>
-          )}
+          <TransformWrapper
+            key={`${containerHeight}${containerWidth}${imageScale}`}
+            initialScale={transformState.current.scale ?? imageScale}
+            initialPositionX={transformState.current.translateX ?? initialPosition.x}
+            initialPositionY={transformState.current.translateY ?? initialPosition.y}
+            minScale={imageScale}
+            maxScale={imageScale * zoomFactor}
+            onInit={() => { listenTransformChanges() }}
+          >
+            {(controls) => (
+              <>
+                <Controls controls={controls} resetValue={controlsResetValue} />
+                <TransformComponent>
+                  {children}
+                </TransformComponent>
+              </>
+            )}
+          </TransformWrapper>
         </div>
       </div>
     </div>
@@ -177,7 +200,7 @@ const Controls = (props: { controls: ReactZoomPanPinchContentRef, resetValue: [n
   }
 
   return (
-    <div className="MermaidOutputZoomableSVG-actions">
+    <div className={zoomableContentClasses.actions}>
       <Button icon={Icons.Plus} onClick={handleZoomIn} />
       <Button icon={Icons.Minus} onClick={handleZoomOut} />
       <Button icon={Icons.FullScreen} onClick={handleResetZoom} />

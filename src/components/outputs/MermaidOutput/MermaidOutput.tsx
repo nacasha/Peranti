@@ -2,11 +2,13 @@ import mermaid from "mermaid"
 import { type FC, useEffect, useState, useRef } from "react"
 
 import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { ZoomableContent } from "src/components/common/ZoomableContent"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
-import { MermaidOutputZoomableSVG } from "./MermaidOutputZoomableSVG.js"
-
 import "./MermaidOutput.scss"
+
+import { interfaceStore } from "src/services/interface-store"
+import { Theme } from "src/enums/theme"
 
 interface MermaidOutputProps extends OutputComponentProps {}
 
@@ -25,7 +27,7 @@ export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
         setSvgString(svg)
       }
     } catch (exception) {
-      // TODO console.log(exception)
+      console.log(exception)
     }
   }
 
@@ -49,6 +51,11 @@ export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
    * Fix MermaidJS render unknown diagram parts
    */
   useEffect(() => {
+    mermaid.mermaidAPI.initialize({
+      securityLevel: "loose",
+      theme: interfaceStore.theme === Theme.Dark ? "dark" : "default"
+    })
+
     setMermaidSyntax(value.concat(" "))
   }, [])
 
@@ -56,7 +63,7 @@ export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
     <div className="MermaidOutput" onContextMenu={onContextMenu}>
       <ComponentLabel label={label} />
       <div className="MermaidOutput-inner">
-        <MermaidOutputZoomableSVG
+        <ZoomableContent
           initialState={initialState}
           onStageChange={onStateChange}
         >
@@ -66,7 +73,7 @@ export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
             dangerouslySetInnerHTML={{ __html: svgString }}
           >
           </div>
-        </MermaidOutputZoomableSVG>
+        </ZoomableContent>
       </div>
     </div>
   )
