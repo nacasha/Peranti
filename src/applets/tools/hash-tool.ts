@@ -65,11 +65,19 @@ const hashTool: AppletConstructor<InputFields, OutputFields> = {
     }
   ],
   samples: [
-    { input: "admin" },
-    { input: "admin12345" },
-    { input: "password" },
-    { input: "string-with-symbols" },
-    () => ({ input: "random-" + generateRandomString(10, stringEntries.smallAz) })
+    {
+      name: "Random String",
+      inputValues: () => ({
+        input: generateRandomString(15, stringEntries.smallAz)
+      })
+    },
+    {
+      name: "Batch Random String",
+      isBatchModeEnabled: true,
+      inputValues: () => ({
+        input: new Array(5).map(() => generateRandomString(15, stringEntries.smallAz)).join("\n")
+      })
+    }
   ],
   action: ({ inputValues }) => {
     const { input } = inputValues

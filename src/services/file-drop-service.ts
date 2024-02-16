@@ -62,8 +62,6 @@ class FileDropService {
 
     const [inputFields, isAvailableOnBatchMode] = activeApplet.getInputFieldsWithReadableFile()
 
-    console.log(inputFields, isAvailableOnBatchMode)
-
     if (inputFields.length === 0) {
       toast.error(`Current tool ${activeApplet.name} does not support file drop`)
       this.resetState()

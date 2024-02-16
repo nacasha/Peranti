@@ -42,7 +42,7 @@ createGlobalTheme("body", globalTokens, {
   fontFamily: "Inter, serif",
   fontMono: "Consolas, monospace, serif",
   fontSize: "13px",
-  fontWeight: "500",
+  fontWeight: "400",
 
   // Colors
   colorAccent: "#275efe",
@@ -66,7 +66,7 @@ createGlobalTheme("body", globalTokens, {
   windowControlButtonHeight: "36px",
 
   // Tool
-  appletHeaderHeight: "45px",
+  appletHeaderHeight: "60px",
 
   // Session tabbar
   sessionTabbarHeight: "37px",

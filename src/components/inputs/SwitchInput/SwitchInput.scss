@@ -3,7 +3,7 @@
   flex-direction: column;
 
   .buttons {
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--input-output-border-color);
     border-radius: var(--border-radius);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 100px));

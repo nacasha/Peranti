@@ -15,6 +15,7 @@ import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOption } from "src/types/AppletOption"
 import { type AppletOutput } from "src/types/AppletOutput"
+import { type AppletSample } from "src/types/AppletSample"
 import { type AppletState } from "src/types/AppletState"
 import { type ExtensionMetadata } from "src/types/ExtensionMetadata"
 import { type LayoutSetting } from "src/types/LayoutSetting"
@@ -155,7 +156,7 @@ export class Applet<
   /**
    * Input field key when batch mode enabled
    */
-  @observable batchInputKey: string = ""
+  @observable batchModeInputKey: string = ""
 
   /**
    * Output fields key when batch mode enabled
@@ -200,7 +201,7 @@ export class Applet<
   /**
    * Applet input samples
    */
-  readonly samples: Array<Partial<InputFields> | (() => Partial<InputFields>)> = []
+  readonly samples: Array<AppletSample<InputFields>> = []
 
   /**
    * Index of sample that has been showed on viewer
@@ -290,7 +291,7 @@ export class Applet<
       this.inputValues = Object.assign(this.inputValues, initialState.inputValues)
       this.outputValues = Object.assign(this.outputValues, initialState.outputValues)
       this.isBatchModeEnabled = initialState.isBatchModeEnabled ?? this.isBatchModeEnabled
-      this.batchInputKey = initialState.batchModeInputKey ?? this.batchInputKey
+      this.batchModeInputKey = initialState.batchModeInputKey ?? this.batchModeInputKey
       this.batchModeOutputKey = initialState.batchModeOutputKey ?? this.batchModeOutputKey
       this.actionRunCount = initialState.actionRunCount ?? this.actionRunCount
       this.isOutputValuesModified = initialState.isOutputValuesModified ?? this.isOutputValuesModified
@@ -347,7 +348,7 @@ export class Applet<
 
   toState(): AppletState {
     const {
-      batchInputKey: batchModeInputKey,
+      batchModeInputKey,
       batchModeOutputKey,
       inputFieldsState,
       inputValues,
@@ -418,16 +419,26 @@ export class Applet<
     this.isDeleted = isDeleted
   }
 
+  get hasBatchMode() {
+    return this.getInputFields().some((output) => output.allowBatch)
+  }
+
   @action
   setBatchMode(isEnabled: boolean) {
     this.isBatchModeEnabled = isEnabled
 
-    if (this.batchInputKey === "") {
-      this.batchInputKey = this.getInputFields().filter((input) => input.allowBatch)[0].key
+    if (this.batchModeInputKey === "") {
+      const batchInputField = this.getInputFields().filter((input) => input.allowBatch)[0]
+      if (batchInputField) {
+        this.batchModeInputKey = batchInputField.key
+      }
     }
 
     if (this.batchModeOutputKey === "") {
-      this.batchModeOutputKey = this.getOutputFields().filter((output) => output.allowBatch)[0].key
+      const batchOutputField = this.getOutputFields().filter((output) => output.allowBatch)[0]
+      if (batchOutputField) {
+        this.batchModeOutputKey = batchOutputField.key
+      }
     }
   }
 
@@ -438,7 +449,12 @@ export class Applet<
 
   @action
   setBatchModeInputKey(batchInputKey: string) {
-    this.batchInputKey = batchInputKey
+    this.batchModeInputKey = batchInputKey
+  }
+
+  @action
+  toggleBatchMode() {
+    this.setBatchMode(!this.isBatchModeEnabled)
   }
 
   getInputFields() {
@@ -730,7 +746,7 @@ export class Applet<
   }
 
   private async runBatch() {
-    const { inputValues, batchInputKey, optionValues } = this
+    const { inputValues, batchModeInputKey: batchInputKey, optionValues } = this
     const batchInputValues = inputValues[batchInputKey]
     const inputLines = batchInputValues.split("\n")
 
@@ -807,5 +823,25 @@ export class Applet<
 
   getHasSamples() {
     return this.samples.length > 0
+  }
+
+  fillInputValuesWithSample(sample: AppletSample) {
+    if (sample) {
+      const defaultInputValues = this.getInputValuesWithDefault()
+      const { inputValues, isBatchModeEnabled = false } = sample
+
+      this.setBatchMode(isBatchModeEnabled)
+      if (typeof inputValues === "function") {
+        this.setInputValues({ ...defaultInputValues, ...inputValues() })
+      } else {
+        this.setInputValues({ ...defaultInputValues, ...inputValues })
+      }
+
+      this.forceRerender()
+
+      if (!this.autoRun) {
+        void this.run()
+      }
+    }
   }
 }

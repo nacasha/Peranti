@@ -35,8 +35,18 @@ const mathEvaluatorTool: AppletConstructor<InputFields, OutputFields> = {
     }
   ],
   samples: [
-    { input: "(100 * 145) + 10" },
-    { input: "1500 + 2030 * 10 - (10 * 50)" }
+    {
+      name: "Sample 1",
+      inputValues: {
+        input: "(100 * 145) + 10"
+      }
+    },
+    {
+      name: "Sample 2",
+      inputValues: {
+        input: "1500 + 2030 * 10 - (10 * 50)"
+      }
+    }
   ],
   action({ inputValues }) {
     const { input } = inputValues

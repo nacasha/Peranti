@@ -24,7 +24,7 @@ $border-radius: 20px;
     cursor: pointer;
     border: 1px solid var(--bc, var(--border));
     background: var(--b, var(--background));
-    transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
+    transition: background 0.1s, border-color 0.1s, box-shadow 0.1s;
   }
   .Switch input[type=checkbox]:after {
     content: "";
@@ -32,14 +32,14 @@ $border-radius: 20px;
     left: 0;
     top: 0;
     position: absolute;
-    transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
+    transition: transform var(--d-t, 0.1s) var(--d-t-e, ease), opacity var(--d-o, 0.1s);
   }
   .Switch input[type=checkbox]:checked {
     --b: var(--active);
     --bc: var(--active);
     --d-o: .3s;
     --d-t: .6s;
-    --d-t-e: cubic-bezier(.2, .85, .32, 1.2);
+    --d-t-e: cubic-bezier(.1, .85, 0, 1.2);
   }
   .Switch input[type=checkbox]:disabled {
     --b: var(--disabled);

@@ -41,10 +41,31 @@ const cronReadableTool: AppletConstructor<InputFields, OutputFields> = {
     }
   ],
   samples: [
-    { input: "* * * * * *" },
-    { input: "* * * * *" },
-    { input: "0 0/30 * * * *" },
-    { input: "0 0 * * * *" }
+    {
+      name: "Sample 1",
+      inputValues: {
+        input: "* * * * *"
+      }
+    },
+    {
+      name: "Sample 2",
+      inputValues: {
+        input: "0 0/30 * * * *"
+      }
+    },
+    {
+      name: "Sample 3",
+      inputValues: {
+        input: "0 08-17 * * 5-0"
+      }
+    },
+    {
+      name: "Batch Sample",
+      isBatchModeEnabled: true,
+      inputValues: {
+        input: "0 0 * * * *\n0 08-17 * * 5-0\n0 0/30 * * * *"
+      }
+    }
   ],
   action: ({ inputValues }) => {
     const { input } = inputValues

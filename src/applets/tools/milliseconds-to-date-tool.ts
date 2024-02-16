@@ -50,6 +50,21 @@ const millisecondsToDate: AppletConstructor<InputFields, OutputFields> = {
       allowBatch: true
     }
   ],
+  samples: [
+    {
+      name: "Current Millis",
+      inputValues: () => ({
+        milliseconds: new Date().getTime().toString()
+      })
+    },
+    {
+      name: "Batch Sample",
+      isBatchModeEnabled: true,
+      inputValues: {
+        milliseconds: "1694000944625\n1708001926834\n1704000944625"
+      }
+    }
+  ],
   action: ({ inputValues }) => {
     const { milliseconds } = inputValues
     if (milliseconds.trim().length === 0) {

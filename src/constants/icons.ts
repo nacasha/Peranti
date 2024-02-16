@@ -2,6 +2,8 @@ import Back from "src/assets/icons/back.svg"
 import BackspaceFill from "src/assets/icons/backspace-fill.svg"
 import Box from "src/assets/icons/box.svg"
 import Check from "src/assets/icons/check.svg"
+import ChevronDown from "src/assets/icons/chevron-down.svg"
+import ChevronUp from "src/assets/icons/chevron-up.svg"
 import Clean from "src/assets/icons/clean.svg"
 import Close from "src/assets/icons/close.svg"
 import Documents from "src/assets/icons/documents.svg"
@@ -17,6 +19,7 @@ import Minimize from "src/assets/icons/minimize.svg"
 import Minus from "src/assets/icons/minus.svg"
 import Newspaper from "src/assets/icons/newspaper.svg"
 import PanelLeft from "src/assets/icons/panel-left.svg"
+import PanelRight from "src/assets/icons/panel-right.svg"
 import Plus from "src/assets/icons/plus.svg"
 import Refresh from "src/assets/icons/refresh.svg"
 import Reset from "src/assets/icons/reset.svg"
@@ -34,6 +37,8 @@ import Untrash from "src/assets/icons/untrash.svg"
 export const Icons = {
   Back,
   Check,
+  ChevronDown,
+  ChevronUp,
   Search,
   Documents,
   Trash,
@@ -55,6 +60,7 @@ export const Icons = {
   PanelLeft,
   Plus,
   Refresh,
+  PanelRight,
   Reset,
   Minus,
   Restore,

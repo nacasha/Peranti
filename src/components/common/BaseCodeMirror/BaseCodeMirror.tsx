@@ -1,7 +1,7 @@
 import { jsonLanguage } from "@codemirror/lang-json"
 import { markdownLanguage } from "@codemirror/lang-markdown"
 import { githubLight } from "@uiw/codemirror-theme-github"
-import { monokaiDimmed } from "@uiw/codemirror-theme-monokai-dimmed"
+import { vscodeDarkInit } from "@uiw/codemirror-theme-vscode"
 import CodeMirror, { EditorView, type ReactCodeMirrorRef, type ReactCodeMirrorProps, type ViewUpdate, EditorSelection } from "@uiw/react-codemirror"
 import { useRef, type FC, useEffect, useState } from "react"
 
@@ -140,7 +140,16 @@ export const BaseCodeMirror: FC<Props> = (props) => {
         {...codeMirrorProps}
         ref={editorComponentRef}
         value={value}
-        theme={isDarkMode ? monokaiDimmed : githubLight}
+        theme={isDarkMode
+          ? vscodeDarkInit({
+            settings: {
+              foreground: "#bcbec4",
+              background: "#292a30",
+              gutterBackground: "#292a30",
+              gutterBorder: "1px solid red"
+            }
+          })
+          : githubLight}
         extensions={getExtensions()}
         initialState={initialState}
         onChange={handleOnChange}
@@ -150,7 +159,8 @@ export const BaseCodeMirror: FC<Props> = (props) => {
         style={{ opacity: ready ? "1" : "0" }}
         basicSetup={{
           highlightActiveLine: false,
-          highlightActiveLineGutter: false
+          highlightActiveLineGutter: false,
+          foldGutter: false
         }}
       />
     </div>

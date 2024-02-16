@@ -12,6 +12,7 @@ import { FileDropListener } from "./components/filedrop/FileDropListener"
 import { NotificationProvider } from "./components/notification/NotificationProvider/NotificationProvider.tsx"
 import { SessionTabbar } from "./components/session/SessionTabbar"
 import { PrimarySidebar } from "./components/sidebar/PrimarySidebar"
+import { SecondarySidebarCommandbar } from "./components/sidebar/SecondarySidebar/index.ts"
 import { WindowResizeEventListener } from "./components/window/WindowResizeEventListener"
 import { WindowSizeListener } from "./components/window/WindowSizeListener"
 import { AppTitleBarStyle } from "./enums/app-titlebar-style.ts"
@@ -85,6 +86,8 @@ export const AppMain = () => {
           <SessionTabbar />
           <AppletViewer />
         </div>
+
+        <SecondarySidebarCommandbar />
       </div>
 
       <AppStatusbar />

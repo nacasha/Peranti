@@ -6,9 +6,9 @@ import { styleTokens } from "src/styles/styleTokens.css"
 
 export const windowControlsClasses = {
   root: style({
+    display: "flex",
     selectors: {
       [`${appClasses.root}${appClasses.withTabbar} &`]: {
-        borderBottom: `1px solid ${styleTokens.borderColor}`,
         top: `calc(0px - ${styleTokens.sessionTabbarDraggableHeight})`,
         paddingBottom: styleTokens.sessionTabbarDraggableHeight
       },
@@ -42,10 +42,40 @@ export const windowControlsClasses = {
         backgroundColor: "#c42b1c"
       }
     }
+  }),
+
+  layoutControls: style({
+    display: "flex",
+    marginRight: 10,
+    gap: 5,
+    alignItems: "center"
+  }),
+
+  layoutControlsItem: style({
+    display: "flex",
+    alignItems: "center",
+    userSelect: "none",
+    marginBlock: 6,
+    padding: 5,
+    borderRadius: styleTokens.borderRadius,
+
+    ":hover": {
+      background: "color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%)",
+      cursor: "pointer"
+    }
+  }),
+
+  windowControls: style({
+    display: "flex"
   })
 }
 
 globalStyle(`${windowControlsClasses.button} img`, {
   width: "14px",
+  filter: styleTokens.iconColorFilter
+})
+
+globalStyle(`${windowControlsClasses.layoutControlsItem} img`, {
+  width: "15px",
   filter: styleTokens.iconColorFilter
 })

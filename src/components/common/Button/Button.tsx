@@ -1,20 +1,20 @@
 import { clsx } from "clsx"
-import { type ButtonHTMLAttributes, type DetailedHTMLProps, type DOMAttributes, type FC, type ReactNode } from "react"
+import { type ButtonHTMLAttributes, type DetailedHTMLProps, type FC, type ReactNode } from "react"
 
-import { buttonCss } from "./Button.css"
+import { buttonClasses } from "./Button.css"
 
 interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
   icon?: string
   children?: ReactNode
-  onClick?: DOMAttributes<HTMLButtonElement>["onClick"]
+  active?: boolean
 }
 
 export const Button: FC<ButtonProps> = (props) => {
-  const { children, icon, className, ...restProps } = props
+  const { children, icon, className, active, ...restProps } = props
 
   return (
     <button
-      className={clsx(buttonCss, className)}
+      className={clsx(buttonClasses.root, className, { [buttonClasses.active]: active })}
       {...restProps}
     >
       {icon && <img src={icon} alt={children?.toString()} />}

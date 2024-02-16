@@ -21,7 +21,9 @@ export const AppTitlebar: FC = () => {
       <div />
       <AppletSearchBar />
 
-      <WindowControls />
+      <div>
+        <WindowControls />
+      </div>
     </div>
   )
 }

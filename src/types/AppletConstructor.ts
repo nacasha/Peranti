@@ -4,6 +4,7 @@ import { type AppletActionParams } from "./AppletAction.ts"
 import { type AppletInput } from "./AppletInput.ts"
 import { type AppletOption } from "./AppletOption.ts"
 import { type AppletOutput } from "./AppletOutput.ts"
+import { type AppletSample } from "./AppletSample.ts"
 import { type LayoutSetting } from "./LayoutSetting.ts"
 import { type Pipeline } from "./Pipeline.ts"
 
@@ -22,7 +23,7 @@ export interface AppletConstructor<
   pipelines?: Pipeline[]
   autoRun?: boolean
   type?: AppletType
-  samples?: Array<Partial<InputFields> | (() => Partial<InputFields>)>
+  samples?: Array<AppletSample<InputFields>>
   metadata?: any
   disableMultipleSession?: boolean
   hideOnSidebar?: boolean

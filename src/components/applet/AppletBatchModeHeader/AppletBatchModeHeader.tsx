@@ -8,7 +8,7 @@ import "./AppletBatchModeHeader.scss"
 
 export const AppletBatchModeHeader = observer(() => {
   const activeApplet = activeAppletStore.getActiveApplet()
-  const { isBatchModeEnabled, batchModeOutputKey, batchInputKey: batchModeInputKey } = activeApplet
+  const { isBatchModeEnabled, batchModeOutputKey, batchModeInputKey } = activeApplet
 
   const isReadOnly = activeApplet.isDeleted
   const inputFields = activeApplet.getInputFields()

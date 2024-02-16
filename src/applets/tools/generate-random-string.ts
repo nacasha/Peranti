@@ -73,10 +73,30 @@ const generateRandomStringTool: AppletConstructor<InputFields, OutputFields> = {
     }
   ],
   samples: [
-    { count: "5", stringLength: "40", number: true, capitalAz: false, smallAz: false, symbol: false },
-    { count: "5", stringLength: "40", number: false, capitalAz: true, smallAz: false, symbol: false },
-    { count: "5", stringLength: "40", number: false, capitalAz: false, smallAz: true, symbol: false },
-    { count: "5", stringLength: "40", number: false, capitalAz: false, smallAz: false, symbol: true }
+    {
+      name: "Numbers",
+      inputValues: {
+        count: "5", stringLength: "40", number: true, capitalAz: false, smallAz: false, symbol: false
+      }
+    },
+    {
+      name: "Uppercase Alphabets",
+      inputValues: {
+        count: "5", stringLength: "40", number: false, capitalAz: true, smallAz: false, symbol: false
+      }
+    },
+    {
+      name: "Lowercase Alphabets",
+      inputValues: {
+        count: "5", stringLength: "40", number: false, capitalAz: false, smallAz: true, symbol: false
+      }
+    },
+    {
+      name: "Symbols",
+      inputValues: {
+        count: "5", stringLength: "40", number: false, capitalAz: false, smallAz: false, symbol: true
+      }
+    }
   ],
   action: ({ inputValues }) => {
     const { count, stringLength, smallAz, capitalAz, number, symbol } = inputValues

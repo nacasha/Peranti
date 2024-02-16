@@ -245,8 +245,6 @@ class SessionStore {
     if (!skipOpenAnotherSession && (activeApplet.sessionId === session.sessionId)) {
       const newSessions = this.getRunningSessions(session.appletId)
 
-      console.log(closedSessionIndex)
-
       /**
        * Reset session sequence for related appletId
        * if the new sessions has empty list

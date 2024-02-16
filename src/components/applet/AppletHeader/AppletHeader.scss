@@ -1,15 +1,19 @@
 .AppletHeader {
   display: flex;
-  gap: 0px;
-  padding: 0 10px;
-  align-items: center;
-  min-height: var(--applet-header-height);
+  flex-direction: column;
   border-bottom: 1px solid var(--border-color);
-  justify-content: space-between;
+  padding: 7px 15px;
+  justify-content: center;
   background-color: var(--applet-header-background-color);
   position: sticky;
   z-index: 1;
   top: 0;
+
+  .AppletHeader-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
   .AppletHeader-title {
     font-weight: 500;
@@ -17,7 +21,7 @@
 
   .AppletHeader-button-list {
     display: flex;
-    gap: 5px;
+    gap: 10px;
     align-items: center;
   }
 

@@ -4,7 +4,6 @@ import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
 interface InputFields {
   input: InputFieldsType.Switch
-  space: InputFieldsType.Text
   type: InputFieldsType.Code
 }
 
@@ -86,6 +85,22 @@ const jsonFormatter: AppletConstructor<InputFields, OutputFields, Options> = {
           { label: "7", value: "7" },
           { label: "8", value: "8" }
         ]
+      }
+    }
+  ],
+  samples: [
+    {
+      name: "Prettify",
+      inputValues: {
+        type: "pretty",
+        input: "{\n  \"result\": [\n    {\n      \"approvalStatus\": \"REJECTED\",\n      \"createdDate\": 1707811932382,\n      \"subject\": \"Early Termination\"\n    },\n    {\n      \"approvalStatus\": \"NEED_APPROVAL\",\n      \"createdDate\": 1707811693773,\n      \"subject\": \"Early Termination Requested\"\n    }\n  ]\n}"
+      }
+    },
+    {
+      name: "Minify",
+      inputValues: {
+        type: "minify",
+        input: "{\n  \"result\": [\n    {\n      \"approvalStatus\": \"REJECTED\",\n      \"createdDate\": 1707811932382,\n      \"subject\": \"Early Termination\"\n    },\n    {\n      \"approvalStatus\": \"NEED_APPROVAL\",\n      \"createdDate\": 1707811693773,\n      \"subject\": \"Early Termination Requested\"\n    }\n  ]\n}"
       }
     }
   ],

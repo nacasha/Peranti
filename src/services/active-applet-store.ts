@@ -23,7 +23,7 @@ class ActiveAppletStore {
     })
   }
 
-  get hasBatchOutput() {
+  get hasBatchMode() {
     return this.getActiveApplet().getInputFields().some((output) => output.allowBatch)
   }
 
@@ -57,19 +57,35 @@ class ActiveAppletStore {
     activeApplet.forceRerender()
   }
 
-  fillInputValuesWithSample() {
+  private getSample() {
     const activeApplet = this.getActiveApplet()
     const { samples } = activeApplet
 
     if (samples.length > 0) {
       const sampleIndex = activeApplet.sampleIndex
       const sample = samples[sampleIndex]
-      const defaultInputValues = activeApplet.getInputValuesWithDefault()
 
       if (typeof sample === "function") {
-        activeApplet.setInputValues({ ...defaultInputValues, ...sample() })
+        return sample()
       } else {
-        activeApplet.setInputValues({ ...defaultInputValues, ...sample })
+        return sample
+      }
+    }
+  }
+
+  fillInputValuesWithSample() {
+    const activeApplet = this.getActiveApplet()
+    const { samples } = activeApplet
+
+    if (samples.length > 0) {
+      const sampleIndex = activeApplet.sampleIndex
+      const defaultInputValues = activeApplet.getInputValuesWithDefault()
+      const sample = this.getSample()
+
+      if (sample) {
+        const { inputValues, isBatchModeEnabled = false } = sample
+        activeApplet.setBatchMode(isBatchModeEnabled)
+        activeApplet.setInputValues({ ...defaultInputValues, ...inputValues })
       }
 
       const newSampleIndex = sampleIndex + 1

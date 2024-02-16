@@ -1,6 +1,6 @@
 .CheckboxInput {
   transition: all var(--transition-speed);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-output-border-color);
   border-radius: var(--border-radius);
   display: flex;
   justify-content: space-between;
