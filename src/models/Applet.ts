@@ -837,6 +837,7 @@ export class Applet<
         this.setInputValues({ ...defaultInputValues, ...inputValues })
       }
 
+      this.resetInputAndOutputFieldsState()
       this.forceRerender()
 
       if (!this.autoRun) {

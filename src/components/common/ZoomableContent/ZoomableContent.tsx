@@ -18,14 +18,29 @@ interface ZoomableContentProps {
   initialState?: TransformState
   onStageChange?: (state: any) => any
   checkered?: boolean
+  isContentReady?: boolean
+  contentWidth?: number
+  contentHeight?: number
 }
 
 export const ZoomableContent: FC<ZoomableContentProps> = (props) => {
-  const { children, initialState, checkered, onStageChange } = props
+  const {
+    children,
+    initialState,
+    checkered,
+    onStageChange,
+    contentWidth: contentWidthProps,
+    contentHeight: contentHeightProps,
+    isContentReady: isContentReadyProps
+  } = props
 
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
-  const [containerWidth, setContainerWidth] = useState<number>(0)
-  const [containerHeight, setContainerHeight] = useState<number>(0)
+  const [containerWidth, setContainerWidth] = useState(0)
+  const [containerHeight, setContainerHeight] = useState(0)
+
+  const [isContentReady, setIsContentReady] = useState(isContentReadyProps ?? true)
+  const [contentWidth, setContentWidth] = useState(contentWidthProps ?? 100)
+  const [contentHeight, setContentHeight] = useState(contentHeightProps ?? 100)
 
   /**
    * Maximum zoom factor
@@ -41,9 +56,8 @@ export const ZoomableContent: FC<ZoomableContentProps> = (props) => {
 
   const imageScale = useMemo(() => {
     if (containerWidth === 0 || containerHeight === 0) { return 0 }
-    const scale = Math.min(containerWidth / 100, containerHeight / 100)
-    return scale
-  }, [containerWidth, containerHeight, children])
+    return Math.min(containerWidth / contentWidth, containerHeight / contentHeight)
+  }, [containerWidth, containerHeight, contentWidth, containerHeight, children])
 
   /**
    * Initial position of transform
@@ -54,10 +68,10 @@ export const ZoomableContent: FC<ZoomableContentProps> = (props) => {
     }
 
     return {
-      x: (containerWidth - (100 * imageScale)) / 2,
-      y: (containerHeight - (100 * imageScale)) / 2
+      x: (containerWidth - (contentWidth * imageScale)) / 2,
+      y: (containerHeight - (contentHeight * imageScale)) / 2
     }
-  }, [containerWidth, containerHeight, children, imageScale])
+  }, [containerWidth, containerHeight, contentWidth, containerHeight, children, imageScale])
 
   /**
    * Set new container size
@@ -132,16 +146,32 @@ export const ZoomableContent: FC<ZoomableContentProps> = (props) => {
     }
   }, [container])
 
+  useEffect(() => {
+    if (isContentReadyProps) {
+      setIsContentReady(isContentReadyProps)
+    }
+  }, [isContentReadyProps])
+
   /**
    * Store last transform state to applet storage
    */
   useEffect(() => {
+    /**
+     * Send transform current position and zoom when unload the component
+     */
     return () => {
       if (onStageChange) {
         onStageChange(transformState.current)
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (contentWidthProps && contentHeightProps) {
+      setContentWidth(contentWidthProps)
+      setContentHeight(contentHeightProps)
+    }
+  }, [contentWidthProps, contentHeightProps])
 
   /**
    * Reset value of transform
@@ -159,24 +189,26 @@ export const ZoomableContent: FC<ZoomableContentProps> = (props) => {
           ref={(el: HTMLDivElement | null) => { setContainer(el) }}
           className={clsx(zoomableContentClasses.content, { [zoomableContentClasses.checkered]: checkered })}
         >
-          <TransformWrapper
-            key={`${containerHeight}${containerWidth}${imageScale}`}
-            initialScale={transformState.current.scale ?? imageScale}
-            initialPositionX={transformState.current.translateX ?? initialPosition.x}
-            initialPositionY={transformState.current.translateY ?? initialPosition.y}
-            minScale={imageScale}
-            maxScale={imageScale * zoomFactor}
-            onInit={() => { listenTransformChanges() }}
-          >
-            {(controls) => (
-              <>
-                <Controls controls={controls} resetValue={controlsResetValue} />
-                <TransformComponent>
-                  {children}
-                </TransformComponent>
-              </>
-            )}
-          </TransformWrapper>
+          {isContentReady && (
+            <TransformWrapper
+              key={`${containerHeight}${containerWidth}${contentWidth}${contentHeight}${imageScale}`}
+              initialScale={transformState.current.scale ?? imageScale}
+              initialPositionX={transformState.current.translateX ?? initialPosition.x}
+              initialPositionY={transformState.current.translateY ?? initialPosition.y}
+              minScale={imageScale}
+              maxScale={imageScale * zoomFactor}
+              onInit={() => { listenTransformChanges() }}
+            >
+              {(controls) => (
+                <>
+                  <Controls controls={controls} resetValue={controlsResetValue} />
+                  <TransformComponent>
+                    {children}
+                  </TransformComponent>
+                </>
+              )}
+            </TransformWrapper>
+          )}
         </div>
       </div>
     </div>

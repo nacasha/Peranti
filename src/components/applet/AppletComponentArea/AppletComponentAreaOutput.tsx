@@ -16,13 +16,17 @@ export const AppletComponentAreaOutput: FC<AppletComponentAreaOutpuProps> = (pro
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
   const outputFields = useSelector(() => activeAppletStore.getActiveApplet().getOutputFields())
   const inputAreaDirection = useSelector(() => activeAppletStore.getActiveApplet().layoutSetting.outputAreaDirection)
+  const renderCounter = useSelector(() => activeAppletStore.getActiveApplet().renderCounter)
 
   if (outputFields.length === 0) {
     return null
   }
 
   return (
-    <div className={clsx("AppletComponentAreaOutput", inputAreaDirection, className)}>
+    <div
+      key={activeApplet.sessionId.concat(renderCounter.toString())}
+      className={clsx("AppletComponentAreaOutput", inputAreaDirection, className)}
+    >
       {outputFields.map((outputComponent) => (
         <AppletOutputRenderer
           key={activeApplet.sessionId.concat(outputComponent.key)}

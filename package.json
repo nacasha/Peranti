@@ -75,7 +75,6 @@
     "tauri-plugin-context-menu": "^0.7.0",
     "ts-deepmerge": "^7.0.0",
     "uuid": "^9.0.1",
-    "vm2": "^3.9.19",
     "wouter": "^2.12.1"
   },
   "devDependencies": {

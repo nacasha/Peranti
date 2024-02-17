@@ -20,6 +20,7 @@ import markdownParserTool from "src/applets/tools/markdown-parser-tool.ts"
 import mathEvaluatorTool from "src/applets/tools/math-evaluator-tool.ts"
 import mermaidEditorTool from "src/applets/tools/mermaid-editor-tool.ts"
 import millisecondsToDate from "src/applets/tools/milliseconds-to-date-tool.ts"
+import pintoraEditorTool from "src/applets/tools/pintora-editor-tool.ts"
 import prefixSuffixLines from "src/applets/tools/prefix-suffix-lines-tool.ts"
 import removeDuplicateList from "src/applets/tools/remove-duplicate-lines-tool.ts"
 import sortList from "src/applets/tools/sort-list-tool.ts"
@@ -71,7 +72,8 @@ class AppletStore {
     [markdownParserTool.appletId]: markdownParserTool,
     [dateToMillisecondsTool.appletId]: dateToMillisecondsTool,
     [settingsTool.appletId]: settingsTool,
-    [mermaidEditorTool.appletId]: mermaidEditorTool
+    [mermaidEditorTool.appletId]: mermaidEditorTool,
+    [pintoraEditorTool.appletId]: pintoraEditorTool
   }
 
   /**

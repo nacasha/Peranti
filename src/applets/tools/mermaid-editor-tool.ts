@@ -29,7 +29,7 @@ const mermaidEditorTool: AppletConstructor<InputFields, OutputFields> = {
   outputFields: [
     {
       key: "output",
-      label: "Diagram",
+      label: "Mermaid Diagram",
       component: "Mermaid"
     }
   ],

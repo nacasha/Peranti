@@ -17,6 +17,7 @@ import { IFrameOutput } from "src/components/outputs/IFrameOutput"
 import { ImageOutput } from "src/components/outputs/ImageOutput"
 import { MarkdownOutput } from "src/components/outputs/MarkdownOutput"
 import { MermaidOutput } from "src/components/outputs/MermaidOutput"
+import { PintoraOutput } from "src/components/outputs/PintoraOutput"
 import { TextAreaOutput } from "src/components/outputs/TextAreaOutput"
 import { TextOutput } from "src/components/outputs/TextOutput"
 import { SettingsView } from "src/components/settings/SettingsView"
@@ -131,6 +132,10 @@ class AppletComponentService {
 
     Mermaid: new Component({
       component: MermaidOutput
+    }),
+
+    Pintora: new Component({
+      component: PintoraOutput
     })
   }
 

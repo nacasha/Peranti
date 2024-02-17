@@ -3,12 +3,11 @@ import { type FC, useEffect, useState, useRef } from "react"
 
 import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { ZoomableContent } from "src/components/common/ZoomableContent"
+import { Theme } from "src/enums/theme"
+import { interfaceStore } from "src/services/interface-store"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
-import "./MermaidOutput.scss"
-
-import { interfaceStore } from "src/services/interface-store"
-import { Theme } from "src/enums/theme"
+import { mermaidOutputClasses } from "./MermaidOutput.css"
 
 interface MermaidOutputProps extends OutputComponentProps {}
 
@@ -60,15 +59,15 @@ export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
   }, [])
 
   return (
-    <div className="MermaidOutput" onContextMenu={onContextMenu}>
+    <div className={mermaidOutputClasses.root} onContextMenu={onContextMenu}>
       <ComponentLabel label={label} />
-      <div className="MermaidOutput-inner">
+      <div className={mermaidOutputClasses.inner}>
         <ZoomableContent
           initialState={initialState}
           onStageChange={onStateChange}
         >
           <div
-            className="MermaidOutput-svg"
+            className={mermaidOutputClasses.svg}
             ref={renderRef}
             dangerouslySetInnerHTML={{ __html: svgString }}
           >

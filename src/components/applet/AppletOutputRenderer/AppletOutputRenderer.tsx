@@ -46,8 +46,12 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
     })
   }
 
+  /**
+   * Pass `initialState` related props to selected components
+   * Only few components handling those events
+   */
   const additionalProps: Record<string, any> = {}
-  if (["Code", "Mermaid", "Image"].includes(appletOutput.component)) {
+  if (["Code", "Mermaid", "Image", "Pintora"].includes(appletOutput.component)) {
     additionalProps.initialState = initialState
     additionalProps.onStateChange = handleStateChange
   }

@@ -72,6 +72,7 @@ export const { ...zoomableContentClasses } = new class {
 
 globalStyle(`${zoomableContentClasses.root} .react-transform-wrapper`, {
   width: "100%",
+  maxWidth: "100%",
   maxHeight: "100%",
   height: "100%",
   flex: "1"
