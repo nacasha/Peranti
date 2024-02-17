@@ -22,7 +22,7 @@ export const { ...zoomableContentClasses } = new class {
     gap: "5px",
     padding: "10px",
     position: "absolute",
-    bottom: "0",
+    top: "0",
     zIndex: "1"
   })
 
@@ -49,10 +49,10 @@ export const { ...zoomableContentClasses } = new class {
 
     selectors: {
       [`${darkThemeClass} &`]: {
-        background: "#1e1f22",
+        background: "#292a30",
 
         vars: {
-          [checkeredBackgroundColor]: "#1e1f22"
+          [checkeredBackgroundColor]: "#292a30"
         }
       },
 

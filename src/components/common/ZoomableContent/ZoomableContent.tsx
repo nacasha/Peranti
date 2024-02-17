@@ -233,8 +233,8 @@ const Controls = (props: { controls: ReactZoomPanPinchContentRef, resetValue: [n
 
   return (
     <div className={zoomableContentClasses.actions}>
-      <Button icon={Icons.Plus} onClick={handleZoomIn} />
       <Button icon={Icons.Minus} onClick={handleZoomOut} />
+      <Button icon={Icons.Plus} onClick={handleZoomIn} />
       <Button icon={Icons.FullScreen} onClick={handleResetZoom} />
     </div>
   )

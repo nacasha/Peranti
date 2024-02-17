@@ -99,6 +99,10 @@ class InterfaceStore {
   setIsWindowMaximized(value: boolean) {
     this.isWindowMaximized = value
   }
+
+  get isDarkTheme() {
+    return this.theme === Theme.Dark
+  }
 }
 
 export const interfaceStore = new InterfaceStore()

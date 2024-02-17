@@ -3,6 +3,7 @@ import { type FC, useEffect, useState, useRef } from "react"
 
 import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { ZoomableContent } from "src/components/common/ZoomableContent"
+import { interfaceStore } from "src/services/interface-store"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import { pintoraOutputClasses } from "./PintoraOutput.css"
@@ -39,7 +40,10 @@ export const PintoraOutput: FC<PintoraOutputProps> = (props) => {
           },
           config: {
             themeConfig: {
-              theme: "dark"
+              theme: interfaceStore.isDarkTheme ? "dark" : "default",
+              themeVariables: {
+                canvasBackground: "transparent"
+              }
             }
           }
         })
