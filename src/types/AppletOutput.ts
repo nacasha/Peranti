@@ -47,4 +47,7 @@ export type AppletOutput<K extends Record<string, string> = any> = {
 } | {
   component: "Pintora"
   props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Mermaid>
+} | {
+  component: "React"
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.React>
 })

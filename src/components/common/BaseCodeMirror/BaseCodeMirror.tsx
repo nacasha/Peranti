@@ -1,3 +1,4 @@
+import { jsxLanguage } from "@codemirror/lang-javascript"
 import { jsonLanguage } from "@codemirror/lang-json"
 import { markdownLanguage } from "@codemirror/lang-markdown"
 import { githubLight } from "@uiw/codemirror-theme-github"
@@ -12,7 +13,7 @@ import { interfaceStore } from "src/services/interface-store"
 import "./BaseCodeMirror.scss"
 
 export interface BaseCodeMirrorProps {
-  language?: "json" | "plain" | "markdown"
+  language?: "json" | "plain" | "markdown" | "javascript"
 }
 
 interface InitialStateCodeMirror {
@@ -66,6 +67,8 @@ export const BaseCodeMirror: FC<Props> = (props) => {
       extensions.push(jsonLanguage)
     } else if (language === "markdown") {
       extensions.push(markdownLanguage)
+    } else if (language === "javascript") {
+      extensions.push(jsxLanguage)
     }
 
     return extensions

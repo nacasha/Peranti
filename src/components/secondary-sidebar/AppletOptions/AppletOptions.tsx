@@ -11,6 +11,10 @@ export const AppletOptions = () => {
   const options = useSelector(() => activeAppletStore.getActiveApplet().options)
   const readOnly = useSelector(() => activeAppletStore.getActiveApplet().isDeleted)
 
+  if (options.length === 0) {
+    return null
+  }
+
   return (
     <SecondarySidebarSection title="Options">
       {options.map((option) => (

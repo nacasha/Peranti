@@ -7,7 +7,7 @@ interface InputFields {
 }
 
 interface OutputFields {
-  output: OutputFieldsType.Mermaid
+  output: OutputFieldsType.Pintora
 }
 
 const pintoraEditorTool: AppletConstructor<InputFields, OutputFields> = {

@@ -18,6 +18,7 @@ import { ImageOutput } from "src/components/outputs/ImageOutput"
 import { MarkdownOutput } from "src/components/outputs/MarkdownOutput"
 import { MermaidOutput } from "src/components/outputs/MermaidOutput"
 import { PintoraOutput } from "src/components/outputs/PintoraOutput"
+import { ReactOutput } from "src/components/outputs/ReactOutput"
 import { TextAreaOutput } from "src/components/outputs/TextAreaOutput"
 import { TextOutput } from "src/components/outputs/TextOutput"
 import { SettingsView } from "src/components/settings/SettingsView"
@@ -136,6 +137,10 @@ class AppletComponentService {
 
     Pintora: new Component({
       component: PintoraOutput
+    }),
+
+    React: new Component({
+      component: ReactOutput
     })
   }
 

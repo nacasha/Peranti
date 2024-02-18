@@ -37,6 +37,15 @@ export const DiffOutput: FC<DiffOutputProps> = observer((props) => {
           splitView={splitView}
           showDiffOnly={false}
           useDarkTheme={interfaceStore.theme === Theme.Dark}
+          styles={{
+            variables: {
+              dark: {
+                diffViewerBackground: "#292a30",
+                gutterBackground: "#292a30",
+                gutterColor: "#838383"
+              }
+            }
+          }}
         />
       </div>
     </div>

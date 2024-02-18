@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@codemirror/commands": "^6.3.3",
+    "@codemirror/lang-javascript": "^6.2.1",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/lang-markdown": "^6.2.4",
     "@codemirror/language": "^6.10.0",
@@ -69,12 +70,14 @@
     "react-hot-toast": "^2.4.1",
     "react-hotkeys-hook": "^4.4.4",
     "react-markdown": "^9.0.1",
+    "react-runner": "^1.0.3",
     "react-zoom-pan-pinch": "^3.3.0",
     "remark-gfm": "^4.0.0",
     "simplebar-react": "^3.2.4",
     "tauri-plugin-clipboard-api": "^0.5.5",
     "tauri-plugin-context-menu": "^0.7.0",
     "ts-deepmerge": "^7.0.0",
+    "unescape-js": "^1.1.4",
     "uuid": "^9.0.1",
     "wouter": "^2.12.1"
   },

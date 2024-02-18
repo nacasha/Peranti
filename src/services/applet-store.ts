@@ -15,7 +15,7 @@ import hashTool from "src/applets/tools/hash-tool.ts"
 import jsonDiffTool from "src/applets/tools/json-diff-tool"
 import jsonFormatter from "src/applets/tools/json-formatter-tool.ts"
 import { jsonToCsvTool } from "src/applets/tools/json-to-csv-tool/json-to-csv-tool.ts"
-import { jsonataTool } from "src/applets/tools/jsonata-tool"
+import { jsonataTool } from "src/applets/tools/jsonata-tool/jsonata-tool.ts"
 import loremIpsumGeneratorTool from "src/applets/tools/lorem-ipsum-generator-tool.ts"
 import markdownParserTool from "src/applets/tools/markdown-parser-tool.ts"
 import mathEvaluatorTool from "src/applets/tools/math-evaluator-tool.ts"
@@ -23,10 +23,12 @@ import mermaidEditorTool from "src/applets/tools/mermaid-editor-tool.ts"
 import millisecondsToDate from "src/applets/tools/milliseconds-to-date-tool.ts"
 import pintoraEditorTool from "src/applets/tools/pintora-editor-tool.ts"
 import prefixSuffixLines from "src/applets/tools/prefix-suffix-lines-tool.ts"
+import { reactRunnerTool } from "src/applets/tools/react-runner-tool/react-runner-tool.ts"
 import removeDuplicateList from "src/applets/tools/remove-duplicate-lines-tool.ts"
 import sortList from "src/applets/tools/sort-list-tool.ts"
 import testPipelines from "src/applets/tools/test-pipelines-tool.ts"
 import textEditorTool from "src/applets/tools/text-editor-tool.ts"
+import textEscapeUnescapeTool from "src/applets/tools/text-escape-unescape-tool/text-escape-unescape-tool.ts"
 import textTransformTool from "src/applets/tools/text-transform-tool.ts"
 import uriEncodeDecodeTool from "src/applets/tools/uri-encode-decode-tool.ts"
 import { type AppletConstructor } from "src/types/AppletConstructor.ts"
@@ -75,7 +77,9 @@ class AppletStore {
     [settingsTool.appletId]: settingsTool,
     [mermaidEditorTool.appletId]: mermaidEditorTool,
     [pintoraEditorTool.appletId]: pintoraEditorTool,
-    [jsonToCsvTool.appletId]: jsonToCsvTool
+    [jsonToCsvTool.appletId]: jsonToCsvTool,
+    [reactRunnerTool.appletId]: reactRunnerTool,
+    [textEscapeUnescapeTool.appletId]: textEscapeUnescapeTool
   }
 
   /**
