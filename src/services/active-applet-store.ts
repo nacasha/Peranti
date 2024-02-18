@@ -57,47 +57,6 @@ class ActiveAppletStore {
     activeApplet.forceRerender()
   }
 
-  private getSample() {
-    const activeApplet = this.getActiveApplet()
-    const { samples } = activeApplet
-
-    if (samples.length > 0) {
-      const sampleIndex = activeApplet.sampleIndex
-      const sample = samples[sampleIndex]
-
-      if (typeof sample === "function") {
-        return sample()
-      } else {
-        return sample
-      }
-    }
-  }
-
-  fillInputValuesWithSample() {
-    const activeApplet = this.getActiveApplet()
-    const { samples } = activeApplet
-
-    if (samples.length > 0) {
-      const sampleIndex = activeApplet.sampleIndex
-      const defaultInputValues = activeApplet.getInputValuesWithDefault()
-      const sample = this.getSample()
-
-      if (sample) {
-        const { inputValues, isBatchModeEnabled = false } = sample
-        activeApplet.setBatchMode(isBatchModeEnabled)
-        activeApplet.setInputValues({ ...defaultInputValues, ...inputValues })
-      }
-
-      const newSampleIndex = sampleIndex + 1
-      activeApplet.setSampleIndex(newSampleIndex > (samples.length - 1) ? 0 : newSampleIndex)
-      activeApplet.forceRerender()
-
-      if (!activeApplet.autoRun) {
-        void activeApplet.run()
-      }
-    }
-  }
-
   run() {
     void this.getActiveApplet().run()
   }

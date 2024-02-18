@@ -3,5 +3,6 @@ export const StorageKeys = {
   AppletState: "applet-state|",
   InterfaceStore: "interface-store",
   SessionHistoryStore: "session-history-store",
-  SessionStore: "session-store"
+  SessionStore: "session-store",
+  AppletSidebar: "applet-sidebar"
 }

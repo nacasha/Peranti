@@ -14,7 +14,8 @@ import generateUuidTool from "src/applets/tools/generate-uuid-tool.ts"
 import hashTool from "src/applets/tools/hash-tool.ts"
 import jsonDiffTool from "src/applets/tools/json-diff-tool"
 import jsonFormatter from "src/applets/tools/json-formatter-tool.ts"
-import jsonataTool from "src/applets/tools/jsonata-tool"
+import { jsonToCsvTool } from "src/applets/tools/json-to-csv-tool/json-to-csv-tool.ts"
+import { jsonataTool } from "src/applets/tools/jsonata-tool"
 import loremIpsumGeneratorTool from "src/applets/tools/lorem-ipsum-generator-tool.ts"
 import markdownParserTool from "src/applets/tools/markdown-parser-tool.ts"
 import mathEvaluatorTool from "src/applets/tools/math-evaluator-tool.ts"
@@ -73,7 +74,8 @@ class AppletStore {
     [dateToMillisecondsTool.appletId]: dateToMillisecondsTool,
     [settingsTool.appletId]: settingsTool,
     [mermaidEditorTool.appletId]: mermaidEditorTool,
-    [pintoraEditorTool.appletId]: pintoraEditorTool
+    [pintoraEditorTool.appletId]: pintoraEditorTool,
+    [jsonToCsvTool.appletId]: jsonToCsvTool
   }
 
   /**

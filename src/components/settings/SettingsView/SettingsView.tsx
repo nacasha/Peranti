@@ -41,10 +41,6 @@ export const SettingsView: FC = () => {
           <AppTitleBarStyleSelect />
         </SettingsCardItem>
 
-        <SettingsCardItem label="User Interface Font">
-          <AppTitleBarStyleSelect />
-        </SettingsCardItem>
-
         <SettingsCardItem
           label="Floating Sidebar"
           description="Primary sidebar will automatically hidden after opening tool"

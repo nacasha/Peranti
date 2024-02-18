@@ -14,7 +14,7 @@ export interface ExtensionTool<
   outputFields: Array<AppletOutput<OutputFields>> | ((outputParams: OutputFields) => Array<AppletOutput<OutputFields>>)
   layoutSetting?: LayoutSetting
   autoRun?: boolean
-  samples?: Array<AppletSample<InputFields> | (() => AppletSample<InputFields>)>
+  samples?: Array<AppletSample<InputFields>>
   disableMultipleSession?: boolean
   actionFile: string
   dependencies?: {

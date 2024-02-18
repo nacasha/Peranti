@@ -564,16 +564,11 @@ export class Applet<
     this.optionValues = { ...this.optionValues, [key]: value }
 
     /**
-     * Re-run action if input has been modified
+     * Re-run action if input has been modified and autoRun is enabled
      */
-    if (this.isInputValuesModified) {
+    if (this.autoRun && this.isInputValuesModified) {
       void this.run()
     }
-  }
-
-  @action
-  setOptionValues(optionValues: any) {
-    this.optionValues = optionValues
   }
 
   @action

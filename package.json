@@ -46,6 +46,7 @@
     "fuse.js": "^7.0.0",
     "hash.js": "^1.1.7",
     "js-base64": "^3.7.6",
+    "json-2-csv": "^5.0.1",
     "jsonata": "^2.0.3",
     "localforage": "^1.10.0",
     "lorem-ipsum": "^2.0.8",

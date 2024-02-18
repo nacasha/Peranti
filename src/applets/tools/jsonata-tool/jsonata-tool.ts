@@ -4,6 +4,11 @@ import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
+import addressSample from "./address-sample.json"
+import invoiceSample from "./invoice-sample.json"
+import librarySample from "./library-sample.json"
+import schemaSample from "./schema-sample.json"
+
 interface InputFields {
   jsonString: InputFieldsType.Code
   expression: InputFieldsType.Code
@@ -13,7 +18,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const jsonataTool: AppletConstructor<InputFields, OutputFields> = {
+export const jsonataTool: AppletConstructor<InputFields, OutputFields> = {
   appletId: "jsonata",
   name: "JSONata",
   description: "JSON query and transformation language",
@@ -21,7 +26,7 @@ const jsonataTool: AppletConstructor<InputFields, OutputFields> = {
   inputFields: [
     {
       key: "expression",
-      label: "Expression",
+      label: "JSONata Expression",
       component: "Code",
       defaultValue: "",
       props: {
@@ -48,6 +53,43 @@ const jsonataTool: AppletConstructor<InputFields, OutputFields> = {
       }
     }
   ],
+  samples: [
+    {
+      name: "Invoice",
+      inputValues: {
+        expression: "$sum(Account.Order.Product.(Price * Quantity))",
+        jsonString: JSON.stringify(invoiceSample, null, 2)
+      }
+    },
+    {
+      name: "Address",
+      inputValues: {
+        expression: `{
+  "name": FirstName & " " & Surname,
+  "mobile": Phone[type = "mobile"].number
+}`,
+        jsonString: JSON.stringify(addressSample, null, 2)
+      }
+    },
+    {
+      name: "Library",
+      inputValues: {
+        expression: `library.loans@$L.books@$B[$L.isbn=$B.isbn].customers[$L.customer=id].{
+  'customer': name,
+  'book': $B.title,
+  'due': $L.return
+}`,
+        jsonString: JSON.stringify(librarySample, null, 2)
+      }
+    },
+    {
+      name: "Schema",
+      inputValues: {
+        expression: "**.properties ~> $keys()",
+        jsonString: JSON.stringify(schemaSample, null, 2)
+      }
+    }
+  ],
   action: async({ inputValues }) => {
     const { jsonString, expression } = inputValues
 
@@ -70,5 +112,3 @@ const jsonataTool: AppletConstructor<InputFields, OutputFields> = {
     }
   }
 }
-
-export default jsonataTool

@@ -95,6 +95,9 @@ dependencies:
   js-base64:
     specifier: ^3.7.6
     version: 3.7.6
+  json-2-csv:
+    specifier: ^5.0.1
+    version: 5.0.1
   jsonata:
     specifier: ^2.0.3
     version: 2.0.3
@@ -3318,6 +3321,11 @@ packages:
     resolution: {integrity: sha512-Q6fKUPqnAHAyhiUgFU7BUzLiv0kd8saH9al7tnu5Q/okj6dnupxyTgFIBjVzJATdfIAm9NAsvXNzjaKa+bxVyA==}
     dev: false
 
+  /deeks@3.0.2:
+    resolution: {integrity: sha512-c6OmjIygIB/avwXwEQOiODS+nw6fEX4cvOdDMqdL7dt3dicV/xykAJ9AeVc/8/JTVQDuacjRc9KCMmXafL1Y4A==}
+    engines: {node: '>= 16'}
+    dev: false
+
   /deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
     dev: true
@@ -3409,6 +3417,11 @@ packages:
 
   /discontinuous-range@1.0.0:
     resolution: {integrity: sha512-c68LpLbO+7kP/b1Hr1qs8/BJ09F5khZGTxqxZuhzxpmwJKOgRFHJWIb9/KmqnqHhLdO55aOxFH/EGBvUQbL/RQ==}
+    dev: false
+
+  /doc-path@4.0.2:
+    resolution: {integrity: sha512-OqZEk7EM1aP3JpO+mq0pv1msEJWrzZVXu4q3YjEYJKc+Wt3/chac4KJdaGueK5IGemOwfptrLctG9I8xkb59qQ==}
+    engines: {node: '>=16'}
     dev: false
 
   /doctrine@2.1.0:
@@ -4663,6 +4676,14 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
     dev: true
+
+  /json-2-csv@5.0.1:
+    resolution: {integrity: sha512-rP9ChyMskS0angbvFdQ43SwEe72mEvqcY1/V2OeukQWxtlreUuZWhMlTdWjtd4L6kJxq+HPFTI06yqLvZiEVIA==}
+    engines: {node: '>= 16'}
+    dependencies:
+      deeks: 3.0.2
+      doc-path: 4.0.2
+    dev: false
 
   /json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}

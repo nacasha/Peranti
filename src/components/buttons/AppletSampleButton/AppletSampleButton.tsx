@@ -14,7 +14,7 @@ export const AppletSampleButton: FC = () => {
   }
 
   const handleClick = () => {
-    activeAppletStore.fillInputValuesWithSample()
+    // activeAppletStore.fillInputValuesWithSample()
   }
 
   return (

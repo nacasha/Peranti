@@ -1,10 +1,18 @@
 import { makeAutoObservable } from "mobx"
+import { makePersistable } from "mobx-persist-store"
+
+import { StorageKeys } from "src/constants/storage-keys"
 
 class AppletSidebarService {
   isOpen: boolean = false
 
   constructor() {
     makeAutoObservable(this)
+
+    void makePersistable(this, {
+      name: StorageKeys.AppletSidebar,
+      properties: ["isOpen"]
+    })
   }
 
   toggle() {
