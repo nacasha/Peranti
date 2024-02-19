@@ -91,6 +91,10 @@
   --blue12: hsl(206, 98%, 95.8%);
 }
 
+[cmdk-root] {
+  font-size: 13px;
+}
+
 [cmdk-dialog] {
   position: fixed;
   inset: 0;
@@ -102,23 +106,15 @@
 
 [cmdk-input] {
   border: none;
-  padding: 10px;
-  padding-bottom: 17px;
+  padding: 18px 18px;
   outline: none;
   background: var(--bg);
   color: var(--gray12);
   border-bottom: 1px solid var(--gray6);
-  margin-bottom: 16px;
-  border-radius: var(--border-radius);
-  margin: 10px;
 
   &::placeholder {
     color: var(--gray9);
   }
-}
-
-[cmdk-list-sizer] {
-  padding-bottom: 7px;
 }
 
 [cmdk-vercel-badge] {
@@ -142,7 +138,6 @@
   display: flex;
   align-items: center;
   padding: 10px;
-  font-size: 13px;
   user-select: none;
   will-change: background, color;
   transition: all 150ms ease;
@@ -191,12 +186,12 @@
 }
 
 [cmdk-list] {
-  height: min(330px, calc(var(--cmdk-list-height)));
   max-height: 400px;
   overflow: auto;
   overscroll-behavior: contain;
   transition: 100ms ease;
   transition-property: height;
+  padding: 7px 0;
 }
 
 [cmdk-vercel-shortcuts] {

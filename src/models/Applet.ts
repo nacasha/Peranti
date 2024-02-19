@@ -132,7 +132,7 @@ export class Applet<
    */
   readonly autoRun: boolean = false
 
-  autoRunDelay: number = 300
+  autoRunDelay: number = 0
 
   /**
    * Variable to store setTimeout when running action

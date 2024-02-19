@@ -59,7 +59,7 @@ const ToolSidebarInnerItem: FC<{ tool: AppletConstructor, children: ReactNode }>
       active={isActive}
       onClick={onClickSidebarItem(tool)}
     >
-      <img src={Icons.Hash} alt="Hash" />
+      <img src={Icons.Hash} alt={tool.name} />
       <div>{tool.name}</div>
     </ToolSidebarItem>
   )

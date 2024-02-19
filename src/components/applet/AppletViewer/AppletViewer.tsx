@@ -13,13 +13,7 @@ import { AppletComponentArea } from "../AppletComponentArea"
 import "./AppletViewer.scss"
 
 export const AppletViewer: FC = () => {
-  const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
-
-  if (activeApplet.appletId === "") {
-    return (
-      <HomePage />
-    )
-  }
+  const showHomepage = useSelector(() => activeAppletStore.getActiveApplet().appletId === "")
 
   return (
     <div className="AppletViewer">
@@ -28,7 +22,7 @@ export const AppletViewer: FC = () => {
 
         <div style={{ display: "flex", flex: 1, overflow: "hidden", width: 0, minWidth: "100%" }}>
           <SimpleBar className="AppletViewer-main-panel">
-            <AppletComponentArea />
+            {showHomepage ? <HomePage /> : <AppletComponentArea />}
           </SimpleBar>
         </div>
 

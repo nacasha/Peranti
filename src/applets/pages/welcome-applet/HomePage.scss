@@ -5,6 +5,7 @@
   align-items: center;
   background-color: var(--applet-viewer-background-color);
   user-select: none;
+  opacity: 0.8;
 
   .content {
     margin: auto;
@@ -12,6 +13,14 @@
     height: 100%;
     max-width: 900px;
     max-height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .headline {
+    text-align: center;
   }
 
   .title {
@@ -21,5 +30,55 @@
 
   .subtitle {
     font-size: 1.1em;
+  }
+
+  .logo {
+    width: 130px;
+    filter: grayscale(1);
+    opacity: 0.3;
+    margin-bottom: 20px;
+  }
+
+  .guide {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .guide-item {
+      display: flex;
+      gap: 10px;
+
+      .guide-item-label {
+        text-align: right;
+        width: 200px;
+      }
+
+      .guide-item-keys-group {
+        width: 200px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .guide-item-keys {
+        display: flex;
+        gap: 4px;
+
+        kbd {
+          padding-inline: 5px;
+          border: 1px solid var(--border-color);
+          border-radius: var(--border-radius);
+          background-color: var(--border-color);
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-height: 470px) {
+  .HomePage {
+    .headline, .logo {
+      display: none;
+    }
   }
 }
