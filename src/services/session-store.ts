@@ -83,7 +83,7 @@ class SessionStore {
     this.isInitialized = value
   }
 
-  keepAliveSession(sessionId: string, value: boolean) {
+  setSessionHasRunningAction(sessionId: string, value: boolean) {
     const sessionIndex = this.sessions.findIndex((session) => session.sessionId === sessionId)
 
     if (sessionIndex > -1) {

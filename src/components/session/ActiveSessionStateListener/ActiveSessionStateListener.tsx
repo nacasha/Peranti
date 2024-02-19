@@ -14,9 +14,9 @@ export const ActiveSessionStateListener: FC = observer(() => {
       const { isInputValuesModified, isAutoRunAndFirstTime } = activeApplet
 
       if (isAppletChanged && isAutoRunAndFirstTime) {
-        activeAppletStore.run()
+        void activeApplet.run()
       } else if (!isAppletChanged && isInputValuesModified) {
-        activeAppletStore.run()
+        void activeApplet.runDebounced()
       }
     }
   }, [activeApplet.inputValues])

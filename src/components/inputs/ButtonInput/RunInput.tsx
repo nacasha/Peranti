@@ -11,12 +11,13 @@ import "./RunInput.scss"
 interface RunInputProps extends InputComponentProps { }
 
 export const RunInput: FC<RunInputProps> = (props) => {
-  const isActionRunning = useSelector(() => activeAppletStore.getActiveApplet().isActionRunning)
+  const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
+  const isActionRunning = useSelector(() => activeAppletStore.getActiveApplet().isActionRunningDebounced)
   const { label } = props
 
   const onClickButton = () => {
     if (!isActionRunning) {
-      activeAppletStore.run()
+      void activeApplet.run()
     }
   }
 

@@ -6,7 +6,6 @@ import { AppStatusbar } from "./components/app/AppStatusbar"
 import { AppThemeListener } from "./components/app/AppThemeListener/AppThemeListener.tsx"
 import { AppTitlebar } from "./components/app/AppTitlebar"
 import { AppletViewer } from "./components/applet/AppletViewer"
-import { BottomPanel } from "./components/bottom-panel/BottomPanel/BottomPanel.tsx"
 import { Commandbar } from "./components/commandbar/Commandbar/Commandbar.tsx"
 import { FileDropArea } from "./components/filedrop/FileDropArea"
 import { FileDropListener } from "./components/filedrop/FileDropListener"
@@ -86,7 +85,6 @@ export const AppMain = () => {
         <div className={appClasses.content}>
           <SessionTabbar />
           <AppletViewer />
-          <BottomPanel />
         </div>
 
         <SecondarySidebarCommandbar />

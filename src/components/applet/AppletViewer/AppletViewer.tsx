@@ -2,6 +2,7 @@ import { type FC } from "react"
 import SimpleBar from "simplebar-react"
 
 import { HomePage } from "src/applets/pages/welcome-applet"
+import { BottomPanel } from "src/components/bottom-panel/BottomPanel"
 import { ActiveSessionStateListener } from "src/components/session/ActiveSessionStateListener"
 import { SecondarySidebarTabbar } from "src/components/sidebar/SecondarySidebar"
 import { useSelector } from "src/hooks/useSelector"
@@ -30,6 +31,8 @@ export const AppletViewer: FC = () => {
             <AppletComponentArea />
           </SimpleBar>
         </div>
+
+        <BottomPanel />
       </div>
 
       <SecondarySidebarTabbar />

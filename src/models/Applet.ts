@@ -63,17 +63,6 @@ export class Applet<
   readonly layoutSetting: LayoutSetting
 
   /**
-   * Auto execute applet action when input values is changed
-   */
-  readonly autoRun: boolean = false
-
-  /**
-   * Indicates that the applet has auto run enabled and hasn't been run
-   * for at least once
-   */
-  isAutoRunAndFirstTime: boolean = false
-
-  /**
    * Pipelines of applet
    */
   readonly pipelines: Pipeline[] = []
@@ -139,6 +128,24 @@ export class Applet<
   isOutputValuesModified: boolean = false
 
   /**
+   * Auto execute applet action when input values is changed
+   */
+  readonly autoRun: boolean = false
+
+  autoRunDelay: number = 300
+
+  /**
+   * Variable to store setTimeout when running action
+   */
+  private autoRunSetTimeout?: number
+
+  /**
+   * Indicates that the applet has auto run enabled and hasn't been run
+   * for at least once
+   */
+  isAutoRunAndFirstTime: boolean = false
+
+  /**
    * Applet action
    */
   readonly action: (actionParams: AppletActionParams<InputFields, OutputFields>) => any
@@ -152,6 +159,17 @@ export class Applet<
    * Is action still running asynchronous
    */
   @observable isActionRunning: boolean = false
+
+  /**
+   * Is action still running asynchronous more than 500 milliseconds
+   * Used to show on user interface
+   */
+  @observable isActionRunningDebounced: boolean = false
+
+  /**
+   * Variable to store the setTimeout number for debounced value
+   */
+  private isActionRunningDebouncedTimeout?: number
 
   /**
    * Input field key when batch mode enabled
@@ -622,15 +640,51 @@ export class Applet<
     this.outputFieldsState = {}
   }
 
+  /**
+   * Mark applet has action running
+   *
+   * @param newActionValue
+   */
   @action
-  private setIsActionRunning(value: boolean) {
-    this.isActionRunning = value
-    sessionStore.keepAliveSession(this.sessionId, value)
+  private setIsActionRunning(newActionValue: boolean) {
+    this.isActionRunning = newActionValue
+
+    /**
+     * Clear existing debounced setTimeout
+     */
+    if (this.isActionRunningDebouncedTimeout) {
+      clearTimeout(this.isActionRunningDebouncedTimeout)
+      this.isActionRunningDebouncedTimeout = undefined
+    }
+
+    /**
+     * If isActionRunning has value true, wait for 100 milliseconds to set value of
+     * session store and debounced value
+     */
+    if (newActionValue) {
+      this.isActionRunningDebouncedTimeout = setTimeout(() => {
+        this.isActionRunningDebounced = newActionValue
+        sessionStore.setSessionHasRunningAction(this.sessionId, newActionValue)
+      }, 200)
+    } else {
+      this.isActionRunningDebounced = newActionValue
+      sessionStore.setSessionHasRunningAction(this.sessionId, newActionValue)
+    }
   }
 
   @action
   private incrementActionRunCount() {
     this.actionRunCount = this.actionRunCount + 1
+  }
+
+  async runDebounced() {
+    if (this.autoRunSetTimeout) {
+      clearTimeout(this.autoRunSetTimeout)
+    }
+
+    this.autoRunSetTimeout = setTimeout(() => {
+      void this.run()
+    }, this.autoRunDelay)
   }
 
   async run() {

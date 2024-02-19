@@ -1,4 +1,4 @@
-import { createInitminalRun } from "@initminal/run"
+import { createInitminalRun, defaultSafeObjects } from "@initminal/run"
 
 import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
@@ -39,7 +39,19 @@ export const javascriptRunnerTool: AppletConstructor<InputFields, OutputFields> 
     const { code } = inputValues
 
     try {
-      const InitminalRun = createInitminalRun()
+      const InitminalRun = createInitminalRun({
+        whitelists: [
+          ...defaultSafeObjects,
+          "crypto",
+          "FormData",
+          "URLSearchParams",
+          "navigator",
+          "WorkerGlobalScope",
+          "importScripts",
+          "XMLHttpRequest",
+          "awaiuuidv4"
+        ]
+      })
       const result = await InitminalRun.run(code)
 
       if (result.success) {
