@@ -137,6 +137,11 @@ const _themeableTokens = {
   secondaySidebarBackgroundColor: "secondary-sidebar-background-color",
 
   /**
+   * Bottom panel
+   */
+  bottomPanelBackgroundColor: "bottom-panel-background-color",
+
+  /**
    * Statusbar
    */
   statusbarBackgroundColor: "statusbar-background-color",

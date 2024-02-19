@@ -15,7 +15,9 @@ export const ReactOutput: FC<ReactOutputProps> = (props) => {
     <div className={reactOutputClasses.root}>
       <ComponentLabel label={label} />
       <div className={reactOutputClasses.outputArea}>
-        <Runner code={value} />
+        <div className={reactOutputClasses.outputContent}>
+          <Runner code={value} />
+        </div>
       </div>
     </div>
   )

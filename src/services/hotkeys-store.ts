@@ -7,7 +7,8 @@ class HotkeysStore {
     TAB_CYCLE_NEXT: "ctrl+tab",
     TAB_CYCLE_PREV: "ctrl+shift+tab",
     RESTORE_CLOSED_TAB: "ctrl+shift+t",
-    RENAME_ACTIVE_TAB: "f2"
+    RENAME_ACTIVE_TAB: "f2",
+    BOTTOM_PANEL: "ctrl+`"
   }
 
   keys = {

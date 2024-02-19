@@ -47,7 +47,7 @@ export const windowControlsClasses = {
   layoutControls: style({
     display: "flex",
     marginRight: 10,
-    gap: 5,
+    gap: 4,
     alignItems: "center"
   }),
 

@@ -12,7 +12,7 @@ interface OutputFields {
 
 const characterCounterTool: AppletConstructor<InputFields, OutputFields> = {
   appletId: "character-counter",
-  name: "Word Counter",
+  name: "Text Counter",
   category: "Text",
   layoutSetting: {
     direction: "vertical",

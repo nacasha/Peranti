@@ -4,5 +4,6 @@ export const StorageKeys = {
   InterfaceStore: "interface-store",
   SessionHistoryStore: "session-history-store",
   SessionStore: "session-store",
-  AppletSidebar: "applet-sidebar"
+  AppletSidebar: "applet-sidebar",
+  BottomPanel: "bottom-panel"
 }

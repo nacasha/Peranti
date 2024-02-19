@@ -21,6 +21,7 @@ export const lightThemeClass = createTheme(themeableTokens, {
   activitybarItemBackgroundColorActive: "#d6d6d6",
   primarySidebarBackgroundColor: "#f6f8fa",
   secondaySidebarBackgroundColor: "#ffffff",
+  bottomPanelBackgroundColor: "#ffffff",
   statusbarBackgroundColor: "#f6f6f6",
   inputOutputBackgroundColor: "#ffffff",
   inputOutputBorderColor: "var(--border-color)",

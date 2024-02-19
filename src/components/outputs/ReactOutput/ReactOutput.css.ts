@@ -11,8 +11,14 @@ export const reactOutputClasses = {
 
   outputArea: style({
     border: `1px solid ${styleTokens.borderColor}`,
+    borderRadius: styleTokens.borderRadius,
     height: "100%",
     flex: 1,
     backgroundColor: "#ffffff"
+  }),
+
+  outputContent: style({
+    all: "unset",
+    color: "initial"
   })
 }

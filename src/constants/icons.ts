@@ -18,6 +18,7 @@ import Layers from "src/assets/icons/layers.svg"
 import Minimize from "src/assets/icons/minimize.svg"
 import Minus from "src/assets/icons/minus.svg"
 import Newspaper from "src/assets/icons/newspaper.svg"
+import PanelBottom from "src/assets/icons/panel-bottom.svg"
 import PanelLeft from "src/assets/icons/panel-left.svg"
 import PanelRight from "src/assets/icons/panel-right.svg"
 import Plus from "src/assets/icons/plus.svg"
@@ -36,6 +37,7 @@ import Untrash from "src/assets/icons/untrash.svg"
 
 export const Icons = {
   Back,
+  PanelBottom,
   Check,
   ChevronDown,
   ChevronUp,

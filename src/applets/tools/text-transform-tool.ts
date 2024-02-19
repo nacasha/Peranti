@@ -13,7 +13,7 @@ interface OutputFields {
 
 const textTransformTool: AppletConstructor<InputFields, OutputFields> = {
   appletId: "text-transform",
-  name: "Text Transform",
+  name: "Text Case Transform",
   category: "Text",
   layoutSetting: {
     direction: "vertical"

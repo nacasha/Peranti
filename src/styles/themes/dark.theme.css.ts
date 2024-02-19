@@ -21,6 +21,7 @@ export const darkThemeClass = createTheme(themeableTokens, {
   activitybarItemBackgroundColorActive: "#434549",
   primarySidebarBackgroundColor: "#1a1b1d",
   secondaySidebarBackgroundColor: "#1a1b1d",
+  bottomPanelBackgroundColor: "#181818",
   statusbarBackgroundColor: "#181818",
   inputOutputBackgroundColor: "#292a30",
   inputOutputBorderColor: "#353535",

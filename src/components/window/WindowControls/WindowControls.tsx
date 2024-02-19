@@ -1,7 +1,9 @@
 import { type FC } from "react"
 
+import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons"
 import { appletSidebarService } from "src/services/applet-sidebar-service"
+import { bottomPanelService } from "src/services/bottom-panel-service"
 import { interfaceStore } from "src/services/interface-store"
 import { windowManager } from "src/services/window-manager"
 
@@ -28,15 +30,16 @@ export const WindowControls: FC = () => {
     interfaceStore.toggleSidebar()
   }
 
+  const handleClickPanelBottom = () => {
+    bottomPanelService.toggleIsOpen()
+  }
+
   return (
     <div className={windowControlsClasses.root} data-tauri-drag-region>
       <div className={windowControlsClasses.layoutControls}>
-        <div onClick={handleClickPanelLeft} className={windowControlsClasses.layoutControlsItem}>
-          <img src={Icons.PanelLeft} />
-        </div>
-        <div onClick={handleClickPanelRight} className={windowControlsClasses.layoutControlsItem}>
-          <img src={Icons.PanelRight} />
-        </div>
+        <ButtonIcon onClick={handleClickPanelLeft} icon={Icons.PanelLeft} />
+        <ButtonIcon onClick={handleClickPanelBottom} icon={Icons.PanelBottom} />
+        <ButtonIcon onClick={handleClickPanelRight} icon={Icons.PanelRight} />
       </div>
       <div className={windowControlsClasses.windowControls}>
         <div

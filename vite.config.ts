@@ -26,5 +26,9 @@ export default defineConfig(async () => ({
     alias: [
       { find: 'src', replacement: fileURLToPath(new URL('./src', import.meta.url)) }
     ]
+  },
+
+  define: {
+    'process.env': process.env
   }
 }));

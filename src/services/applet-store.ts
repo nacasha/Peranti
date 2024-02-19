@@ -12,6 +12,7 @@ import fileToBase64Tool from "src/applets/tools/file-to-base-64-tool"
 import generateRandomStringTool from "src/applets/tools/generate-random-string.ts"
 import generateUuidTool from "src/applets/tools/generate-uuid-tool.ts"
 import hashTool from "src/applets/tools/hash-tool.ts"
+import { javascriptRunnerTool } from "src/applets/tools/javascript-runner-tool/javascript-runner-tool.ts"
 import jsonDiffTool from "src/applets/tools/json-diff-tool"
 import jsonFormatter from "src/applets/tools/json-formatter-tool.ts"
 import { jsonToCsvTool } from "src/applets/tools/json-to-csv-tool/json-to-csv-tool.ts"
@@ -79,7 +80,8 @@ class AppletStore {
     [pintoraEditorTool.appletId]: pintoraEditorTool,
     [jsonToCsvTool.appletId]: jsonToCsvTool,
     [reactRunnerTool.appletId]: reactRunnerTool,
-    [textEscapeUnescapeTool.appletId]: textEscapeUnescapeTool
+    [textEscapeUnescapeTool.appletId]: textEscapeUnescapeTool,
+    [javascriptRunnerTool.appletId]: javascriptRunnerTool
   }
 
   /**
