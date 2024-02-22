@@ -20,7 +20,13 @@ export const lightThemeClass = createTheme(themeableTokens, {
   activitybarItemBackgroundColorHover: "#dfdddd",
   activitybarItemBackgroundColorActive: "#d6d6d6",
   primarySidebarBackgroundColor: "#f6f8fa",
+
+  /**
+   * Secondary Sidebar
+   */
   secondaySidebarBackgroundColor: "#ffffff",
+  secondaySidebarItemBackgroundColorHover: "#efefef",
+
   bottomPanelBackgroundColor: "#ffffff",
   statusbarBackgroundColor: "#f6f6f6",
   inputOutputBackgroundColor: "#ffffff",
@@ -44,5 +50,12 @@ export const lightThemeClass = createTheme(themeableTokens, {
   scrollbarTrackBackgroundColor: "#ffffff",
   scrollbarThumbBackgroundColor: "#8b8b8b",
   scrollbarThumbBackgroundColorHover: "#555",
-  scrollbarThumbBorderRadius: "4px"
+  scrollbarThumbBorderRadius: "4px",
+
+  /**
+   * Tooltip
+   */
+  tooltipTextColor: "var(--text-color)",
+  tooltipBackgroundColor: "#1e1f22",
+  tooltipBorderColor: "#454545"
 })

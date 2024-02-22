@@ -1,4 +1,3 @@
-import { atom } from "nanostores"
 import { type FC } from "react"
 import { type ItemParams, Item, Separator } from "react-contexify"
 
@@ -7,7 +6,7 @@ import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
 
-const $renamingSessionId = atom<string>("")
+import { $renamingSessionId } from "./SessionTabbar.tsx"
 
 interface MenuParams {
   session: Session

@@ -1,6 +1,5 @@
 import { useStore } from "@nanostores/react"
 import clsx from "clsx"
-import { atom } from "nanostores"
 import { type MouseEventHandler, type FC, useEffect, useRef, type FocusEventHandler, useMemo } from "react"
 import { useContextMenu } from "react-contexify"
 
@@ -12,8 +11,7 @@ import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
 
 import { sessionTabbarClasses } from "./SessionTabbar.css"
-
-const $renamingSessionId = atom<string>("")
+import { $renamingSessionId } from "./SessionTabbar.tsx"
 
 interface TabItemProps {
   session: Session

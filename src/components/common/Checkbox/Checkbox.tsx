@@ -1,11 +1,11 @@
 import clsx from "clsx"
 import { useId, type FC, useState } from "react"
 
-import { switchClasses } from "./Switch.css"
+import { checkboxClasses } from "./Checkbox.css"
 
-import "./Switch.scss"
+import "./Checkbox.scss"
 
-interface SwitchProps {
+interface CheckboxProps {
   label?: string
   defaultChecked?: boolean
   value?: boolean
@@ -13,7 +13,7 @@ interface SwitchProps {
   readOnly?: boolean
 }
 
-export const Switch: FC<SwitchProps> = (props) => {
+export const Checkbox: FC<CheckboxProps> = (props) => {
   const { label, onChange: onChangeProps, defaultChecked = false, readOnly, value } = props
   const [checked, setChecked] = useState(defaultChecked)
   const id = useId()
@@ -27,16 +27,15 @@ export const Switch: FC<SwitchProps> = (props) => {
   }
 
   return (
-    <div className={clsx("Switch", switchClasses.root)}>
+    <div className={clsx("Switch", checkboxClasses.root)}>
       <input
         checked={value ?? checked}
         id={id}
         type="checkbox"
-        className="switch"
         onChange={onChange}
         readOnly={readOnly}
       />
-      {label && <label htmlFor={id}>Switch</label>}
+      {label && <label htmlFor={id}>{label}</label>}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { type FC } from "react"
 
 import { ButtonIcon } from "src/components/common/ButtonIcon"
+import { Tooltip } from "src/components/common/Tooltip"
 import { Icons } from "src/constants/icons"
 import { appletSidebarService } from "src/services/applet-sidebar-service"
 import { bottomPanelService } from "src/services/bottom-panel-service"
@@ -37,9 +38,15 @@ export const WindowControls: FC = () => {
   return (
     <div className={windowControlsClasses.root} data-tauri-drag-region>
       <div className={windowControlsClasses.layoutControls}>
-        <ButtonIcon onClick={handleClickPanelLeft} icon={Icons.PanelLeft} />
-        <ButtonIcon onClick={handleClickPanelBottom} icon={Icons.PanelBottom} />
-        <ButtonIcon onClick={handleClickPanelRight} icon={Icons.PanelRight} />
+        <Tooltip overlay="Toggle Primary Sidebar">
+          <ButtonIcon onClick={handleClickPanelLeft} icon={Icons.PanelLeft} />
+        </Tooltip>
+        <Tooltip overlay="Toggle Bottom Panel">
+          <ButtonIcon onClick={handleClickPanelBottom} icon={Icons.PanelBottom} />
+        </Tooltip>
+        <Tooltip overlay="Toggle Secondary Sidebar">
+          <ButtonIcon onClick={handleClickPanelRight} icon={Icons.PanelRight} />
+        </Tooltip>
       </div>
       <div className={windowControlsClasses.windowControls}>
         <div

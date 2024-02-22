@@ -1,0 +1,23 @@
+.AppletInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.AppletInfo-item {
+  font-size: 12px;
+  padding: 3px 10px;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    background-color: var(--secondary-sidebar-item-background-color-hover);
+  }
+}
+
+.AppletInfo-item-title {
+  font-weight: 600;
+}
+
+.AppletInfo-item-content {
+  word-wrap: normal;
+}

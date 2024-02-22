@@ -1,7 +1,7 @@
 import { observer } from "mobx-react"
 import { type FC } from "react"
 
-import { Switch } from "src/components/common/Switch"
+import { Checkbox } from "src/components/common/Checkbox"
 import { interfaceStore } from "src/services/interface-store"
 
 export const SidebarMode: FC = observer(() => {
@@ -10,7 +10,7 @@ export const SidebarMode: FC = observer(() => {
   }
 
   return (
-    <Switch
+    <Checkbox
       defaultChecked={interfaceStore.isFloatingSidebar}
       onChange={onToggleSwitch}
     />

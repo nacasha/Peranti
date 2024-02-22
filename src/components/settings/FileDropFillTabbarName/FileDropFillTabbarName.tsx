@@ -1,7 +1,7 @@
 import { observer } from "mobx-react"
 import { type FC } from "react"
 
-import { Switch } from "src/components/common/Switch"
+import { Checkbox } from "src/components/common/Checkbox"
 import { fileDropService } from "src/services/file-drop-service"
 
 export const FileDropFillTabbarName: FC = observer(() => {
@@ -10,7 +10,7 @@ export const FileDropFillTabbarName: FC = observer(() => {
   }
 
   return (
-    <Switch
+    <Checkbox
       defaultChecked={fileDropService.droppedFileReplaceSessionName}
       onChange={onToggleSwitch}
     />

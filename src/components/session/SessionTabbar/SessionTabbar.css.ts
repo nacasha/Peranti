@@ -106,7 +106,6 @@ export const { ...sessionTabbarClasses } = new class {
   itemIcon = style([this.itemSession, {
     backgroundColor: "var(--session-tabbar-color)",
     borderRight: "1px solid var(--border-color) !important",
-    zIndex: 10,
     userSelect: "none",
 
     ":hover": {

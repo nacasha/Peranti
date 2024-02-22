@@ -36,25 +36,25 @@ const generateRandomStringTool: AppletConstructor<InputFields, OutputFields> = {
     },
     {
       key: "smallAz",
-      label: "Include Lowercase Characters (a-z)",
+      label: "Lowercase Characters (a-z)",
       component: "Checkbox",
       defaultValue: true
     },
     {
       key: "capitalAz",
-      label: "Include Uppercase Characters (A-Z)",
+      label: "Uppercase Characters (A-Z)",
       component: "Checkbox",
       defaultValue: true
     },
     {
       key: "number",
-      label: "Include Numbers (0-9)",
+      label: "Numbers (0-9)",
       component: "Checkbox",
       defaultValue: true
     },
     {
       key: "symbol",
-      label: "Include Special Characters (!@#$%^&*)",
+      label: "Special Characters (!@#$%^&*)",
       component: "Checkbox",
       defaultValue: true
     },

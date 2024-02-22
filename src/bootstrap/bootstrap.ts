@@ -1,6 +1,7 @@
 import { setElementVars } from "@vanilla-extract/dynamic"
 import localforage from "localforage"
 import { configurePersistable } from "mobx-persist-store"
+import "rc-tooltip/assets/bootstrap_white.css"
 import "react-contexify/ReactContexify.css"
 import "simplebar-react/dist/simplebar.min.css"
 
@@ -10,6 +11,7 @@ import "src/styles/globals.css"
 import "src/styles/libraries/context-menu.css"
 import "src/styles/libraries/notifications.css"
 import "src/styles/libraries/simplebar.css"
+import "src/styles/libraries/tooltip.scss"
 import { styleTokens } from "src/styles/styleTokens.css"
 
 configurePersistable({

@@ -135,6 +135,7 @@ const _themeableTokens = {
    * Secondary sidebar
    */
   secondaySidebarBackgroundColor: "secondary-sidebar-background-color",
+  secondaySidebarItemBackgroundColorHover: "secondary-sidebar-item-background-color-hover",
 
   /**
    * Bottom panel
@@ -194,7 +195,14 @@ const _themeableTokens = {
   scrollbarTrackBackgroundColor: "scrollbar-track-background",
   scrollbarThumbBackgroundColor: "scrollbar-thumb-background",
   scrollbarThumbBackgroundColorHover: "scrollbar-thumb-background-hover",
-  scrollbarThumbBorderRadius: "scrollbar-thumb-border-radius"
+  scrollbarThumbBorderRadius: "scrollbar-thumb-border-radius",
+
+  /**
+   * Tooltip
+   */
+  tooltipTextColor: "tooltip-text-color",
+  tooltipBackgroundColor: "tooltip-background-color",
+  tooltipBorderColor: "tooltip-border-color"
 }
 
 export const themeableTokens = createGlobalThemeContract(_themeableTokens)

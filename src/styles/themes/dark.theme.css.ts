@@ -20,7 +20,13 @@ export const darkThemeClass = createTheme(themeableTokens, {
   activitybarItemBackgroundColorHover: "#5a5b5e",
   activitybarItemBackgroundColorActive: "#434549",
   primarySidebarBackgroundColor: "#1a1b1d",
+
+  /**
+   * Secondary Sidebar
+   */
   secondaySidebarBackgroundColor: "#1a1b1d",
+  secondaySidebarItemBackgroundColorHover: "#2a2b2d",
+
   bottomPanelBackgroundColor: "#181818",
   statusbarBackgroundColor: "#181818",
   inputOutputBackgroundColor: "#292a30",
@@ -44,5 +50,12 @@ export const darkThemeClass = createTheme(themeableTokens, {
   scrollbarTrackBackgroundColor: "transparent",
   scrollbarThumbBackgroundColor: "#393a3f",
   scrollbarThumbBackgroundColorHover: "#555",
-  scrollbarThumbBorderRadius: "4px"
+  scrollbarThumbBorderRadius: "4px",
+
+  /**
+   * Tooltip
+   */
+  tooltipTextColor: "var(--text-color)",
+  tooltipBackgroundColor: "#1e1f22",
+  tooltipBorderColor: "#454545"
 })

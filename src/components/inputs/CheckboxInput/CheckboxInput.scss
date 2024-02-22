@@ -1,14 +1,25 @@
 .CheckboxInput {
-  transition: all var(--transition-speed);
-  border: 1px solid var(--input-output-border-color);
-  border-radius: var(--border-radius);
   display: flex;
-  justify-content: space-between;
-  gap: 3px;
-  padding: 4px var(--input-output-padding);
-  background-color: var(--input-output-background-color);
+  align-items: start;
+  gap: 7px;
 
-  &:hover {
-    border-color: var(--input-output-border-color-hover);
+  & > div {
+    margin-bottom: 0;
   }
 }
+
+// .CheckboxInput {
+//   transition: all var(--transition-speed);
+//   border: 1px solid var(--input-output-border-color);
+//   border-radius: var(--border-radius);
+//   display: flex;
+//   justify-content: space-between;
+//   gap: 3px;
+//   padding: 4px var(--input-output-padding);
+//   background-color: var(--input-output-background-color);
+
+//   &:hover {
+//     border-color: var(--input-output-border-color-hover);
+//   }
+// }
+

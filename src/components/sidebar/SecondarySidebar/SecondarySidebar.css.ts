@@ -64,7 +64,6 @@ export const { ...secondarySidebarClasses } = new class {
   })
 
   sectionBody = style({
-    padding: "8px",
     display: "flex",
     flexDirection: "column",
     gap: 8

@@ -4,6 +4,7 @@ import { atom } from "nanostores"
 import { type FC, useEffect, useRef, type CSSProperties } from "react"
 import SimpleBar from "simplebar-react"
 
+import { Tooltip } from "src/components/common/Tooltip/Tooltip.tsx"
 import { WindowControls } from "src/components/window/WindowControls"
 import { Icons } from "src/constants/icons"
 import { AppTitleBarStyle } from "src/enums/app-titlebar-style"
@@ -19,7 +20,7 @@ import { sessionTabbarClasses } from "./SessionTabbar.css"
 import { SessionTabbarContextMenu } from "./SessionTabbarContextMenu.tsx"
 import { SessionTabbarItem } from "./SessionTabbarItem.tsx"
 
-const $renamingSessionId = atom<string>("")
+export const $renamingSessionId = atom<string>("")
 
 export const SessionTabbar: FC = observer(() => {
   const activeApplet = activeAppletStore.getActiveApplet()
@@ -142,7 +143,7 @@ export const SessionTabbar: FC = observer(() => {
             />
           )}
 
-          <div className={sessionTabbarClasses.innerBody}>
+          <div className={sessionTabbarClasses.innerBody} data-tauri-drag-region>
             <div className={sessionTabbarClasses.innerSimplebar}>
               <SimpleBar
                 style={{ width: "100%" }}
@@ -180,10 +181,12 @@ const SessionTabbarItemIcon: FC<SessionTabbarItemIconProps> = (props) => {
   const { onClick, label, icon, style } = props
 
   return (
-    <div onClick={onClick} className={sessionTabbarClasses.itemIcon} style={style}>
-      <div className={sessionTabbarClasses.itemSessionIcon}>
-        <img src={icon} alt={label} />
+    <Tooltip overlay={label}>
+      <div onClick={onClick} className={sessionTabbarClasses.itemIcon} style={style}>
+        <div className={sessionTabbarClasses.itemSessionIcon}>
+          <img src={icon} alt={label} />
+        </div>
       </div>
-    </div>
+    </Tooltip>
   )
 }

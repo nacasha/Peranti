@@ -27,7 +27,7 @@ export const PipelineOptions: FC = () => {
   }
 
   return (
-    <SecondarySidebarSection title="Pipeline">
+    <SecondarySidebarSection title="Pipeline" padding>
       {viewMode === "main"
         ? (
           <>

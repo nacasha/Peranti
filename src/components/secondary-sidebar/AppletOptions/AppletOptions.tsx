@@ -16,7 +16,7 @@ export const AppletOptions = () => {
   }
 
   return (
-    <SecondarySidebarSection title="Options">
+    <SecondarySidebarSection title="Options" padding>
       {options.map((option) => (
         <div key={option.key} className="AppletSidebarItem">
           <AppletSidebarItem

@@ -56,7 +56,7 @@ createGlobalTheme("body", globalTokens, {
   accentColorDark80: "color-mix(in srgb, var(--accent-color), #000000 80%)",
 
   // General
-  borderRadius: "5px",
+  borderRadius: "3px",
 
   // App Titlebar
   appTitlebarHeight: "37px",

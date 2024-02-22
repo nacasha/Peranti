@@ -1,14 +1,15 @@
 .AppletHeader {
   display: flex;
   flex-direction: column;
-  border-bottom: 1px solid var(--border-color);
-  padding: 7px 15px;
+  border: 1px solid var(--border-color);
+  padding: 5px;
+  border-radius: var(--border-radius);
   justify-content: center;
   background-color: var(--applet-header-background-color);
   position: sticky;
   z-index: 1;
   top: 0;
-  margin: 15px;
+  margin: 15px 15px 1px;
 
   .AppletHeader-inner {
     display: flex;
@@ -22,7 +23,7 @@
 
   .AppletHeader-button-list {
     display: flex;
-    gap: 10px;
+    gap: 5px;
     align-items: center;
   }
 

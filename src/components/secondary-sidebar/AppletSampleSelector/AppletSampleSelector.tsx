@@ -19,7 +19,7 @@ export const AppletSampleSelector: FC = () => {
   }
 
   return (
-    <SecondarySidebarSection title="Samples">
+    <SecondarySidebarSection title="Samples" padding>
       {samples.map((sample, index) => (
         <Button
           key={sample.name.concat(index.toString())}

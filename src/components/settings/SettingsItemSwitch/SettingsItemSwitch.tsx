@@ -1,6 +1,6 @@
 import { type FC } from "react"
 
-import { Switch } from "src/components/common/Switch"
+import { Checkbox } from "src/components/common/Checkbox"
 
 interface SettingsItemSwitchProps {
   defaultChecked?: boolean
@@ -15,7 +15,7 @@ export const SettingsItemSwitch: FC<SettingsItemSwitchProps> = (props) => {
   }
 
   return (
-    <Switch
+    <Checkbox
       defaultChecked={defaultChecked}
       onChange={onToggleSwitch}
     />

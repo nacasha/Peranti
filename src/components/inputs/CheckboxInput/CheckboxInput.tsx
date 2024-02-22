@@ -1,6 +1,6 @@
-import { type FC, useId } from "react"
+import { type FC } from "react"
 
-import { Switch } from "src/components/common/Switch"
+import { Checkbox } from "src/components/common/Checkbox"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./CheckboxInput.scss"
@@ -8,7 +8,6 @@ import "./CheckboxInput.scss"
 interface CheckboxInputProps extends InputComponentProps<boolean> {}
 
 export const CheckboxInput: FC<CheckboxInputProps> = (props) => {
-  const id = useId()
   const { label, onValueChange, readOnly, defaultValue } = props
 
   const onChange = (checked: boolean) => {
@@ -17,8 +16,12 @@ export const CheckboxInput: FC<CheckboxInputProps> = (props) => {
 
   return (
     <div className="CheckboxInput">
-      <label htmlFor={id}>{label}</label>
-      <Switch defaultChecked={Boolean(defaultValue)} onChange={onChange} readOnly={readOnly} />
+      <Checkbox
+        defaultChecked={Boolean(defaultValue)}
+        onChange={onChange}
+        readOnly={readOnly}
+        label={label}
+      />
     </div>
   )
 }

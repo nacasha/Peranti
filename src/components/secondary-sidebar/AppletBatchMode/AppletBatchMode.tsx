@@ -1,6 +1,6 @@
 import { observer } from "mobx-react"
 
-import { Switch } from "src/components/common/Switch"
+import { Checkbox } from "src/components/common/Checkbox"
 import { SelectInput } from "src/components/inputs/SelectInput"
 import { SecondarySidebarSection } from "src/components/sidebar/SecondarySidebar"
 import { activeAppletStore } from "src/services/active-applet-store"
@@ -32,12 +32,12 @@ export const AppletBatchMode = observer(() => {
   }
 
   return (
-    <SecondarySidebarSection title={(
+    <SecondarySidebarSection padding title={(
       <>
         <div>
           Batch Mode
         </div>
-        <Switch
+        <Checkbox
           value={isBatchModeEnabled}
           onChange={handleToggleBatchMode}
         />

@@ -1,7 +1,7 @@
 export enum AppletType {
-  Tool = "tool",
-  Page = "page",
-  Extension = "extension",
-  Preset = "preset",
-  Pipeline = "pipeline",
+  Tool = "Tool",
+  Page = "Page",
+  Extension = "Extension",
+  Preset = "Preset",
+  Pipeline = "Pipeline",
 }

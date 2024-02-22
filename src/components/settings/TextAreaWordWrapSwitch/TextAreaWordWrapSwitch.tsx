@@ -1,6 +1,6 @@
 import { type FC } from "react"
 
-import { Switch } from "src/components/common/Switch"
+import { Checkbox } from "src/components/common/Checkbox"
 import { interfaceStore } from "src/services/interface-store"
 
 export const TextAreaWordWrapSwitch: FC = () => {
@@ -9,7 +9,7 @@ export const TextAreaWordWrapSwitch: FC = () => {
   }
 
   return (
-    <Switch
+    <Checkbox
       defaultChecked={interfaceStore.textAreaWordWrap}
       onChange={onToggleSwitch}
     />

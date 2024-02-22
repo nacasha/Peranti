@@ -1,28 +1,28 @@
-$border-radius: 20px;
+$border-radius: var(--border-radius);
 
 @supports (-webkit-appearance: none) or (-moz-appearance: none) {
   .Switch {
-    transform: scale(0.8);
+    display: flex;
+    align-items: center;
   }
   .Switch input[type=checkbox] {
     --active: #275EFE;
     --active-inner: #fff;
-    --focus: 2px rgba(39, 94, 254, .3);
-    --border: #BBC1E1;
-    --border-hover: #275EFE;
-    --background: #fff;
+    --focus: 0px rgba(39, 94, 254, .3);
+    --border: var(--border-color);
+    --border-hover: var(--border-color);
+    --background: var(--input-output-background-color);
     --disabled: #F6F8FF;
     --disabled-inner: #E1E6F9;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    height: 21px;
+    appearance: none;
+    height: 19px;
     outline: none;
     display: inline-block;
     vertical-align: top;
     position: relative;
     margin: 0;
     cursor: pointer;
-    border: 1px solid var(--bc, var(--border));
+    border: 1px solid var(--bc, var(--input-output-border-color));
     background: var(--b, var(--background));
     transition: background 0.1s, border-color 0.1s, box-shadow 0.1s;
   }
@@ -48,7 +48,7 @@ $border-radius: 20px;
   }
   .Switch input[type=checkbox]:disabled:checked {
     --b: var(--disabled-inner);
-    --bc: var(--border);
+    --bc: var(--input-output-border-color);
   }
   .Switch input[type=checkbox]:disabled + label {
     cursor: not-allowed;
@@ -59,57 +59,38 @@ $border-radius: 20px;
   .Switch input[type=checkbox]:focus {
     box-shadow: 0 0 0 var(--focus);
   }
-  .Switch input[type=checkbox]:not(.switch) {
-    width: 21px;
+  .Switch input[type=checkbox] {
+    width: 19px;
   }
-  .Switch input[type=checkbox]:not(.switch):after {
+  .Switch input[type=checkbox]:after {
     opacity: var(--o, 0);
   }
-  .Switch input[type=checkbox]:not(.switch):checked {
+  .Switch input[type=checkbox]:checked {
     --o: 1;
   }
   .Switch input[type=checkbox] + label {
-    display: inline-block;
-    vertical-align: middle;
     cursor: pointer;
-    margin-left: 4px;
+    margin-left: 10px;
+    user-select: none;
+    line-height: 21px;
+    height: 21px;
   }
 
-  .Switch input[type=checkbox]:not(.switch) {
+  .Switch input[type=checkbox] {
     border-radius: $border-radius;
   }
-  .Switch input[type=checkbox]:not(.switch):after {
+  .Switch input[type=checkbox]:after {
     width: 5px;
     height: 9px;
     border: 2px solid var(--active-inner);
     border-top: 0;
     border-left: 0;
-    left: 7px;
-    top: 4px;
+    left: 6px;
+    top: 2px;
     transform: rotate(var(--r, 20deg));
   }
-  .Switch input[type=checkbox]:not(.switch):checked {
+  .Switch input[type=checkbox]:checked {
     --r: 43deg;
-  }
-  .Switch input[type=checkbox].switch {
-    width: 38px;
-    border-radius: $border-radius;
-  }
-  .Switch input[type=checkbox].switch:after {
-    left: 2px;
-    top: 2px;
-    border-radius: $border-radius;
-    width: 17px;
-    height: 17px;
-    background: var(--ab, var(--border));
-    transform: translateX(var(--x, 0));
-  }
-  .Switch input[type=checkbox].switch:checked {
-    --ab: var(--active-inner);
-    --x: 17px;
-  }
-  .Switch input[type=checkbox].switch:disabled:not(:checked):after {
-    opacity: 0.6;
   }
 }
 
@@ -119,10 +100,4 @@ $border-radius: 20px;
 .Switch *:before,
 .Switch *:after {
   box-sizing: inherit;
-}
-
-.AppRoot.dark {
-  .Switch .switch:not(:checked) {
-    background-color: var(--button-background-color);
-  }
 }
