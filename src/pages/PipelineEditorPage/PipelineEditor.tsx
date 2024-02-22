@@ -23,10 +23,10 @@ const initialNodes = [
   { id: "text-transform-1", type: "applet", position: { x: 0, y: 200 }, data: { appletId: "text-transform" } },
   { id: "generate-uuid-1", type: "applet", position: { x: 0, y: 200 }, data: { appletId: "generate-uuid" } },
   { id: "sort-list-1", type: "applet", position: { x: 0, y: 200 }, data: { appletId: "sort-list" } },
-  { id: "input-input", type: "appletInput", position: { x: 0, y: 300 }, data: { component: "Code", key: "input", label: "Input" } },
-  { id: "input-input2", type: "appletInput", position: { x: 0, y: 300 }, data: { component: "Code", key: "input2", label: "Input 2" } },
-  { id: "output-output", type: "appletOutput", position: { x: 0, y: 400 }, data: { component: "Code", key: "output", label: "Output" } },
-  { id: "output-output2", type: "appletOutput", position: { x: 0, y: 600 }, data: { component: "Code", key: "output2", label: "Output 2" } }
+  { id: "input-input", type: "appletInput", position: { x: 0, y: 300 }, data: { component: "Text", key: "input", label: "Number of Generated UUID" } },
+  { id: "input-input2", type: "appletInput", position: { x: 0, y: 300 }, data: { component: "Text", key: "input2", label: "TextCase" } },
+  { id: "output-output", type: "appletOutput", position: { x: 0, y: 400 }, data: { component: "Code", key: "output", label: "List" } },
+  { id: "output-output2", type: "appletOutput", position: { x: 0, y: 600 }, data: { component: "Code", key: "output2", label: "List 2" } }
 ]
 
 const nodeTypes = {

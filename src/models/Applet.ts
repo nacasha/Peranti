@@ -295,17 +295,18 @@ export class Applet<
     this.viewMode = "main"
 
     /**
-     * Default true when autoRun is enabled
-     */
-    if (this.autoRun) {
-      this.isAutoRunAndFirstTime = true
-    }
-
-    /**
      * Set default viewMode when opening pipeline for the first time
      */
     if (appletConstructor.type === AppletType.Pipeline) {
       this.viewMode = "pipeline"
+      this.autoRun = false
+    }
+
+    /**
+     * Default true when autoRun is enabled
+     */
+    if (this.autoRun) {
+      this.isAutoRunAndFirstTime = true
     }
 
     /**

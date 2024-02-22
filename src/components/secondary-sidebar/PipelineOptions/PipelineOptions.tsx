@@ -8,10 +8,16 @@ import { activeAppletStore } from "src/services/active-applet-store"
 
 export const PipelineOptions: FC = () => {
   const type = useSelector(() => activeAppletStore.getActiveApplet().type)
+  const viewMode = useSelector(() => activeAppletStore.getActiveApplet().viewMode)
 
-  const handleClickOpenTool = () => {
+  const handleClickRun = () => {
+    void activeAppletStore.getActiveApplet().run()
+  }
+
+  const handleClickView = () => {
     activeAppletStore.getActiveApplet().setViewMode("main")
   }
+
   const handleClickEditPipeline = () => {
     activeAppletStore.getActiveApplet().setViewMode("pipeline")
   }
@@ -22,8 +28,16 @@ export const PipelineOptions: FC = () => {
 
   return (
     <SecondarySidebarSection title="Pipeline">
-      <Button onClick={handleClickOpenTool}>Open Tool</Button>
-      <Button onClick={handleClickEditPipeline}>Edit Pipeline</Button>
+      {viewMode === "main"
+        ? (
+          <>
+            <Button onClick={handleClickRun}>Run Pipeline</Button>
+            <Button onClick={handleClickEditPipeline}>Edit Pipeline</Button>
+          </>
+        )
+        : (
+          <Button onClick={handleClickView}>View As Tool</Button>
+        )}
     </SecondarySidebarSection>
   )
 }

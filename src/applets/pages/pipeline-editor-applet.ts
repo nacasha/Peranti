@@ -6,7 +6,8 @@ const pipelineEditorApplet: AppletConstructor = {
   name: "Pipeline Editor",
   category: "App",
   layoutSetting: {
-    gridTemplate: "1fr"
+    direction: "horizontal",
+    gridTemplate: "1fr 1fr"
   },
   inputFields: [
     {

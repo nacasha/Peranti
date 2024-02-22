@@ -18,18 +18,7 @@ export const { ...sessionTabbarClasses } = new class {
   })
 
   inner = style({
-    display: "flex",
-    position: "absolute",
-    inset: "0",
-    overflowX: "auto",
-    overflowY: "hidden",
-    zIndex: 1,
-
-    selectors: {
-      [`${appClasses.root}${appClasses.withTabbar} &`]: {
-        right: `calc(${styleTokens.windowControlButtonWidth} * 7)`
-      }
-    }
+    display: "flex"
   })
 
   innerBody = style({
@@ -38,7 +27,22 @@ export const { ...sessionTabbarClasses } = new class {
   })
 
   innerSimplebar = style({
-    width: "100%"
+    position: "absolute",
+    inset: "0",
+
+    selectors: {
+      [`${appClasses.root}${appClasses.withTabbar} &`]: {
+        right: `calc(${styleTokens.windowControlButtonWidth} * 6)`
+      }
+    }
+  })
+
+  innerSimplebarBorderRight = style({
+    position: "sticky",
+    right: 0,
+    height: styleTokens.sessionTabbarHeight,
+    zIndex: 10,
+    borderRight: `1px solid ${styleTokens.borderColor}`
   })
 
   itemSession = style({
@@ -65,7 +69,7 @@ export const { ...sessionTabbarClasses } = new class {
 
     selectors: {
       "&:nth-last-child(2)": {
-        // borderRight: "none"
+        borderRight: "none"
       },
 
       [`${appClasses.root}${appClasses.withTabbar}${appClasses.withNotMaximized} &::before`]: {
@@ -101,7 +105,7 @@ export const { ...sessionTabbarClasses } = new class {
 
   itemIcon = style([this.itemSession, {
     backgroundColor: "var(--session-tabbar-color)",
-    borderRight: "1px solid var(--border-color)",
+    borderRight: "1px solid var(--border-color) !important",
     zIndex: 10,
     userSelect: "none",
 
@@ -160,7 +164,7 @@ export const { ...sessionTabbarClasses } = new class {
 
   constructor() {
     globalStyle(`${this.itemSessionIcon} img`, {
-      width: "12px",
+      width: "13px",
       filter: styleTokens.iconColorFilter
     })
 
@@ -188,8 +192,8 @@ export const { ...sessionTabbarClasses } = new class {
     })
 
     globalStyle(`${this.root} .simplebar-content`, {
-      display: "flex",
-      height: "100%"
+      display: "flex"
+      // height: "100%"
     })
   }
 }()

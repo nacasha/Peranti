@@ -143,9 +143,9 @@ export const SessionTabbar: FC = observer(() => {
           )}
 
           <div className={sessionTabbarClasses.innerBody}>
-            <div style={{ position: "absolute", inset: 0 }}>
+            <div className={sessionTabbarClasses.innerSimplebar}>
               <SimpleBar
-                className={sessionTabbarClasses.innerSimplebar}
+                style={{ width: "100%" }}
                 scrollableNodeProps={{ ref: scrollBarRef }}
               >
                 {sessions.map((session) => (
@@ -155,6 +155,7 @@ export const SessionTabbar: FC = observer(() => {
                     active={isAppletActive(session)}
                   />
                 ))}
+                <div className={sessionTabbarClasses.innerSimplebarBorderRight}></div>
               </SimpleBar>
             </div>
           </div>
