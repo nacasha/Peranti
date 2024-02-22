@@ -11,13 +11,13 @@ interface SwitchInputProps extends InputComponentProps {
 }
 
 export const SwitchInput: FC<SwitchInputProps> = (props) => {
-  const { label, options = [], onSubmit, defaultValue, readOnly } = props
+  const { label, options = [], onValueChange, defaultValue, readOnly } = props
   const [selectedOption, setSelectedOption] = useState<any>(defaultValue)
 
   const onClickItem = (option: typeof options[0]) => () => {
     if (readOnly) return
     setSelectedOption(option.value)
-    onSubmit(option.value)
+    onValueChange(option.value)
   }
 
   return (

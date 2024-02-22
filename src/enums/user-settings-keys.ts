@@ -16,5 +16,5 @@ export enum UserSettingsKeys {
 
   // Tool tabbar
   tabbarEnableMultipleSession = "tabbar.enableMultipleSession",
-  tabbarSeparateSessionForEachTool = "tabbar.separateSessionForEachTool"
+  tabbarGroupTabsByTool = "tabbar.groupTabsByTool"
 }

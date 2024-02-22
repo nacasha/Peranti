@@ -68,7 +68,7 @@ const generateRandomStringTool: AppletConstructor<InputFields, OutputFields> = {
   outputFields: [
     {
       key: "output",
-      label: "Output",
+      label: "Generated String",
       component: "Code"
     }
   ],

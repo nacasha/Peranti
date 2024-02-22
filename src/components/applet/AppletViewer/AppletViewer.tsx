@@ -1,11 +1,11 @@
 import { type FC } from "react"
 import SimpleBar from "simplebar-react"
 
-import { HomePage } from "src/applets/pages/welcome-applet"
 import { BottomPanel } from "src/components/bottom-panel/BottomPanel"
 import { ActiveSessionStateListener } from "src/components/session/ActiveSessionStateListener"
 import { SecondarySidebarTabbar } from "src/components/sidebar/SecondarySidebar"
 import { useSelector } from "src/hooks/useSelector"
+import { HomePage } from "src/pages/HomePage"
 import { activeAppletStore } from "src/services/active-applet-store"
 
 import { AppletComponentArea } from "../AppletComponentArea"

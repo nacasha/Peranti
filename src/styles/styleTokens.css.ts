@@ -180,6 +180,7 @@ const _themeableTokens = {
   toolSidebarTextColorActive: "tool-sidebar-text-color-active",
   toolSidebarIconColor: "tool-sidebar-icon-color",
   toolSidebarIconColorActive: "tool-sidebar-icon-color-active",
+  toolSidebarBackgroundColorActive: "tool-sidebar-background-color-active",
 
   /**
    * Settings view

@@ -7,11 +7,16 @@ export const buttonIconClasses = {
     display: "flex",
     alignItems: "center",
     userSelect: "none",
-    padding: 5,
+    padding: 6,
     borderRadius: styleTokens.borderRadius,
 
     ":hover": {
       background: "color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%)",
+      cursor: "pointer"
+    },
+
+    ":active": {
+      background: "color-mix(in srgb, var(--background-color-main), var(--opposite-color) 7%)",
       cursor: "pointer"
     }
   }),

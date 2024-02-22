@@ -3,11 +3,11 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
 import SimpleBar from "simplebar-react"
-import { useLocation } from "wouter"
 
 import { activityBarClasses } from "src/components/activity-bar/ActivityBar/ActivityBar.css"
-import { ClosedEditorSidebar } from "src/components/sidebar-contents/ClosedEditorSidebar"
-import { ToolSidebar } from "src/components/sidebar-contents/ToolSidebar"
+import { ClosedEditorSidebar } from "src/components/primary-sidebar/ClosedEditorSidebar"
+import { ExtensionsSidebar } from "src/components/primary-sidebar/ExtensionsSidebar"
+import { ToolSidebar } from "src/components/primary-sidebar/ToolSidebar"
 import { SidebarMode } from "src/enums/sidebar-mode"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
@@ -25,16 +25,13 @@ export const PrimarySidebar = observer(() => {
     ignoreClass: [activityBarClasses.root, "PrimarySidebar"]
   })
 
-  const [location] = useLocation()
-  const isSidebarHidden = ["/settings"].includes(location) || !isSidebarShow
-
   const sidebarMode = isFloatingSidebar
     ? SidebarMode.FloatUnpinned
     : sidebarModeStore
 
   return (
     <SimpleBar
-      className={clsx("PrimarySidebar", sidebarMode, isSidebarHidden && "hidden")}
+      className={clsx("PrimarySidebar", sidebarMode, !isSidebarShow && "hidden")}
       scrollableNodeProps={{ ref }}
     >
       <PrimarySidebarBody />
@@ -44,13 +41,11 @@ export const PrimarySidebar = observer(() => {
 
 const PrimarySidebarBody: FC = () => {
   const sidebarActiveMenuId = useSelector(() => interfaceStore.sidebarActiveMenuId)
-  let Component: FC | undefined
-
-  if (sidebarActiveMenuId === "tools") {
-    Component = ToolSidebar
-  } else if (sidebarActiveMenuId === "history") {
-    Component = ClosedEditorSidebar
-  }
+  const Component: FC | undefined = {
+    tools: ToolSidebar,
+    history: ClosedEditorSidebar,
+    extensions: ExtensionsSidebar
+  }[sidebarActiveMenuId]
 
   if (Component) {
     return <Component />

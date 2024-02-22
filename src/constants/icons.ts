@@ -8,6 +8,11 @@ import Clean from "src/assets/icons/clean.svg"
 import Close from "src/assets/icons/close.svg"
 import Documents from "src/assets/icons/documents.svg"
 import Download from "src/assets/icons/download.svg"
+import Extension from "src/assets/icons/extension.svg"
+import Extensions from "src/assets/icons/extensions.svg"
+import FilterSolid from "src/assets/icons/filter-solid.svg"
+import Filter from "src/assets/icons/filter.svg"
+import Folder from "src/assets/icons/folder.svg"
 import FullScreen from "src/assets/icons/fullscreen.svg"
 import Gear from "src/assets/icons/gear.svg"
 import Hash from "src/assets/icons/hash.svg"
@@ -32,11 +37,17 @@ import Settings from "src/assets/icons/settings.svg"
 import ThreeLineHorizontal from "src/assets/icons/three-line-horizontal.svg"
 import ThreeLineVertical from "src/assets/icons/three-line-vertical.svg"
 import Thunder from "src/assets/icons/thunder.svg"
+import Tool from "src/assets/icons/tool.svg"
 import Trash from "src/assets/icons/trash.svg"
 import Untrash from "src/assets/icons/untrash.svg"
 
 export const Icons = {
   Back,
+  Tool,
+  Filter,
+  FilterSolid,
+  Folder,
+  Extensions,
   PanelBottom,
   Check,
   ChevronDown,
@@ -53,6 +64,7 @@ export const Icons = {
   Gear,
   Hash,
   FullScreen,
+  Extension,
   History,
   Home,
   Layers,

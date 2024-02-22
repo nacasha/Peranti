@@ -1,7 +1,9 @@
 import fastDeepEqual from "fast-deep-equal"
 import { observable, action, makeObservable, toJS } from "mobx"
-import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, pausePersisting, startPersisting, stopPersisting } from "mobx-persist-store"
+import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, stopPersisting } from "mobx-persist-store"
 import toast from "react-hot-toast"
+import { type Edge, type Node } from "reactflow"
+import { merge } from "ts-deepmerge"
 
 import { StorageKeys } from "src/constants/storage-keys"
 import { AppletType } from "src/enums/applet-type"
@@ -70,7 +72,7 @@ export class Applet<
   /**
    * Allow applet to run its pipeline
    */
-  private canRunPipeline = true
+  private readonly canRunPipeline = true
 
   /**
    * Unique ID of each created session based on this applet
@@ -132,6 +134,9 @@ export class Applet<
    */
   readonly autoRun: boolean = false
 
+  /**
+   * Debounce input delay when autoRun is enabled
+   */
   autoRunDelay: number = 0
 
   /**
@@ -222,21 +227,21 @@ export class Applet<
   readonly samples: Array<AppletSample<InputFields>> = []
 
   /**
-   * Index of sample that has been showed on viewer
-   */
-  @observable sampleIndex: number = 0
-
-  /**
    * Applet input and output options
    */
   readonly options: Array<AppletOption<OptionKeys>>
 
+  /**
+   * Applet options values
+   */
   @observable optionValues: any = {}
 
   /**
    * Indicates that the applet has input values overridden by preset
    */
   readonly hasOverriddenDefaultState: boolean = false
+
+  @observable viewMode: "main" | "pipeline"
 
   /**
    * Empty applet
@@ -287,11 +292,25 @@ export class Applet<
     this.options = appletConstructor.options ?? []
     this.optionValues = this.getOptionValuesWithDefault()
     this.description = appletConstructor.description ?? ""
+    this.viewMode = "main"
 
+    /**
+     * Default true when autoRun is enabled
+     */
     if (this.autoRun) {
       this.isAutoRunAndFirstTime = true
     }
 
+    /**
+     * Set default viewMode when opening pipeline for the first time
+     */
+    if (appletConstructor.type === AppletType.Pipeline) {
+      this.viewMode = "pipeline"
+    }
+
+    /**
+     * Default applet layout setting
+     */
     this.layoutSetting = {
       direction: "horizontal",
       reversed: false,
@@ -301,7 +320,10 @@ export class Applet<
       ...appletConstructor.layoutSetting
     }
 
-    const { initialState, disablePersistence = false } = options
+    /**
+     * Replace constructed state with initialState if exist
+     */
+    const { initialState } = options
     if (initialState) {
       this.sessionId = initialState.sessionId ?? this.sessionId
       this.sessionName = initialState.sessionName ?? this.sessionName
@@ -319,12 +341,21 @@ export class Applet<
       this.outputFieldsState = initialState.outputFieldsState ?? this.outputFieldsState
       this.isAutoRunAndFirstTime = initialState.isAutoRunAndFirstTime ?? this.isAutoRunAndFirstTime
       this.optionValues = initialState.optionValues ?? this.optionValues
+      this.viewMode = initialState.viewMode ?? this.viewMode
     }
 
+    /**
+     * Use applet name as sessionName if the applet only allowed
+     * to have one session at once
+     */
     if (this.disableMultipleSession) {
       this.sessionName = appletStore.mapOfLoadedApplets[this.appletId].name
     }
 
+    /**
+     * Disable persistence if needed
+     */
+    const { disablePersistence = false } = options
     this.disablePersistence = disablePersistence
 
     makeObservable(this)
@@ -382,7 +413,8 @@ export class Applet<
       sessionSequenceNumber,
       appletId,
       isAutoRunAndFirstTime,
-      optionValues
+      optionValues,
+      viewMode
     } = this
 
     const createdAt = new Date().getTime()
@@ -405,7 +437,8 @@ export class Applet<
       sessionSequenceNumber,
       appletId,
       isAutoRunAndFirstTime,
-      optionValues: toJS(optionValues)
+      optionValues: toJS(optionValues),
+      viewMode
     }
   }
 
@@ -476,10 +509,31 @@ export class Applet<
   }
 
   getInputFields() {
+    if (this.type === AppletType.Pipeline && this.viewMode === "main") {
+      return this.getInputFieldsFromPipeline()
+    }
+
     if (typeof this.inputFields === "function") {
       return this.inputFields(this.inputValues)
     }
     return this.inputFields
+  }
+
+  private getInputFieldsFromPipeline() {
+    const inputNodes: Node[] = this.inputValues?.$PIPELINE?.nodes ?? []
+
+    if (inputNodes.length > 0) {
+      const appletInputNodes = inputNodes.filter((inputNode) => inputNode.type === "appletInput")
+      const appletInput: Array<AppletInput<InputFields>> = appletInputNodes.map((inputNode) => ({
+        key: inputNode.data.key,
+        label: inputNode.data.label,
+        component: inputNode.data.component
+      }))
+
+      return appletInput
+    }
+
+    return []
   }
 
   getInputFieldsWithReadableFile(): [Array<AppletInput<InputFields>>, boolean] {
@@ -513,10 +567,31 @@ export class Applet<
   }
 
   getOutputFields() {
+    if (this.type === AppletType.Pipeline && this.viewMode === "main") {
+      return this.getOutputFieldsFromPipeline()
+    }
+
     if (typeof this.outputFields === "function") {
       return this.outputFields(this.inputValues)
     }
     return this.outputFields
+  }
+
+  private getOutputFieldsFromPipeline() {
+    const outputNodes: Node[] = this.inputValues?.$PIPELINE?.nodes ?? []
+
+    if (outputNodes.length > 0) {
+      const appletOutputNodes = outputNodes.filter((inputNode) => inputNode.type === "appletOutput")
+      const appletOutput: Array<AppletOutput<InputFields>> = appletOutputNodes.map((outputNode) => ({
+        key: outputNode.data.key,
+        label: outputNode.data.label,
+        component: outputNode.data.component
+      }))
+
+      return appletOutput
+    }
+
+    return []
   }
 
   @action
@@ -543,6 +618,12 @@ export class Applet<
     if (!this.isAutoRunAndFirstTime) {
       this.isInputValuesModified = options.markAsModified
     }
+  }
+
+  @action
+  setInputValuesMerge(inputValues: any, options: { markAsModified: boolean } = { markAsModified: true }) {
+    const mergedValues = merge(this.inputValues, inputValues)
+    this.setInputValues(mergedValues, options)
   }
 
   getInputValue(key: string) {
@@ -658,7 +739,7 @@ export class Applet<
     }
 
     /**
-     * If isActionRunning has value true, wait for 100 milliseconds to set value of
+     * If isActionRunning has value true, wait few milliseconds to set value of
      * session store and debounced value
      */
     if (newActionValue) {
@@ -694,7 +775,7 @@ export class Applet<
 
     if (this.type === AppletType.Extension) {
       void this.runExtension()
-    } else if (this.canRunPipeline && this.pipelines.length > 0) {
+    } else if (this.canRunPipeline && this.type === AppletType.Pipeline) {
       await this.runPipeline()
     } else if (this.isBatchModeEnabled) {
       await this.runBatch()
@@ -763,35 +844,119 @@ export class Applet<
   }
 
   private async runPipeline() {
-    const { pipelines = [] } = this
-    const pipelineResults = []
-    const mergedPipelines = [this, ...pipelines, this]
+    const edges: Edge[] = this.inputValues.$PIPELINE.edges ?? []
+    const nodes: Node[] = this.inputValues.$PIPELINE.nodes ?? []
+    const nodesMap = Object.fromEntries(nodes.map((node) => [node.id, node]))
 
-    for (let index = 0; index < mergedPipelines.length; index++) {
-      const pipeline = mergedPipelines[index]
+    const resolvedValues: Record<string, Record<any, any>> = {}
 
-      if (index === 0) {
-        pipelineResults.push((pipeline as this).inputValues)
-      } else if (index === mergedPipelines.length - 1) {
-        this.setOutputValues(pipelineResults[index - 1])
-      } else {
-        const appletConstructor = appletStore.mapOfLoadedApplets[pipeline.appletId]
-        const applet = new Applet(appletConstructor)
-        applet.canRunPipeline = false
-
-        const previousResult = pipelineResults[index - 1];
-        (pipeline as Pipeline).fields.forEach((field: any) => {
-          if (field.previousOutputKey) {
-            applet.setInputValue(field.inputKey, previousResult[field.previousOutputKey])
-          } else if (field.value) {
-            applet.setInputValue(field.inputKey, field.value)
-          }
-        })
-
-        await applet.run()
-        pipelineResults.push(applet.outputValues)
+    const targetInputDependencies: Record<string, number> = {}
+    edges.forEach((edge) => {
+      if (!targetInputDependencies[edge.target]) {
+        targetInputDependencies[edge.target] = 0
       }
+
+      targetInputDependencies[edge.target]++
+    })
+
+    /**
+     * Find unresolved edge by filtering the source edge that has value and does not
+     * resolving the target value
+     */
+    let loop = 0
+
+    /**
+     * Resolve node outputValues that has no input dependencies
+     */
+    let resolveTargetWithoutDependencies = true
+    let unresolved = edges.filter((edge) => !targetInputDependencies[edge.source] && !resolvedValues[edge.source])
+
+    console.log({ edges: toJS(edges) })
+    console.log({ nodes: toJS(nodes) })
+
+    while (unresolved.length > 0 && loop < 10) {
+      const edge = unresolved[0]
+      const node = nodesMap[edge.source]
+
+      /**
+       * Set default value for source node
+       */
+      if (!resolvedValues[edge.source]) {
+        resolvedValues[edge.source] = { inputValues: {}, outputValues: {} }
+      }
+
+      /**
+       * Set default value for target node
+       */
+      if (!resolvedValues[edge.target]) {
+        resolvedValues[edge.target] = { inputValues: {}, outputValues: {} }
+      }
+
+      /**
+       * Fill source node input and output values
+       */
+      if (node.type === "applet") {
+        const appletConstructor = appletStore.mapOfLoadedApplets[node.data.appletId]
+        const applet = new Applet(appletConstructor, { disablePersistence: true })
+        applet.setInputValuesMerge(resolvedValues[edge.source].inputValues)
+        await applet.run()
+
+        resolvedValues[edge.source].outputValues = merge(
+          resolvedValues[edge.source].outputValues,
+          applet.outputValues
+        )
+      } else if (node.type === "appletInput") {
+        if (edge.sourceHandle && edge.targetHandle) {
+          resolvedValues[edge.source].outputValues[edge.sourceHandle] = this.inputValues[node.data.key]
+        }
+      }
+
+      /**
+       * Fill target node input and output values
+       */
+      const sourceEdges = edges.filter((e) => e.source === edge.source)
+
+      sourceEdges.forEach((sourceEdge) => {
+        console.log("Resolving edge ", edge.source, " for ", sourceEdge.target)
+        if (sourceEdge.targetHandle && sourceEdge.sourceHandle) {
+          const targetInputValues = {
+            [sourceEdge.targetHandle]: resolvedValues[edge.source].outputValues[sourceEdge.sourceHandle]
+          }
+
+          /**
+           * Set default value for target node
+           */
+          if (!resolvedValues[sourceEdge.target]) {
+            resolvedValues[sourceEdge.target] = { inputValues: {}, outputValues: {} }
+          }
+
+          resolvedValues[sourceEdge.target].inputValues = merge(
+            resolvedValues[sourceEdge.target].inputValues,
+            targetInputValues
+          )
+        }
+      })
+
+      if (resolveTargetWithoutDependencies) {
+        unresolved = edges.filter((edge) => !targetInputDependencies[edge.source] && !resolvedValues[edge.source])
+      }
+
+      if (unresolved.length === 0 || !resolveTargetWithoutDependencies) {
+        resolveTargetWithoutDependencies = false
+        unresolved = edges.filter((edge) => (
+          (targetInputDependencies[edge.source] === Object.values(resolvedValues?.[edge.source]?.inputValues ?? {}).length) &&
+          Object.values(resolvedValues[edge.source]?.outputValues ?? {}).length === 0
+        ))
+      }
+
+      loop++
+      console.log({ resolvedValues })
     }
+
+    const outputNodes = nodes.filter((node) => node.type === "appletOutput" && resolvedValues[node.id]?.inputValues)
+    outputNodes.forEach((outputNode) => {
+      this.setOutputValue(outputNode.data.key, resolvedValues[outputNode.id].inputValues[outputNode.data.key])
+    })
   }
 
   private async runBatch() {
@@ -821,36 +986,41 @@ export class Applet<
     )
   }
 
+  /**
+   * Force applet input and output components to rerender
+   */
   @action
   forceRerender() {
     this.renderCounter += 1
   }
 
-  getHasIframe() {
-    return this.getOutputFields().some((field) => field.component === "IFrame")
-  }
-
+  /**
+   * Manually hydrate applet state to storage
+   */
   async hydrateStore() {
     await hydrateStore(this)
   }
 
-  pauseStore() {
-    pausePersisting(this)
-  }
-
-  startStore() {
-    startPersisting(this)
-  }
-
+  /**
+   * Stop and destroy reference to mobx persist store
+   */
   stopStore() {
     stopPersisting(this)
   }
 
+  /**
+   * Set value of isDeleted
+   *
+   * @param isDeleted
+   */
   @action
   setDeleted(isDeleted: boolean) {
     this.isDeleted = isDeleted
   }
 
+  /**
+   * Mark applet as deleted
+   */
   @action
   async markAsDeleted() {
     this.resetInputAndOutputFieldsState()
@@ -865,33 +1035,49 @@ export class Applet<
     }
   }
 
-  @action
-  setSampleIndex(index: number) {
-    this.sampleIndex = index
-  }
-
+  /**
+   * Indicates applet has samples
+   *
+   * @returns
+   */
   getHasSamples() {
     return this.samples.length > 0
   }
 
+  /**
+   * Fill current inputValues with sample data
+   *
+   * @param sample
+   */
   fillInputValuesWithSample(sample: AppletSample) {
     if (sample) {
       const defaultInputValues = this.getInputValuesWithDefault()
       const { inputValues, isBatchModeEnabled = false } = sample
 
+      this.resetInputAndOutputFieldsState()
+
       this.setBatchMode(isBatchModeEnabled)
+      let computedInputValues
       if (typeof inputValues === "function") {
-        this.setInputValues({ ...defaultInputValues, ...inputValues() })
+        computedInputValues = inputValues()
       } else {
-        this.setInputValues({ ...defaultInputValues, ...inputValues })
+        computedInputValues = inputValues
       }
 
-      this.resetInputAndOutputFieldsState()
+      console.log(computedInputValues)
+
+      this.setInputValues({ ...defaultInputValues, ...computedInputValues })
       this.forceRerender()
 
-      if (!this.autoRun) {
-        void this.run()
-      }
+      /**
+       * Always run the sample even the applet has autoRun disabled
+       */
+      void this.run()
     }
+  }
+
+  @action
+  setViewMode(viewMode: "main" | "pipeline") {
+    this.viewMode = viewMode
   }
 }

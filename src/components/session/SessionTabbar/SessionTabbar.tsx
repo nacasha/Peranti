@@ -1,7 +1,7 @@
 import { appWindow } from "@tauri-apps/api/window"
 import { observer } from "mobx-react"
 import { atom } from "nanostores"
-import { type FC, useEffect, useRef } from "react"
+import { type FC, useEffect, useRef, type CSSProperties } from "react"
 import SimpleBar from "simplebar-react"
 
 import { WindowControls } from "src/components/window/WindowControls"
@@ -24,6 +24,7 @@ const $renamingSessionId = atom<string>("")
 export const SessionTabbar: FC = observer(() => {
   const activeApplet = activeAppletStore.getActiveApplet()
   const sessions = sessionStore.getRunningSessions(activeApplet.appletId)
+  const groupTabsByTool = sessionStore.groupTabsByTool
   const activeIndex = sessions.findIndex((tab) => tab.sessionId === activeApplet.sessionId)
   const appTitlebarStyle = interfaceStore.appTitlebarStyle
 
@@ -35,6 +36,10 @@ export const SessionTabbar: FC = observer(() => {
 
   const onClickAddTab = () => {
     sessionStore.createSession(activeApplet, undefined, true)
+  }
+
+  const handleClickGroupTabs = () => {
+    sessionStore.toggleGroupTabsByTool()
   }
 
   useHotkeysModified(hotkeysStore.keys.TAB_NEW_EDITOR, (event) => {
@@ -124,26 +129,35 @@ export const SessionTabbar: FC = observer(() => {
         <div className={sessionTabbarClasses.rootBorderBottom} data-tauri-drag-region />
 
         <div className={sessionTabbarClasses.inner}>
-          <SimpleBar
-            className={sessionTabbarClasses.innerSimplebar}
-            scrollableNodeProps={{ ref: scrollBarRef }}
-          >
-            {sessions.map((session) => (
-              <SessionTabbarItem
-                key={session.sessionId.concat(session.sessionName ?? "")}
-                session={session}
-                active={isAppletActive(session)}
-              />
-            ))}
+          <SessionTabbarItemIcon
+            onClick={handleClickGroupTabs}
+            label="Group Tabs By Tool"
+            icon={groupTabsByTool ? Icons.FilterSolid : Icons.Filter}
+          />
+          {!(activeApplet.appletId === "") && (
+            <SessionTabbarItemIcon
+              onClick={onClickAddTab}
+              label="Add Tab"
+              icon={Icons.Plus}
+            />
+          )}
 
-            {!(activeApplet.appletId === "") && (
-              <div onClick={onClickAddTab} className={sessionTabbarClasses.itemNew}>
-                <div className={sessionTabbarClasses.itemSessionIcon}>
-                  <img src={Icons.Plus} alt="Add Tab" />
-                </div>
-              </div>
-            )}
-          </SimpleBar>
+          <div className={sessionTabbarClasses.innerBody}>
+            <div style={{ position: "absolute", inset: 0 }}>
+              <SimpleBar
+                className={sessionTabbarClasses.innerSimplebar}
+                scrollableNodeProps={{ ref: scrollBarRef }}
+              >
+                {sessions.map((session) => (
+                  <SessionTabbarItem
+                    key={session.sessionId.concat(session.sessionName ?? "")}
+                    session={session}
+                    active={isAppletActive(session)}
+                  />
+                ))}
+              </SimpleBar>
+            </div>
+          </div>
         </div>
 
         {appTitlebarStyle === AppTitleBarStyle.Tabbar && <WindowControls />}
@@ -153,3 +167,22 @@ export const SessionTabbar: FC = observer(() => {
     </>
   )
 })
+
+interface SessionTabbarItemIconProps {
+  onClick: () => any
+  label: string
+  icon: string
+  style?: CSSProperties
+}
+
+const SessionTabbarItemIcon: FC<SessionTabbarItemIconProps> = (props) => {
+  const { onClick, label, icon, style } = props
+
+  return (
+    <div onClick={onClick} className={sessionTabbarClasses.itemIcon} style={style}>
+      <div className={sessionTabbarClasses.itemSessionIcon}>
+        <img src={icon} alt={label} />
+      </div>
+    </div>
+  )
+}

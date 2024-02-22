@@ -17,7 +17,7 @@ export const ThemeSelect: FC = () => {
         { label: "Dark", value: Theme.Dark },
         { label: "Light", value: Theme.Light }
       ]}
-      onSubmit={onChange}
+      onValueChange={onChange}
       defaultValue={theme}
     />
   )

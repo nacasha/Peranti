@@ -52,7 +52,7 @@ export const AppletBatchMode = observer(() => {
             value: input.key
           }))}
           defaultValue={batchModeInputKey}
-          onSubmit={onChangeInputKey}
+          onValueChange={onChangeInputKey}
           readOnly={isDeleted}
         />
         <SelectInput
@@ -62,7 +62,7 @@ export const AppletBatchMode = observer(() => {
             value: output.key
           }))}
           defaultValue={batchModeOutputKey}
-          onSubmit={onChangeOutputKey}
+          onValueChange={onChangeOutputKey}
           readOnly={isDeleted}
         />
       </>

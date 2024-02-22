@@ -18,7 +18,7 @@ export const FileDropActionSelect: FC = () => {
         { label: "Open In New Editor", value: FileDropAction.OpenInNewEditor },
         { label: "Replace Current Editor", value: FileDropAction.ReplaceCurrentEditor }
       ]}
-      onSubmit={onChange}
+      onValueChange={onChange}
       defaultValue={fileDropAction}
     />
   )

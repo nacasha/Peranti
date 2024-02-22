@@ -59,8 +59,8 @@ export const SettingsView: FC = () => {
           description="Enabling this will only shows tabbars related to active tool"
         >
           <SettingsItemSwitch
-            defaultChecked={sessionStore.separateSessionForEachApplet}
-            onChange={(value) => { sessionStore.setSeparateSessionForEachApplet(value) }}
+            defaultChecked={sessionStore.groupTabsByTool}
+            onChange={(value) => { sessionStore.setGroupTabsByTool(value) }}
           />
         </SettingsCardItem>
       </SettingsCard>

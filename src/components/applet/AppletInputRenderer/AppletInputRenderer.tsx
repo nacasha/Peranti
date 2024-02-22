@@ -27,7 +27,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   const inputComponent = appletComponentService.getInputComponent(appletInput.component, isBatchModeEnabled)
   const Component: FC<InputComponentProps<any>> = inputComponent.component
 
-  const handleSUbmit = (val: unknown) => {
+  const handleValueChange = (val: unknown) => {
     activeApplet.setInputValue(appletInput.key, val)
   }
 
@@ -51,7 +51,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   }
 
   const additionalProps: Record<string, any> = {}
-  if (["Code"].includes(appletInput.component)) {
+  if (["Code", "PipelineEditor"].includes(appletInput.component)) {
     additionalProps.initialState = initialState
     additionalProps.onStateChange = handleStateChange
   }
@@ -67,7 +67,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
       label={appletInput.label}
       defaultValue={defaultValue}
       readOnly={readOnly}
-      onSubmit={handleSUbmit}
+      onValueChange={handleValueChange}
       onContextMenu={handleContextMenu}
       {...additionalProps}
     />

@@ -27,9 +27,14 @@ export const { ...sessionTabbarClasses } = new class {
 
     selectors: {
       [`${appClasses.root}${appClasses.withTabbar} &`]: {
-        right: `calc(${styleTokens.windowControlButtonWidth} * 5)`
+        right: `calc(${styleTokens.windowControlButtonWidth} * 7)`
       }
     }
+  })
+
+  innerBody = style({
+    position: "relative",
+    width: "100%"
   })
 
   innerSimplebar = style({
@@ -60,7 +65,7 @@ export const { ...sessionTabbarClasses } = new class {
 
     selectors: {
       "&:nth-last-child(2)": {
-        borderRight: "none"
+        // borderRight: "none"
       },
 
       [`${appClasses.root}${appClasses.withTabbar}${appClasses.withNotMaximized} &::before`]: {
@@ -94,12 +99,10 @@ export const { ...sessionTabbarClasses } = new class {
     }
   })
 
-  itemNew = style([this.itemSession, {
+  itemIcon = style([this.itemSession, {
     backgroundColor: "var(--session-tabbar-color)",
-    position: "sticky",
-    right: "0",
-    borderLeft: "1px solid var(--border-color)",
-    zIndex: 7,
+    borderRight: "1px solid var(--border-color)",
+    zIndex: 10,
     userSelect: "none",
 
     ":hover": {
@@ -130,7 +133,7 @@ export const { ...sessionTabbarClasses } = new class {
     },
 
     selectors: {
-      [`${this.itemNew} &`]: {
+      [`${this.itemIcon} &`]: {
         opacity: 1,
         paddingInline: 10,
         borderRadius: 0

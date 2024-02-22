@@ -1,4 +1,4 @@
-import settingsTool from "src/applets/pages/settings-applet.ts"
+import settingsApplet from "src/applets/pages/settings-applet.ts"
 import { Icons } from "src/constants/icons.ts"
 import { commandbarService } from "src/services/commandbar-service"
 
@@ -25,6 +25,11 @@ export const ActivityBar = () => {
           label="Closed Editor"
           menuId="history"
         />
+        <ActivityBarItem
+          icon={Icons.Extensions}
+          label="Extensions"
+          menuId="extensions"
+        />
       </div>
 
       <div className={activityBarClasses.bottomButtons}>
@@ -41,7 +46,7 @@ export const ActivityBar = () => {
           icon={Icons.Gear}
           label="Settings"
           menuId="settings"
-          appletConstructor={settingsTool}
+          appletConstructor={settingsApplet}
           clickHideOnFloatingSidebar
         />
       </div>

@@ -34,7 +34,7 @@ export const AppletBatchModeHeader = observer(() => {
             value: input.key
           }))}
           defaultValue={batchModeInputKey}
-          onSubmit={onChangeInputKey}
+          onValueChange={onChangeInputKey}
           readOnly={isReadOnly}
         />
         <SelectInput
@@ -43,7 +43,7 @@ export const AppletBatchModeHeader = observer(() => {
             value: output.key
           }))}
           defaultValue={batchModeOutputKey}
-          onSubmit={onChangeOutputKey}
+          onValueChange={onChangeOutputKey}
           readOnly={isReadOnly}
         />
       </div>

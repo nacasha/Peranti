@@ -1,13 +1,8 @@
 import { AppletType } from "src/enums/applet-type"
 import { type AppletConstructor } from "src/types/AppletConstructor"
-import { type InputFieldsType } from "src/types/InputFieldsType"
 
-interface InputFields {
-  input: InputFieldsType.Code
-}
-
-const settingsTool: AppletConstructor<InputFields> = {
-  appletId: "settings-tool",
+const settingsApplet: AppletConstructor = {
+  appletId: "settings-page",
   name: "Settings",
   category: "App",
   layoutSetting: {
@@ -16,8 +11,9 @@ const settingsTool: AppletConstructor<InputFields> = {
   inputFields: [],
   outputFields: [
     {
-      key: "web",
-      label: "Web",
+      key: "content",
+      label: "content",
+      customComponent: true,
       component: "Settings"
     }
   ],
@@ -26,4 +22,4 @@ const settingsTool: AppletConstructor<InputFields> = {
   type: AppletType.Page
 }
 
-export default settingsTool
+export default settingsApplet

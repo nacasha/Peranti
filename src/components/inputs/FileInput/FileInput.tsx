@@ -8,7 +8,7 @@ import "./FileInput.scss"
 interface InputFileProps extends InputComponentProps<File | null> { }
 
 export const FileInput: FC<InputFileProps> = (props) => {
-  const { label, onSubmit, defaultValue } = props
+  const { label, onValueChange, defaultValue } = props
   const [selectedFile, setSelectedFile] = useState<File | undefined>(() => defaultValue)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -17,7 +17,7 @@ export const FileInput: FC<InputFileProps> = (props) => {
 
     if (file) {
       setSelectedFile(file)
-      onSubmit(file)
+      onValueChange(file)
     }
   }
 

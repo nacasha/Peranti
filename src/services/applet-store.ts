@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx"
 
-import settingsTool from "src/applets/pages/settings-applet.ts"
+import pipelineEditorApplet from "src/applets/pages/pipeline-editor-applet.ts"
+import settingsApplet from "src/applets/pages/settings-applet.ts"
 import base64EncodeDecodeTool from "src/applets/tools/base64-encode-decode-tool.ts"
 import base64ToFileTool from "src/applets/tools/base64-to-file-tool.ts"
 import characterCounterTool from "src/applets/tools/character-counter-tool.ts"
@@ -27,7 +28,6 @@ import prefixSuffixLines from "src/applets/tools/prefix-suffix-lines-tool.ts"
 import { reactRunnerTool } from "src/applets/tools/react-runner-tool/react-runner-tool.ts"
 import removeDuplicateList from "src/applets/tools/remove-duplicate-lines-tool.ts"
 import sortList from "src/applets/tools/sort-list-tool.ts"
-import testPipelines from "src/applets/tools/test-pipelines-tool.ts"
 import textEditorTool from "src/applets/tools/text-editor-tool.ts"
 import textEscapeUnescapeTool from "src/applets/tools/text-escape-unescape-tool/text-escape-unescape-tool.ts"
 import textTransformTool from "src/applets/tools/text-transform-tool.ts"
@@ -50,12 +50,14 @@ class AppletStore {
    * List of buildit applets
    */
   private readonly builtInApplets: Record<string, AppletConstructor> = {
+    /**
+     * Applet Tools
+     */
     [removeDuplicateList.appletId]: removeDuplicateList,
     [sortList.appletId]: sortList,
     [compareListTool.appletId]: compareListTool,
     [prefixSuffixLines.appletId]: prefixSuffixLines,
     [millisecondsToDate.appletId]: millisecondsToDate,
-    [testPipelines.appletId]: testPipelines,
     [textTransformTool.appletId]: textTransformTool,
     [hashTool.appletId]: hashTool,
     [generateUuidTool.appletId]: generateUuidTool,
@@ -75,13 +77,18 @@ class AppletStore {
     [base64ToFileTool.appletId]: base64ToFileTool,
     [markdownParserTool.appletId]: markdownParserTool,
     [dateToMillisecondsTool.appletId]: dateToMillisecondsTool,
-    [settingsTool.appletId]: settingsTool,
     [mermaidEditorTool.appletId]: mermaidEditorTool,
     [pintoraEditorTool.appletId]: pintoraEditorTool,
     [jsonToCsvTool.appletId]: jsonToCsvTool,
     [reactRunnerTool.appletId]: reactRunnerTool,
     [textEscapeUnescapeTool.appletId]: textEscapeUnescapeTool,
-    [javascriptRunnerTool.appletId]: javascriptRunnerTool
+    [javascriptRunnerTool.appletId]: javascriptRunnerTool,
+
+    /**
+     * Applet Pages
+     */
+    [pipelineEditorApplet.appletId]: pipelineEditorApplet,
+    [settingsApplet.appletId]: settingsApplet
   }
 
   /**
@@ -160,7 +167,7 @@ class AppletStore {
   /**
    * Load applets from extension folder
    */
-  private async loadExtensions() {
+  async loadExtensions() {
     const extensions = await extensionsService.getExtensionsAsAppletContructor()
 
     const mapOfExtensions = Object.fromEntries(extensions.map((extension) => {
@@ -173,7 +180,7 @@ class AppletStore {
   /**
    * Build loaded applets into map and list
    */
-  private buildApplets() {
+  buildApplets() {
     this.listOfLoadedApplets = Object.values(this.mapOfLoadedApplets)
     this.mapOfLoadedAppletsName = Object.fromEntries(
       Object.entries(this.mapOfLoadedApplets).map((

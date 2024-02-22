@@ -1,6 +1,5 @@
 import { makeAutoObservable } from "mobx"
 
-import { AppletType } from "src/enums/applet-type"
 import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
 import { type AppletConstructor } from "src/types/AppletConstructor"
 
@@ -74,10 +73,10 @@ class ToolSidebarService {
     }
 
     /**
-     * Only filter applets with type equal to `Tool`
+     * Filter applet that showable on sidebar
      */
     [...appletStore.listOfLoadedApplets].forEach((applet) => {
-      if (applet.type === AppletType.Page) {
+      if (applet.hideOnSidebar) {
         return
       }
 

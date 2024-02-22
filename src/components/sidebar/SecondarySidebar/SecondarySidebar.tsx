@@ -5,6 +5,7 @@ import SimpleBar from "simplebar-react"
 import { AppletBatchMode } from "src/components/secondary-sidebar/AppletBatchMode"
 import { AppletOptions } from "src/components/secondary-sidebar/AppletOptions"
 import { AppletSampleSelector } from "src/components/secondary-sidebar/AppletSampleSelector"
+import { PipelineOptions } from "src/components/secondary-sidebar/PipelineOptions"
 import { AppTitleBarStyle } from "src/enums/app-titlebar-style"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
@@ -44,6 +45,7 @@ const SecondarySidebar: FC = () => {
 
   return (
     <SimpleBar key={activeAppletSessionId} className={className}>
+      <PipelineOptions />
       <AppletSampleSelector />
       <AppletBatchMode />
       <AppletOptions />

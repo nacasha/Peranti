@@ -11,11 +11,11 @@ interface TextAreaInputProps extends InputComponentProps {
 
 export const TextAreaInput: FC<TextAreaInputProps> = (props) => {
   const id = useId()
-  const { onSubmit, defaultValue, readOnly, label = "Input", ...restProps } = props
+  const { onValueChange, defaultValue, readOnly, label = "Input", ...restProps } = props
 
   const onInputChange: React.InputHTMLAttributes<HTMLTextAreaElement>["onBlur"] = (event) => {
     const value = event.target.value
-    onSubmit(value)
+    onValueChange(value)
   }
 
   return (

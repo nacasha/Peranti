@@ -18,12 +18,12 @@ export interface InputComponentProps<T = string> {
    * @param value
    * @returns
    */
-  onSubmit: (value: T) => any
+  onValueChange: (value: T) => any
 
   /**
    * Initial state component (scroll position, selection, styling, etc)
    */
-  initialState?: unknown
+  initialState?: any
 
   /**
    * Mark component as readonly

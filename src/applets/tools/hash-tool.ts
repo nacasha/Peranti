@@ -75,7 +75,7 @@ const hashTool: AppletConstructor<InputFields, OutputFields> = {
       name: "Batch Random String",
       isBatchModeEnabled: true,
       inputValues: () => ({
-        input: new Array(5).map(() => generateRandomString(15, stringEntries.smallAz)).join("\n")
+        input: new Array(5).fill(null).map(() => generateRandomString(15, stringEntries.smallAz)).join("\n")
       })
     }
   ],

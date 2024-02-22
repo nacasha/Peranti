@@ -17,4 +17,5 @@ export interface AppletState {
   outputFieldsState: Record<string, any>
   isAutoRunAndFirstTime: boolean
   optionValues: any
+  viewMode: "main" | "pipeline"
 }

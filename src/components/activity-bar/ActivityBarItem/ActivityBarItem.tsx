@@ -1,6 +1,5 @@
 import { clsx } from "clsx"
 import { type FC } from "react"
-import { useLocation } from "wouter"
 
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
@@ -13,15 +12,13 @@ interface ActivityBarItemProps {
   label: string
   icon: string
   menuId: string
-  href?: string
   appletConstructor?: AppletConstructor
   onClick?: () => any
   clickHideOnFloatingSidebar?: boolean
 }
 
 export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
-  const { icon, label, menuId, href, appletConstructor, onClick, clickHideOnFloatingSidebar } = props
-  const [, setLocation] = useLocation()
+  const { icon, label, menuId, appletConstructor, onClick, clickHideOnFloatingSidebar } = props
   const isActive = useSelector(() => interfaceStore.sidebarActiveMenuId === menuId)
   const isFloatingSidebar = useSelector(() => interfaceStore.isFloatingSidebar)
 
@@ -41,10 +38,6 @@ export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
       interfaceStore.showSidebar()
     } else if (oldActiveMenuId === interfaceStore.sidebarActiveMenuId && oldActiveMenuId === menuId) {
       interfaceStore.toggleSidebar()
-    }
-
-    if (href) {
-      setLocation(href)
     }
 
     if (clickHideOnFloatingSidebar && isFloatingSidebar) {

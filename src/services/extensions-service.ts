@@ -1,3 +1,4 @@
+import { makeAutoObservable } from "mobx"
 import toast from "react-hot-toast"
 
 import { FileNames } from "src/constants/file-names"
@@ -9,6 +10,25 @@ import { appDataService } from "./app-data-service.js"
 import { fileService } from "./file-service.js"
 
 class ExtensionsService {
+  /**
+   * List of loaded extensions
+   */
+  loadedExtensions: AppletConstructor[] = []
+
+  /**
+   * Constructor
+   */
+  constructor() {
+    makeAutoObservable(this)
+  }
+
+  /**
+   * Build Applet Constructor from extension definition
+   *
+   * @param path
+   * @param extensionRawFile
+   * @returns
+   */
   private async buildAppletConstructor(path: string, extensionRawFile: string) {
     const extension: ExtensionTool = JSON.parse(extensionRawFile)
     const realActionFilePath = await fileService.resolveFilePath(path, extension.actionFile)
@@ -36,8 +56,13 @@ class ExtensionsService {
     return appletConstructor
   }
 
+  /**
+   * Get all extensions from folder and convert it into Applet Constructor
+   *
+   * @returns
+   */
   async getExtensionsAsAppletContructor() {
-    const extensions = []
+    const appletConstructors: AppletConstructor[] = []
     const entries = await appDataService.readExtensionsFolder()
 
     /**
@@ -59,7 +84,7 @@ class ExtensionsService {
           const extensionRawFile = await fileService.readFileAsText(files[FileNames.ExtensionDefinition])
           const appletConstructor = await this.buildAppletConstructor(entry.path, extensionRawFile)
 
-          extensions.push(appletConstructor)
+          appletConstructors.push(appletConstructor)
         }
       } catch (exception) {
         toast.error(`Failed to read ${entry.name} extension`)
@@ -67,7 +92,9 @@ class ExtensionsService {
       }
     }
 
-    return extensions
+    this.loadedExtensions = appletConstructors
+
+    return appletConstructors
   }
 }
 

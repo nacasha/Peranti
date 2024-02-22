@@ -32,15 +32,16 @@
 
     img {
       width: 14px;
-      filter: var(--tool-sidebar-icon-color);
+      // filter: var(--tool-sidebar-icon-color);
     }
 
     &.active {
       color: var(--tool-sidebar-text-color-active);
+      background-color: var(--tool-sidebar-background-color-active);
 
       img {
         width: 14px;
-        filter: var(--tool-sidebar-icon-color-active);
+        // filter: var(--tool-sidebar-icon-color-active);
       }
     }
   }

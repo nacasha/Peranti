@@ -2,6 +2,7 @@ import { clsx } from "clsx"
 import { type ReactNode, type FC } from "react"
 
 import { Icons } from "src/constants/icons"
+import { AppletType } from "src/enums/applet-type"
 import { SidebarMode } from "src/enums/sidebar-mode"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
@@ -29,7 +30,7 @@ export const ToolSidebar: FC = () => {
           {applets.map((applet) => (
             <ToolSidebarInnerItem
               key={applet.appletId}
-              tool={applet}
+              appletConstructor={applet}
             >
               {applet.name}
             </ToolSidebarInnerItem>
@@ -40,9 +41,9 @@ export const ToolSidebar: FC = () => {
   )
 }
 
-const ToolSidebarInnerItem: FC<{ tool: AppletConstructor, children: ReactNode }> = ({ tool }) => {
+const ToolSidebarInnerItem: FC<{ appletConstructor: AppletConstructor, children: ReactNode }> = ({ appletConstructor }) => {
   const isActive = useSelector(() => (
-    activeAppletStore.getActiveApplet().appletId === tool.appletId &&
+    activeAppletStore.getActiveApplet().appletId === appletConstructor.appletId &&
     !activeAppletStore.getActiveApplet().isDeleted
   ))
 
@@ -53,14 +54,22 @@ const ToolSidebarInnerItem: FC<{ tool: AppletConstructor, children: ReactNode }>
     }
   }
 
+  const icons: Record<string, string> = {
+    [AppletType.Extension]: Icons.Extension,
+    [AppletType.Tool]: Icons.Tool,
+    [AppletType.Pipeline]: Icons.Hash
+  }
+
+  const appletIcon = icons[appletConstructor.type ?? "Tool"] ?? Icons.Tool
+
   return (
     <ToolSidebarItem
       className="ToolSidebarItem"
       active={isActive}
-      onClick={onClickSidebarItem(tool)}
+      onClick={onClickSidebarItem(appletConstructor)}
     >
-      <img src={Icons.Hash} alt={tool.name} />
-      <div>{tool.name}</div>
+      <img src={appletIcon} alt={appletConstructor.name} />
+      <div>{appletConstructor.name}</div>
     </ToolSidebarItem>
   )
 }

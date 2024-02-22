@@ -3,7 +3,7 @@ import { Item, type ItemParams } from "react-contexify"
 
 import { ContextMenu } from "src/components/common/ContextMenu"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
-import { type Component } from "src/models/Component"
+import { type AppletComponent } from "src/models/AppletComponent"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
 import { ClipboardService } from "src/services/clipboard-service"
@@ -14,7 +14,7 @@ import { type AppletOutput } from "src/types/AppletOutput"
 interface MenuParams {
   appletInput?: AppletInput
   appletOutput?: AppletOutput
-  component: Component
+  component: AppletComponent
 }
 
 type ContextMenuItemParams = ItemParams<MenuParams>
@@ -47,7 +47,7 @@ export const AppletContextMenu: FC = () => {
 
   const isHidePasteFromFile: ComponentProps<typeof Item>["hidden"] = ({ props }) => {
     const { component } = props as MenuParams
-    return !component.readFileMimes
+    return !component.readFileAs
   }
 
   const handleClickSaveToFile = (itemParams: ContextMenuItemParams) => {

@@ -23,9 +23,9 @@ class SessionStore {
    */
   enableMultipleSession = true
 
-  @userSettingsService.watch(UserSettingsKeys.tabbarSeparateSessionForEachTool)
-  separateSessionForEachApplet = userSettingsService.get(
-    UserSettingsKeys.tabbarSeparateSessionForEachTool,
+  @userSettingsService.watch(UserSettingsKeys.tabbarGroupTabsByTool)
+  groupTabsByTool = userSettingsService.get(
+    UserSettingsKeys.tabbarGroupTabsByTool,
     false
   )
 
@@ -212,7 +212,7 @@ class SessionStore {
     /**
      * Get closed session index from its appletId only if unified session is disabled
      */
-    if (this.separateSessionForEachApplet) {
+    if (this.groupTabsByTool) {
       removedSessionIndex = this.getRunningSessionsFromAppletId(removedSession.appletId).findIndex(
         (session) => session.sessionId === removedSession.sessionId
       )
@@ -297,7 +297,7 @@ class SessionStore {
      * If unified session is enabled, we can directly close all session
      * and reset the session sequence
      */
-    if (!this.separateSessionForEachApplet) {
+    if (!this.groupTabsByTool) {
       this.sessions.forEach((session) => {
         void this.closeSession(session, true)
       })
@@ -330,7 +330,7 @@ class SessionStore {
   }
 
   async closeOtherSession(keepOpenSession: Session) {
-    if (!this.separateSessionForEachApplet) {
+    if (!this.groupTabsByTool) {
       this.sessions.forEach((session) => {
         if (session.sessionId !== keepOpenSession.sessionId) {
           void this.closeSession(session, true)
@@ -485,7 +485,7 @@ class SessionStore {
   }
 
   getRunningSessions(appletId: string) {
-    if (!this.separateSessionForEachApplet) {
+    if (!this.groupTabsByTool) {
       return this.sessions
     }
 
@@ -522,8 +522,12 @@ class SessionStore {
     this.sessions[sessionIndex] = updatedSession
   }
 
-  setSeparateSessionForEachApplet(value: boolean) {
-    this.separateSessionForEachApplet = value
+  setGroupTabsByTool(value: boolean) {
+    this.groupTabsByTool = value
+  }
+
+  toggleGroupTabsByTool() {
+    this.groupTabsByTool = !this.groupTabsByTool
   }
 }
 

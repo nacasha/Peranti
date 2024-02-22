@@ -25,6 +25,8 @@
     "@hexagon/base64": "^1.1.28",
     "@initminal/run": "^0.2.24",
     "@nanostores/react": "^0.7.1",
+    "@nodl/core": "^1.0.9",
+    "@nodl/react": "^1.0.4",
     "@pintora/standalone": "^0.6.5",
     "@tauri-apps/api": "^1.5.1",
     "@types/compose-function": "^0.0.33",
@@ -74,14 +76,17 @@
     "react-markdown": "^9.0.1",
     "react-runner": "^1.0.3",
     "react-zoom-pan-pinch": "^3.3.0",
+    "reactflow": "^11.10.4",
     "remark-gfm": "^4.0.0",
+    "rxjs": "^7.8.1",
     "simplebar-react": "^3.2.4",
     "tauri-plugin-clipboard-api": "^0.5.5",
     "tauri-plugin-context-menu": "^0.7.0",
     "ts-deepmerge": "^7.0.0",
     "unescape-js": "^1.1.4",
     "uuid": "^9.0.1",
-    "wouter": "^2.12.1"
+    "wouter": "^2.12.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.6",

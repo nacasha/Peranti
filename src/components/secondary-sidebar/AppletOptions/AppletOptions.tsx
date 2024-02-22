@@ -46,7 +46,7 @@ const AppletSidebarItem = ({ option, readOnly }: { option: AppletOption, readOnl
       {...props}
       label={option.label}
       defaultValue={defaultValue}
-      onSubmit={handleValueChange}
+      onValueChange={handleValueChange}
       readOnly={readOnly}
     />
   )

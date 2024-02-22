@@ -3,4 +3,5 @@ export enum AppletType {
   Page = "page",
   Extension = "extension",
   Preset = "preset",
+  Pipeline = "pipeline",
 }

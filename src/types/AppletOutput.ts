@@ -1,9 +1,9 @@
-import { type Component } from "src/models/Component.ts"
+import { type AppletComponent } from "src/models/AppletComponent.ts"
 import { type appletComponentService } from "src/services/applet-component-service.ts"
 
 import { type OutputComponentProps } from "./OutputComponentProps.ts"
 
-type ExtractOutputComponentProps<T> = T extends Component<React.FC<infer P>>
+type ExtractOutputComponentProps<T> = T extends AppletComponent<React.FC<infer P>>
   ? Omit<P, keyof OutputComponentProps>
   : never
 
@@ -11,7 +11,9 @@ export type AppletOutput<K extends Record<string, string> = any> = {
   key: Extract<keyof K, string>
   label: string
   allowBatch?: boolean
+  customComponent?: boolean
 } & ({
+  customComponent: true
   component: "Settings"
   props?: any
 } | {

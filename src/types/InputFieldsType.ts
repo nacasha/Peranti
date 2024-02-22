@@ -1,11 +1,11 @@
 import { type FC } from "react"
 
-import { type Component } from "src/models/Component.ts"
+import { type AppletComponent } from "src/models/AppletComponent.ts"
 import { type appletComponentService } from "src/services/applet-component-service.ts"
 
 import { type InputComponentProps } from "./InputComponentProps.ts"
 
-type ExtractType<T> = T extends Component<FC<InputComponentProps<infer P>>> ? P : never
+type ExtractType<T> = T extends AppletComponent<FC<InputComponentProps<infer P>>> ? P : never
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace InputFieldsType {
