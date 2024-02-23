@@ -4,7 +4,8 @@ import { markdownLanguage } from "@codemirror/lang-markdown"
 import { githubLight } from "@uiw/codemirror-theme-github"
 import { vscodeDarkInit } from "@uiw/codemirror-theme-vscode"
 import CodeMirror, { EditorView, type ReactCodeMirrorRef, type ReactCodeMirrorProps, type ViewUpdate, EditorSelection } from "@uiw/react-codemirror"
-import { useRef, type FC, useEffect, useState } from "react"
+import fastDeepEqual from "fast-deep-equal"
+import { useRef, type FC, useEffect, useState, memo } from "react"
 
 import { Theme } from "src/enums/theme"
 import { useSelector } from "src/hooks/useSelector"
@@ -32,13 +33,40 @@ interface Props extends BaseCodeMirrorProps, Omit<ReactCodeMirrorProps, "theme" 
 // TODO: If history contains many changes, IndexedDB will really slow to store the data
 // const stateFields = { history: historyField }
 
+const darkTheme = vscodeDarkInit({
+  settings: {
+    foreground: "#bcbec4",
+    background: "#292a30",
+    gutterBackground: "#292a30"
+  }
+})
+
+const basicSetup = {
+  highlightActiveLine: false,
+  highlightActiveLineGutter: false,
+  foldGutter: false
+}
+
 export const BaseCodeMirror: FC<Props> = (props) => {
+  const [ready, setReady] = useState(false)
+
+  return (
+    <div className="CodeMirrorContainer">
+      <div style={{ opacity: ready ? "1" : "0" }}>
+        <CodeMirrorInstance {...props} onReady={() => { setReady(true) }} />
+      </div>
+    </div>
+  )
+}
+
+const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => {
   const {
     language = "plain",
     onChange,
     onStateChange,
     initialStateCodeMirror,
     value,
+    onReady,
     ...codeMirrorProps
   } = props
 
@@ -50,8 +78,6 @@ export const BaseCodeMirror: FC<Props> = (props) => {
   const scrollStateRef = useRef<InitialStateCodeMirror["scroll"]>(
     initialStateCodeMirror?.scroll ?? { left: 0, top: 0 }
   )
-
-  const [ready, setReady] = useState(false)
 
   const initialState = initialStateCodeMirror?.editor
     ? { json: initialStateCodeMirror?.editor }
@@ -101,15 +127,18 @@ export const BaseCodeMirror: FC<Props> = (props) => {
       })
     }
 
+    const initialTop = Number(initialStateCodeMirror?.scroll.top ?? 0)
+    const initialLeft = Number(initialStateCodeMirror?.scroll.left ?? 0)
+
+    view.contentDOM.style.height = "4859px"
+    view.scrollDOM.scrollTop = initialTop
+    view.scrollDOM.scrollLeft = initialLeft
+
     setTimeout(() => {
-      const initialTop = Number(initialStateCodeMirror?.scroll.top ?? 0)
-      const initialLeft = Number(initialStateCodeMirror?.scroll.left ?? 0)
-
-      view.scrollDOM.scrollTo({ top: initialTop, left: initialLeft })
-      scrollStateRef.current = { top: initialTop, left: initialLeft }
-
-      setReady(true)
-    }, 50)
+      view.scrollDOM.scrollTop = initialTop
+      view.scrollDOM.scrollLeft = initialLeft
+      onReady()
+    }, 0.1)
   }
 
   const handleScroll = () => {
@@ -122,50 +151,30 @@ export const BaseCodeMirror: FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (editorComponentRef.current?.view) {
-      setReady(true)
-    } else {
-      setReady(false)
-    }
-  }, [editorComponentRef.current?.view])
-
-  useEffect(() => {
     return () => {
       if (editorStateRef.current && onStateChange) {
-        onStateChange(getCodeMirrorState())
+        if (!fastDeepEqual(getCodeMirrorState(), initialStateCodeMirror)) {
+          onStateChange(getCodeMirrorState())
+        }
       }
     }
   }, [])
 
+  console.log("rr")
+
   return (
-    <div className="CodeMirrorContainer">
-      <CodeMirror
-        {...codeMirrorProps}
-        ref={editorComponentRef}
-        value={value}
-        theme={isDarkMode
-          ? vscodeDarkInit({
-            settings: {
-              foreground: "#bcbec4",
-              background: "#292a30",
-              gutterBackground: "#292a30",
-              gutterBorder: "1px solid red"
-            }
-          })
-          : githubLight}
-        extensions={getExtensions()}
-        initialState={initialState}
-        onChange={handleOnChange}
-        onUpdate={handleStateChange}
-        onCreateEditor={handleCreateEditor}
-        onScrollCapture={handleScroll}
-        style={{ opacity: ready ? "1" : "0" }}
-        basicSetup={{
-          highlightActiveLine: false,
-          highlightActiveLineGutter: false,
-          foldGutter: false
-        }}
-      />
-    </div>
+    <CodeMirror
+      {...codeMirrorProps}
+      ref={editorComponentRef}
+      value={value}
+      theme={isDarkMode ? darkTheme : githubLight}
+      extensions={getExtensions()}
+      initialState={initialState}
+      onChange={handleOnChange}
+      onUpdate={handleStateChange}
+      onCreateEditor={handleCreateEditor}
+      onScrollCapture={handleScroll}
+      basicSetup={basicSetup}
+    />
   )
-}
+}, () => true)
