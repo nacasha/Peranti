@@ -1,5 +1,7 @@
 .rc-tooltip {
   pointer-events: none;
+  opacity: 1;
+  background-color: var(--tooltip-background-color);
 }
 
 .rc-tooltip-inner {
@@ -8,7 +10,7 @@
   font-size: 13px;
   padding: 5px 7px;
   color: var(--tooltip-text-color);
-  background-color: var(--tooltip-background-color);
   border: 1px solid var(--tooltip-border-color);
   border-radius: var(--border-radius);
+  background-color: unset;
 }

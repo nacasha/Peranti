@@ -32,40 +32,32 @@ export const AppletBatchMode = observer(() => {
   }
 
   return (
-    <SecondarySidebarSection padding title={(
-      <>
-        <div>
-          Batch Mode
-        </div>
-        <Checkbox
-          value={isBatchModeEnabled}
-          onChange={handleToggleBatchMode}
-        />
-      </>
-    )}
-    >
-      <>
-        <SelectInput
-          label="Input"
-          options={allowedBatchInputFields.map((input) => ({
-            label: input.label,
-            value: input.key
-          }))}
-          defaultValue={batchModeInputKey}
-          onValueChange={onChangeInputKey}
-          readOnly={isDeleted}
-        />
-        <SelectInput
-          label="Output"
-          options={allowedBatchOutputFields.map((output) => ({
-            label: output.label,
-            value: output.key
-          }))}
-          defaultValue={batchModeOutputKey}
-          onValueChange={onChangeOutputKey}
-          readOnly={isDeleted}
-        />
-      </>
+    <SecondarySidebarSection padding title="Batch Mode">
+      <Checkbox
+        value={isBatchModeEnabled}
+        onChange={handleToggleBatchMode}
+        label="Enable Batch Mode"
+      />
+      <SelectInput
+        label="Input"
+        options={allowedBatchInputFields.map((input) => ({
+          label: input.label,
+          value: input.key
+        }))}
+        defaultValue={batchModeInputKey}
+        onValueChange={onChangeInputKey}
+        readOnly={isDeleted}
+      />
+      <SelectInput
+        label="Output"
+        options={allowedBatchOutputFields.map((output) => ({
+          label: output.label,
+          value: output.key
+        }))}
+        defaultValue={batchModeOutputKey}
+        onValueChange={onChangeOutputKey}
+        readOnly={isDeleted}
+      />
     </SecondarySidebarSection>
   )
 })

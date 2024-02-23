@@ -22,7 +22,7 @@ export const { ...secondarySidebarClasses } = new class {
 
   section = style({
     overflow: "hidden",
-    height: 30,
+    height: 33,
     borderTop: `1px solid ${styleTokens.borderColor}`,
     transition: `all ${styleTokens.transitionSpeed}`,
 
@@ -66,7 +66,7 @@ export const { ...secondarySidebarClasses } = new class {
   sectionBody = style({
     display: "flex",
     flexDirection: "column",
-    gap: 8
+    gap: 10
   })
 }()
 

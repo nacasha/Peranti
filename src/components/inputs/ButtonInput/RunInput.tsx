@@ -12,7 +12,7 @@ interface RunInputProps extends InputComponentProps { }
 
 export const RunInput: FC<RunInputProps> = (props) => {
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
-  const isActionRunning = useSelector(() => activeAppletStore.getActiveApplet().isActionRunningDebounced)
+  const isActionRunning = useSelector(() => activeAppletStore.getActiveApplet().isActionRunning)
   const { label } = props
 
   const onClickButton = () => {

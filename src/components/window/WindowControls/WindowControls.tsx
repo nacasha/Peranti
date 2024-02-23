@@ -1,4 +1,4 @@
-import { type FC } from "react"
+import { memo, type FC } from "react"
 
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Tooltip } from "src/components/common/Tooltip"
@@ -10,7 +10,7 @@ import { windowManager } from "src/services/window-manager"
 
 import { windowControlsClasses } from "./WindowControls.css"
 
-export const WindowControls: FC = () => {
+export const WindowControls: FC = memo(() => {
   const handleClickMinimize = () => {
     void windowManager.minimize()
   }
@@ -70,4 +70,4 @@ export const WindowControls: FC = () => {
       </div>
     </div>
   )
-}
+}, () => true)

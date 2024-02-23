@@ -56,6 +56,6 @@ export const lightThemeClass = createTheme(themeableTokens, {
    * Tooltip
    */
   tooltipTextColor: "var(--text-color)",
-  tooltipBackgroundColor: "#1e1f22",
-  tooltipBorderColor: "#454545"
+  tooltipBackgroundColor: "#ffffff",
+  tooltipBorderColor: "#cbcccd"
 })

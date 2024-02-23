@@ -286,7 +286,7 @@ export class Applet<
     this.type = appletConstructor.type ?? AppletType.Tool
     this.metadata = appletConstructor.metadata
     this.samples = appletConstructor.samples ?? []
-    this.disableMultipleSession = appletConstructor.disableMultipleSession ?? false
+    this.disableMultipleSession = appletConstructor.disableMultipleSession ?? !sessionStore.enableMultipleSession
     this.hasOverriddenDefaultState = appletConstructor.hasOverriddenDefaultState ?? false
     this.inputValues = this.getInputValuesWithDefault()
     this.options = appletConstructor.options ?? []
@@ -349,7 +349,7 @@ export class Applet<
      * Use applet name as sessionName if the applet only allowed
      * to have one session at once
      */
-    if (this.disableMultipleSession) {
+    if (this.disableMultipleSession && this.appletId !== "") {
       this.sessionName = appletStore.mapOfLoadedApplets[this.appletId].name
     }
 
@@ -1064,8 +1064,6 @@ export class Applet<
       } else {
         computedInputValues = inputValues
       }
-
-      console.log(computedInputValues)
 
       this.setInputValues({ ...defaultInputValues, ...computedInputValues })
       this.forceRerender()

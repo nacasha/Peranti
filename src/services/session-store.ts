@@ -18,13 +18,17 @@ class SessionStore {
   isInitialized: boolean = false
 
   /**
-   * By defaut, aach tool can have multiple sessions at once
-   * To disable this, need some works for the closed editor
+   * By defaut, each tool can have multiple sessions at once
+   * To disable this, need some works for restoring closed editor
    */
   enableMultipleSession = true
 
+  /**
+   * When enabled, only show running session in tabbar related to
+   * active applet
+   */
   @userSettingsService.watch(UserSettingsKeys.tabbarGroupTabsByTool)
-  groupTabsByTool = userSettingsService.get(
+  groupTabsByTool: boolean = userSettingsService.get(
     UserSettingsKeys.tabbarGroupTabsByTool,
     false
   )
@@ -40,6 +44,8 @@ class SessionStore {
   activeSessionIdOfApplets: Record<string, string> = {}
 
   activeSessionId: string = ""
+
+  renamingSessionId: string = ""
 
   constructor() {
     makeAutoObservable(this)
@@ -95,6 +101,22 @@ class SessionStore {
     }
   }
 
+  /**
+   * Create new session / tab from active applet
+   */
+  createSessionOfActiveApplet() {
+    const activeApplet = activeAppletStore.getActiveApplet()
+    this.createSession(activeApplet)
+  }
+
+  /**
+   * Create new session / tab using appletConstructor
+   *
+   * @param appletConstructor
+   * @param appletOptions
+   * @param placeSessionAtTheEnd
+   * @returns
+   */
   createSession(
     appletConstructor: AppletConstructor,
     appletOptions: ConstructorParameters<typeof Applet>["1"] = {},
@@ -165,6 +187,47 @@ class SessionStore {
     }
   }
 
+  /**
+   * Open next session to index of active applet in running session list
+   */
+  cycleOpenNextSessionOfActiveSession() {
+    const activeIndex = this.getIndexofActiveRunningSession()
+    const sessions = this.getRunningSessionOfActiveApplet()
+
+    const nextActiveIndex = activeIndex + 1
+    let session
+    if (nextActiveIndex > sessions.length - 1) {
+      session = sessions[0]
+    } else {
+      session = sessions[nextActiveIndex]
+    }
+
+    void sessionStore.openSession(session)
+  }
+
+  /**
+   * Open previous session to index of active applet in running session list
+   */
+  cycleOpenPreviousSessionOfActiveSession() {
+    const activeIndex = this.getIndexofActiveRunningSession()
+    const sessions = this.getRunningSessionOfActiveApplet()
+
+    const nextActiveIndex = activeIndex - 1
+    let session
+    if (nextActiveIndex < 0) {
+      session = sessions[sessions.length - 1]
+    } else {
+      session = sessions[nextActiveIndex]
+    }
+
+    void sessionStore.openSession(session)
+  }
+
+  /**
+   * Open closed session and set active without adding it into session list
+   *
+   * @param sessionHistory
+   */
   async openHistory(sessionHistory: SessionHistory) {
     const applet = await StorageManager.getAppletFromStorage(sessionHistory.sessionId)
 
@@ -290,6 +353,14 @@ class SessionStore {
     } else {
       await this.proceedCloseSession({ session })
     }
+  }
+
+  /**
+   * Close session of currently active applet
+   */
+  async closeSessionOfActiveApplet() {
+    const activeApplet = activeAppletStore.getActiveApplet()
+    await this.closeSession(activeApplet.toSession())
   }
 
   closeAllSession() {
@@ -480,16 +551,50 @@ class SessionStore {
     }
   }
 
+  /**
+   * Get list of running sessios of applet
+   *
+   * @param appletId
+   * @returns
+   */
   getRunningSessionsFromAppletId(appletId: string) {
     return this.sessions.filter((session) => session.appletId === appletId)
   }
 
+  /**
+   * Get list of running sessions of applet based on groups tabs state
+   */
   getRunningSessions(appletId: string) {
-    if (!this.groupTabsByTool) {
-      return this.sessions
+    if (this.groupTabsByTool) {
+      return this.getRunningSessionsFromAppletId(appletId)
     }
 
-    return this.getRunningSessionsFromAppletId(appletId)
+    /**
+     * Clone session as its doesnt works well with useSelector
+     */
+    return this.sessions.slice()
+  }
+
+  /**
+   * Get list of running session of active applet
+   *
+   * @returns
+   */
+  getRunningSessionOfActiveApplet() {
+    const appletId = activeAppletStore.getActiveApplet().appletId
+    return this.getRunningSessions(appletId)
+  }
+
+  /**
+   * Get index of active running session
+   *
+   * @returns number
+   */
+  getIndexofActiveRunningSession() {
+    const sessionId = activeAppletStore.getActiveApplet().sessionId
+    return this.getRunningSessionOfActiveApplet().findIndex(
+      (tab) => tab.sessionId === sessionId
+    )
   }
 
   switchSessionPosition(fromSessionId: string, toSessionId: string) {
@@ -528,6 +633,15 @@ class SessionStore {
 
   toggleGroupTabsByTool() {
     this.groupTabsByTool = !this.groupTabsByTool
+  }
+
+  setRenamingSessionId(sessionId: string) {
+    this.renamingSessionId = sessionId
+  }
+
+  setRenamingSessionIdOfActiveApplet() {
+    const activeAppletSessionId = activeAppletStore.getActiveApplet().sessionId
+    this.renamingSessionId = activeAppletSessionId
   }
 }
 

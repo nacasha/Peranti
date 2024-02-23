@@ -1,28 +1,26 @@
-import { useStore } from "@nanostores/react"
 import clsx from "clsx"
-import { type MouseEventHandler, type FC, useEffect, useRef, type FocusEventHandler, useMemo } from "react"
+import { type MouseEventHandler, type FC, useEffect, useRef, type FocusEventHandler } from "react"
 import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { Icons } from "src/constants/icons"
 import { useDragAndDropJS } from "src/hooks/useDragAndDropJS"
+import { useSelector } from "src/hooks/useSelector.ts"
 import { appletStore } from "src/services/applet-store"
 import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
 
 import { sessionTabbarClasses } from "./SessionTabbar.css"
-import { $renamingSessionId } from "./SessionTabbar.tsx"
 
 interface TabItemProps {
   session: Session
-  active: boolean
 }
 
-export const SessionTabbarItem: FC<TabItemProps> = (props) => {
-  const { session, active } = props
-  const { sessionId, sessionName, sessionSequenceNumber, appletId, isActionRunning } = session
-  const renamingSessionId = useStore($renamingSessionId)
-  const isRenamingSession = useMemo(() => renamingSessionId === sessionId, [renamingSessionId])
+export const SessionTabbarItem: FC<TabItemProps> = ({ session }) => {
+  const { sessionId, sessionName, sessionSequenceNumber, appletId } = session
+  const isRenamingSession = useSelector(() => sessionStore.renamingSessionId === session.sessionId)
+  const isActive = useSelector(() => sessionStore.activeSessionId === session.sessionId)
+  const isActionRunning = useSelector(() => sessionStore.sessions.find((s) => s.sessionId === session.sessionId)?.isActionRunning)
   const tabLabelRef = useRef<HTMLDivElement>(null)
 
   const { show } = useContextMenu()
@@ -68,10 +66,10 @@ export const SessionTabbarItem: FC<TabItemProps> = (props) => {
   }
 
   useEffect(() => {
-    if (active && draggableElementRef.current) {
+    if (isActive && draggableElementRef.current) {
       draggableElementRef.current.scrollIntoView()
     }
-  }, [active])
+  }, [isActive])
 
   useEffect(() => {
     if (isRenamingSession) {
@@ -107,7 +105,7 @@ export const SessionTabbarItem: FC<TabItemProps> = (props) => {
   }, [tabLabelRef.current])
 
   const handleSessionNameInputBlur: FocusEventHandler<HTMLDivElement> = () => {
-    $renamingSessionId.set("")
+    sessionStore.setRenamingSessionId("")
 
     if (tabLabelRef.current) {
       const tabLabel = tabLabelRef.current.innerText
@@ -140,7 +138,7 @@ export const SessionTabbarItem: FC<TabItemProps> = (props) => {
       <div
         ref={draggableElementRef}
         key={session.sessionId}
-        className={clsx(sessionTabbarClasses.itemSessionBody, { [sessionTabbarClasses.itemSessionActive]: active })}
+        className={clsx(sessionTabbarClasses.itemSessionBody, { [sessionTabbarClasses.itemSessionActive]: isActive })}
         data-session-id={session.sessionId}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}

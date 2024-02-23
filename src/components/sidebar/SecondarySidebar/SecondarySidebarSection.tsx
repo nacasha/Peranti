@@ -29,7 +29,7 @@ export const SecondarySidebarSection: FC<SecondarySidebarSectionProps> = (props)
           {title}
         </div>
       </div>
-      <div className={secondarySidebarClasses.sectionBody} style={{ padding: padding ? "3px 10px" : 0 }}>
+      <div className={secondarySidebarClasses.sectionBody} style={{ padding: padding ? "3px 10px 10px" : 0 }}>
         {children}
       </div>
     </div>

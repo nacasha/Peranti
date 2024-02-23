@@ -1,7 +1,5 @@
 import { appWindow } from "@tauri-apps/api/window"
-import { observer } from "mobx-react"
-import { atom } from "nanostores"
-import { type FC, useEffect, useRef, type CSSProperties } from "react"
+import { type FC, useEffect, useRef, type CSSProperties, memo } from "react"
 import SimpleBar from "simplebar-react"
 
 import { Tooltip } from "src/components/common/Tooltip/Tooltip.tsx"
@@ -9,74 +7,41 @@ import { WindowControls } from "src/components/window/WindowControls"
 import { Icons } from "src/constants/icons"
 import { AppTitleBarStyle } from "src/enums/app-titlebar-style"
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
+import { useSelector } from "src/hooks/useSelector.ts"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { hotkeysStore } from "src/services/hotkeys-store"
 import { interfaceStore } from "src/services/interface-store"
 import { sessionHistoryStore } from "src/services/session-history-store"
 import { sessionStore } from "src/services/session-store"
-import { type Session } from "src/types/Session"
 
 import { sessionTabbarClasses } from "./SessionTabbar.css"
 import { SessionTabbarContextMenu } from "./SessionTabbarContextMenu.tsx"
 import { SessionTabbarItem } from "./SessionTabbarItem.tsx"
 
-export const $renamingSessionId = atom<string>("")
-
-export const SessionTabbar: FC = observer(() => {
-  const activeApplet = activeAppletStore.getActiveApplet()
-  const sessions = sessionStore.getRunningSessions(activeApplet.appletId)
-  const groupTabsByTool = sessionStore.groupTabsByTool
-  const activeIndex = sessions.findIndex((tab) => tab.sessionId === activeApplet.sessionId)
-  const appTitlebarStyle = interfaceStore.appTitlebarStyle
+export const SessionTabbar: FC = () => {
+  const sessions = useSelector(() => sessionStore.getRunningSessionOfActiveApplet())
+  const appTitlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
 
   const scrollBarRef = useRef<HTMLDivElement>(null)
 
-  const isAppletActive = (session: Session) => (
-    session.sessionId === activeApplet.sessionId
-  )
-
-  const onClickAddTab = () => {
-    sessionStore.createSession(activeApplet, undefined, true)
-  }
-
-  const handleClickGroupTabs = () => {
-    sessionStore.toggleGroupTabsByTool()
-  }
-
   useHotkeysModified(hotkeysStore.keys.TAB_NEW_EDITOR, (event) => {
     event.preventDefault()
-    sessionStore.createSession(activeApplet, undefined)
+    sessionStore.createSessionOfActiveApplet()
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_NEXT, (event) => {
     event.preventDefault()
-    const nextActiveIndex = activeIndex + 1
-    let session
-    if (nextActiveIndex > sessions.length - 1) {
-      session = sessions[0]
-    } else {
-      session = sessions[nextActiveIndex]
-    }
-
-    void sessionStore.openSession(session)
+    sessionStore.cycleOpenNextSessionOfActiveSession()
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_PREV, (event) => {
     event.preventDefault()
-    const nextActiveIndex = activeIndex - 1
-    let session
-    if (nextActiveIndex < 0) {
-      session = sessions[sessions.length - 1]
-    } else {
-      session = sessions[nextActiveIndex]
-    }
-
-    void sessionStore.openSession(session)
+    sessionStore.cycleOpenPreviousSessionOfActiveSession()
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CLOSE, (event) => {
     event.preventDefault()
-    void sessionStore.closeSession(activeApplet.toSession())
+    void sessionStore.closeSessionOfActiveApplet()
   })
 
   useHotkeysModified(hotkeysStore.keys.RESTORE_CLOSED_TAB, (event) => {
@@ -86,7 +51,7 @@ export const SessionTabbar: FC = observer(() => {
 
   useHotkeysModified(hotkeysStore.keys.RENAME_ACTIVE_TAB, (event) => {
     event?.preventDefault()
-    $renamingSessionId.set(activeApplet.sessionId)
+    sessionStore.setRenamingSessionIdOfActiveApplet()
   })
 
   useEffect(() => {
@@ -123,52 +88,69 @@ export const SessionTabbar: FC = observer(() => {
   }, [scrollBarRef, appTitlebarStyle])
 
   return (
-    <>
+    <div className={sessionTabbarClasses.root}>
+      {/* Below component was outside the root */}
       <div className={sessionTabbarClasses.windowExtraDrag} data-tauri-drag-region></div>
+      <div className={sessionTabbarClasses.rootBorderBottom} data-tauri-drag-region />
 
-      <div className={sessionTabbarClasses.root}>
-        <div className={sessionTabbarClasses.rootBorderBottom} data-tauri-drag-region />
+      <div className={sessionTabbarClasses.inner}>
+        <TabbarActions />
 
-        <div className={sessionTabbarClasses.inner}>
-          <SessionTabbarItemIcon
-            onClick={handleClickGroupTabs}
-            label="Group Tabs By Tool"
-            icon={groupTabsByTool ? Icons.FilterSolid : Icons.Filter}
-          />
-          {!(activeApplet.appletId === "") && (
-            <SessionTabbarItemIcon
-              onClick={onClickAddTab}
-              label="Add Tab"
-              icon={Icons.Plus}
-            />
-          )}
-
-          <div className={sessionTabbarClasses.innerBody} data-tauri-drag-region>
-            <div className={sessionTabbarClasses.innerSimplebar}>
-              <SimpleBar
-                style={{ width: "100%" }}
-                scrollableNodeProps={{ ref: scrollBarRef }}
-              >
-                {sessions.map((session) => (
-                  <SessionTabbarItem
-                    key={session.sessionId.concat(session.sessionName ?? "")}
-                    session={session}
-                    active={isAppletActive(session)}
-                  />
-                ))}
-                <div className={sessionTabbarClasses.innerSimplebarBorderRight}></div>
-              </SimpleBar>
-            </div>
+        <div className={sessionTabbarClasses.innerBody} data-tauri-drag-region>
+          <div className={sessionTabbarClasses.innerSimplebar}>
+            <SimpleBar
+              style={{ width: "100%" }}
+              scrollableNodeProps={{ ref: scrollBarRef }}
+            >
+              {sessions.map((session) => (
+                <SessionTabbarItem
+                  key={session.sessionId.concat(session.sessionName ?? "")}
+                  session={session}
+                />
+              ))}
+              <div className={sessionTabbarClasses.innerSimplebarBorderRight}></div>
+            </SimpleBar>
           </div>
         </div>
-
-        {appTitlebarStyle === AppTitleBarStyle.Tabbar && <WindowControls />}
       </div>
 
+      {appTitlebarStyle === AppTitleBarStyle.Tabbar && <WindowControls />}
       <SessionTabbarContextMenu />
+    </div>
+  )
+}
+
+const TabbarActions = () => {
+  const groupTabsByTool = useSelector(() => sessionStore.groupTabsByTool)
+  const hideTabbarActions = useSelector(() => activeAppletStore.getActiveApplet().appletId === "")
+
+  const onClickAddTab = () => {
+    sessionStore.createSessionOfActiveApplet()
+  }
+
+  const handleClickGroupTabs = () => {
+    sessionStore.toggleGroupTabsByTool()
+  }
+
+  if (hideTabbarActions) {
+    return null
+  }
+
+  return (
+    <>
+      <SessionTabbarItemIcon
+        onClick={handleClickGroupTabs}
+        label="Group Tabs By Tool"
+        icon={groupTabsByTool ? Icons.FilterSolid : Icons.Filter}
+      />
+      <SessionTabbarItemIcon
+        onClick={onClickAddTab}
+        label="Add Tab"
+        icon={Icons.Plus}
+      />
     </>
   )
-})
+}
 
 interface SessionTabbarItemIconProps {
   onClick: () => any
@@ -177,7 +159,7 @@ interface SessionTabbarItemIconProps {
   style?: CSSProperties
 }
 
-const SessionTabbarItemIcon: FC<SessionTabbarItemIconProps> = (props) => {
+const SessionTabbarItemIcon: FC<SessionTabbarItemIconProps> = memo((props) => {
   const { onClick, label, icon, style } = props
 
   return (
@@ -189,4 +171,6 @@ const SessionTabbarItemIcon: FC<SessionTabbarItemIconProps> = (props) => {
       </div>
     </Tooltip>
   )
-}
+}, (prevProps, nextProps) => {
+  return prevProps.icon === nextProps.icon
+})

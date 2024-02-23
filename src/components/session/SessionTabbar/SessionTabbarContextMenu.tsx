@@ -6,8 +6,6 @@ import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
 
-import { $renamingSessionId } from "./SessionTabbar.tsx"
-
 interface MenuParams {
   session: Session
 }
@@ -36,7 +34,7 @@ export const SessionTabbarContextMenu: FC = () => {
   const handleRenameSession = (itemParams: TabbarContextMenuItemParams) => {
     const { session } = itemParams.props ?? {}
     if (session) {
-      $renamingSessionId.set(session.sessionId)
+      sessionStore.setRenamingSessionId(session.sessionId)
     }
   }
 
