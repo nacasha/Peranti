@@ -35,6 +35,7 @@ interface Props extends BaseCodeMirrorProps, Omit<ReactCodeMirrorProps, "theme" 
 
 const darkTheme = vscodeDarkInit({
   settings: {
+    fontFamily: "Monolisa",
     foreground: "#bcbec4",
     background: "#292a30",
     gutterBackground: "#292a30"
@@ -159,8 +160,6 @@ const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => 
       }
     }
   }, [])
-
-  console.log("rr")
 
   return (
     <CodeMirror

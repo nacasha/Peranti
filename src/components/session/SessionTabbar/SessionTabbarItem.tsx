@@ -1,5 +1,6 @@
 import clsx from "clsx"
-import { type MouseEventHandler, type FC, useEffect, useRef, type FocusEventHandler } from "react"
+import fastDeepEqual from "fast-deep-equal"
+import { type MouseEventHandler, type FC, useEffect, useRef, type FocusEventHandler, memo } from "react"
 import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
@@ -16,7 +17,7 @@ interface TabItemProps {
   session: Session
 }
 
-export const SessionTabbarItem: FC<TabItemProps> = ({ session }) => {
+export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
   const { sessionId, sessionName, sessionSequenceNumber, appletId } = session
   const isRenamingSession = useSelector(() => sessionStore.renamingSessionId === session.sessionId)
   const isActive = useSelector(() => sessionStore.activeSessionId === session.sessionId)
@@ -160,4 +161,4 @@ export const SessionTabbarItem: FC<TabItemProps> = ({ session }) => {
       </div>
     </div>
   )
-}
+}, fastDeepEqual)

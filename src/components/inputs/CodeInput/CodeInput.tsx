@@ -12,9 +12,9 @@ interface CodeInputProps extends InputComponentProps, BaseCodeMirrorProps {
 
 export const CodeInput: FC<CodeInputProps> = (props) => {
   const {
+    label,
     defaultValue = "",
     initialState,
-    label,
     onValueChange,
     readOnly,
     ...baseCodeMirrorProps

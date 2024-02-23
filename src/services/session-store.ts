@@ -569,10 +569,7 @@ class SessionStore {
       return this.getRunningSessionsFromAppletId(appletId)
     }
 
-    /**
-     * Clone session as its doesnt works well with useSelector
-     */
-    return this.sessions.slice()
+    return this.sessions
   }
 
   /**

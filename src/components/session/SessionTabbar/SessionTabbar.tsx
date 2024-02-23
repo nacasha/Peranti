@@ -1,4 +1,5 @@
 import { appWindow } from "@tauri-apps/api/window"
+import { observer } from "mobx-react"
 import { type FC, useEffect, useRef, type CSSProperties, memo } from "react"
 import SimpleBar from "simplebar-react"
 
@@ -19,9 +20,7 @@ import { SessionTabbarContextMenu } from "./SessionTabbarContextMenu.tsx"
 import { SessionTabbarItem } from "./SessionTabbarItem.tsx"
 
 export const SessionTabbar: FC = () => {
-  const sessions = useSelector(() => sessionStore.getRunningSessionOfActiveApplet())
   const appTitlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
-
   const scrollBarRef = useRef<HTMLDivElement>(null)
 
   useHotkeysModified(hotkeysStore.keys.TAB_NEW_EDITOR, (event) => {
@@ -102,12 +101,7 @@ export const SessionTabbar: FC = () => {
               style={{ width: "100%" }}
               scrollableNodeProps={{ ref: scrollBarRef }}
             >
-              {sessions.map((session) => (
-                <SessionTabbarItem
-                  key={session.sessionId.concat(session.sessionName ?? "")}
-                  session={session}
-                />
-              ))}
+              <TabbarList />
               <div className={sessionTabbarClasses.innerSimplebarBorderRight}></div>
             </SimpleBar>
           </div>
@@ -119,6 +113,21 @@ export const SessionTabbar: FC = () => {
     </div>
   )
 }
+
+const TabbarList = observer(() => {
+  const sessions = sessionStore.getRunningSessionOfActiveApplet()
+
+  return (
+    <div style={{ display: "flex" }}>
+      {sessions.map((session) => (
+        <SessionTabbarItem
+          key={session.sessionId.concat(session.sessionName ?? "")}
+          session={session}
+        />
+      ))}
+    </div>
+  )
+})
 
 const TabbarActions = () => {
   const groupTabsByTool = useSelector(() => sessionStore.groupTabsByTool)
