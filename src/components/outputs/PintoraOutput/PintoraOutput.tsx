@@ -11,7 +11,7 @@ import { pintoraOutputClasses } from "./PintoraOutput.css"
 interface PintoraOutputProps extends OutputComponentProps {}
 
 export const PintoraOutput: FC<PintoraOutputProps> = (props) => {
-  const { label, value = "", onContextMenu, onStateChange, initialState } = props
+  const { label, value = "", onContextMenu, onStateChange, initialState, fieldKey } = props
 
   const renderRef = useRef<HTMLDivElement>(null)
   const [pintoraSyntax, setPintoraSyntax] = useState(() => value)
@@ -77,7 +77,7 @@ export const PintoraOutput: FC<PintoraOutputProps> = (props) => {
   }, [])
 
   return (
-    <div className={pintoraOutputClasses.root} onContextMenu={onContextMenu}>
+    <div className={pintoraOutputClasses.root} style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
       <div key={pintoraSyntax} ref={renderRef} className={pintoraOutputClasses.output} />
       <ComponentLabel label={label} />
       <div className={pintoraOutputClasses.inner}>

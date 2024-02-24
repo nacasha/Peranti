@@ -17,8 +17,8 @@ const cronReadableTool: AppletConstructor<InputFields, OutputFields> = {
   name: "CRON Parser",
   category: "Date Time",
   layoutSetting: {
-    direction: "vertical",
-    gridTemplate: "auto 1fr"
+    areaType: "grid",
+    areaGridTemplate: "'input' min-content 'output' min-content"
   },
   inputFields: [
     {

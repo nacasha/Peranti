@@ -10,10 +10,10 @@ import "./CodeOutput.scss"
 interface CodeOutputProps extends OutputComponentProps, BaseCodeMirrorProps {}
 
 export const CodeOutput: FC<CodeOutputProps> = (props) => {
-  const { value, label = "Output", initialState, ...baseCodeMirrorProps } = props
+  const { value, label = "Output", initialState, fieldKey, ...baseCodeMirrorProps } = props
 
   return (
-    <div className="CodeOutput">
+    <div className="CodeOutput" style={{ gridArea: fieldKey }}>
       <ComponentLabel label={label} />
       <LargeInputWarning input={value}>
         <BaseCodeMirror

@@ -9,7 +9,7 @@ import "./FileOutput.scss"
 interface FileOutputProps extends OutputComponentProps<string[]> {}
 
 export const FileOutput: FC<FileOutputProps> = (props) => {
-  const { label, value = [] } = props
+  const { label, value = [], fieldKey } = props
   const [initialized, setInitialized] = useState(() => false)
 
   let documents: Array<{ uri: string }>
@@ -26,7 +26,7 @@ export const FileOutput: FC<FileOutputProps> = (props) => {
   }, [])
 
   return (
-    <div className="FileOutput">
+    <div className="FileOutput" style={{ gridArea: fieldKey }}>
       <ComponentLabel label={label} />
       {initialized && (
         <div className="FileOutput-viewer-container">

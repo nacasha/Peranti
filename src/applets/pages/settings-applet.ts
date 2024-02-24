@@ -5,9 +5,6 @@ const settingsApplet: AppletConstructor = {
   appletId: "settings-page",
   name: "Settings",
   category: "App",
-  layoutSetting: {
-    gridTemplate: "1fr"
-  },
   inputFields: [],
   outputFields: [
     {

@@ -176,4 +176,6 @@ const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => 
       basicSetup={basicSetup}
     />
   )
-}, () => true)
+}, (prevProps, nextProps) => {
+  return prevProps.value === nextProps.value
+})

@@ -9,10 +9,10 @@ import { reactOutputClasses } from "./ReactOutput.css"
 interface ReactOutputProps extends OutputComponentProps {}
 
 export const ReactOutput: FC<ReactOutputProps> = (props) => {
-  const { label, value } = props
+  const { label, value, fieldKey } = props
 
   return (
-    <div className={reactOutputClasses.root}>
+    <div className={reactOutputClasses.root} style={{ gridArea: fieldKey }}>
       <ComponentLabel label={label} />
       <div className={reactOutputClasses.outputArea}>
         <div className={reactOutputClasses.outputContent}>

@@ -1,5 +1,5 @@
-import { clsx } from "clsx"
-import { type FC } from "react"
+import { type ClassValue, clsx } from "clsx"
+import { type CSSProperties, type FC } from "react"
 
 import { useSelector } from "src/hooks/useSelector.ts"
 import { activeAppletStore } from "src/services/active-applet-store"
@@ -10,26 +10,23 @@ interface AppletComponentAreaContainerProps {
 }
 
 export const AppletComponentAreaContainer: FC<AppletComponentAreaContainerProps> = ({ children }) => {
-  const isBatchEnabled = useSelector(() => activeAppletStore.getActiveApplet().isBatchModeEnabled)
-  const layoutSetting = useSelector(() => activeAppletStore.getActiveApplet().layoutSetting)
+  // const isBatchEnabled = useSelector(() => activeAppletStore.getActiveApplet().isBatchModeEnabled)
   const textAreaWordWrap = useSelector(() => interfaceStore.textAreaWordWrap)
+  const layoutSetting = useSelector(() => activeAppletStore.getActiveApplet().layoutSetting)
+  const { areaType } = layoutSetting
 
-  const { direction, reversed, gridTemplate } = layoutSetting
+  // const computedLayoutDirection = isBatchEnabled ? "horizontal-batch" : ""
+  const classNames: ClassValue[] = ["AppletComponentArea", areaType, textAreaWordWrap && "text-area-word-wrap"]
+  const styles: CSSProperties = {}
 
-  const computedLayoutDirection = isBatchEnabled ? "horizontal-batch" : direction
-  const isLayoutHorizontal = computedLayoutDirection === "horizontal"
-
-  const computedStyles = isLayoutHorizontal
-    ? { gridTemplateColumns: gridTemplate }
-    : { gridTemplateRows: gridTemplate }
-
-  const classNames = { "text-area-word-wrap": textAreaWordWrap, reversed }
+  if (areaType === "flex") {
+    classNames.push(layoutSetting.areaFlexDirection)
+  } else if (areaType === "grid") {
+    styles.gridTemplate = layoutSetting.areaGridTemplate
+  }
 
   return (
-    <div
-      className={clsx("AppletComponentArea", computedLayoutDirection, classNames)}
-      style={computedStyles}
-    >
+    <div className={clsx(classNames)} style={styles}>
       {children}
     </div>
   )

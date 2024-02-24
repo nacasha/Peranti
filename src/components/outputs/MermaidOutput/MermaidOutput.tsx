@@ -12,7 +12,7 @@ import { mermaidOutputClasses } from "./MermaidOutput.css"
 interface MermaidOutputProps extends OutputComponentProps {}
 
 export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
-  const { label, value = "", onContextMenu, onStateChange, initialState } = props
+  const { label, value = "", onContextMenu, onStateChange, initialState, fieldKey } = props
 
   const renderRef = useRef<HTMLDivElement>(null)
 
@@ -59,7 +59,7 @@ export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
   }, [])
 
   return (
-    <div className={mermaidOutputClasses.root} onContextMenu={onContextMenu}>
+    <div className={mermaidOutputClasses.root} onContextMenu={onContextMenu} style={{ gridArea: fieldKey }}>
       <ComponentLabel label={label} />
       <div className={mermaidOutputClasses.inner}>
         <ZoomableContent

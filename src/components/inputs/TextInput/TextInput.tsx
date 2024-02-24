@@ -12,7 +12,7 @@ interface TextInputProps extends InputComponentProps {
 
 export const TextInput: FC<TextInputProps> = (props) => {
   const id = useId()
-  const { onValueChange, defaultValue, readOnly, label, ...restProps } = props
+  const { onValueChange, defaultValue, readOnly, label, fieldKey, ...restProps } = props
 
   const onInputChange: InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
     const value = event.target.value
@@ -20,7 +20,7 @@ export const TextInput: FC<TextInputProps> = (props) => {
   }
 
   return (
-    <div className="TextInput">
+    <div className="TextInput" style={{ gridArea: fieldKey }}>
       <ComponentLabel label={label} />
       <input
         id={id}

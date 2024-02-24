@@ -64,6 +64,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
     <Component
       {...appletInput.props}
       key={appletInput.key}
+      fieldKey={appletInput.key}
       label={appletInput.label}
       defaultValue={defaultValue}
       readOnly={readOnly}

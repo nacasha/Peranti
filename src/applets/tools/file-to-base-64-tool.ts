@@ -22,8 +22,8 @@ const fileToBase64Tool: AppletConstructor<InputFields, OutputFields> = {
   name: "File to Base64",
   category: "File",
   layoutSetting: {
-    direction: "vertical",
-    gridTemplate: "auto 1fr"
+    areaType: "grid",
+    areaGridTemplate: "'input' min-content 'output' 1fr"
   },
   inputFields: [
     {

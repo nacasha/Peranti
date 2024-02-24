@@ -310,15 +310,23 @@ export class Applet<
     }
 
     /**
-     * Default applet layout setting
+     * Default layout for applet
      */
     this.layoutSetting = {
-      direction: "horizontal",
-      reversed: false,
-      gridTemplate: "1fr 1fr",
-      inputAreaDirection: "vertical",
-      outputAreaDirection: "vertical",
-      ...appletConstructor.layoutSetting
+      /**
+       * Default area type is horizontal, input and output area are side-by-side
+       */
+      areaType: "flex",
+      areaFlexDirection: "horizontal",
+
+      /**
+       * Default fields placement are vertically stacked from top to bottom
+       */
+      fieldsType: "flex",
+      fieldsInputFlexDirection: "vertical",
+      fieldsOutputFlexDirection: "vertical",
+
+      ...appletConstructor.layoutSetting ?? {}
     }
 
     /**

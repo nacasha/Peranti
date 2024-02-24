@@ -15,9 +15,8 @@ const characterCounterTool: AppletConstructor<InputFields, OutputFields> = {
   name: "Text Counter",
   category: "Text",
   layoutSetting: {
-    direction: "vertical",
-    gridTemplate: "auto 1fr",
-    reversed: true
+    areaType: "grid",
+    areaGridTemplate: "'output' min-content 'input' 1fr"
   },
   inputFields: [
     {

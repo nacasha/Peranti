@@ -2,6 +2,8 @@
  * Base input component properties
  */
 export interface InputComponentProps<T = string> {
+  fieldKey: string
+
   /**
    * Label of component
    */

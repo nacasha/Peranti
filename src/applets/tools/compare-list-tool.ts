@@ -18,9 +18,12 @@ const compareListTool: AppletConstructor<InputFields, OutputFields> = {
   name: "Compare List",
   category: "List",
   layoutSetting: {
-    direction: "vertical",
-    inputAreaDirection: "horizontal",
-    outputAreaDirection: "horizontal"
+    areaType: "flex",
+    areaFlexDirection: "vertical",
+
+    fieldsType: "flex",
+    fieldsInputFlexDirection: "horizontal",
+    fieldsOutputFlexDirection: "horizontal"
   },
   inputFields: [
     {

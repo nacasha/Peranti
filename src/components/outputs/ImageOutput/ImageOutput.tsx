@@ -12,10 +12,10 @@ interface ImageOutputProps extends OutputComponentProps<string> {
 }
 
 export const ImageOutput: FC<ImageOutputProps> = (props) => {
-  const { value = "", label, initialState, onStateChange, onContextMenu } = props
+  const { value = "", label, initialState, onStateChange, onContextMenu, fieldKey } = props
 
   return (
-    <div className="ImageOutput">
+    <div className="ImageOutput" style={{ gridArea: fieldKey }}>
       <ComponentLabel label={label} />
       <div className="ImageOutput-inner" onContextMenu={onContextMenu}>
         <ZoomableContent

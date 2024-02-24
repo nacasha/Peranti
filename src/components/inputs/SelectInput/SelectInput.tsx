@@ -16,14 +16,14 @@ interface SelectInputProps<T extends string> extends InputComponentProps<T> {
 
 export const SelectInput: <T extends string>(props: SelectInputProps<T>) => JSX.Element = (props) => {
   const id = useId()
-  const { label, options = [], onValueChange, readOnly, defaultValue } = props
+  const { label, options = [], onValueChange, readOnly, defaultValue, fieldKey } = props
 
   const onChange: React.SelectHTMLAttributes<HTMLSelectElement>["onChange"] = function(event) {
     onValueChange(event.target.value as any)
   }
 
   return (
-    <div className="SelectInput">
+    <div className="SelectInput" style={{ gridArea: fieldKey }}>
       <ComponentLabel label={label} />
       <select
         id={id}

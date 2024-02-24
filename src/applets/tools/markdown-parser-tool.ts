@@ -14,9 +14,6 @@ const markdownParserTool: AppletConstructor<InputFields, OutputFields> = {
   appletId: "markdown-editor",
   name: "Markdown Editor",
   category: "Editor",
-  layoutSetting: {
-    direction: "horizontal"
-  },
   inputFields: [
     {
       key: "markdown",

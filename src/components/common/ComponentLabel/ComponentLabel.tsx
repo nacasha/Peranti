@@ -10,8 +10,10 @@ export const ComponentLabel: FC<ComponentLabelProps> = (props) => {
   const { label } = props
 
   return (
-    <label className={componentLabelCss}>
-      {label}
-    </label>
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <label className={componentLabelCss}>
+        {label}
+      </label>
+    </div>
   )
 }

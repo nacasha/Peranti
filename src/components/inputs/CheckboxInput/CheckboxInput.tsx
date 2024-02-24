@@ -8,14 +8,14 @@ import "./CheckboxInput.scss"
 interface CheckboxInputProps extends InputComponentProps<boolean> {}
 
 export const CheckboxInput: FC<CheckboxInputProps> = (props) => {
-  const { label, onValueChange, readOnly, defaultValue } = props
+  const { label, onValueChange, readOnly, defaultValue, fieldKey } = props
 
   const onChange = (checked: boolean) => {
     onValueChange(checked)
   }
 
   return (
-    <div className="CheckboxInput">
+    <div className="CheckboxInput" style={{ gridArea: fieldKey }}>
       <Checkbox
         defaultChecked={Boolean(defaultValue)}
         onChange={onChange}

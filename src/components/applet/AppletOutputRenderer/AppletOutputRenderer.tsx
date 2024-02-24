@@ -64,6 +64,7 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
     <Component
       {...appletOutput.props}
       key={appletOutput.key}
+      fieldKey={appletOutput.key}
       label={appletOutput.label}
       value={outputValue}
       onContextMenu={handleContextMenu}

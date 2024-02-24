@@ -2,59 +2,15 @@ $padding: var(--input-output-fields-spacing);
 
 .AppletComponentArea {
   flex: 1;
-  display: grid;
+  gap: $padding;
   padding: $padding;
 
-  &.horizontal {
-    grid-template-columns: 1fr 1fr;
-    column-gap: $padding;
+  &.grid {
+    display: grid;
   }
 
-  &.vertical {
-    grid-template-rows: 1fr 1fr;
-    row-gap: $padding;
-  }
-
-  &.horizontal-batch {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: none !important;
-    column-gap: $padding;
-  }
-
-  &.separated-input-output {
-    padding: unset;
-    column-gap: unset;
-    row-gap: unset;
-
-    .AppletComponentAreaInput, .AppletComponentAreaOutput {
-      padding: $padding;
-    }
-
-    &.horizontal {
-      .AppletComponentAreaInput {
-        border-right: 1px solid var(--border-color);
-      }
-    }
-
-    &.vertical {
-      .AppletComponentAreaInput {
-        border-bottom: 1px solid var(--border-color);
-      }
-    }
-  }
-
-  &.reversed {
-    .AppletComponentAreaInput {
-      order: 1;
-    }
-  }
-
-  .AppletComponentAreaInput, .AppletComponentAreaOutput {
-    overflow: hidden;
-    position: relative;
-    flex: 1;
+  &.flex {
     display: flex;
-    gap: $padding;
 
     &.horizontal {
       flex-direction: row;
@@ -63,42 +19,40 @@ $padding: var(--input-output-fields-spacing);
     &.vertical {
       flex-direction: column;
     }
+  }
+
+  .AppletComponentAreaInput {
+    grid-area: input;
+  }
+
+  .AppletComponentAreaOutput {
+    grid-area: output;
+  }
+
+  .AppletComponentAreaInput, .AppletComponentAreaOutput {
+    overflow: hidden;
+    position: relative;
+    flex: 1;
+    gap: $padding;
+
+    &.grid {
+      display: grid;
+    }
+
+    &.flex {
+      display: flex;
+
+      &.horizontal {
+        flex-direction: row;
+      }
+
+      &.vertical {
+        flex-direction: column;
+      }
+    }
 
     &.hidden {
       display: none;
-    }
-
-    > * {
-      &:nth-child(1) {
-        grid-area: a;
-      }
-      &:nth-child(2) {
-        grid-area: b;
-      }
-      &:nth-child(3) {
-        grid-area: c;
-      }
-      &:nth-child(4) {
-        grid-area: d;
-      }
-      &:nth-child(5) {
-        grid-area: e;
-      }
-      &:nth-child(6) {
-        grid-area: f;
-      }
-      &:nth-child(7) {
-        grid-area: g;
-      }
-      &:nth-child(8) {
-        grid-area: h;
-      }
-      &:nth-child(9) {
-        grid-area: i;
-      }
-      &:nth-child(10) {
-        grid-area: j;
-      }
     }
   }
 }

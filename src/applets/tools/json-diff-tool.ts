@@ -18,7 +18,8 @@ const jsonDiffTool: AppletConstructor<InputFields, OutputFields> = {
   name: "JSON Diff",
   category: "JSON",
   layoutSetting: {
-    gridTemplate: "1fr 1.5fr"
+    areaType: "grid",
+    areaGridTemplate: "'input output' 1fr / 1.5fr 2fr"
   },
   inputFields: [
     {

@@ -15,9 +15,6 @@ const mermaidEditorTool: AppletConstructor<InputFields, OutputFields> = {
   name: "Mermaid Editor",
   category: "Editor",
   description: "JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically",
-  layoutSetting: {
-    direction: "horizontal"
-  },
   inputFields: [
     {
       key: "text",

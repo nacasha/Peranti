@@ -15,9 +15,6 @@ const pintoraEditorTool: AppletConstructor<InputFields, OutputFields> = {
   name: "Pintora Editor",
   category: "Editor",
   description: "Pintora is a javascript text-to-diagrams library that works in both browser and Node.js",
-  layoutSetting: {
-    direction: "horizontal"
-  },
   inputFields: [
     {
       key: "syntax",

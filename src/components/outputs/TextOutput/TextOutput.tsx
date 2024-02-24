@@ -7,10 +7,10 @@ import "./TextOutput.scss"
 
 export const TextOutput: FC<OutputComponentProps> = (props) => {
   const id = useId()
-  const { value, label = "Output", onContextMenu } = props
+  const { value, label = "Output", onContextMenu, fieldKey } = props
 
   return (
-    <div className="TextOutput" onContextMenu={onContextMenu}>
+    <div className="TextOutput" style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
       <ComponentLabel label={label} />
       <input id={id} value={value} readOnly autoComplete="off" />
     </div>

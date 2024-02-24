@@ -23,8 +23,8 @@ const hashTool: AppletConstructor<InputFields, OutputFields> = {
   description: "Encrypt text or file to MD5 / SHA1 / SHA256 / SHA512",
   category: "Generator",
   layoutSetting: {
-    direction: "vertical",
-    gridTemplate: "auto 1fr"
+    areaType: "grid",
+    areaGridTemplate: "'input' min-content 'output' min-content"
   },
   inputFields: [
     {

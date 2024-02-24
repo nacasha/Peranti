@@ -18,8 +18,8 @@ const loremIpsumGeneratorTool: AppletConstructor<InputFields, OutputFields> = {
   name: "Lorem Ipsum Generator",
   category: "Generator",
   layoutSetting: {
-    direction: "vertical",
-    gridTemplate: "auto 1fr"
+    areaType: "grid",
+    areaGridTemplate: "'input' min-content 'output' 1fr"
   },
   inputFields: (inputParams) => {
     const { type } = inputParams

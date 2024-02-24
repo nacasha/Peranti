@@ -27,8 +27,8 @@ const faviconGrabberTool: AppletConstructor<InputFields, OutputFields> = {
   category: "Image",
   autoRun: false,
   layoutSetting: {
-    direction: "vertical",
-    gridTemplate: "auto 1fr"
+    areaType: "grid",
+    areaGridTemplate: "'input' min-content 'output' 1fr"
   },
   inputFields: [
     {

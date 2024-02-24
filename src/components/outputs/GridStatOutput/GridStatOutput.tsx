@@ -12,14 +12,14 @@ interface Output {
 interface GridStatOutputProps extends OutputComponentProps<Output[]> { }
 
 export const GridStatOutput: FC<GridStatOutputProps> = (props) => {
-  let { value = [] } = props
+  let { value = [], fieldKey } = props
 
   if (!Array.isArray(value)) {
     value = []
   }
 
   return (
-    <div className="GridStatOutput">
+    <div className="GridStatOutput" style={{ gridArea: fieldKey }}>
       {value.map((item) => (
         <div key={item.label} className="GridStatOutput-item">
           <div className="GridStatOutput-item-label">{item.label}</div>

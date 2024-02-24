@@ -17,6 +17,7 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
     initialState,
     onValueChange,
     readOnly,
+    fieldKey,
     ...baseCodeMirrorProps
   } = props
 
@@ -25,7 +26,7 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
   }
 
   return (
-    <div className="CodeInput">
+    <div className="CodeInput" style={{ gridArea: fieldKey }}>
       <ComponentLabel label={label} />
       <BaseCodeMirror
         {...baseCodeMirrorProps}

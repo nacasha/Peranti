@@ -9,10 +9,10 @@ interface TextAreaOutputProps extends OutputComponentProps {}
 
 export const TextAreaOutput: FC<TextAreaOutputProps> = (props) => {
   const id = useId()
-  const { value, label = "Output", onContextMenu } = props
+  const { value, label = "Output", onContextMenu, fieldKey } = props
 
   return (
-    <div className="TextAreaOutput" onContextMenu={onContextMenu}>
+    <div className="TextAreaOutput" style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
       <ComponentLabel label={label} />
       <textarea
         id={id}

@@ -11,7 +11,7 @@ interface TextAreaInputProps extends InputComponentProps {
 
 export const TextAreaInput: FC<TextAreaInputProps> = (props) => {
   const id = useId()
-  const { onValueChange, defaultValue, readOnly, label = "Input", ...restProps } = props
+  const { onValueChange, defaultValue, readOnly, label = "Input", fieldKey, ...restProps } = props
 
   const onInputChange: React.InputHTMLAttributes<HTMLTextAreaElement>["onBlur"] = (event) => {
     const value = event.target.value
@@ -19,7 +19,7 @@ export const TextAreaInput: FC<TextAreaInputProps> = (props) => {
   }
 
   return (
-    <div className="TextAreaInput">
+    <div className="TextAreaInput" style={{ gridArea: fieldKey }}>
       <ComponentLabel label={label} />
       <textarea
         id={id}

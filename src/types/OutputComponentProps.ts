@@ -1,4 +1,5 @@
 export interface OutputComponentProps<T = string> {
+  fieldKey: string
   label?: string
   value?: T
   initialState?: any

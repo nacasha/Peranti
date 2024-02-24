@@ -23,6 +23,11 @@ export const jsonataTool: AppletConstructor<InputFields, OutputFields> = {
   name: "JSONata",
   description: "JSON query and transformation language",
   category: "JSON",
+  layoutSetting: {
+    fieldsType: "grid",
+    fieldsinputGridTemplate: "'expression' 1fr 'jsonString' 3fr",
+    fieldsOutputGridTemplate: "'output' 1fr"
+  },
   inputFields: [
     {
       key: "expression",

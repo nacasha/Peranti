@@ -8,7 +8,7 @@ import "./FileInput.scss"
 interface InputFileProps extends InputComponentProps<File | null> { }
 
 export const FileInput: FC<InputFileProps> = (props) => {
-  const { label, onValueChange, defaultValue } = props
+  const { label, onValueChange, defaultValue, fieldKey } = props
   const [selectedFile, setSelectedFile] = useState<File | undefined>(() => defaultValue)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -26,7 +26,7 @@ export const FileInput: FC<InputFileProps> = (props) => {
   }
 
   return (
-    <div className="FileInput">
+    <div className="FileInput" style={{ gridArea: fieldKey }}>
       <ComponentLabel label={label} />
       <div>
         <div onClick={onClickChooseFile} className="FileInputPicker">

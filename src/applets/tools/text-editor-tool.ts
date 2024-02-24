@@ -9,9 +9,6 @@ const textEditorTool: AppletConstructor<InputFields> = {
   appletId: "text-editor",
   name: "Text Editor",
   category: "Editor",
-  layoutSetting: {
-    gridTemplate: "1fr"
-  },
   inputFields: [
     {
       key: "input",

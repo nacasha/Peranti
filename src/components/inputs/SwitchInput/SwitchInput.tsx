@@ -11,7 +11,7 @@ interface SwitchInputProps extends InputComponentProps {
 }
 
 export const SwitchInput: FC<SwitchInputProps> = (props) => {
-  const { label, options = [], onValueChange, defaultValue, readOnly } = props
+  const { label, options = [], onValueChange, defaultValue, readOnly, fieldKey } = props
   const [selectedOption, setSelectedOption] = useState<any>(defaultValue)
 
   const onClickItem = (option: typeof options[0]) => () => {
@@ -21,7 +21,7 @@ export const SwitchInput: FC<SwitchInputProps> = (props) => {
   }
 
   return (
-    <div className={clsx("SwitchInput", readOnly && "read-only")}>
+    <div className={clsx("SwitchInput", readOnly && "read-only")} style={{ gridArea: fieldKey }}>
       <ComponentLabel label={label} />
       <div className="buttons">
         {options.map((option) => (

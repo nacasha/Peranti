@@ -9,7 +9,6 @@ import { AppletSampleSelector } from "src/components/secondary-sidebar/AppletSam
 import { PipelineOptions } from "src/components/secondary-sidebar/PipelineOptions"
 import { AppTitleBarStyle } from "src/enums/app-titlebar-style"
 import { useSelector } from "src/hooks/useSelector"
-import { activeAppletStore } from "src/services/active-applet-store"
 import { appletSidebarService } from "src/services/applet-sidebar-service"
 import { interfaceStore } from "src/services/interface-store"
 
@@ -35,7 +34,6 @@ export const SecondarySidebarTabbar: FC = () => {
 
 const SecondarySidebar: FC = () => {
   const isOpen = useSelector(() => appletSidebarService.isOpen)
-  const activeAppletSessionId = useSelector(() => activeAppletStore.getActiveApplet().sessionId)
 
   const className = clsx([
     secondarySidebarClasses.root,
@@ -45,7 +43,7 @@ const SecondarySidebar: FC = () => {
   ])
 
   return (
-    <SimpleBar key={activeAppletSessionId} className={className}>
+    <SimpleBar className={className}>
       <AppletInfo />
       <PipelineOptions />
       <AppletSampleSelector />

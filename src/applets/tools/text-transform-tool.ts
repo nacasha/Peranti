@@ -15,9 +15,6 @@ const textTransformTool: AppletConstructor<InputFields, OutputFields> = {
   appletId: "text-transform",
   name: "Text Case Transform",
   category: "Text",
-  layoutSetting: {
-    direction: "vertical"
-  },
   inputFields: [
     {
       key: "type",

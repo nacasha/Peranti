@@ -1,17 +1,17 @@
-import { AppletSampleButton } from "src/components/buttons/AppletSampleButton"
-import { DeleteClosedEditorButton } from "src/components/buttons/DeleteClosedEditorButton"
-import { RestoreClosedEditorButton } from "src/components/buttons/RestoreClosedEditorButton"
-import { Button } from "src/components/common/Button"
+// import { AppletSampleButton } from "src/components/buttons/AppletSampleButton"
+// import { DeleteClosedEditorButton } from "src/components/buttons/DeleteClosedEditorButton"
+// import { RestoreClosedEditorButton } from "src/components/buttons/RestoreClosedEditorButton"
+// import { Button } from "src/components/common/Button"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons"
-import { appletSidebarService } from "src/services/applet-sidebar-service"
+// import { appletSidebarService } from "src/services/applet-sidebar-service"
 
 import "./AppletHeader.scss"
 
 export const AppletHeader = () => {
-  const handleClickSettings = () => {
-    appletSidebarService.toggle()
-  }
+  // const handleClickSettings = () => {
+  //   appletSidebarService.toggle()
+  // }
 
   return (
     <div className="AppletHeader">

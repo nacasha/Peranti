@@ -13,7 +13,7 @@ interface RunInputProps extends InputComponentProps { }
 export const RunInput: FC<RunInputProps> = (props) => {
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
   const isActionRunning = useSelector(() => activeAppletStore.getActiveApplet().isActionRunning)
-  const { label } = props
+  const { label, fieldKey } = props
 
   const onClickButton = () => {
     if (!isActionRunning) {
@@ -22,7 +22,7 @@ export const RunInput: FC<RunInputProps> = (props) => {
   }
 
   return (
-    <div className="RunInput">
+    <div className="RunInput" style={{ gridArea: fieldKey }}>
       <Button
         type="submit"
         icon={Icons.Refresh}
