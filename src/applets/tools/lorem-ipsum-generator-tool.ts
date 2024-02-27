@@ -1,6 +1,6 @@
 import { loremIpsum, type ILoremIpsumParams } from "lorem-ipsum"
 
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -13,7 +13,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const loremIpsumGeneratorTool: AppletConstructor<InputFields, OutputFields> = {
+const loremIpsumGeneratorTool = new AppletConstructorModel<InputFields, OutputFields>({
   appletId: "lorem-ipsum-generator",
   name: "Lorem Ipsum Generator",
   category: "Generator",
@@ -77,6 +77,6 @@ const loremIpsumGeneratorTool: AppletConstructor<InputFields, OutputFields> = {
 
     return { output }
   }
-}
+})
 
 export default loremIpsumGeneratorTool

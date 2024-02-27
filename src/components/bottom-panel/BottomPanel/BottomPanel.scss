@@ -1,0 +1,17 @@
+.BottomPanel {
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bottom-panel-background-color)
+}
+
+.BottomPanel-header {
+  padding: 5px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color)
+}
+
+.BottomPanel-content {
+  height: 250px;
+  overflow: auto;
+}

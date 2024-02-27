@@ -1,7 +1,7 @@
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -15,7 +15,7 @@ interface OutputFields {
   milliseconds: OutputFieldsType.Text
 }
 
-const dateToMillisecondsTool: AppletConstructor<InputFields, OutputFields> = {
+const dateToMillisecondsTool = new AppletConstructorModel<InputFields, OutputFields>({
   appletId: "date-to-milliseconds",
   name: "Date To Milliseconds",
   category: "Date Time",
@@ -79,6 +79,6 @@ const dateToMillisecondsTool: AppletConstructor<InputFields, OutputFields> = {
 
     return { milliseconds: milliseconds.toString() }
   }
-}
+})
 
 export default dateToMillisecondsTool

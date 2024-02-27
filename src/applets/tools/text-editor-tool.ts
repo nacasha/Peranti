@@ -1,11 +1,11 @@
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 
 interface InputFields {
   input: InputFieldsType.Code
 }
 
-const textEditorTool: AppletConstructor<InputFields> = {
+const textEditorTool = new AppletConstructorModel<InputFields>({
   appletId: "text-editor",
   name: "Text Editor",
   category: "Editor",
@@ -21,6 +21,6 @@ const textEditorTool: AppletConstructor<InputFields> = {
     }
   ],
   outputFields: []
-}
+})
 
 export default textEditorTool

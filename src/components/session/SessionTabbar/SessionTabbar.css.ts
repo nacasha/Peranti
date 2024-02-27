@@ -68,7 +68,7 @@ export const { ...sessionTabbarClasses } = new class {
     },
 
     selectors: {
-      "&:nth-last-child(2)": {
+      "&:nth-last-child(1)": {
         borderRight: "none"
       },
 

@@ -8,12 +8,17 @@ export const darkThemeClass = createTheme(themeableTokens, {
   iconColorFilter: "invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%)",
   colorOppositeColor: "#ffffff",
   appTitlebarBackgroundColor: "#1a1b1d",
+
+  /**
+   * Button
+   */
   buttonBackgroundColor: "#181818",
   buttonBackgroundColorHover: "#26282a",
-  buttonBackgroundColorActive: "#1a1c1e",
+  buttonBackgroundColorActive: "#2a2b2d",
   buttonBorderColor: "#3e3e3e",
   buttonBorderColorHover: "#3e3e3e",
   buttonBorderColorActive: "#3e3e3e",
+
   backgroundMain: "#1a1b1d",
   backgroundContent: "#222429",
   activitybarBackgroundColor: "#181818",

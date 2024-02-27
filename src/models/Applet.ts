@@ -21,7 +21,6 @@ import { type AppletSample } from "src/types/AppletSample"
 import { type AppletState } from "src/types/AppletState"
 import { type ExtensionMetadata } from "src/types/ExtensionMetadata"
 import { type LayoutSetting } from "src/types/LayoutSetting"
-import { type Pipeline } from "src/types/Pipeline"
 import { type Session } from "src/types/Session"
 import { type SessionHistory } from "src/types/SessionHistory"
 import { generateRandomString } from "src/utils/generate-random-string"
@@ -63,11 +62,6 @@ export class Applet<
    * Applet input and output layout settings
    */
   readonly layoutSetting: LayoutSetting
-
-  /**
-   * Pipelines of applet
-   */
-  readonly pipelines: Pipeline[] = []
 
   /**
    * Allow applet to run its pipeline
@@ -281,7 +275,6 @@ export class Applet<
     this.category = appletConstructor.category
     this.inputFields = appletConstructor.inputFields
     this.outputFields = appletConstructor.outputFields
-    this.pipelines = appletConstructor.pipelines ?? []
     this.autoRun = appletConstructor.autoRun ?? true
     this.type = appletConstructor.type ?? AppletType.Tool
     this.metadata = appletConstructor.metadata
@@ -783,7 +776,7 @@ export class Applet<
     }
 
     if (this.type === AppletType.Extension) {
-      void this.runExtension()
+      await this.runExtension()
     } else if (this.canRunPipeline && this.type === AppletType.Pipeline) {
       await this.runPipeline()
     } else if (this.isBatchModeEnabled) {
@@ -853,6 +846,8 @@ export class Applet<
   }
 
   private async runPipeline() {
+    console.log(this.sessionId, "Run pipeline")
+
     const edges: Edge[] = this.inputValues.$PIPELINE.edges ?? []
     const nodes: Node[] = this.inputValues.$PIPELINE.nodes ?? []
     const nodesMap = Object.fromEntries(nodes.map((node) => [node.id, node]))
@@ -864,28 +859,46 @@ export class Applet<
       if (!targetInputDependencies[edge.target]) {
         targetInputDependencies[edge.target] = 0
       }
-
       targetInputDependencies[edge.target]++
     })
 
-    /**
-     * Find unresolved edge by filtering the source edge that has value and does not
-     * resolving the target value
-     */
-    let loop = 0
+    let breakWhile = false
 
     /**
      * Resolve node outputValues that has no input dependencies
      */
     let resolveTargetWithoutDependencies = true
+
+    /**
+     * Find unresolved edge by filtering the source edge that has value and does not
+     * resolving the target value
+     */
     let unresolved = edges.filter((edge) => !targetInputDependencies[edge.source] && !resolvedValues[edge.source])
 
-    console.log({ edges: toJS(edges) })
-    console.log({ nodes: toJS(nodes) })
+    const countExecutedEdges: Record<string, number> = {}
 
-    while (unresolved.length > 0 && loop < 10) {
+    console.log(this.sessionId, "Nodes", toJS(edges))
+    console.log(this.sessionId, "Edges", toJS(nodes))
+
+    while (unresolved.length > 0 && !breakWhile) {
       const edge = unresolved[0]
       const node = nodesMap[edge.source]
+
+      /**
+       * Count number of time(s) edge has been executed
+       */
+      if (!countExecutedEdges[edge.id]) {
+        countExecutedEdges[edge.id] = 0
+      }
+      countExecutedEdges[edge.id]++
+
+      /**
+       * Break while loop if edge is executed more than 1 times
+       * It's supposed to run once
+       */
+      if (countExecutedEdges[edge.id] > 1) {
+        breakWhile = true
+      }
 
       /**
        * Set default value for source node
@@ -910,6 +923,8 @@ export class Applet<
         applet.setInputValuesMerge(resolvedValues[edge.source].inputValues)
         await applet.run()
 
+        console.log(this.sessionId, "Run node", applet.name, "with result", applet.outputValues)
+
         resolvedValues[edge.source].outputValues = merge(
           resolvedValues[edge.source].outputValues,
           applet.outputValues
@@ -926,7 +941,7 @@ export class Applet<
       const sourceEdges = edges.filter((e) => e.source === edge.source)
 
       sourceEdges.forEach((sourceEdge) => {
-        console.log("Resolving edge ", edge.source, " for ", sourceEdge.target)
+        console.log(this.sessionId, "Resolving edge", edge.source, "for", sourceEdge.target)
         if (sourceEdge.targetHandle && sourceEdge.sourceHandle) {
           const targetInputValues = {
             [sourceEdge.targetHandle]: resolvedValues[edge.source].outputValues[sourceEdge.sourceHandle]
@@ -958,9 +973,11 @@ export class Applet<
         ))
       }
 
-      loop++
-      console.log({ resolvedValues })
+      console.log(this.sessionId, "Resolved values", resolvedValues)
     }
+
+    console.log(this.sessionId, "Final resolved values", resolvedValues)
+    console.log(this.sessionId, "Time(s) edge executed", countExecutedEdges)
 
     const outputNodes = nodes.filter((node) => node.type === "appletOutput" && resolvedValues[node.id]?.inputValues)
     outputNodes.forEach((outputNode) => {
@@ -1032,14 +1049,32 @@ export class Applet<
    */
   @action
   async markAsDeleted() {
-    this.resetInputAndOutputFieldsState()
     this.setDeleted(true)
 
+    /**
+     * Reset input and output field state
+     */
+    this.resetInputAndOutputFieldsState()
+
+    /**
+     * Reset to pipeline mode when deleted applet type is Pipeline
+     */
+    if (this.type === AppletType.Pipeline) {
+      this.viewMode = "pipeline"
+    }
+
+    /**
+     * Direcly update to storage if the applet session if not persisting
+     *
+     * Example case for this one is when the tab are not currently active and
+     * closed through tabbar context menu (Close Tab, Close Others or Close All)
+     */
     if (!isPersisting(this)) {
       await StorageManager.updateAppletStatePropertyInStorage(this.sessionId, {
         inputFieldsState: {},
         outputFieldsState: {},
-        isDeleted: true
+        isDeleted: true,
+        viewMode: this.type === AppletType.Pipeline ? "pipeline" : this.viewMode
       })
     }
   }

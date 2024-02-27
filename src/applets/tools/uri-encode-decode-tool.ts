@@ -1,4 +1,4 @@
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -11,7 +11,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const uriEncodeDecodeTool: AppletConstructor<InputFields, OutputFields> = {
+const uriEncodeDecodeTool = new AppletConstructorModel<InputFields, OutputFields>({
   appletId: "uri-encode-decode",
   name: "URI Encode Decode",
   category: "Encode / Decode",
@@ -59,6 +59,6 @@ const uriEncodeDecodeTool: AppletConstructor<InputFields, OutputFields> = {
       return { output: "Invalid Input" }
     }
   }
-}
+})
 
 export default uriEncodeDecodeTool

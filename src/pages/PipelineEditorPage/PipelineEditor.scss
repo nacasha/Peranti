@@ -1,0 +1,98 @@
+.PipelineEditor {
+
+}
+
+.PipelineEditorButtons {
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  border-radius: var(--border-radius);
+  background-color: #1a1b1d;
+}
+
+.DialogRoot {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size);
+  padding: 30px;
+
+  .DialogOverlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .Dialog {
+    z-index: 1;
+    margin: auto;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    background-color: #1a1b1d;
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+
+    .Dialog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .Dialog-body {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      padding: 15px;
+      max-height: 75vh;
+      overflow: auto;
+    }
+
+    .Dialog-buttons {
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      padding: 15px;
+    }
+  }
+}
+
+.AddNodeModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  .AddNodeModalBody-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    .AddNodeModalBody-section {
+      .AddNodeModalBody-section-header {
+        font-weight: bold;
+        padding-bottom: 10px;
+      }
+
+      .AddNodeModalBody-section-items {
+        gap: 5px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-auto-flow: row dense;
+
+        .AddNodeModalBody-section-item {
+          text-wrap: nowrap;
+          padding: 8px;
+          border: 1px solid var(--border-color);
+          border-radius: var(--border-radius);
+        }
+      }
+    }
+  }
+}

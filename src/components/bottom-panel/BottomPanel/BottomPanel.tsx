@@ -1,5 +1,5 @@
 import { Console, Hook, Unhook } from "console-feed"
-import { useState, type FC, useEffect } from "react"
+import { useState, type FC, useEffect, useRef } from "react"
 
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons"
@@ -9,12 +9,13 @@ import { bottomPanelService } from "src/services/bottom-panel-service"
 import { hotkeysStore } from "src/services/hotkeys-store"
 import { interfaceStore } from "src/services/interface-store"
 
-import { bottomPanelClasses } from "./BottomPanel.css"
+import "./BottomPanel.scss"
 
 export const BottomPanel: FC = () => {
   const isOpen = useSelector(() => bottomPanelService.isOpen)
   const isDarkTheme = useSelector(() => interfaceStore.isDarkTheme)
 
+  const contentRef = useRef<HTMLDivElement>(null)
   const [logs, setLogs] = useState<any[]>([])
 
   const handleClickClose = () => {
@@ -29,7 +30,12 @@ export const BottomPanel: FC = () => {
   useEffect(() => {
     const hookedConsole = Hook(
       window.console,
-      (log) => { setLogs((currLogs) => [...currLogs, log]) },
+      (log) => {
+        setLogs((currLogs) => {
+          const newLogs = [...currLogs, log]
+          return newLogs.slice(-100)
+        })
+      },
       false,
       100
     )
@@ -39,17 +45,23 @@ export const BottomPanel: FC = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTo(0, contentRef.current.scrollHeight + 200)
+    }
+  }, [logs.length, contentRef.current])
+
   if (!isOpen) {
     return null
   }
 
   return (
-    <div className={bottomPanelClasses.root}>
-      <div className={bottomPanelClasses.header}>
-        <div className={bottomPanelClasses.title}>Console Output</div>
+    <div className="BottomPanel">
+      <div className="BottomPanel-header">
+        <div className="BottomPanel-title">Console Output</div>
         <ButtonIcon icon={Icons.Close} onClick={handleClickClose} />
       </div>
-      <div className={bottomPanelClasses.content}>
+      <div ref={contentRef} className="BottomPanel-content">
         <Console logs={logs} variant={isDarkTheme ? "dark" : "light"} />
       </div>
     </div>

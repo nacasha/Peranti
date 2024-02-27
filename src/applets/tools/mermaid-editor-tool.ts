@@ -1,4 +1,4 @@
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -10,7 +10,7 @@ interface OutputFields {
   output: OutputFieldsType.Mermaid
 }
 
-const mermaidEditorTool: AppletConstructor<InputFields, OutputFields> = {
+const mermaidEditorTool = new AppletConstructorModel<InputFields, OutputFields>({
   appletId: "mermaid-editor",
   name: "Mermaid Editor",
   category: "Editor",
@@ -65,8 +65,11 @@ const mermaidEditorTool: AppletConstructor<InputFields, OutputFields> = {
   ],
   action({ inputValues }) {
     const { text } = inputValues
-    return { output: text }
+    if (text.trim().length > 0) {
+      return { output: text }
+    }
+    return { output: "" }
   }
-}
+})
 
 export default mermaidEditorTool

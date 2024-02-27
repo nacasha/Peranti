@@ -1,7 +1,7 @@
 import { AppletType } from "src/enums/applet-type"
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 
-const pipelineEditorApplet: AppletConstructor = {
+const pipelineEditorApplet = new AppletConstructorModel({
   appletId: "pipeline-editor",
   name: "Pipeline Editor",
   category: "App",
@@ -16,6 +16,6 @@ const pipelineEditorApplet: AppletConstructor = {
   outputFields: [],
   hideOnSidebar: true,
   type: AppletType.Pipeline
-}
+})
 
 export default pipelineEditorApplet

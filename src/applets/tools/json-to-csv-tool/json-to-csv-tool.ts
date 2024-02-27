@@ -1,6 +1,6 @@
 import { json2csv } from "json-2-csv"
 
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -23,7 +23,7 @@ interface Options {
   prependHeader: InputFieldsType.Checkbox
 }
 
-export const jsonToCsvTool: AppletConstructor<InputFields, OutputFields, Options> = {
+export const jsonToCsvTool = new AppletConstructorModel<InputFields, OutputFields, Options>({
   appletId: "json-to-csv",
   name: "JSON to CSV",
   description: "JSON to CSV Converter",
@@ -114,4 +114,4 @@ export const jsonToCsvTool: AppletConstructor<InputFields, OutputFields, Options
     })
     return { csv }
   }
-}
+})

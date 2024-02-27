@@ -1,3 +1,4 @@
+import NiceModal from "@ebay/nice-modal-react"
 import clsx from "clsx"
 import { useEffect, type FC, type ReactNode } from "react"
 
@@ -56,9 +57,11 @@ const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   }, [])
 
   return (
-    <div className={classNames}>
-      {children}
-    </div>
+    <NiceModal.Provider>
+      <div className={classNames}>
+        {children}
+      </div>
+    </NiceModal.Provider>
   )
 }
 

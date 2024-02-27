@@ -5,21 +5,35 @@ import { styleTokens } from "src/styles/styleTokens.css"
 export const pipelineItemClasses = {
   root: style({
     border: `1px solid ${styleTokens.inputOutputBorderColor}`,
-    width: 230,
+    width: 280,
     backgroundColor: styleTokens.inputOutputBackgroundColor,
     borderRadius: styleTokens.borderRadius
   }),
 
-  title: style({
+  header: style({
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     borderBottom: `1px solid ${styleTokens.inputOutputBorderColor}`,
     padding: "10px 15px"
   }),
 
-  handles: style({
-    display: "flex",
-    justifyContent: "space-between",
+  headerTitle: style({
+    display: "flex"
+  }),
+
+  headerAction: style({
+    display: "flex"
+  }),
+
+  body: style({
+    paddingBlock: 10
+  }),
+
+  bodyInner: style({
     position: "relative",
-    marginTop: 10
+    display: "flex",
+    justifyContent: "space-between"
   }),
 
   handlesLeft: style({
@@ -46,4 +60,9 @@ globalStyle(`${pipelineItemClasses.handlesLeft} label`, {
 
 globalStyle(`${pipelineItemClasses.handlesRight} label`, {
   paddingRight: 15
+})
+
+globalStyle(`${pipelineItemClasses.headerTitle} img`, {
+  width: 15,
+  marginRight: 10
 })

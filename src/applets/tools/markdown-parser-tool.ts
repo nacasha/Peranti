@@ -1,4 +1,4 @@
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -10,7 +10,7 @@ interface OutputFields {
   output: OutputFieldsType.Markdown
 }
 
-const markdownParserTool: AppletConstructor<InputFields, OutputFields> = {
+const markdownParserTool = new AppletConstructorModel<InputFields, OutputFields>({
   appletId: "markdown-editor",
   name: "Markdown Editor",
   category: "Editor",
@@ -36,6 +36,6 @@ const markdownParserTool: AppletConstructor<InputFields, OutputFields> = {
     const { markdown } = inputValues
     return { output: markdown }
   }
-}
+})
 
 export default markdownParserTool

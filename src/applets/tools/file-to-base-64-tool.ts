@@ -1,4 +1,4 @@
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -17,7 +17,7 @@ const toBase64 = async(file: File) => await new Promise<string>((resolve, reject
   reader.onerror = reject
 })
 
-const fileToBase64Tool: AppletConstructor<InputFields, OutputFields> = {
+const fileToBase64Tool = new AppletConstructorModel<InputFields, OutputFields>({
   appletId: "file-to-base64-encode",
   name: "File to Base64",
   category: "File",
@@ -49,6 +49,6 @@ const fileToBase64Tool: AppletConstructor<InputFields, OutputFields> = {
 
     return { output: "" }
   }
-}
+})
 
 export default fileToBase64Tool

@@ -1,6 +1,6 @@
 import { createInitminalRun, defaultSafeObjects } from "@initminal/run"
 
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -13,7 +13,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-export const javascriptRunnerTool: AppletConstructor<InputFields, OutputFields> = {
+export const javascriptRunnerTool = new AppletConstructorModel<InputFields, OutputFields>({
   appletId: "javascript-runner",
   name: "Javascript Runner",
   description: "Safely execute untrusted code with ESM syntax support, dynamic injection of ESM modules from URL or plain JS code, and granular access control based on whitelisting for each JS object.",
@@ -42,7 +42,7 @@ export const javascriptRunnerTool: AppletConstructor<InputFields, OutputFields> 
       component: "Code"
     }
   ],
-  action: async({ inputValues }) => {
+  action: async({ inputValues, options }) => {
     let { code, ...restInputs } = inputValues
     code = code.replace("export default", "export const initminal = ")
 
@@ -60,8 +60,9 @@ export const javascriptRunnerTool: AppletConstructor<InputFields, OutputFields> 
           "awaiuuidv4"
         ]
       })
-      const result = await InitminalRun.run(code, {
-        inputs: JSON.stringify(restInputs)
+
+      const result = await InitminalRun.run(code, {}, {
+        inputValues: restInputs
       })
 
       if (result.success) {
@@ -75,4 +76,4 @@ export const javascriptRunnerTool: AppletConstructor<InputFields, OutputFields> 
       return { output: "" }
     }
   }
-}
+})

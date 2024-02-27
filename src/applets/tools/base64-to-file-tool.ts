@@ -1,4 +1,4 @@
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -10,7 +10,7 @@ interface OutputFields {
   output: OutputFieldsType.File
 }
 
-const base64ToFileTool: AppletConstructor<InputFields, OutputFields> = {
+const base64ToFileTool = new AppletConstructorModel<InputFields, OutputFields>({
   appletId: "base64-to-file",
   name: "Base64 To File",
   category: "File",
@@ -40,6 +40,6 @@ const base64ToFileTool: AppletConstructor<InputFields, OutputFields> = {
 
     return { output: [input] }
   }
-}
+})
 
 export default base64ToFileTool

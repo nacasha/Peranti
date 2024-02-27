@@ -23,6 +23,9 @@ dependencies:
   '@cyntler/react-doc-viewer':
     specifier: ^1.14.1
     version: 1.14.1(@types/react@18.2.41)(react-dom@18.2.0)(react@18.2.0)
+  '@ebay/nice-modal-react':
+    specifier: ^1.2.13
+    version: 1.2.13(react-dom@18.2.0)(react@18.2.0)
   '@hexagon/base64':
     specifier: ^1.1.28
     version: 1.1.28
@@ -753,6 +756,16 @@ packages:
       - '@types/react'
       - encoding
       - supports-color
+    dev: false
+
+  /@ebay/nice-modal-react@1.2.13(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-jx8xIWe/Up4tpNuM02M+rbnLoxdngTGk3Y8LjJsLGXXcSoKd/+eZStZcAlIO/jwxyz/bhPZnpqPJZWAmhOofuA==}
+    peerDependencies:
+      react: '>16.8.0'
+      react-dom: '>16.8.0'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /@emotion/cache@10.0.29:

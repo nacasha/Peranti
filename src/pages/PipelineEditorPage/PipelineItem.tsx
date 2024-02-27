@@ -1,57 +1,93 @@
-import { Position } from "reactflow"
+import { type FC } from "react"
+import { type Node, Position, useNodeId, useStore } from "reactflow"
 
-import { useSelector } from "src/hooks/useSelector"
-import { appletStore } from "src/services/applet-store"
+import { ButtonIcon } from "src/components/common/ButtonIcon"
+import { Icons } from "src/constants/icons.js"
 
 import { CustomHandle } from "./CustomHandle.js"
 import { pipelineItemClasses } from "./PipelineItem.css"
 
-export const PipelineItem = (props: any) => {
-  const { data } = props
-  const { appletId } = data
-  const applet = useSelector(() => appletStore.mapOfLoadedApplets[appletId])
+const itemHeight = 25
+const itemGap = 10
 
-  const inputFields = typeof applet.inputFields === "function" ? applet.inputFields({}) : applet.inputFields
-  const outputFields = typeof applet.outputFields === "function" ? applet.outputFields({}) : applet.outputFields
-  const numberOfFields = Math.max(inputFields.length, outputFields.length)
+interface PipelineItemProps {
+  title: string
+  icon?: string
+  sources?: Array<Omit<PipelineItemHandleProps, "type" | "index">>
+  targets?: Array<Omit<PipelineItemHandleProps, "type" | "index">>
+  onClickSetting?: (node: Node) => void
+}
+
+export const PipelineItem: FC<PipelineItemProps> = (props) => {
+  const { title, icon, sources = [], targets = [], onClickSetting } = props
+  const numberOfFields = Math.max(sources.length, targets.length)
+
+  const nodeInternals = useStore((s) => s.nodeInternals)
+  const nodeId = useNodeId()
+
+  const handleClickSetting = () => {
+    if (nodeId && onClickSetting) {
+      const node = nodeInternals.get(nodeId)
+      if (node) {
+        onClickSetting(node)
+      }
+    }
+  }
 
   return (
     <div className={pipelineItemClasses.root}>
-      <div className={pipelineItemClasses.title}>
-        {applet.name}
-      </div>
-      <div className={pipelineItemClasses.handles} style={{ height: 35 * numberOfFields }}>
-        <div className={pipelineItemClasses.handlesLeft}>
-          {inputFields.map((inputField, index) => (
-            <div key={inputField.key} style={{ top: 35 * index }}>
-              <label>
-                {inputField.label}
-              </label>
-              <CustomHandle
-                id={inputField.key}
-                type="target"
-                position={Position.Left}
-                isConnectable={true}
-              />
-            </div>
-          ))}
+      <div className={pipelineItemClasses.header}>
+        <div className={pipelineItemClasses.headerTitle}>
+          {icon && <img src={icon} alt={title} />}
+          <div>{title}</div>
         </div>
-        <div className={pipelineItemClasses.handlesRight}>
-          {outputFields.map((outputField, index) => (
-            <div key={outputField.key} style={{ top: 35 * index }}>
-              <label>
-                {outputField.label}
-              </label>
-              <CustomHandle
-                id={outputField.key}
-                type="source"
-                position={Position.Right}
-                isConnectable={true}
-              />
-            </div>
-          ))}
+        {onClickSetting && (
+          <div className={pipelineItemClasses.headerAction}>
+            <ButtonIcon onClick={handleClickSetting} tooltip="Customize" icon={Icons.Settings} />
+          </div>
+        )}
+      </div>
+      <div className={pipelineItemClasses.body} style={{ height: ((itemHeight + itemGap) * numberOfFields) - itemGap }}>
+        <div className={pipelineItemClasses.bodyInner}>
+
+          <div className={pipelineItemClasses.handlesLeft}>
+            {targets.map((target, index) => (
+              <PipelineItemHandle key={target.id} {...target} type="target" index={index} />
+            ))}
+          </div>
+
+          <div className={pipelineItemClasses.handlesRight}>
+            {sources.map((source, index) => (
+              <PipelineItemHandle key={source.id} {...source} type="source" index={index} />
+            ))}
+          </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+interface PipelineItemHandleProps {
+  id: string
+  label: string
+  type: "source" | "target"
+  index: number
+}
+
+const PipelineItemHandle: FC<PipelineItemHandleProps> = (props) => {
+  const { id, label, type, index } = props
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", height: itemHeight, top: (itemHeight + itemGap) * index }}>
+      <label>
+        {label}
+      </label>
+      <CustomHandle
+        id={id}
+        type={type}
+        position={type === "source" ? Position.Right : Position.Left}
+        isConnectable={true}
+      />
     </div>
   )
 }

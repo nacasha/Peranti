@@ -22,6 +22,7 @@
     "@codemirror/lang-markdown": "^6.2.4",
     "@codemirror/language": "^6.10.0",
     "@cyntler/react-doc-viewer": "^1.14.1",
+    "@ebay/nice-modal-react": "^1.2.13",
     "@hexagon/base64": "^1.1.28",
     "@initminal/run": "^0.2.24",
     "@nanostores/react": "^0.7.1",

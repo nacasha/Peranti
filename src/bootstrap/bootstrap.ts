@@ -3,6 +3,7 @@ import localforage from "localforage"
 import { configurePersistable } from "mobx-persist-store"
 import "rc-tooltip/assets/bootstrap_white.css"
 import "react-contexify/ReactContexify.css"
+import "reactflow/dist/style.css"
 import "simplebar-react/dist/simplebar.min.css"
 
 import "src/services/user-settings-service"

@@ -12,23 +12,24 @@ export const AppletInfo: FC = () => {
   return (
     <SecondarySidebarSection title="Info">
       <div className="AppletInfo">
-        <div className="AppletInfo-item">
-          <div className="AppletInfo-item-title">Name</div>
-          <div className="AppletInfo-item-content">{activeApplet.name}</div>
-        </div>
-        <div className="AppletInfo-item">
-          <div className="AppletInfo-item-title">Description</div>
-          <div className="AppletInfo-item-content">{activeApplet.description ?? "-"}</div>
-        </div>
-        <div className="AppletInfo-item">
-          <div className="AppletInfo-item-title">Category</div>
-          <div className="AppletInfo-item-content">{activeApplet.category}</div>
-        </div>
-        <div className="AppletInfo-item">
-          <div className="AppletInfo-item-title">Type</div>
-          <div className="AppletInfo-item-content">{activeApplet.type}</div>
-        </div>
+        <Item label="Name" content={activeApplet.name} />
+        <Item label="Description" content={activeApplet.description} />
+        <Item label="Category" content={activeApplet.category} />
+        <Item label="Type" content={activeApplet.type} />
       </div>
     </SecondarySidebarSection>
+  )
+}
+
+const Item: FC<{ label: string, content: string }> = ({ content, label }) => {
+  if (content.trim().length === 0) {
+    return null
+  }
+
+  return (
+    <div className="AppletInfo-item">
+      <div className="AppletInfo-item-title">{label}</div>
+      <div className="AppletInfo-item-content">{content}</div>
+    </div>
   )
 }

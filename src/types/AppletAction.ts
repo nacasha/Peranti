@@ -5,3 +5,10 @@ export interface AppletActionParams<InputFields, OptionKeys> {
   toast: typeof toast
   options: OptionKeys
 }
+
+export type AppletActionReturn<OutputFields> = {
+  type: "output" | "toast"
+} & {
+  type: "output"
+  data: OutputFields
+}

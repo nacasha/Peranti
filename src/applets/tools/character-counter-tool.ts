@@ -1,4 +1,4 @@
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -10,7 +10,7 @@ interface OutputFields {
   output: OutputFieldsType.GridStat
 }
 
-const characterCounterTool: AppletConstructor<InputFields, OutputFields> = {
+const characterCounterTool = new AppletConstructorModel<InputFields, OutputFields>({
   appletId: "character-counter",
   name: "Text Counter",
   category: "Text",
@@ -66,6 +66,6 @@ const characterCounterTool: AppletConstructor<InputFields, OutputFields> = {
 
     return { output }
   }
-}
+})
 
 export default characterCounterTool

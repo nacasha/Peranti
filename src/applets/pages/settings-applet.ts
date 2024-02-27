@@ -1,7 +1,7 @@
 import { AppletType } from "src/enums/applet-type"
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 
-const settingsApplet: AppletConstructor = {
+const settingsApplet = new AppletConstructorModel({
   appletId: "settings-page",
   name: "Settings",
   category: "App",
@@ -17,6 +17,6 @@ const settingsApplet: AppletConstructor = {
   disableMultipleSession: true,
   hideOnSidebar: true,
   type: AppletType.Page
-}
+})
 
 export default settingsApplet

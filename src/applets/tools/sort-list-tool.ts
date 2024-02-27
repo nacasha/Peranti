@@ -1,4 +1,4 @@
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -10,7 +10,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const sortList: AppletConstructor<InputFields, OutputFields> = {
+const sortList = new AppletConstructorModel<InputFields, OutputFields>({
   appletId: "sort-list",
   name: "Sort List",
   category: "List",
@@ -40,6 +40,6 @@ const sortList: AppletConstructor<InputFields, OutputFields> = {
 
     return { output: sortedString }
   }
-}
+})
 
 export default sortList

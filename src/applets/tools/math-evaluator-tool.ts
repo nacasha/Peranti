@@ -1,6 +1,6 @@
 import Mexp from "math-expression-evaluator"
 
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { AppletConstructorModel } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -12,7 +12,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const mathEvaluatorTool: AppletConstructor<InputFields, OutputFields> = {
+const mathEvaluatorTool = new AppletConstructorModel<InputFields, OutputFields>({
   appletId: "math-evaluator",
   name: "Math Evaluator",
   category: "Math",
@@ -69,6 +69,6 @@ const mathEvaluatorTool: AppletConstructor<InputFields, OutputFields> = {
 
     return { output }
   }
-}
+})
 
 export default mathEvaluatorTool

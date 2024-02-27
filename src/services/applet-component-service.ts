@@ -32,7 +32,7 @@ import { fileService } from "./file-service.js"
 
 class AppletComponentService {
   /**
-   * List of input components
+   * Map of key and input components
    */
   readonly inputs = {
     Checkbox: new AppletComponent({
@@ -80,7 +80,7 @@ class AppletComponentService {
   }
 
   /**
-   * List of ouptut components
+   * Map of key and output components
    */
   readonly outputs = {
     Code: new AppletComponent({
@@ -144,6 +144,20 @@ class AppletComponentService {
     Settings: new AppletComponent({
       component: SettingsPage
     })
+  }
+
+  /**
+   * List of input component keys
+   */
+  get listOfInputs() {
+    return Object.keys(this.inputs)
+  }
+
+  /**
+   * List of output component keys
+   */
+  get listOfOutputs() {
+    return Object.keys(this.outputs)
   }
 
   /**
