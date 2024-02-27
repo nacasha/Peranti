@@ -10,19 +10,25 @@ interface AppletComponentAreaContainerProps {
 }
 
 export const AppletComponentAreaContainer: FC<AppletComponentAreaContainerProps> = ({ children }) => {
-  // const isBatchEnabled = useSelector(() => activeAppletStore.getActiveApplet().isBatchModeEnabled)
+  const isBatchEnabled = useSelector(() => activeAppletStore.getActiveApplet().isBatchModeEnabled)
   const textAreaWordWrap = useSelector(() => interfaceStore.textAreaWordWrap)
   const layoutSetting = useSelector(() => activeAppletStore.getActiveApplet().layoutSetting)
   const { areaType } = layoutSetting
 
-  // const computedLayoutDirection = isBatchEnabled ? "horizontal-batch" : ""
   const classNames: ClassValue[] = ["AppletComponentArea", areaType, textAreaWordWrap && "text-area-word-wrap"]
   const styles: CSSProperties = {}
 
-  if (areaType === "flex") {
-    classNames.push(layoutSetting.areaFlexDirection)
-  } else if (areaType === "grid") {
-    styles.gridTemplate = layoutSetting.areaGridTemplate
+  /**
+   * Layout will be flex horizontally when batch mode is enabled
+   */
+  if (isBatchEnabled) {
+    classNames.push(...["flex", "horizontal"])
+  } else {
+    if (areaType === "flex") {
+      classNames.push(layoutSetting.areaFlexDirection)
+    } else if (areaType === "grid") {
+      styles.gridTemplate = layoutSetting.areaGridTemplate
+    }
   }
 
   return (
