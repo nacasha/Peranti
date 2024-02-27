@@ -13,6 +13,7 @@ export const ThemeSelect: FC = () => {
 
   return (
     <SelectInput<Theme>
+      fieldKey=""
       options={[
         { label: "Dark", value: Theme.Dark },
         { label: "Light", value: Theme.Light }

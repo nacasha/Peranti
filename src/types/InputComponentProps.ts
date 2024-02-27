@@ -2,6 +2,10 @@
  * Base input component properties
  */
 export interface InputComponentProps<T = string> {
+  /**
+   * Key to be passed into component
+   * For now, it's used to give name for grid-area
+   */
   fieldKey: string
 
   /**

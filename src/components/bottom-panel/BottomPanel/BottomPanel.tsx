@@ -49,7 +49,7 @@ export const BottomPanel: FC = () => {
     if (contentRef.current) {
       contentRef.current.scrollTo(0, contentRef.current.scrollHeight + 200)
     }
-  }, [logs.length, contentRef.current])
+  }, [logs[0], contentRef.current])
 
   if (!isOpen) {
     return null

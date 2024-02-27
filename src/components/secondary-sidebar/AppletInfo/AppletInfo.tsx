@@ -14,8 +14,6 @@ export const AppletInfo: FC = () => {
       <div className="AppletInfo">
         <Item label="Name" content={activeApplet.name} />
         <Item label="Description" content={activeApplet.description} />
-        <Item label="Category" content={activeApplet.category} />
-        <Item label="Type" content={activeApplet.type} />
       </div>
     </SecondarySidebarSection>
   )

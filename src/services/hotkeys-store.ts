@@ -8,7 +8,9 @@ class HotkeysStore {
     TAB_CYCLE_PREV: "ctrl+shift+tab",
     RESTORE_CLOSED_TAB: "ctrl+shift+t",
     RENAME_ACTIVE_TAB: "f2",
-    BOTTOM_PANEL: "ctrl+`"
+    BOTTOM_PANEL: "ctrl+`",
+    PREVIOUS_SESSION: "alt+ArrowLeft",
+    NEXT_SESSION: "alt+ArrowRight"
   }
 
   keys = {

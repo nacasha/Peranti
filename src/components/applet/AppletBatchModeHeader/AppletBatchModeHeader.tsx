@@ -29,6 +29,7 @@ export const AppletBatchModeHeader = observer(() => {
     <div className={clsx("AppletBatchModeHeader", isBatchModeEnabled && "show")}>
       <div className="AppletBatchModeHeader-button-list">
         <SelectInput
+          fieldKey=""
           options={allowedBatchInputFields.map((input) => ({
             label: input.label,
             value: input.key
@@ -38,6 +39,7 @@ export const AppletBatchModeHeader = observer(() => {
           readOnly={isReadOnly}
         />
         <SelectInput
+          fieldKey=""
           options={allowedBatchOutputFields.map((output) => ({
             label: output.label,
             value: output.key

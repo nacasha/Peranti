@@ -13,6 +13,7 @@ export const FileDropActionSelect: FC = () => {
 
   return (
     <SelectInput<FileDropAction>
+      fieldKey=""
       options={[
         { label: "Always Ask", value: FileDropAction.AlwaysAsk },
         { label: "Open In New Editor", value: FileDropAction.OpenInNewEditor },

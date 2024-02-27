@@ -42,9 +42,9 @@ export const javascriptRunnerTool = new AppletConstructor<InputFields, OutputFie
       component: "Code"
     }
   ],
-  action: async({ inputValues, options }) => {
+  action: async({ inputValues }) => {
     let { code, ...restInputs } = inputValues
-    code = code.replace("export default", "export const initminal = ")
+    code = code.replace("export default", "export const OUTPUT = ")
 
     try {
       const InitminalRun = createInitminalRun({
@@ -61,9 +61,7 @@ export const javascriptRunnerTool = new AppletConstructor<InputFields, OutputFie
         ]
       })
 
-      const result = await InitminalRun.run(code, {}, {
-        inputValues: restInputs
-      })
+      const result = await InitminalRun.run(code, {}, restInputs, "OUTPUT")
 
       if (result.success) {
         return { output: result.value as string }

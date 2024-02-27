@@ -30,12 +30,12 @@ export const SessionTabbar: FC = () => {
 
   useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_NEXT, (event) => {
     event.preventDefault()
-    sessionStore.cycleOpenNextSessionOfActiveSession()
+    sessionStore.openNextSessionOfActiveSession()
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CYCLE_PREV, (event) => {
     event.preventDefault()
-    sessionStore.cycleOpenPreviousSessionOfActiveSession()
+    sessionStore.openPreviousSessionOfActiveSession()
   })
 
   useHotkeysModified(hotkeysStore.keys.TAB_CLOSE, (event) => {
@@ -44,14 +44,42 @@ export const SessionTabbar: FC = () => {
   })
 
   useHotkeysModified(hotkeysStore.keys.RESTORE_CLOSED_TAB, (event) => {
-    event?.preventDefault()
+    event.preventDefault()
     void sessionHistoryStore.restoreLastHistory()
   })
 
   useHotkeysModified(hotkeysStore.keys.RENAME_ACTIVE_TAB, (event) => {
-    event?.preventDefault()
+    event.preventDefault()
     sessionStore.setRenamingSessionIdOfActiveApplet()
   })
+
+  useHotkeysModified(hotkeysStore.keys.PREVIOUS_SESSION, (event) => {
+    event.preventDefault()
+    void sessionStore.openPreviousLastActiveSession()
+  })
+
+  useHotkeysModified(hotkeysStore.keys.NEXT_SESSION, (event) => {
+    event.preventDefault()
+    void sessionStore.openNextLastActiveSession()
+  })
+
+  useEffect(() => {
+    const handleMouseUp = (event: MouseEvent) => {
+      if (event.button === 3) {
+        event.preventDefault()
+        void sessionStore.openPreviousLastActiveSession()
+      } else if (event.button === 4) {
+        event.preventDefault()
+        void sessionStore.openNextLastActiveSession()
+      }
+    }
+
+    document.addEventListener("mouseup", handleMouseUp)
+
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp)
+    }
+  }, [])
 
   useEffect(() => {
     if (scrollBarRef.current) {

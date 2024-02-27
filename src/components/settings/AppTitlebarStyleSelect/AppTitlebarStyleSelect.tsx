@@ -13,6 +13,7 @@ export const AppTitleBarStyleSelect: FC = () => {
 
   return (
     <SelectInput<AppTitleBarStyle>
+      fieldKey=""
       options={[
         { label: "Commandbar", value: AppTitleBarStyle.Commandbar },
         { label: "Tabbar", value: AppTitleBarStyle.Tabbar }

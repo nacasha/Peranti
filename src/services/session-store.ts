@@ -33,19 +33,50 @@ class SessionStore {
     false
   )
 
+  /**
+   * Created session will be placed at most right tabbar
+   */
   placeNewSessionToLast = false
 
+  /**
+   * List of session
+   */
   sessions: Session[] = []
 
+  /**
+   * Map key value of session If and its applet instance
+   */
   runningApplets: Record<string, Applet | undefined> = {}
 
+  /**
+   * Map key value of applet and its created session sequences
+   */
   sessionSequences: Record<string, boolean[]> = {}
 
+  /**
+   * Map key value of applet and its all session Ids
+   */
   activeSessionIdOfApplets: Record<string, string> = {}
 
+  /**
+   * Currently active session Id
+   */
   activeSessionId: string = ""
 
+  /**
+   * Indicates session name are being renamed
+   */
   renamingSessionId: string = ""
+
+  /**
+   * List of last activated session ids
+   */
+  lastActiveSessionIds: string[] = this.activeSessionId !== "" ? [this.activeSessionId] : []
+
+  /**
+   * List of sesion id popped from list lastActiveSessionids
+   */
+  indexOflastActiveSessionIds: number = 0
 
   constructor() {
     makeAutoObservable(this)
@@ -68,21 +99,8 @@ class SessionStore {
   }
 
   async handleHydratedStore() {
-    await this.openLastActiveSession()
+    await this.openCurrentlyActiveSession()
     this.setIsInitialized(true)
-  }
-
-  async openLastActiveSession() {
-    const session = this.sessions.find((session) => session.sessionId === this.activeSessionId)
-
-    if (session) {
-      const applet = await StorageManager.getAppletFromStorage(session.sessionId)
-      if (applet) {
-        this.activateApplet(applet)
-      }
-    } else {
-      this.activateApplet(Applet.empty())
-    }
   }
 
   private setIsInitialized(value: boolean) {
@@ -99,6 +117,40 @@ class SessionStore {
         isKeepAlive: value
       }
     }
+  }
+
+  setRenamingSessionId(sessionId: string) {
+    this.renamingSessionId = sessionId
+  }
+
+  setRenamingSessionIdOfActiveApplet() {
+    const activeAppletSessionId = activeAppletStore.getActiveApplet().sessionId
+    this.renamingSessionId = activeAppletSessionId
+  }
+
+  setGroupTabsByTool(value: boolean) {
+    this.groupTabsByTool = value
+  }
+
+  toggleGroupTabsByTool() {
+    this.groupTabsByTool = !this.groupTabsByTool
+  }
+
+  async openSessionBySessionId(sessionId: string, options: { saveToLastActiveSessionIds?: false } = {}) {
+    const session = this.sessions.find((session) => session.sessionId === sessionId)
+
+    if (session) {
+      const applet = await StorageManager.getAppletFromStorage(session.sessionId)
+      if (applet) {
+        this.activateApplet(applet, options)
+      }
+    } else {
+      this.activateApplet(Applet.empty(), { saveToLastActiveSessionIds: false })
+    }
+  }
+
+  async openCurrentlyActiveSession() {
+    await this.openSessionBySessionId(this.activeSessionId)
   }
 
   /**
@@ -190,7 +242,7 @@ class SessionStore {
   /**
    * Open next session to index of active applet in running session list
    */
-  cycleOpenNextSessionOfActiveSession() {
+  openNextSessionOfActiveSession() {
     const activeIndex = this.getIndexofActiveRunningSession()
     const sessions = this.getRunningSessionOfActiveApplet()
 
@@ -208,7 +260,7 @@ class SessionStore {
   /**
    * Open previous session to index of active applet in running session list
    */
-  cycleOpenPreviousSessionOfActiveSession() {
+  openPreviousSessionOfActiveSession() {
     const activeIndex = this.getIndexofActiveRunningSession()
     const sessions = this.getRunningSessionOfActiveApplet()
 
@@ -242,11 +294,37 @@ class SessionStore {
 
       this.pushIntoSessionList(applet.toSession(), true)
       activeAppletStore.setActiveApplet(applet)
-      this.setActiveSessionId(applet.appletId, applet.sessionId)
+      this.setActiveSessionId(applet.appletId, applet.sessionId, { saveToLastActiveSessionIds: false })
     }
   }
 
-  activateApplet(applet: Applet) {
+  async openPreviousLastActiveSession() {
+    this.indexOflastActiveSessionIds++
+    if (this.indexOflastActiveSessionIds > this.lastActiveSessionIds.length - 1) {
+      this.indexOflastActiveSessionIds = this.lastActiveSessionIds.length - 1
+    }
+
+    const lastActiveSessionId = this.lastActiveSessionIds[this.indexOflastActiveSessionIds]
+
+    if (lastActiveSessionId !== this.activeSessionId) {
+      await this.openSessionBySessionId(lastActiveSessionId, { saveToLastActiveSessionIds: false })
+    }
+  }
+
+  async openNextLastActiveSession() {
+    this.indexOflastActiveSessionIds--
+    if (this.indexOflastActiveSessionIds < 0) {
+      this.indexOflastActiveSessionIds = 0
+    }
+
+    const lastActiveSessionId = this.lastActiveSessionIds[this.indexOflastActiveSessionIds]
+
+    if (lastActiveSessionId !== this.activeSessionId) {
+      await this.openSessionBySessionId(lastActiveSessionId, { saveToLastActiveSessionIds: false })
+    }
+  }
+
+  activateApplet(applet: Applet, options: { saveToLastActiveSessionIds?: boolean } = {}) {
     const activeApplet = activeAppletStore.getActiveApplet()
 
     if (activeApplet.sessionId === applet.sessionId) {
@@ -256,7 +334,7 @@ class SessionStore {
     void this.deactivateApplet(activeApplet)
 
     activeAppletStore.setActiveApplet(applet)
-    this.setActiveSessionId(applet.appletId, applet.sessionId)
+    this.setActiveSessionId(applet.appletId, applet.sessionId, options)
   }
 
   private async deactivateApplet(applet: Applet) {
@@ -314,7 +392,7 @@ class SessionStore {
        */
       if (newSessions.length === 0) {
         this.resetSessionSequence(session.appletId)
-        this.activateApplet(Applet.empty())
+        this.activateApplet(Applet.empty(), { saveToLastActiveSessionIds: false })
 
       /**
        * Open another running session
@@ -397,7 +475,7 @@ class SessionStore {
     /**
      * Activate empty applet
      */
-    this.activateApplet(Applet.empty())
+    this.activateApplet(Applet.empty(), { saveToLastActiveSessionIds: false })
   }
 
   async closeOtherSession(keepOpenSession: Session) {
@@ -500,7 +578,27 @@ class SessionStore {
     })
   }
 
-  setActiveSessionId(appletId: string, sessionId: string) {
+  setActiveSessionId(appletId: string, sessionId: string, options: { saveToLastActiveSessionIds?: boolean } = {}) {
+    const { saveToLastActiveSessionIds = true } = options
+    if (saveToLastActiveSessionIds && sessionId.trim() !== "") {
+      /**
+       * Reset index of last active session id because opening new session
+       */
+      if (this.indexOflastActiveSessionIds > 0) {
+        this.lastActiveSessionIds = this.lastActiveSessionIds.slice(this.indexOflastActiveSessionIds)
+      }
+
+      this.lastActiveSessionIds.unshift(sessionId)
+      this.indexOflastActiveSessionIds = 0
+
+      /**
+       * Remove history of lastActiveSessionIds that exceed 100 items
+       */
+      if (this.lastActiveSessionIds.length > 100) {
+        this.lastActiveSessionIds = this.lastActiveSessionIds.slice(0, 100)
+      }
+    }
+
     this.activeSessionIdOfApplets[appletId] = sessionId
     this.activeSessionId = sessionId
   }
@@ -520,7 +618,7 @@ class SessionStore {
 
     if (toBeDeleted) {
       if (toBeDeleted.isDeleted) {
-        void this.openLastActiveSession()
+        void this.openCurrentlyActiveSession()
         return
       }
 
@@ -534,6 +632,15 @@ class SessionStore {
         setTimeout(() => {
           void StorageManager.removeAppletStateFromStorage(toBeDeleted!.sessionId)
         }, 500)
+      }
+
+      /**
+       * Remove entry from last active session ids
+       */
+      if (this.lastActiveSessionIds.includes(toBeDeleted.sessionId)) {
+        this.lastActiveSessionIds = this.lastActiveSessionIds.filter((sessionId) => (
+          sessionId !== toBeDeleted?.sessionId
+        ))
       }
     }
   }
@@ -622,23 +729,6 @@ class SessionStore {
   updateSession(updatedSession: Session) {
     const sessionIndex = this.sessions.findIndex((session) => session.sessionId === updatedSession.sessionId)
     this.sessions[sessionIndex] = updatedSession
-  }
-
-  setGroupTabsByTool(value: boolean) {
-    this.groupTabsByTool = value
-  }
-
-  toggleGroupTabsByTool() {
-    this.groupTabsByTool = !this.groupTabsByTool
-  }
-
-  setRenamingSessionId(sessionId: string) {
-    this.renamingSessionId = sessionId
-  }
-
-  setRenamingSessionIdOfActiveApplet() {
-    const activeAppletSessionId = activeAppletStore.getActiveApplet().sessionId
-    this.renamingSessionId = activeAppletSessionId
   }
 }
 

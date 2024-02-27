@@ -78,7 +78,7 @@ class SessionHistoryStore {
     void StorageManager.removeAppletStateFromStorage(sessionId)
 
     if (activeAppletStore.getActiveApplet().sessionId === sessionId) {
-      void sessionStore.openLastActiveSession()
+      void sessionStore.openCurrentlyActiveSession()
     }
   }
 

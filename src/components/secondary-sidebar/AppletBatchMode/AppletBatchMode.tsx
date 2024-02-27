@@ -39,6 +39,7 @@ export const AppletBatchMode = observer(() => {
         label="Enable Batch Mode"
       />
       <SelectInput
+        fieldKey=""
         label="Input"
         options={allowedBatchInputFields.map((input) => ({
           label: input.label,
@@ -49,6 +50,7 @@ export const AppletBatchMode = observer(() => {
         readOnly={isDeleted}
       />
       <SelectInput
+        fieldKey=""
         label="Output"
         options={allowedBatchOutputFields.map((output) => ({
           label: output.label,
