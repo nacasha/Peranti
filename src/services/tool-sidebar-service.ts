@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx"
 
 import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { type AppletConstructor } from "src/models/AppletConstructor.js"
 
 import { appletStore } from "./applet-store.js"
 import { userSettingsService } from "./user-settings-service.js"

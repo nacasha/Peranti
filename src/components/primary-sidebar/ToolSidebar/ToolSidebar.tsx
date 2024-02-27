@@ -5,11 +5,11 @@ import { Icons } from "src/constants/icons"
 import { AppletType } from "src/enums/applet-type"
 import { SidebarMode } from "src/enums/sidebar-mode"
 import { useSelector } from "src/hooks/useSelector"
+import { type AppletConstructor } from "src/models/AppletConstructor"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
 import { toolSidebarService } from "src/services/tool-sidebar-service"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 
 import { ToolSidebarItem } from "../ToolSidebarItem"
 
@@ -41,14 +41,19 @@ export const ToolSidebar: FC = () => {
   )
 }
 
-const ToolSidebarInnerItem: FC<{ appletConstructor: AppletConstructor, children: ReactNode }> = ({ appletConstructor }) => {
+interface ToolSidebarInnerItemProps {
+  appletConstructor: AppletConstructor
+  children: ReactNode
+}
+
+const ToolSidebarInnerItem: FC<ToolSidebarInnerItemProps> = ({ appletConstructor }) => {
   const isActive = useSelector(() => (
     activeAppletStore.getActiveApplet().appletId === appletConstructor.appletId &&
     !activeAppletStore.getActiveApplet().isDeleted
   ))
 
-  const onClickSidebarItem = (tool: AppletConstructor) => () => {
-    sessionStore.findOrCreateSession(tool)
+  const onClickSidebarItem = (appletConstructor: AppletConstructor) => () => {
+    sessionStore.findOrCreateSession(appletConstructor)
     if (interfaceStore.sidebarMode === SidebarMode.FloatUnpinned) {
       interfaceStore.hideSidebar()
     }

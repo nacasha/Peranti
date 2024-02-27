@@ -6,17 +6,19 @@ import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import "./FileOutput.scss"
 
-interface FileOutputProps extends OutputComponentProps<string[]> {}
+interface FileOutputProps extends OutputComponentProps<string> {}
 
 export const FileOutput: FC<FileOutputProps> = (props) => {
-  const { label, value = [], fieldKey } = props
+  const { label, value = "", fieldKey } = props
   const [initialized, setInitialized] = useState(() => false)
 
-  let documents: Array<{ uri: string }>
+  const documents: Array<{ uri: string }> = []
   try {
-    documents = value.map((output) => ({ uri: output }))
+    if (value && value.trim().length > 0) {
+      documents.push({ uri: value })
+    }
   } catch (exception) {
-    documents = []
+    console.log(exception)
   }
 
   useEffect(() => {

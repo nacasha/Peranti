@@ -1,6 +1,6 @@
 import jsonata from "jsonata"
 
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -18,7 +18,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-export const jsonataTool = new AppletConstructorModel<InputFields, OutputFields>({
+export const jsonataTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "jsonata",
   name: "JSONata",
   description: "JSON query and transformation language",

@@ -1,5 +1,5 @@
 import { AppletType } from "src/enums/applet-type"
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { type AppletConstructor } from "src/models/AppletConstructor"
 import { type Preset } from "src/types/Preset"
 
 export function mergeAppletConstructorWithPreset(appletConstructor: AppletConstructor, preset: Preset) {

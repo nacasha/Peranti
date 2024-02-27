@@ -1,6 +1,6 @@
 import cronstrue from "cronstrue"
 
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -12,7 +12,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const cronReadableTool = new AppletConstructorModel<InputFields, OutputFields>({
+const cronReadableTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "cron-parser",
   name: "CRON Parser",
   category: "Date Time",

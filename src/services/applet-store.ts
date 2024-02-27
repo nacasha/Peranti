@@ -32,7 +32,7 @@ import textEditorTool from "src/applets/tools/text-editor-tool.ts"
 import textEscapeUnescapeTool from "src/applets/tools/text-escape-unescape-tool/text-escape-unescape-tool.ts"
 import textTransformTool from "src/applets/tools/text-transform-tool.ts"
 import uriEncodeDecodeTool from "src/applets/tools/uri-encode-decode-tool.ts"
-import { type AppletConstructor } from "src/types/AppletConstructor.ts"
+import { type AppletConstructor } from "src/models/AppletConstructor.ts"
 import { type Preset } from "src/types/Preset.ts"
 import { mergeAppletConstructorWithPreset } from "src/utils/merge-applet-constructor-with-preset.ts"
 

@@ -1,7 +1,7 @@
 import { AppletType } from "src/enums/applet-type"
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 
-const settingsApplet = new AppletConstructorModel({
+const settingsApplet = new AppletConstructor({
   appletId: "settings-page",
   name: "Settings",
   category: "App",

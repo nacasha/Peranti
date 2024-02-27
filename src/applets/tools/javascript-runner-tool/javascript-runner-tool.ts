@@ -1,6 +1,6 @@
 import { createInitminalRun, defaultSafeObjects } from "@initminal/run"
 
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -13,7 +13,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-export const javascriptRunnerTool = new AppletConstructorModel<InputFields, OutputFields>({
+export const javascriptRunnerTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "javascript-runner",
   name: "Javascript Runner",
   description: "Safely execute untrusted code with ESM syntax support, dynamic injection of ESM modules from URL or plain JS code, and granular access control based on whitelisting for each JS object.",

@@ -6,7 +6,7 @@ import { type AppletOutput } from "src/types/AppletOutput"
 import { type AppletSample } from "src/types/AppletSample"
 import { type LayoutSetting } from "src/types/LayoutSetting"
 
-export class AppletConstructorModel<
+export class AppletConstructor<
   InputFields extends Record<string, any> = any,
   OutputFields extends Record<string, any> = any,
   OptionKeys extends Record<string, any> = any,
@@ -28,7 +28,7 @@ export class AppletConstructorModel<
   hasOverriddenDefaultState?: boolean
   options?: Array<AppletOption<OptionKeys>>
 
-  constructor(data: AppletConstructorModel<InputFields, OutputFields, OptionKeys>) {
+  constructor(data: AppletConstructor<InputFields, OutputFields, OptionKeys>) {
     this.appletId = data.appletId
     this.name = data.name
     this.category = data.category

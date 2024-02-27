@@ -3,7 +3,7 @@ import toast from "react-hot-toast"
 
 import { FileNames } from "src/constants/file-names"
 import { AppletType } from "src/enums/applet-type"
-import { type AppletConstructor } from "src/types/AppletConstructor"
+import { type AppletConstructor } from "src/models/AppletConstructor.js"
 import { type ExtensionTool } from "src/types/ExtensionTool"
 
 import { appDataService } from "./app-data-service.js"

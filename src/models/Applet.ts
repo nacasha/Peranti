@@ -13,7 +13,6 @@ import { rustInvokerService } from "src/services/rust-invoker-service"
 import { sessionStore } from "src/services/session-store"
 import { StorageManager } from "src/services/storage-manager"
 import { type AppletActionParams } from "src/types/AppletAction"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOption } from "src/types/AppletOption"
 import { type AppletOutput } from "src/types/AppletOutput"
@@ -24,6 +23,8 @@ import { type LayoutSetting } from "src/types/LayoutSetting"
 import { type Session } from "src/types/Session"
 import { type SessionHistory } from "src/types/SessionHistory"
 import { generateRandomString } from "src/utils/generate-random-string"
+
+import { type AppletConstructor } from "./AppletConstructor.js"
 
 /**
  * Applet, a small program that performs a specific task.

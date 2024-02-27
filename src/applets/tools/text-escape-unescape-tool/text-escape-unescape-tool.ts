@@ -1,6 +1,6 @@
 import unescapejs from "unescape-js"
 
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -13,7 +13,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const textEscapeUnescapeTool = new AppletConstructorModel<InputFields, OutputFields>({
+const textEscapeUnescapeTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "text-escape-unescape-tool",
   name: "Text Escape / Unescape",
   category: "Text",

@@ -2,9 +2,9 @@ import { clsx } from "clsx"
 import { type FC } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
+import { type AppletConstructor } from "src/models/AppletConstructor"
 import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
-import { type AppletConstructor } from "src/types/AppletConstructor"
 
 import { activitybarItemClasses } from "./ActivityBarItem.css"
 

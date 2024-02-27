@@ -1,4 +1,4 @@
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -12,7 +12,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const prefixSuffixLines = new AppletConstructorModel<InputFields, OutputFields>({
+const prefixSuffixLines = new AppletConstructor<InputFields, OutputFields>({
   appletId: "prefix-suffix-lines",
   name: "Prefix Suffix Lines",
   category: "List",

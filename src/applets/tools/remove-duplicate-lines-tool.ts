@@ -1,4 +1,4 @@
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -10,7 +10,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const removeDuplicateList = new AppletConstructorModel<InputFields, OutputFields>({
+const removeDuplicateList = new AppletConstructor<InputFields, OutputFields>({
   appletId: "remove-duplicate-list",
   name: "Remove Duplicate List",
   category: "List",

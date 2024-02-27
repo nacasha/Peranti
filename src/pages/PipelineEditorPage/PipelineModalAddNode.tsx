@@ -4,11 +4,11 @@ import { type MouseEventHandler } from "react"
 import { Button } from "src/components/common/Button"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons.js"
-import { type AppletConstructorModel } from "src/models/AppletConstructor"
+import { type AppletConstructor } from "src/models/AppletConstructor"
 import { toolSidebarService } from "src/services/tool-sidebar-service"
 
 interface PipelineModalInputOutputProps {
-  onSelectTool: (appletConstructor: AppletConstructorModel) => void
+  onSelectTool: (appletConstructor: AppletConstructor) => void
 }
 
 export const PipelineModalAddNode = NiceModal.create((props: PipelineModalInputOutputProps) => {
@@ -21,7 +21,7 @@ export const PipelineModalAddNode = NiceModal.create((props: PipelineModalInputO
     modal.remove()
   }
 
-  const handleClickItem = (tool: AppletConstructorModel) => {
+  const handleClickItem = (tool: AppletConstructor) => {
     onSelectTool(tool)
     modal.remove()
   }

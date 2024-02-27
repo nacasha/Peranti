@@ -1,4 +1,4 @@
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { httpClient } from "src/services/http-client"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
@@ -21,7 +21,7 @@ async function getFavicon(url: any) {
   return response
 }
 
-const faviconGrabberTool = new AppletConstructorModel<InputFields, OutputFields>({
+const faviconGrabberTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "favicon-grabber-tool",
   name: "Favicon Grabber",
   category: "Image",

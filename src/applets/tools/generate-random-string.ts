@@ -1,4 +1,4 @@
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { generateRandomString } from "src/utils/generate-random-string"
@@ -17,7 +17,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const generateRandomStringTool = new AppletConstructorModel<InputFields, OutputFields>({
+const generateRandomStringTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "generate-random-string",
   name: "Generate Random String",
   category: "Generator",

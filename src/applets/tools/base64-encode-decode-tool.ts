@@ -1,4 +1,4 @@
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -11,7 +11,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const base64EncodeDecodeTool = new AppletConstructorModel<InputFields, OutputFields>({
+const base64EncodeDecodeTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "base64-encode-decode",
   name: "Base64 Encode Decode",
   category: "Encode / Decode",

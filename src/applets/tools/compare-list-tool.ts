@@ -1,4 +1,4 @@
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -13,7 +13,7 @@ interface OutputFields {
   onlyExistInputB: OutputFieldsType.Code
 }
 
-const compareListTool = new AppletConstructorModel<InputFields, OutputFields>({
+const compareListTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "compare-lines",
   name: "Compare List",
   category: "List",

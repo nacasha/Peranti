@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx"
 import { type Edge, type Node, type OnConnect, type OnEdgesChange, type OnNodesChange, addEdge, applyEdgeChanges, applyNodeChanges } from "reactflow"
 
-import { type AppletConstructorModel } from "src/models/AppletConstructor"
+import { type AppletConstructor } from "src/models/AppletConstructor"
 import { generateRandomString, stringEntries } from "src/utils/generate-random-string"
 
 export class PipelineEditorStore {
@@ -74,7 +74,7 @@ export class PipelineEditorStore {
   addInputOrOutput = (type: "input" | "output", position: { x: number, y: number }) => {
     const nodeType = type === "input" ? "appletInput" : "appletOutput"
     const label = type === "input" ? "Input" : "Output"
-    const inputId = "input-".concat(generateRandomString(10, stringEntries.smallAz))
+    const inputId = type + "-".concat(generateRandomString(10, stringEntries.smallAz))
 
     const numberOfNodesCreated = this.nodes.filter((node) => node.type === nodeType).length
 
@@ -88,7 +88,7 @@ export class PipelineEditorStore {
     this.setNodes([...this.nodes, newNode])
   }
 
-  addTool = (tool: AppletConstructorModel, position: { x: number, y: number }) => {
+  addTool = (tool: AppletConstructor, position: { x: number, y: number }) => {
     const newNode: Node = {
       id: tool.appletId.concat("-" + generateRandomString(10, stringEntries.smallAz)),
       type: "applet",

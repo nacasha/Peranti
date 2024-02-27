@@ -1,4 +1,4 @@
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -16,7 +16,7 @@ interface Options {
   indentSize: InputFieldsType.Select
 }
 
-const jsonFormatter = new AppletConstructorModel<InputFields, OutputFields, Options>({
+const jsonFormatter = new AppletConstructor<InputFields, OutputFields, Options>({
   appletId: "json-formatter",
   name: "JSON Formatter",
   description: "JSON Format/Minify/Pretty/Beautify",

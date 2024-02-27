@@ -1,4 +1,4 @@
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -10,7 +10,7 @@ interface OutputFields {
   output: OutputFieldsType.React
 }
 
-export const reactRunnerTool = new AppletConstructorModel<InputFields, OutputFields>({
+export const reactRunnerTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "react-runner",
   name: "React Runner",
   description: "Run your React code on the go",

@@ -1,7 +1,7 @@
 import hash from "hash.js"
 import hashMd5 from "md5"
 
-import { AppletConstructorModel } from "src/models/AppletConstructor"
+import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { generateRandomString, stringEntries } from "src/utils/generate-random-string"
@@ -17,7 +17,7 @@ interface OutputFields {
   sha512: OutputFieldsType.Text
 }
 
-const hashTool = new AppletConstructorModel<InputFields, OutputFields>({
+const hashTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "hash",
   name: "Generate Hash",
   description: "Encrypt text or file to MD5 / SHA1 / SHA256 / SHA512",
