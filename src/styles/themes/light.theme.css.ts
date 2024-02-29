@@ -57,5 +57,13 @@ export const lightThemeClass = createTheme(themeableTokens, {
    */
   tooltipTextColor: "var(--text-color)",
   tooltipBackgroundColor: "#ffffff",
-  tooltipBorderColor: "#cbcccd"
+  tooltipBorderColor: "#cbcccd",
+
+  /**
+   * Dialog
+   */
+  dialogHeaderBackgroundColor: "var(--dialog-content-background-color)",
+  dialogContentBackgroundColor: "#ffffff",
+  dialogFooterBackgroundColor: "var(--dialog-content-background-color)",
+  dialogOverlayColor: "rgba(0, 0, 0, 0.8)"
 })

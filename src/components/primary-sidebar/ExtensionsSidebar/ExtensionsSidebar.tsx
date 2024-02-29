@@ -18,11 +18,19 @@ export const ExtensionsSidebar = () => {
 
   return (
     <div className="ExtensionsSidebar">
-      <div className="PrimarySidebar-title" style={{ display: "flex", justifyContent: "space-between" }}>
+      <div className="PrimarySidebar-title">
         <div>Extensions</div>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 3 }}>
-          <ButtonIcon icon={Icons.Folder} onClick={() => { void handleClickRefresh() }} />
-          <ButtonIcon icon={Icons.Refresh} onClick={() => { void handleClickRefresh() }} />
+          <ButtonIcon
+            icon={Icons.Folder}
+            tooltip="Open Extensions Folder"
+            onClick={() => { void handleClickRefresh() }}
+          />
+          <ButtonIcon
+            icon={Icons.Refresh}
+            tooltip="Refresh Extensions"
+            onClick={() => { void handleClickRefresh() }}
+          />
         </div>
       </div>
 

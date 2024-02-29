@@ -6,7 +6,7 @@ import { buttonIconClasses } from "./ButtonIcon.css"
 
 interface ButtonIconProps extends DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   icon: string
-  tooltip?: string
+  tooltip: string
 }
 
 export const ButtonIcon: FC<ButtonIconProps> = (props) => {

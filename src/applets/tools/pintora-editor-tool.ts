@@ -18,7 +18,7 @@ const pintoraEditorTool = new AppletConstructor<InputFields, OutputFields>({
   inputFields: [
     {
       key: "syntax",
-      label: "Mermaid Syntax",
+      label: "Pintora Syntax",
       component: "Code",
       defaultValue: ""
     }

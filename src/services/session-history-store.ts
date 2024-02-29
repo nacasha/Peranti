@@ -1,7 +1,9 @@
+import NiceModal from "@ebay/nice-modal-react"
 import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
+import { ConfirmDialog } from "src/components/dialog/ConfirmDialog/ConfirmDialog.tsx"
 import { StorageKeys } from "src/constants/storage-keys.ts"
 import { type Applet } from "src/models/Applet.ts"
 import { StorageManager } from "src/services/storage-manager.ts"
@@ -98,6 +100,20 @@ class SessionHistoryStore {
     this.histories = this.histories.filter(
       (history) => history.sessionId !== sessionId
     )
+  }
+
+  clearAllHistory() {
+    this.histories = []
+  }
+
+  clearAllHistoryWithConfirm() {
+    void NiceModal.show(ConfirmDialog, {
+      title: "Clear Closed Editor",
+      description: "Your closed editors history will be cleared",
+      onConfirm: () => {
+        this.clearAllHistory()
+      }
+    })
   }
 }
 

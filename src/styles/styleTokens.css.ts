@@ -202,7 +202,15 @@ const _themeableTokens = {
    */
   tooltipTextColor: "tooltip-text-color",
   tooltipBackgroundColor: "tooltip-background-color",
-  tooltipBorderColor: "tooltip-border-color"
+  tooltipBorderColor: "tooltip-border-color",
+
+  /**
+   * Dialog
+   */
+  dialogHeaderBackgroundColor: "dialog-header-background-color",
+  dialogContentBackgroundColor: "dialog-content-background-color",
+  dialogFooterBackgroundColor: "dialog-footer-background-color",
+  dialogOverlayColor: "dialog-overlay-background-color"
 }
 
 export const themeableTokens = createGlobalThemeContract(_themeableTokens)

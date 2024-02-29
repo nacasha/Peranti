@@ -33,4 +33,6 @@
   background-color: var(--primary-sidebar-background-color);
   top: 0;
   z-index: 1;
+  display: flex;
+  justify-content: space-between;
 }
