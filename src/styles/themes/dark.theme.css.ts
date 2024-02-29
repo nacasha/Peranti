@@ -62,5 +62,13 @@ export const darkThemeClass = createTheme(themeableTokens, {
    */
   tooltipTextColor: "var(--text-color)",
   tooltipBackgroundColor: "#1e1f22",
-  tooltipBorderColor: "#454545"
+  tooltipBorderColor: "#454545",
+
+  /**
+   * Dialog
+   */
+  dialogHeaderBackgroundColor: "var(--dialog-content-background-color)",
+  dialogContentBackgroundColor: "#1a1b1d",
+  dialogFooterBackgroundColor: "var(--dialog-content-background-color)",
+  dialogOverlayColor: "rgba(0, 0, 0, 0.8)"
 })

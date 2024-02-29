@@ -1,7 +1,9 @@
+import NiceModal from "@ebay/nice-modal-react"
 import localforage from "localforage"
 import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
+import { ConfirmDialog } from "src/components/dialog/ConfirmDialog"
 import { AppTitleBarStyleSelect } from "src/components/settings/AppTitlebarStyleSelect"
 import { FileDropActionSelect } from "src/components/settings/FileDropActionSelect"
 import { FileDropFillTabbarName } from "src/components/settings/FileDropFillTabbarName"
@@ -18,10 +20,16 @@ import "./SettingsPage.scss"
 
 export const SettingsPage: FC = () => {
   const handleClickResetAppData = () => {
-    localStorage.clear()
+    void NiceModal.show(ConfirmDialog, {
+      title: "Reset App Data",
+      description: "This action will clear data related to application state, your settings will not be touched",
+      onConfirm: () => {
+        localStorage.clear()
 
-    void localforage.clear().then(() => {
-      window.document.location.reload()
+        void localforage.clear().then(() => {
+          window.document.location.reload()
+        })
+      }
     })
   }
 
@@ -100,31 +108,19 @@ export const SettingsPage: FC = () => {
       </SettingsCard>
 
       <SettingsCard title="Application Data">
-        <SettingsCardItem label="App Data Folder">
+        <SettingsCardItem label="User Settings File">
           <Button onClick={handleOpenAppDataFolder}>Open Folder</Button>
         </SettingsCardItem>
 
         <SettingsCardItem
           label="App Data"
-          description="Data related to opened sessions, closed editors, and application state"
+          description="Date related opened sessions, closed editors, and application state"
         >
           <div
             className="SettingsPage-item-value"
             onClick={handleClickResetAppData}
           >
             <Button>Reset App Data</Button>
-          </div>
-        </SettingsCardItem>
-
-        <SettingsCardItem
-          label="User Settings"
-          description="Data related to user customization for application"
-        >
-          <div
-            className="SettingsPage-item-value"
-            onClick={handleClickResetAppData}
-          >
-            <Button>Reset User Settings</Button>
           </div>
         </SettingsCardItem>
       </SettingsCard>

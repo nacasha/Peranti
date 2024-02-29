@@ -1,0 +1,68 @@
+
+.DialogRoot {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size);
+  padding: 30px;
+  opacity: 0;
+  transition: all 0.1s;
+
+  &.show {
+    opacity: 1;
+  }
+
+  .DialogOverlay {
+    background-color: var(--dialog-overlay-background-color);
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .Dialog {
+    z-index: 1;
+    margin: auto;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    background-color: var(--dialog-content-background-color);
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    transform: translateY(10px);
+    transition: all 0.1s ease-out;
+
+    &.show {
+      transform: translateY(0);
+    }
+  }
+
+  .Dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--dialog-header-background-color);
+  }
+
+  .Dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    max-height: 75vh;
+    overflow: auto;
+    background-color: var(--dialog-content-background-color);
+  }
+
+  .Dialog-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 15px;
+    padding: 15px;
+    background-color: var(--dialog-footer-background-color);
+  }
+}
