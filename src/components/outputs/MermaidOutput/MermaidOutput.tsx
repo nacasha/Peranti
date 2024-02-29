@@ -3,7 +3,7 @@ import { type FC, useEffect, useState, useRef } from "react"
 
 import { ComponentLabel } from "src/components/common/ComponentLabel"
 import { ZoomableContent } from "src/components/common/ZoomableContent"
-import { Theme } from "src/enums/theme"
+import { Theme } from "src/enums/theme-2"
 import { interfaceStore } from "src/services/interface-store"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 

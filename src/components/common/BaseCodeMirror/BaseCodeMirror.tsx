@@ -7,7 +7,7 @@ import CodeMirror, { EditorView, type ReactCodeMirrorRef, type ReactCodeMirrorPr
 import fastDeepEqual from "fast-deep-equal"
 import { useRef, type FC, useEffect, useState, memo } from "react"
 
-import { Theme } from "src/enums/theme"
+import { Theme } from "src/enums/theme-2"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
 

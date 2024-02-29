@@ -5,7 +5,7 @@ import { makePersistable } from "mobx-persist-store"
 import { StorageKeys } from "src/constants/storage-keys"
 import { AppTitleBarStyle as AppTitlebarStyle } from "src/enums/app-titlebar-style"
 import { SidebarMode } from "src/enums/sidebar-mode"
-import { Theme } from "src/enums/theme"
+import { Theme } from "src/enums/theme-2.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { getWindowSize } from "src/utils/get-window-size"
 
