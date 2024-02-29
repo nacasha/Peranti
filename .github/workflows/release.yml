@@ -21,7 +21,10 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
+
+      - name: prepare pnpm using corepack
+        run: corepack prepare pnpm@8.10.5 --activate
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
