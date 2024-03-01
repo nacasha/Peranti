@@ -1,19 +1,32 @@
-import { appWindow } from "@tauri-apps/api/window"
+import { type EventCallback } from "@tauri-apps/api/event"
+import { getCurrent, type FileDropEvent } from "@tauri-apps/api/webviewWindow"
 
-export class windowManager {
-  static async minimize() {
-    await appWindow.minimize()
-  }
+export const windowManager = {
+  async minimize() {
+    await getCurrent().minimize()
+  },
 
-  static async toggleMaximize() {
-    await appWindow.toggleMaximize()
-  }
+  async toggleMaximize() {
+    await getCurrent().toggleMaximize()
+  },
 
-  static async close() {
-    await appWindow.close()
-  }
+  async close() {
+    await getCurrent().close()
+  },
 
-  static async setFocus() {
-    await appWindow.setFocus()
+  async setFocus() {
+    await getCurrent().setFocus()
+  },
+
+  async startDragging() {
+    await getCurrent().startDragging()
+  },
+
+  async onFileDropEvent(handler: EventCallback<FileDropEvent>) {
+    return await getCurrent().onFileDropEvent(handler)
+  },
+
+  async isMaximized() {
+    return await getCurrent().isMaximized()
   }
 }

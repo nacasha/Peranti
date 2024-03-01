@@ -1,6 +1,6 @@
-import { save } from "@tauri-apps/api/dialog"
-import { BaseDirectory, readBinaryFile, readTextFile, writeBinaryFile } from "@tauri-apps/api/fs"
 import { resolve } from "@tauri-apps/api/path"
+import { save } from "@tauri-apps/plugin-dialog"
+import { BaseDirectory, readFile, readTextFile, writeFile } from "@tauri-apps/plugin-fs"
 import * as base64 from "js-base64"
 
 import { removeBase64Header } from "src/utils/base-64"
@@ -9,11 +9,11 @@ import { rustInvokerService } from "./rust-invoker-service.js"
 
 class FileService {
   async readFileAsText(filePath: string, appData?: boolean) {
-    return await readTextFile(filePath, appData ? { dir: BaseDirectory.AppData } : undefined)
+    return await readTextFile(filePath, appData ? { baseDir: BaseDirectory.AppData } : undefined)
   }
 
   async readFileAsBinary(filePath: string, appData?: boolean) {
-    return await readBinaryFile(filePath, appData ? { dir: BaseDirectory.AppData } : undefined)
+    return await readFile(filePath, appData ? { baseDir: BaseDirectory.AppData } : undefined)
   }
 
   async resolveFilePath(...paths: string[]) {
@@ -29,7 +29,7 @@ class FileService {
     })
 
     if (filePath) {
-      await writeBinaryFile(filePath, base64.toUint8Array(removeBase64Header(base64String)))
+      await writeFile(filePath, base64.toUint8Array(removeBase64Header(base64String)))
       await this.openPathInFileManager(filePath)
     }
   }
@@ -48,7 +48,7 @@ class FileService {
     })
 
     if (filePath) {
-      await writeBinaryFile(filePath, stringToUint8Array(textString))
+      await writeFile(filePath, stringToUint8Array(textString))
       await this.openPathInFileManager(filePath)
     }
   }

@@ -1,5 +1,5 @@
-import { BaseDirectory, createDir, exists, readDir, writeTextFile } from "@tauri-apps/api/fs"
 import { appDataDir } from "@tauri-apps/api/path"
+import { BaseDirectory, mkdir, exists, readDir, writeTextFile } from "@tauri-apps/plugin-fs"
 
 import { FileNames } from "src/constants/file-names.js"
 import { Folders } from "src/constants/folders"
@@ -13,7 +13,7 @@ class AppDataService {
 
     try {
       if (!(await exists(baseFolder))) {
-        await createDir(baseFolder)
+        await mkdir(baseFolder)
       }
     } catch (err: any) {
       console.log(err)
@@ -24,8 +24,8 @@ class AppDataService {
     await this.prepareAppDirectory()
 
     try {
-      if (!(await exists(Folders.Extensions, { dir: BaseDirectory.AppData }))) {
-        await createDir(Folders.Extensions, { dir: BaseDirectory.AppData })
+      if (!(await exists(Folders.Extensions, { baseDir: BaseDirectory.AppData }))) {
+        await mkdir(Folders.Extensions, { baseDir: BaseDirectory.AppData })
       }
     } catch (err: any) {
       console.log(err)
@@ -34,8 +34,8 @@ class AppDataService {
 
   async prepareSettingsJSONFile() {
     try {
-      if (!(await exists(FileNames.UserSettings, { dir: BaseDirectory.AppData }))) {
-        await writeTextFile(FileNames.UserSettings, "{}", { dir: BaseDirectory.AppData })
+      if (!(await exists(FileNames.UserSettings, { baseDir: BaseDirectory.AppData }))) {
+        await writeTextFile(FileNames.UserSettings, "{}", { baseDir: BaseDirectory.AppData })
       }
     } catch (err: any) {
       console.log(err)
@@ -46,8 +46,7 @@ class AppDataService {
     await this.prepareExtensionsFolder()
 
     const entries = await readDir(Folders.Extensions, {
-      dir: BaseDirectory.AppData,
-      recursive: true
+      baseDir: BaseDirectory.AppData
     })
 
     return entries
@@ -68,7 +67,7 @@ class AppDataService {
     await this.prepareSettingsJSONFile()
 
     try {
-      await writeTextFile(FileNames.UserSettings, JSON.stringify(settings, undefined, 2), { dir: BaseDirectory.AppData })
+      await writeTextFile(FileNames.UserSettings, JSON.stringify(settings, undefined, 2), { baseDir: BaseDirectory.AppData })
     } catch (exception) {
       console.log("Failed to write ".concat(FileNames.UserSettings))
     }

@@ -30,7 +30,11 @@
     "@nodl/core": "^1.0.9",
     "@nodl/react": "^1.0.4",
     "@pintora/standalone": "^0.6.5",
-    "@tauri-apps/api": "^1.5.3",
+    "@tauri-apps/api": "2.0.0-beta.1",
+    "@tauri-apps/plugin-clipboard-manager": "2.0.0-beta.1",
+    "@tauri-apps/plugin-dialog": "2.0.0-beta.1",
+    "@tauri-apps/plugin-fs": "2.0.0-beta.1",
+    "@tauri-apps/plugin-shell": "2.0.0-beta.1",
     "@types/compose-function": "^0.0.33",
     "@types/md5": "^2.3.5",
     "@types/uuid": "^9.0.8",
@@ -92,7 +96,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.5.10",
+    "@tauri-apps/cli": "2.0.0-beta.6",
     "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^6.21.0",

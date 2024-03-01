@@ -1,82 +1,30 @@
 {
+  "productName": "Peranti",
+  "version": "0.0.1",
+  "identifier": "Peranti",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist"
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "productName": "Peranti",
-    "version": "0.0.1"
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "resources": [
+      "extensions-runner/runner.cjs",
+      "extensions-runner/node_modules/*"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
   },
-  "tauri": {
-    "allowlist": {
-      "http": {
-        "all": true,
-        "request": true,
-        "scope": ["https://**", "http://**"]
-      },
-      "all": false,
-      "dialog": {
-        "all": true,
-        "ask": true,
-        "confirm": true,
-        "message": true,
-        "open": true,
-        "save": true
-      },
-      "shell": {
-        "all": false,
-        "execute": true,
-        "open": true,
-        "sidecar": true,
-        "scope": [
-          {
-            "name": "run-extension",
-            "cmd": "node",
-            "args": ["extensions-runner/runner.cjs", { "validator": "\\S+" }]
-          }
-        ]
-      },
-      "window": {
-        "all": false,
-        "close": true,
-        "hide": true,
-        "show": true,
-        "maximize": true,
-        "minimize": true,
-        "unmaximize": true,
-        "unminimize": true,
-        "startDragging": true,
-        "setFocus": true
-      },
-      "fs": {
-        "all": true,
-        "scope": ["$APPDATA", "$APPDATA/**"]
-      },
-      "path": {
-        "all": true
-      }
-    },
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "Peranti",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "resources": [
-        "extensions-runner/runner.cjs",
-        "extensions-runner/node_modules/*"
-      ]
-    },
-    "security": {
-      "csp": null
-    },
+  "plugins": {},
+  "app": {
     "windows": [
       {
         "fullscreen": false,
@@ -89,6 +37,9 @@
         "decorations": false,
         "fileDropEnabled": true
       }
-    ]
+    ],
+    "security": {
+      "csp": null
+    }
   }
 }

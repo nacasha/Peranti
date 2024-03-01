@@ -23,6 +23,7 @@ export const SettingsPage: FC = () => {
     void NiceModal.show(ConfirmDialog, {
       title: "Reset App Data",
       description: "This action will clear data related to application state, your settings will not be touched",
+      confirmKeepOpen: true,
       onConfirm: () => {
         localStorage.clear()
 
