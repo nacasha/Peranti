@@ -8,15 +8,18 @@ interface ConfirmDialogProps {
   title: string
   description?: string
   onConfirm: () => void
+  confirmKeepOpen?: boolean
 }
 
 export const ConfirmDialog = NiceModal.create((props: ConfirmDialogProps) => {
-  const { onConfirm, title, description } = props
+  const { onConfirm, title, description, confirmKeepOpen } = props
   const modal = useModal()
 
   const handleConfirm = () => {
     onConfirm()
-    void modal.hide()
+    if (!confirmKeepOpen) {
+      void modal.hide()
+    }
   }
 
   return (

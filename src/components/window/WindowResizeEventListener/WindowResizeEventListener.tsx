@@ -1,11 +1,11 @@
-import { appWindow } from "@tauri-apps/api/window"
 import { type FC, useEffect } from "react"
 
 import { interfaceStore } from "src/services/interface-store"
+import { windowManager } from "src/services/window-manager"
 
 export const WindowResizeEventListener: FC = () => {
   const checkWindowMaximized = async() => {
-    const isMaximized = await appWindow.isMaximized()
+    const isMaximized = await windowManager.isMaximized()
     interfaceStore.setIsWindowMaximized(isMaximized)
   }
 

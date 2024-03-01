@@ -1,4 +1,4 @@
-import { open } from "@tauri-apps/api/dialog"
+import { open } from "@tauri-apps/plugin-dialog"
 import toast from "react-hot-toast"
 
 import { RunInput } from "src/components/inputs/ButtonInput"
@@ -225,7 +225,7 @@ class AppletComponentService {
     const selectedFilePath = await open()
 
     if (selectedFilePath && !Array.isArray(selectedFilePath)) {
-      return await this.readFileFromComponent(component, selectedFilePath)
+      return await this.readFileFromComponent(component, selectedFilePath.path)
     }
   }
 }

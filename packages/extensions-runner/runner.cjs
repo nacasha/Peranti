@@ -1,4 +1,4 @@
-const { NodeVM, VMScript } = require("./node_modules/vm2");
+const { NodeVM, VMScript } = require("./dependencies/vm2");
 const fs = require("fs");
 
 const args = process.argv[2]
