@@ -225,7 +225,7 @@ class AppletComponentService {
     const selectedFilePath = await open()
 
     if (selectedFilePath && !Array.isArray(selectedFilePath)) {
-      return await this.readFileFromComponent(component, selectedFilePath)
+      return await this.readFileFromComponent(component, selectedFilePath.path)
     }
   }
 }

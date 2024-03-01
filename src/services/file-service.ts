@@ -1,6 +1,6 @@
-import { resolve } from "@tauri-apps/api/path"
+import { appDataDir, resolve } from "@tauri-apps/api/path"
 import { save } from "@tauri-apps/plugin-dialog"
-import { BaseDirectory, readFile, readTextFile, writeFile } from "@tauri-apps/plugin-fs"
+import { BaseDirectory, readDir, readFile, readTextFile, writeFile } from "@tauri-apps/plugin-fs"
 import * as base64 from "js-base64"
 
 import { removeBase64Header } from "src/utils/base-64"
@@ -18,6 +18,11 @@ class FileService {
 
   async resolveFilePath(...paths: string[]) {
     return await resolve(...paths)
+  }
+
+  async resolveFilePathInAppData(...paths: string[]) {
+    const appDataDirPath = await appDataDir()
+    return await resolve(appDataDirPath, ...paths)
   }
 
   async saveToImageFile(base64String: string) {
@@ -55,6 +60,14 @@ class FileService {
 
   async openPathInFileManager(path: string) {
     await rustInvokerService.revealFileManager(path)
+  }
+
+  async readDirectoryInAppData(path: string) {
+    const entries = await readDir(path, {
+      baseDir: BaseDirectory.AppData
+    })
+
+    return entries
   }
 }
 

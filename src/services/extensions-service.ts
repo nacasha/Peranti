@@ -2,6 +2,7 @@ import { makeAutoObservable } from "mobx"
 import toast from "react-hot-toast"
 
 import { FileNames } from "src/constants/file-names"
+import { Folders } from "src/constants/folders.js"
 import { AppletType } from "src/enums/applet-type"
 import { type AppletConstructor } from "src/models/AppletConstructor.js"
 import { type ExtensionTool } from "src/types/ExtensionTool"
@@ -63,31 +64,42 @@ class ExtensionsService {
    */
   async getExtensionsAsAppletContructor() {
     const appletConstructors: AppletConstructor[] = []
-    const entries = await appDataService.readExtensionsFolder()
+    const extensionEntries = await appDataService.readExtensionsFolder()
 
     /**
      * Iterate all folder in extensions folder
      */
-    for (const entry of entries) {
+    for (const extensionEntry of extensionEntries) {
       try {
-        if (entry.children) {
+        /**
+         * Only scan for directory
+         */
+        if (extensionEntry.isDirectory) {
+          const entryFullPath = await fileService.resolveFilePathInAppData(Folders.Extensions, extensionEntry.name)
+          const entryFolders = await fileService.readDirectoryInAppData(entryFullPath)
+
           /**
-           * Make sure the folder has extension definition file
+           * Make sure the folder has peranti.json file
            */
-          if (!entry.children.some((file) => file.name === FileNames.ExtensionDefinition)) {
-            toast.error(`Folder ${entry.name} does not have ${FileNames.ExtensionDefinition} file`)
+          if (!entryFolders.some((entry) => entry.name === FileNames.ExtensionDefinition)) {
+            toast.error(`Folder ${extensionEntry.name} does not have ${FileNames.ExtensionDefinition} file`)
             continue
           }
 
-          const files = Object.fromEntries(entry.children.map((children) => [children.name, children.path]))
+          const tuple = await Promise.all(entryFolders.map(async(children) => {
+            const filePath = await fileService.resolveFilePathInAppData(Folders.Extensions, extensionEntry.name, children.name)
+            return [children.name, filePath]
+          }))
+
+          const files = Object.fromEntries(tuple)
 
           const extensionRawFile = await fileService.readFileAsText(files[FileNames.ExtensionDefinition])
-          const appletConstructor = await this.buildAppletConstructor(entry.path, extensionRawFile)
+          const appletConstructor = await this.buildAppletConstructor(entryFullPath, extensionRawFile)
 
           appletConstructors.push(appletConstructor)
         }
       } catch (exception) {
-        toast.error(`Failed to read ${entry.name} extension`)
+        toast.error(`Failed to read ${extensionEntry.name} extension`)
         console.log(exception)
       }
     }

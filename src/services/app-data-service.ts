@@ -7,8 +7,8 @@ import { type UserSettingsKeys } from "src/enums/user-settings-keys.js"
 
 import { fileService } from "./file-service.js"
 
-class AppDataService {
-  async prepareAppDirectory() {
+export const appDataService = {
+  async prepareAppDataFolder() {
     const baseFolder = await appDataDir()
 
     try {
@@ -18,10 +18,16 @@ class AppDataService {
     } catch (err: any) {
       console.log(err)
     }
-  }
+  },
+
+  async openAppDataFolder() {
+    const appDataDirPath = await appDataDir()
+    const insidePath = await fileService.resolveFilePath(appDataDirPath, FileNames.UserSettings)
+    void fileService.openPathInFileManager(insidePath)
+  },
 
   async prepareExtensionsFolder() {
-    await this.prepareAppDirectory()
+    await this.prepareAppDataFolder()
 
     try {
       if (!(await exists(Folders.Extensions, { baseDir: BaseDirectory.AppData }))) {
@@ -30,9 +36,9 @@ class AppDataService {
     } catch (err: any) {
       console.log(err)
     }
-  }
+  },
 
-  async prepareSettingsJSONFile() {
+  async prepareUserSettingsJSONFile() {
     try {
       if (!(await exists(FileNames.UserSettings, { baseDir: BaseDirectory.AppData }))) {
         await writeTextFile(FileNames.UserSettings, "{}", { baseDir: BaseDirectory.AppData })
@@ -40,7 +46,7 @@ class AppDataService {
     } catch (err: any) {
       console.log(err)
     }
-  }
+  },
 
   async readExtensionsFolder() {
     await this.prepareExtensionsFolder()
@@ -50,10 +56,10 @@ class AppDataService {
     })
 
     return entries
-  }
+  },
 
-  async readSettingsFile() {
-    await this.prepareSettingsJSONFile()
+  async readUserSettingsFile() {
+    await this.prepareUserSettingsJSONFile()
 
     try {
       const userSettingsRaw = await fileService.readFileAsText(FileNames.UserSettings, true)
@@ -61,10 +67,10 @@ class AppDataService {
     } catch (exception) {
       return {} as any
     }
-  }
+  },
 
-  async writeSettingsFile(settings: any) {
-    await this.prepareSettingsJSONFile()
+  async writeUserSettingsFile(settings: any) {
+    await this.prepareUserSettingsJSONFile()
 
     try {
       await writeTextFile(FileNames.UserSettings, JSON.stringify(settings, undefined, 2), { baseDir: BaseDirectory.AppData })
@@ -72,12 +78,4 @@ class AppDataService {
       console.log("Failed to write ".concat(FileNames.UserSettings))
     }
   }
-
-  async openAppDataFolder() {
-    const appDataDirPath = await appDataDir()
-    const insidePath = await fileService.resolveFilePath(appDataDirPath, FileNames.UserSettings)
-    void fileService.openPathInFileManager(insidePath)
-  }
 }
-
-export const appDataService = new AppDataService()

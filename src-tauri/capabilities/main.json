@@ -10,6 +10,8 @@
 
     "event:default",
 
+    "dialog:allow-save",
+
     "window:default",
     "window:allow-toggle-maximize",
     "window:allow-minimize",
@@ -31,7 +33,19 @@
     },
     "fs:default",
     "fs:allow-exists",
-    "fs:allow-read-text-file"
+    "fs:allow-read-text-file",
+    "fs:allow-write-text-file",
+
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "run-extension",
+          "cmd": "node",
+          "args": ["extensions-runner/runner.cjs", { "validator": "\\S+" }]
+        }
+      ]
+    }
   ],
   "platforms": [
     "linux",

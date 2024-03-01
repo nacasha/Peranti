@@ -8,8 +8,9 @@
   },
   "packageManager": "pnpm@8.10.5",
   "scripts": {
-    "predev": "node scripts/createSymlink.cjs",
-    "prebuild": "node scripts/createSymlink.cjs",
+    "predev": "node scripts/create-symlink.cjs",
+    "prebuild": "node scripts/create-symlink.cjs",
+    "build-extensions-runner": "node scripts/build-extensions-runner.cjs",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
@@ -90,6 +91,7 @@
     "tauri-plugin-clipboard-api": "^0.5.5",
     "tauri-plugin-context-menu": "^0.7.0",
     "ts-deepmerge": "^7.0.0",
+    "uglify-js": "^3.17.4",
     "unescape-js": "^1.1.4",
     "uuid": "^9.0.1",
     "wouter": "^2.12.1",
@@ -109,11 +111,14 @@
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.2",
+    "fs-extra": "^11.2.0",
     "sass": "^1.71.1",
     "symlink-dir": "^5.2.1",
+    "terser": "^5.28.1",
     "typescript": "^5.3.3",
     "url": "^0.11.3",
     "vite": "^4.5.2",
-    "vite-plugin-node-polyfills": "^0.21.0"
+    "vite-plugin-node-polyfills": "^0.21.0",
+    "vm2": "^3.9.19"
   }
 }

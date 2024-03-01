@@ -2,11 +2,9 @@
   "name": "extensions-runner",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "runner.js",
   "scripts": {},
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "vm2": "^3.9.19"
-  }
+  "dependencies": {}
 }
