@@ -39,14 +39,14 @@ export const PipelineModalInputOutput = NiceModal.create((props: PipelineModalIn
         <SelectInput
           label="Component"
           fieldKey=""
-          defaultValue={state.component}
+          value={state.component}
           options={components.map((value) => ({ label: value, value }))}
           onValueChange={(component) => { setState((e) => ({ ...e, component })) }}
         />
         <TextInput
           label="Label"
           fieldKey="label"
-          defaultValue={state.label}
+          value={state.label}
           onValueChange={(label) => { setState((e) => ({ ...e, label })) }}
         />
       </Dialog.Content>

@@ -19,7 +19,7 @@ export const ThemeSelect: FC = () => {
         { label: "Light", value: Theme.Light }
       ]}
       onValueChange={onChange}
-      defaultValue={theme}
+      value={theme}
     />
   )
 }

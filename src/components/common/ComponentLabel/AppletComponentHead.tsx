@@ -1,4 +1,4 @@
-import { useContext, type FC } from "react"
+import { useContext, type FC, memo } from "react"
 
 import { Icons } from "src/constants/icons"
 import { AppletComponentContent } from "src/contexts/AppletInputContext/AppletInputContext"
@@ -13,7 +13,7 @@ interface AppletComponentHeadProps {
   showMaximize?: boolean
 }
 
-export const AppletComponentHead: FC<AppletComponentHeadProps> = (props) => {
+export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) => {
   const { label, showMaximize } = props
   const componentContext = useContext(AppletComponentContent)
 
@@ -42,4 +42,6 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = (props) => {
       </div>
     </div>
   )
-}
+}, (prevProps, nextProps) => {
+  return prevProps.label === nextProps.label
+})

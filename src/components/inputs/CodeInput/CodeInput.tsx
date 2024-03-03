@@ -13,7 +13,7 @@ interface CodeInputProps extends InputComponentProps, BaseCodeMirrorProps {
 export const CodeInput: FC<CodeInputProps> = (props) => {
   const {
     label,
-    defaultValue = "",
+    value = "",
     initialState,
     onValueChange,
     readOnly,
@@ -25,12 +25,14 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
     onValueChange(newValue)
   }
 
+  console.log({ defaultValue: value })
+
   return (
     <div className="CodeInput" style={{ gridArea: fieldKey }}>
       <AppletComponentHead showMaximize label={label} />
       <BaseCodeMirror
         {...baseCodeMirrorProps}
-        value={defaultValue}
+        value={value}
         onChange={(newValue) => { onInputChange(newValue) }}
         initialStateCodeMirror={initialState }
         readOnly={readOnly}

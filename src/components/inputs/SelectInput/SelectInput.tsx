@@ -16,7 +16,7 @@ interface SelectInputProps<T extends string> extends InputComponentProps<T> {
 
 export const SelectInput: <T extends string>(props: SelectInputProps<T>) => JSX.Element = (props) => {
   const id = useId()
-  const { label, options = [], onValueChange, readOnly, defaultValue, fieldKey } = props
+  const { label, options = [], onValueChange, readOnly, value, fieldKey } = props
 
   const onChange: React.SelectHTMLAttributes<HTMLSelectElement>["onChange"] = function(event) {
     onValueChange(event.target.value as any)
@@ -29,7 +29,7 @@ export const SelectInput: <T extends string>(props: SelectInputProps<T>) => JSX.
         id={id}
         disabled={readOnly}
         onChange={onChange}
-        defaultValue={defaultValue}
+        value={value}
       >
         {options.map((option) => (
           <option

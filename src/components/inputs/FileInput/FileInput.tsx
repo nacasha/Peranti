@@ -8,8 +8,8 @@ import "./FileInput.scss"
 interface InputFileProps extends InputComponentProps<File | null> { }
 
 export const FileInput: FC<InputFileProps> = (props) => {
-  const { label, onValueChange, defaultValue, fieldKey } = props
-  const [selectedFile, setSelectedFile] = useState<File | undefined>(() => defaultValue)
+  const { label, onValueChange, value, fieldKey } = props
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(() => value)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const onChangeFile: InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {

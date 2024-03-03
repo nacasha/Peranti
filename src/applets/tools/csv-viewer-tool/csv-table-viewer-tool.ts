@@ -32,6 +32,16 @@ export const csvTableViewerTool = new AppletConstructor<InputFields, OutputField
       component: "DataGrid"
     }
   ],
+  samples: [
+    {
+      name: "Sample 1",
+      inputValues: {
+        csvString: `Joe Doe,Structure and Interpretation of Computer Programs,2016-12-05
+Jason Arthur,"Compilers: Principles, Techniques, and Tools",2016-10-22
+Jason Arthur,Structure and Interpretation of Computer Programs,2016-12-22`
+      }
+    }
+  ],
   action: async({ inputValues }) => {
     const { csvString } = inputValues
     let data: any[] = []

@@ -20,7 +20,7 @@ export const FileDropActionSelect: FC = () => {
         { label: "Replace Current Editor", value: FileDropAction.ReplaceCurrentEditor }
       ]}
       onValueChange={onChange}
-      defaultValue={fileDropAction}
+      value={fileDropAction}
     />
   )
 }

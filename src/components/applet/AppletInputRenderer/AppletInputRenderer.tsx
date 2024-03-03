@@ -1,5 +1,5 @@
 import { toJS } from "mobx"
-import { useMemo, type FC } from "react"
+import { type FC } from "react"
 import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
@@ -12,21 +12,20 @@ import { type InputComponentProps } from "src/types/InputComponentProps"
 
 interface AppletInputRendererProps {
   appletInput: AppletInput
-  readOnly?: boolean
 }
 
 export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
-  const { readOnly, appletInput } = props
+  const { appletInput } = props
   const { show } = useContextMenu()
 
   const activeApplet = activeAppletStore.getActiveApplet()
-  const renderCounter = useSelector(() => activeAppletStore.getActiveApplet().renderCounter)
 
   /**
    * Rendered field state
    */
-  const defaultValue = activeApplet.inputValues[appletInput.key] ?? appletInput.defaultValue
-  const initialState = useMemo(() => activeApplet.inputFieldsState[appletInput.key], [renderCounter])
+  const inputValue = useSelector(() => activeApplet.inputValues[appletInput.key] ?? appletInput.defaultValue)
+  const initialState = activeApplet.inputFieldsState[appletInput.key]
+  const isDeleted = useSelector(() => activeApplet.isDeleted)
 
   /**
    * Batch mode state
@@ -54,7 +53,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   }
 
   const handleContextMenu = (event: any) => {
-    if (activeApplet.isDeleted) {
+    if (isDeleted) {
       return
     }
 
@@ -68,6 +67,10 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
     })
   }
 
+  /**
+   * Pass `initialState` related props to selected components
+   * Only few components handling those events
+   */
   const additionalProps: Record<string, any> = {}
   if (["Code", "PipelineEditor"].includes(appletInput.component)) {
     additionalProps.initialState = initialState
@@ -89,8 +92,8 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
         key={appletInput.key}
         fieldKey={appletInput.key}
         label={appletInput.label}
-        defaultValue={defaultValue}
-        readOnly={readOnly}
+        value={inputValue}
+        readOnly={isDeleted}
         onValueChange={handleValueChange}
         onContextMenu={handleContextMenu}
         {...additionalProps}

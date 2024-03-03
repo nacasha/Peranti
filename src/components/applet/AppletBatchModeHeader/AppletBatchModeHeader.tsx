@@ -34,7 +34,7 @@ export const AppletBatchModeHeader = observer(() => {
             label: input.label,
             value: input.key
           }))}
-          defaultValue={batchModeInputKey}
+          value={batchModeInputKey}
           onValueChange={onChangeInputKey}
           readOnly={isReadOnly}
         />
@@ -44,7 +44,7 @@ export const AppletBatchModeHeader = observer(() => {
             label: output.label,
             value: output.key
           }))}
-          defaultValue={batchModeOutputKey}
+          value={batchModeOutputKey}
           onValueChange={onChangeOutputKey}
           readOnly={isReadOnly}
         />

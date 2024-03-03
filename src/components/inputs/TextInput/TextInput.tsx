@@ -12,7 +12,7 @@ interface TextInputProps extends InputComponentProps {
 
 export const TextInput: FC<TextInputProps> = (props) => {
   const id = useId()
-  const { onValueChange, defaultValue, readOnly, label, fieldKey, ...restProps } = props
+  const { onValueChange, value, readOnly, label, fieldKey, ...restProps } = props
 
   const onInputChange: InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
     const value = event.target.value
@@ -24,7 +24,7 @@ export const TextInput: FC<TextInputProps> = (props) => {
       <AppletComponentHead label={label} />
       <input
         id={id}
-        defaultValue={defaultValue}
+        value={value}
         onChange={onInputChange}
         readOnly={readOnly}
         tabIndex={readOnly ? -1 : undefined}

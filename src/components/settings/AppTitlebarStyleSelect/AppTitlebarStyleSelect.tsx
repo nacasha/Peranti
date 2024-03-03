@@ -19,7 +19,7 @@ export const AppTitleBarStyleSelect: FC = () => {
         { label: "Tabbar", value: AppTitleBarStyle.Tabbar }
       ]}
       onValueChange={onChange}
-      defaultValue={appTitlebarStyle}
+      value={appTitlebarStyle}
     />
   )
 }
