@@ -1,5 +1,5 @@
 import { toJS } from "mobx"
-import { type FC } from "react"
+import { useMemo, type FC } from "react"
 import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
@@ -20,12 +20,13 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   const { show } = useContextMenu()
 
   const activeApplet = activeAppletStore.getActiveApplet()
+  const renderCounter = useSelector(() => activeAppletStore.getActiveApplet().renderCounter)
 
   /**
    * Rendered field state
    */
   const defaultValue = activeApplet.inputValues[appletInput.key] ?? appletInput.defaultValue
-  const initialState = activeApplet.inputFieldsState[appletInput.key]
+  const initialState = useMemo(() => activeApplet.inputFieldsState[appletInput.key], [renderCounter])
 
   /**
    * Batch mode state

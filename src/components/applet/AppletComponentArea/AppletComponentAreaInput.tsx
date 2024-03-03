@@ -19,7 +19,6 @@ export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = (prop
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
   const inputFields = useSelector(() => activeAppletStore.getActiveApplet().getInputFields())
   const isDeleted = useSelector(() => activeAppletStore.getActiveApplet().isDeleted)
-  const renderCounter = useSelector(() => activeAppletStore.getActiveApplet().renderCounter)
 
   /**
    * Maximized field state
@@ -54,7 +53,6 @@ export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = (prop
 
   return (
     <form
-      key={activeApplet.sessionId.concat(renderCounter.toString())}
       action="#"
       onSubmit={handleSubmit}
       className={clsx(classNames)}

@@ -4,6 +4,10 @@ import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
+import { diamondFunctionSample } from "./diamond-function-sample.js"
+import { fibonacciFunctionSample } from "./fibbonaci-function-sample.js"
+import { primeNumberSample } from "./prime-number-sample.js"
+
 interface InputFields {
   input: InputFieldsType.Text
   code: InputFieldsType.Code
@@ -40,6 +44,29 @@ export const javascriptRunnerTool = new AppletConstructor<InputFields, OutputFie
       key: "output",
       label: "Output",
       component: "Code"
+    }
+  ],
+  samples: [
+    {
+      name: "Prime Number",
+      inputValues: {
+        code: primeNumberSample,
+        input: "169889"
+      }
+    },
+    {
+      name: "Fibbonaci",
+      inputValues: {
+        code: fibonacciFunctionSample,
+        input: "10"
+      }
+    },
+    {
+      name: "Diamond",
+      inputValues: {
+        code: diamondFunctionSample,
+        input: "27"
+      }
     }
   ],
   action: async({ inputValues }) => {

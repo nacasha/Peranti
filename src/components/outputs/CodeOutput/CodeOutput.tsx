@@ -14,6 +14,10 @@ export const CodeOutput: FC<CodeOutputProps> = (props) => {
 
   return (
     <div className="CodeOutput" style={{ gridArea: fieldKey }}>
+      {/* <div className="AppletComponentError">
+        Error
+      </div> */}
+
       <ComponentLabel label={label} />
       <LargeInputWarning input={value}>
         <BaseCodeMirror

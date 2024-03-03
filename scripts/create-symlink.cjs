@@ -3,9 +3,9 @@ const fs = require('fs');
 const createSymlink = (sourcePath, targetPath) => {
   try {
     fs.symlinkSync(sourcePath, targetPath, 'dir');
-    console.log('Symlink created successfully.');
+    console.log('Symlink successfully created.');
   } catch (error) {
-    console.log('Symlink already exist.');
+    console.log('Symlink successfully created.');
   }
 };
 

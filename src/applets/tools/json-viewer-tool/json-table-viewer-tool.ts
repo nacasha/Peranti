@@ -1,4 +1,5 @@
 import { AppletConstructor } from "src/models/AppletConstructor"
+import customerBook from "src/samples/customer-book-sample.json"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
@@ -20,7 +21,10 @@ export const jsonTableViewerTool = new AppletConstructor<InputFields, OutputFiel
       key: "json",
       label: "JSON",
       component: "Code",
-      defaultValue: ""
+      defaultValue: "",
+      props: {
+        language: "json"
+      }
     }
   ],
   outputFields: [
@@ -28,6 +32,14 @@ export const jsonTableViewerTool = new AppletConstructor<InputFields, OutputFiel
       key: "output",
       label: "Output",
       component: "DataGrid"
+    }
+  ],
+  samples: [
+    {
+      name: "Customer Book",
+      inputValues: {
+        json: JSON.stringify(customerBook, null, 2)
+      }
     }
   ],
   action: async({ inputValues }) => {

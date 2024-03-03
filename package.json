@@ -8,9 +8,11 @@
   },
   "packageManager": "pnpm@8.10.5",
   "scripts": {
-    "predev": "node scripts/create-symlink.cjs",
-    "prebuild": "node scripts/create-symlink.cjs",
-    "build-extensions-runner": "node scripts/build-extensions-runner.cjs",
+    "create-symlink": "node scripts/create-symlink.cjs",
+    "prepare-extensions-runner": "cd packages/extensions-runner/ && npm install",
+
+    "predev": "pnpm create-symlink && pnpm prepare-extensions-runner",
+    "prebuild": "pnpm create-symlink && pnpm prepare-extensions-runner",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",

@@ -2,9 +2,9 @@ const fs = require('fs').promises;
 const path = require('path');
 const uglify = require('uglify-js');
 
-const nodeModulesDir = 'node_modules';
+const nodeModulesDir = 'packages/extensions-runner/node_modules';
 const minifiedDir = 'packages/extensions-runner/dependencies';
-const targetFolders = ['vm2'];
+const targetFolders = ['vm2', 'acorn'];
 
 async function minifyFiles(dir) {
   const files = await fs.readdir(dir);
@@ -19,6 +19,12 @@ async function minifyFiles(dir) {
     if (stats.isDirectory()) {
       await minifyFiles(filePath); // Recursive call for directories
     } else if (path.extname(file) === '.js' && targetFolders.some(folder => filePath.includes(folder))) {
+      if (file[0] === ".") {
+        console.log(file, "skip")
+        continue
+      }
+      console.log(file, "ok")
+
       const relativePath = path.relative(nodeModulesDir, filePath);
       const outputFile = path.join(minifiedDir, relativePath);
 
@@ -26,9 +32,13 @@ async function minifyFiles(dir) {
       await fs.mkdir(path.dirname(outputFile), { recursive: true });
 
       const code = await fs.readFile(filePath, 'utf-8');
-      const result = uglify.minify(code);
 
-      await fs.writeFile(outputFile, code);
+      try {
+        const result = uglify.minify(code, { toplevel: true });
+        await fs.writeFile(outputFile, result.code);
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }

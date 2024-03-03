@@ -46,7 +46,7 @@
         {
           "name": "run-extension",
           "cmd": "node",
-          "args": ["extensions-runner/runner.cjs", { "validator": "\\S+" }]
+          "args": ["extensions-runner/runner.js", { "validator": "\\S+" }]
         }
       ]
     }
