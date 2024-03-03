@@ -110,6 +110,9 @@ dependencies:
   cmdk:
     specifier: ^0.2.1
     version: 0.2.1(@types/react@18.2.61)(react-dom@18.2.0)(react@18.2.0)
+  colord:
+    specifier: ^2.9.3
+    version: 2.9.3
   compose-function:
     specifier: ^3.0.3
     version: 3.0.3
@@ -3763,6 +3766,10 @@ packages:
     requiresBuild: true
     dev: false
     optional: true
+
+  /colord@2.9.3:
+    resolution: {integrity: sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==}
+    dev: false
 
   /combined-stream@1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}

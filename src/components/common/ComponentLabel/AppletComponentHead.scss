@@ -1,4 +1,4 @@
-.ComponentLabel {
+.AppletComponentHead {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -6,10 +6,10 @@
   margin-bottom: var(--input-output-label-spacing);
 }
 
-.ComponentLabel-label {
+.AppletComponentHead-label {
 
 }
 
-.ComponentLabel-buttons {
+.AppletComponentHead-buttons {
 
 }

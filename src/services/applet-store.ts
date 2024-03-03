@@ -5,6 +5,7 @@ import settingsApplet from "src/applets/pages/settings-applet.ts"
 import base64EncodeDecodeTool from "src/applets/tools/base64-encode-decode-tool.ts"
 import base64ToFileTool from "src/applets/tools/base64-to-file-tool.ts"
 import characterCounterTool from "src/applets/tools/character-counter-tool.ts"
+import { colorConverterTool } from "src/applets/tools/color-converter-tool/color-converter-tool.ts"
 import compareListTool from "src/applets/tools/compare-list-tool.ts"
 import cronReadableTool from "src/applets/tools/cron-readable-tool.ts"
 import { csvTableViewerTool } from "src/applets/tools/csv-viewer-tool/csv-table-viewer-tool.ts"
@@ -87,6 +88,7 @@ class AppletStore {
     [javascriptRunnerTool.appletId]: javascriptRunnerTool,
     [csvTableViewerTool.appletId]: csvTableViewerTool,
     [jsonTableViewerTool.appletId]: jsonTableViewerTool,
+    [colorConverterTool.appletId]: colorConverterTool,
 
     /**
      * Applet Pages

@@ -1,6 +1,6 @@
 import { type FC, type ReactNode } from "react"
 
-import { ComponentLabel } from "../ComponentLabel"
+import { AppletComponentHead } from "../ComponentLabel"
 
 import "./AppletComponent.scss"
 
@@ -15,7 +15,7 @@ export const AppletComponent: FC<AppletComponentProps> = (props) => {
 
   return (
     <div className="AppletComponent" style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead label={label} />
       {children}
     </div>
   )

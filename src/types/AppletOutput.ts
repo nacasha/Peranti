@@ -55,4 +55,7 @@ export type AppletOutput<K extends Record<string, string> = any> = {
 } | {
   component: "DataGrid"
   props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.DataGrid>
+} | {
+  component: "Color"
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Color>
 })

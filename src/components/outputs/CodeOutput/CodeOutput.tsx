@@ -1,7 +1,7 @@
 import { type FC } from "react"
 
 import { BaseCodeMirror, type BaseCodeMirrorProps } from "src/components/common/BaseCodeMirror"
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { LargeInputWarning } from "src/components/common/LargeInputWarning"
 import type { OutputComponentProps } from "src/types/OutputComponentProps.ts"
 
@@ -18,7 +18,7 @@ export const CodeOutput: FC<CodeOutputProps> = (props) => {
         Error
       </div> */}
 
-      <ComponentLabel label={label} />
+      <AppletComponentHead showMaximize label={label} />
       <LargeInputWarning input={value}>
         <BaseCodeMirror
           {...baseCodeMirrorProps}

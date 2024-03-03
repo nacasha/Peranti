@@ -1,7 +1,7 @@
 import { type FC } from "react"
 
 import { BaseCodeMirror, type BaseCodeMirrorProps } from "src/components/common/BaseCodeMirror"
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./CodeInput.scss"
@@ -27,7 +27,7 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
 
   return (
     <div className="CodeInput" style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead showMaximize label={label} />
       <BaseCodeMirror
         {...baseCodeMirrorProps}
         value={defaultValue}

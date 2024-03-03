@@ -1,7 +1,7 @@
 import { clsx } from "clsx"
 import { type FC, useState } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./SwitchInput.scss"
@@ -22,7 +22,7 @@ export const SwitchInput: FC<SwitchInputProps> = (props) => {
 
   return (
     <div className={clsx("SwitchInput", readOnly && "read-only")} style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead label={label} />
       <div className="buttons">
         {options.map((option) => (
           <div

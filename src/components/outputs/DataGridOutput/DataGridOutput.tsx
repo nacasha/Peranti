@@ -1,7 +1,7 @@
 import { type DataEditorProps, DataEditor, GridCellKind } from "@glideapps/glide-data-grid"
 import { useCallback, type FC, useState, useEffect } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import "./DataGridOutput.scss"
@@ -128,7 +128,7 @@ export const DataGridOutput: FC<DataGridOutputProps> = (props) => {
 
   return (
     <div className="DataGridOutput" style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead showMaximize label={label} />
       <div className="DataGridOutput-content">
         <DataEditor
           className="DataEditor"

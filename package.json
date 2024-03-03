@@ -10,7 +10,6 @@
   "scripts": {
     "create-symlink": "node scripts/create-symlink.cjs",
     "prepare-extensions-runner": "cd packages/extensions-runner/ && npm install",
-
     "predev": "pnpm create-symlink && pnpm prepare-extensions-runner",
     "prebuild": "pnpm create-symlink && pnpm prepare-extensions-runner",
     "dev": "vite",
@@ -55,6 +54,7 @@
     "axios-tauri-api-adapter": "^0.2.1",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
+    "colord": "^2.9.3",
     "compose-function": "^3.0.3",
     "console-feed": "^3.5.0",
     "cronstrue": "^2.48.0",

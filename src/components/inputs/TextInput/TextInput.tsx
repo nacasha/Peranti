@@ -1,6 +1,6 @@
 import { type FC, type InputHTMLAttributes, useId } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./TextInput.scss"
@@ -21,7 +21,7 @@ export const TextInput: FC<TextInputProps> = (props) => {
 
   return (
     <div className="TextInput" style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead label={label} />
       <input
         id={id}
         defaultValue={defaultValue}

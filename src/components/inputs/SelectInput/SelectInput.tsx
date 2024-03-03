@@ -1,6 +1,6 @@
 import React, { type JSX, useId } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./SelectInput.scss"
@@ -24,7 +24,7 @@ export const SelectInput: <T extends string>(props: SelectInputProps<T>) => JSX.
 
   return (
     <div className="SelectInput" style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead label={label} />
       <select
         id={id}
         disabled={readOnly}

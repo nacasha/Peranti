@@ -6,14 +6,15 @@ import { activeAppletStore } from "src/services/active-applet-store"
 
 import { ButtonIcon } from "../ButtonIcon"
 
-import "./ComponentLabel.scss"
+import "./AppletComponentHead.scss"
 
 interface AppletComponentHeadProps {
   label?: string
+  showMaximize?: boolean
 }
 
 export const AppletComponentHead: FC<AppletComponentHeadProps> = (props) => {
-  const { label } = props
+  const { label, showMaximize } = props
   const componentContext = useContext(AppletComponentContent)
 
   const handleClickMaximize = () => {
@@ -25,17 +26,19 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = (props) => {
   }
 
   return (
-    <div className="ComponentLabel">
-      <label className="ComponentLabel-label">
+    <div className="AppletComponentHead">
+      <label className="AppletComponentHead-label">
         {label}
       </label>
-      <div className="ComponentLabel-buttons">
-        <ButtonIcon
-          tooltip="Maximize"
-          icon={Icons.FullScreen}
-          iconSize={12}
-          onClick={handleClickMaximize}
-        />
+      <div className="AppletComponentHead-buttons">
+        {showMaximize && (
+          <ButtonIcon
+            tooltip="Maximize"
+            icon={Icons.FullScreen}
+            iconSize={12}
+            onClick={handleClickMaximize}
+          />
+        )}
       </div>
     </div>
   )

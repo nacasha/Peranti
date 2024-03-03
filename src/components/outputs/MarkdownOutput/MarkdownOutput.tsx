@@ -2,7 +2,7 @@ import { type FC } from "react"
 import Markdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import "./MarkdownOutput.scss"
@@ -14,7 +14,7 @@ export const MarkdownOutput: FC<MarkdownOutputProps> = (props) => {
 
   return (
     <div className="MarkdownOutput" onContextMenu={onContextMenu} style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead showMaximize label={label} />
       <div className="MarkdownOutput-inner">
         <div className="body">
           <Markdown remarkPlugins={[remarkGfm]}>

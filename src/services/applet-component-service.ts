@@ -10,6 +10,7 @@ import { SwitchInput } from "src/components/inputs/SwitchInput"
 import { TextAreaInput } from "src/components/inputs/TextAreaInput-2"
 import { TextInput } from "src/components/inputs/TextInput"
 import { CodeOutput } from "src/components/outputs/CodeOutput"
+import { ColorOutput } from "src/components/outputs/ColorOutput"
 import { DataGridOutput } from "src/components/outputs/DataGridOutput"
 import { DiffOutput } from "src/components/outputs/DiffOutput"
 import { FileOutput } from "src/components/outputs/FileOutput"
@@ -149,6 +150,10 @@ class AppletComponentService {
 
     DataGrid: new AppletComponent({
       component: DataGridOutput
+    }),
+
+    Color: new AppletComponent({
+      component: ColorOutput
     })
   }
 
@@ -176,7 +181,11 @@ class AppletComponentService {
   getInputComponent(componentName: keyof typeof this.inputs, isBatchComponent: boolean = false) {
     const inputComponent = this.inputs[componentName]
     if (isBatchComponent) {
-      return this.inputs[inputComponent.batchComponent as keyof typeof this.inputs]
+      const inputComponentBatch = this.inputs[inputComponent.batchComponent as keyof typeof this.inputs]
+      if (inputComponentBatch) {
+        return inputComponentBatch
+      }
+      return inputComponent
     }
     return inputComponent
   }
@@ -191,7 +200,11 @@ class AppletComponentService {
   getOutputComponent(componentName: keyof typeof this.outputs, isBatchComponent: boolean = false) {
     const outputComponent = this.outputs[componentName]
     if (isBatchComponent) {
-      return this.outputs[outputComponent.batchComponent as keyof typeof this.outputs]
+      const outputComponentBatch = this.outputs[outputComponent.batchComponent as keyof typeof this.outputs]
+      if (outputComponentBatch) {
+        return outputComponentBatch
+      }
+      return outputComponent
     }
     return outputComponent
   }

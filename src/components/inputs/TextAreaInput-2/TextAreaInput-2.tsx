@@ -1,6 +1,6 @@
 import { type FC, useId } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./TextAreaInput.scss"
@@ -20,7 +20,7 @@ export const TextAreaInput: FC<TextAreaInputProps> = (props) => {
 
   return (
     <div className="TextAreaInput" style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead showMaximize label={label} />
       <textarea
         id={id}
         defaultValue={defaultValue}
