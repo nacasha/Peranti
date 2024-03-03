@@ -22,6 +22,11 @@ export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = (prop
   const renderCounter = useSelector(() => activeAppletStore.getActiveApplet().renderCounter)
 
   /**
+   * Maximized field state
+   */
+  const maximizedField = useSelector(() => activeAppletStore.getActiveApplet().maximizedField)
+
+  /**
    * Applet layout
    */
   const layoutSetting = useSelector(() => activeAppletStore.getActiveApplet().layoutSetting)
@@ -39,8 +44,12 @@ export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = (prop
     event.preventDefault()
   }
 
+  if (maximizedField.enabled && maximizedField.type !== "input") {
+    return
+  }
+
   if (inputFields.length === 0) {
-    return null
+    return
   }
 
   return (

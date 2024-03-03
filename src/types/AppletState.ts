@@ -18,4 +18,5 @@ export interface AppletState {
   isAutoRunAndFirstTime: boolean
   optionValues: any
   viewMode: "main" | "pipeline"
+  maximizedField: any
 }

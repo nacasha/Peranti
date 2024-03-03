@@ -21,6 +21,11 @@ export const AppletComponentAreaOutput: FC<AppletComponentAreaOutpuProps> = (pro
   const renderCounter = useSelector(() => activeAppletStore.getActiveApplet().renderCounter)
 
   /**
+   * Maximized field state
+   */
+  const maximizedField = useSelector(() => activeAppletStore.getActiveApplet().maximizedField)
+
+  /**
    * Applet layout
    */
   const layoutSetting = useSelector(() => activeAppletStore.getActiveApplet().layoutSetting)
@@ -32,6 +37,10 @@ export const AppletComponentAreaOutput: FC<AppletComponentAreaOutpuProps> = (pro
     classNames.push(layoutSetting.fieldsOutputFlexDirection)
   } else if (layoutSetting.fieldsType === "grid") {
     styles.gridTemplate = layoutSetting.fieldsOutputGridTemplate
+  }
+
+  if (maximizedField.enabled && maximizedField.type !== "output") {
+    return
   }
 
   if (outputFields.length === 0) {

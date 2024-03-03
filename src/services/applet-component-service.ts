@@ -10,6 +10,7 @@ import { SwitchInput } from "src/components/inputs/SwitchInput"
 import { TextAreaInput } from "src/components/inputs/TextAreaInput-2"
 import { TextInput } from "src/components/inputs/TextInput"
 import { CodeOutput } from "src/components/outputs/CodeOutput"
+import { DataGridOutput } from "src/components/outputs/DataGridOutput"
 import { DiffOutput } from "src/components/outputs/DiffOutput"
 import { FileOutput } from "src/components/outputs/FileOutput"
 import { GridStatOutput } from "src/components/outputs/GridStatOutput"
@@ -71,6 +72,7 @@ class AppletComponentService {
     Code: new AppletComponent({
       component: CodeInput,
       copyAs: "text",
+      saveAs: "text",
       readFileAs: "text"
     }),
 
@@ -143,6 +145,10 @@ class AppletComponentService {
 
     Settings: new AppletComponent({
       component: SettingsPage
+    }),
+
+    DataGrid: new AppletComponent({
+      component: DataGridOutput
     })
   }
 

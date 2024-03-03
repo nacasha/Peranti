@@ -11,6 +11,7 @@
     "event:default",
 
     "dialog:allow-save",
+    "dialog:allow-open",
 
     "window:default",
     "window:allow-toggle-maximize",
@@ -36,6 +37,8 @@
     "fs:allow-exists",
     "fs:allow-read-text-file",
     "fs:allow-write-text-file",
+    "fs:write-all",
+    "fs:write-files",
 
     {
       "identifier": "shell:allow-execute",

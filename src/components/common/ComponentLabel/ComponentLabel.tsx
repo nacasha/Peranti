@@ -1,19 +1,42 @@
-import { type FC } from "react"
+import { useContext, type FC } from "react"
 
-import { componentLabelCss } from "./ComponentLabel.css"
+import { Icons } from "src/constants/icons"
+import { AppletComponentContent } from "src/contexts/AppletInputContext/AppletInputContext"
+import { activeAppletStore } from "src/services/active-applet-store"
 
-interface ComponentLabelProps {
+import { ButtonIcon } from "../ButtonIcon"
+
+import "./ComponentLabel.scss"
+
+interface AppletComponentHeadProps {
   label?: string
 }
 
-export const ComponentLabel: FC<ComponentLabelProps> = (props) => {
+export const AppletComponentHead: FC<AppletComponentHeadProps> = (props) => {
   const { label } = props
+  const componentContext = useContext(AppletComponentContent)
+
+  const handleClickMaximize = () => {
+    activeAppletStore.getActiveApplet().toggleMaximizedFieldKey({
+      enabled: true,
+      type: componentContext.type,
+      key: componentContext.fieldKey
+    })
+  }
 
   return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <label className={componentLabelCss}>
+    <div className="ComponentLabel">
+      <label className="ComponentLabel-label">
         {label}
       </label>
+      <div className="ComponentLabel-buttons">
+        <ButtonIcon
+          tooltip="Maximize"
+          icon={Icons.FullScreen}
+          iconSize={12}
+          onClick={handleClickMaximize}
+        />
+      </div>
     </div>
   )
 }

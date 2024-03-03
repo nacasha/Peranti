@@ -3,6 +3,7 @@ import { type FC } from "react"
 import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
+import { AppletComponentContent } from "src/contexts/AppletInputContext/AppletInputContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
@@ -19,11 +20,27 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   const { show } = useContextMenu()
 
   const activeApplet = activeAppletStore.getActiveApplet()
+
+  /**
+   * Rendered field state
+   */
   const defaultValue = activeApplet.inputValues[appletInput.key] ?? appletInput.defaultValue
   const initialState = activeApplet.inputFieldsState[appletInput.key]
+
+  /**
+   * Batch mode state
+   */
   const isBatchModeEnabled = useSelector(() => activeApplet.isBatchModeEnabled)
   const batchModeInputKey = useSelector(() => activeApplet.batchModeInputKey)
 
+  /**
+   * Maximized field state
+   */
+  const maximizedField = useSelector(() => activeApplet.maximizedField)
+
+  /**
+   * Component to be rendered
+   */
   const inputComponent = appletComponentService.getInputComponent(appletInput.component, isBatchModeEnabled)
   const Component: FC<InputComponentProps<any>> = inputComponent.component
 
@@ -56,21 +73,27 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
     additionalProps.onStateChange = handleStateChange
   }
 
+  if (maximizedField.enabled && maximizedField.type === "input" && maximizedField.key !== appletInput.key) {
+    return
+  }
+
   if (isBatchModeEnabled && batchModeInputKey !== appletInput.key) {
     return
   }
 
   return (
-    <Component
-      {...appletInput.props}
-      key={appletInput.key}
-      fieldKey={appletInput.key}
-      label={appletInput.label}
-      defaultValue={defaultValue}
-      readOnly={readOnly}
-      onValueChange={handleValueChange}
-      onContextMenu={handleContextMenu}
-      {...additionalProps}
-    />
+    <AppletComponentContent.Provider value={{ type: "input", fieldKey: appletInput.key }}>
+      <Component
+        {...appletInput.props}
+        key={appletInput.key}
+        fieldKey={appletInput.key}
+        label={appletInput.label}
+        defaultValue={defaultValue}
+        readOnly={readOnly}
+        onValueChange={handleValueChange}
+        onContextMenu={handleContextMenu}
+        {...additionalProps}
+      />
+    </AppletComponentContent.Provider>
   )
 }

@@ -7,6 +7,7 @@ import base64ToFileTool from "src/applets/tools/base64-to-file-tool.ts"
 import characterCounterTool from "src/applets/tools/character-counter-tool.ts"
 import compareListTool from "src/applets/tools/compare-list-tool.ts"
 import cronReadableTool from "src/applets/tools/cron-readable-tool.ts"
+import { csvTableViewerTool } from "src/applets/tools/csv-viewer-tool/csv-table-viewer-tool.ts"
 import dateToMillisecondsTool from "src/applets/tools/date-to-milliseconds.ts"
 import faviconGrabberTool from "src/applets/tools/favicon-grabber-tool.ts"
 import fileToBase64Tool from "src/applets/tools/file-to-base-64-tool"
@@ -17,6 +18,7 @@ import { javascriptRunnerTool } from "src/applets/tools/javascript-runner-tool/j
 import jsonDiffTool from "src/applets/tools/json-diff-tool"
 import jsonFormatter from "src/applets/tools/json-formatter-tool.ts"
 import { jsonToCsvTool } from "src/applets/tools/json-to-csv-tool/json-to-csv-tool.ts"
+import { jsonTableViewerTool } from "src/applets/tools/json-viewer-tool/json-table-viewer-tool.ts"
 import { jsonataTool } from "src/applets/tools/jsonata-tool/jsonata-tool.ts"
 import loremIpsumGeneratorTool from "src/applets/tools/lorem-ipsum-generator-tool.ts"
 import markdownParserTool from "src/applets/tools/markdown-parser-tool.ts"
@@ -83,6 +85,8 @@ class AppletStore {
     [reactRunnerTool.appletId]: reactRunnerTool,
     [textEscapeUnescapeTool.appletId]: textEscapeUnescapeTool,
     [javascriptRunnerTool.appletId]: javascriptRunnerTool,
+    [csvTableViewerTool.appletId]: csvTableViewerTool,
+    [jsonTableViewerTool.appletId]: jsonTableViewerTool,
 
     /**
      * Applet Pages

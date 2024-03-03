@@ -137,7 +137,7 @@ export class Applet<
   /**
    * Variable to store setTimeout when running action
    */
-  private autoRunSetTimeout?: number
+  private autoRunSetTimeout?: NodeJS.Timeout
 
   /**
    * Indicates that the applet has auto run enabled and hasn't been run
@@ -169,7 +169,7 @@ export class Applet<
   /**
    * Variable to store the setTimeout number for debounced value
    */
-  private isActionRunningDebouncedTimeout?: number
+  private isActionRunningDebouncedTimeout?: NodeJS.Timeout
 
   /**
    * Input field key when batch mode enabled
@@ -237,6 +237,23 @@ export class Applet<
   readonly hasOverriddenDefaultState: boolean = false
 
   @observable viewMode: "main" | "pipeline"
+
+  @observable maximizedField = {
+    enabled: false,
+    type: "",
+    key: ""
+  }
+
+  @action
+  toggleMaximizedFieldKey(options: typeof this.maximizedField) {
+    if (this.maximizedField.enabled === options.enabled &&
+      this.maximizedField.key === options.key &&
+      this.maximizedField.type === options.type) {
+      options.enabled = false
+    }
+
+    this.maximizedField = options
+  }
 
   /**
    * Empty applet
@@ -345,6 +362,7 @@ export class Applet<
       this.isAutoRunAndFirstTime = initialState.isAutoRunAndFirstTime ?? this.isAutoRunAndFirstTime
       this.optionValues = initialState.optionValues ?? this.optionValues
       this.viewMode = initialState.viewMode ?? this.viewMode
+      this.maximizedField = initialState.maximizedField ?? this.maximizedField
     }
 
     /**
@@ -417,7 +435,8 @@ export class Applet<
       appletId,
       isAutoRunAndFirstTime,
       optionValues,
-      viewMode
+      viewMode,
+      maximizedField
     } = this
 
     const createdAt = new Date().getTime()
@@ -441,7 +460,8 @@ export class Applet<
       appletId,
       isAutoRunAndFirstTime,
       optionValues: toJS(optionValues),
-      viewMode
+      viewMode,
+      maximizedField: toJS(maximizedField)
     }
   }
 

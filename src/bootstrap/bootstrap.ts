@@ -1,3 +1,4 @@
+import "@glideapps/glide-data-grid/dist/index.css"
 import { setElementVars } from "@vanilla-extract/dynamic"
 import localforage from "localforage"
 import { configurePersistable } from "mobx-persist-store"

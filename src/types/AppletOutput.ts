@@ -52,4 +52,7 @@ export type AppletOutput<K extends Record<string, string> = any> = {
 } | {
   component: "React"
   props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.React>
+} | {
+  component: "DataGrid"
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.DataGrid>
 })
