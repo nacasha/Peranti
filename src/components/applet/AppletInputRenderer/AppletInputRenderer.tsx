@@ -3,6 +3,7 @@ import { type FC } from "react"
 import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
+import { AppletComponentContent } from "src/contexts/AppletInputContext/AppletInputContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
@@ -11,19 +12,35 @@ import { type InputComponentProps } from "src/types/InputComponentProps"
 
 interface AppletInputRendererProps {
   appletInput: AppletInput
-  readOnly?: boolean
 }
 
 export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
-  const { readOnly, appletInput } = props
+  const { appletInput } = props
   const { show } = useContextMenu()
 
   const activeApplet = activeAppletStore.getActiveApplet()
-  const defaultValue = activeApplet.inputValues[appletInput.key] ?? appletInput.defaultValue
+
+  /**
+   * Rendered field state
+   */
+  const inputValue = useSelector(() => activeApplet.inputValues[appletInput.key] ?? appletInput.defaultValue)
   const initialState = activeApplet.inputFieldsState[appletInput.key]
+  const isDeleted = useSelector(() => activeApplet.isDeleted)
+
+  /**
+   * Batch mode state
+   */
   const isBatchModeEnabled = useSelector(() => activeApplet.isBatchModeEnabled)
   const batchModeInputKey = useSelector(() => activeApplet.batchModeInputKey)
 
+  /**
+   * Maximized field state
+   */
+  const maximizedField = useSelector(() => activeApplet.maximizedField)
+
+  /**
+   * Component to be rendered
+   */
   const inputComponent = appletComponentService.getInputComponent(appletInput.component, isBatchModeEnabled)
   const Component: FC<InputComponentProps<any>> = inputComponent.component
 
@@ -36,7 +53,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   }
 
   const handleContextMenu = (event: any) => {
-    if (activeApplet.isDeleted) {
+    if (isDeleted) {
       return
     }
 
@@ -50,10 +67,18 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
     })
   }
 
+  /**
+   * Pass `initialState` related props to selected components
+   * Only few components handling those events
+   */
   const additionalProps: Record<string, any> = {}
   if (["Code", "PipelineEditor"].includes(appletInput.component)) {
     additionalProps.initialState = initialState
     additionalProps.onStateChange = handleStateChange
+  }
+
+  if (maximizedField.enabled && maximizedField.type === "input" && maximizedField.key !== appletInput.key) {
+    return
   }
 
   if (isBatchModeEnabled && batchModeInputKey !== appletInput.key) {
@@ -61,16 +86,18 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   }
 
   return (
-    <Component
-      {...appletInput.props}
-      key={appletInput.key}
-      fieldKey={appletInput.key}
-      label={appletInput.label}
-      defaultValue={defaultValue}
-      readOnly={readOnly}
-      onValueChange={handleValueChange}
-      onContextMenu={handleContextMenu}
-      {...additionalProps}
-    />
+    <AppletComponentContent.Provider value={{ type: "input", fieldKey: appletInput.key }}>
+      <Component
+        {...appletInput.props}
+        key={appletInput.key}
+        fieldKey={appletInput.key}
+        label={appletInput.label}
+        value={inputValue}
+        readOnly={isDeleted}
+        onValueChange={handleValueChange}
+        onContextMenu={handleContextMenu}
+        {...additionalProps}
+      />
+    </AppletComponentContent.Provider>
   )
 }

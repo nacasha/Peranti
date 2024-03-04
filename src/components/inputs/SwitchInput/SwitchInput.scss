@@ -18,7 +18,7 @@
       padding: 2px;
       border-radius: var(--border-radius);
       user-select: none;
-      transition: background-color var(--transition-speed);
+      transition: background-color var(--animation-speed);
       background-color: transparent;
 
       &:hover {

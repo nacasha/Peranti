@@ -5,3 +5,16 @@
   flex-direction: column;
   flex: 1;
 }
+
+.AppletComponentError {
+  position: absolute;
+  inset: 0;
+  top: 35px;
+  border-radius: var(--border-radius);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background-color: rgba(255, 0, 0, 0.1);
+}

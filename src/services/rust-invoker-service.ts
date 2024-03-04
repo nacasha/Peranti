@@ -1,5 +1,5 @@
-import { Command } from "@tauri-apps/api/shell"
-import { invoke } from "@tauri-apps/api/tauri"
+import { invoke } from "@tauri-apps/api/core"
+import { Command } from "@tauri-apps/plugin-shell"
 
 interface RunExtensionOptions {
   external: string[]
@@ -14,9 +14,9 @@ export const rustInvokerService = {
   },
 
   async runExtension(options: RunExtensionOptions) {
-    const command = new Command(
+    const command = Command.create(
       "run-extension",
-      ["scripts/extension-runner.cjs", JSON.stringify(options)]
+      ["scripts/extension-runner.js", JSON.stringify(options)]
     )
 
     command.stdout.addListener("data", (e) => {

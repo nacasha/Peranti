@@ -100,7 +100,9 @@
   inset: 0;
   z-index: 100;
   display: flex;
+  padding: 40px;
   justify-content: center;
+  align-items: center;
   pointer-events: none !important;
 }
 

@@ -1,11 +1,9 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use opener::reveal;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use tauri::Manager;
-use opener::reveal;
-use window_shadows::set_shadow;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -22,7 +20,14 @@ fn reveal_file_manager(path: &str) {
 fn my_custom_command(word_count: usize) -> String {
     // List of Lorem Ipsum words
     let lorem_ipsum_words = [
-        "Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
+        "Lorem",
+        "ipsum",
+        "dolor",
+        "sit",
+        "amet",
+        "consectetur",
+        "adipiscing",
+        "elit",
     ];
 
     // Initialize the random number generator
@@ -42,17 +47,15 @@ fn my_custom_command(word_count: usize) -> String {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_fs::init())
         .invoke_handler(tauri::generate_handler![
             greet,
             my_custom_command,
             reveal_file_manager,
         ])
-        .setup(|app| {
-            let window = app.get_window("main").unwrap();
-            set_shadow(&window, true).expect("Unsupported platform!");
-            Ok(())
-        })
-        .plugin(tauri_plugin_clipboard::init())
+        .plugin(tauri_plugin_clipboard_manager::init())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

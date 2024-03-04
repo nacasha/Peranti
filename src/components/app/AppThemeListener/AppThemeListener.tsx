@@ -1,6 +1,6 @@
 import { type FC, useEffect } from "react"
 
-import { Theme } from "src/enums/theme"
+import { Theme } from "src/enums/theme-2"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
 import { darkThemeClass } from "src/styles/themes/dark.theme.css"

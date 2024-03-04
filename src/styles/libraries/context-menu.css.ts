@@ -12,7 +12,8 @@ ${theme} .contexify_submenu-isOpen,
 ${theme} .contexify_submenu-isOpen>.contexify_itemContent`
 
 globalStyle(parent, {
-  boxShadow: "0 0 2px rgba(0, 0, 0, 0.2)"
+  boxShadow: "0 0 7px -1px rgba(0, 0, 0, 0.1)",
+  animationDuration: "var(--animation-speed)"
 })
 
 globalStyle(`${lightThemeClass} ${parent}`, {

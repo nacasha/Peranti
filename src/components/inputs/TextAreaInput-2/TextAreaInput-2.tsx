@@ -1,6 +1,6 @@
 import { type FC, useId } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./TextAreaInput.scss"
@@ -11,7 +11,7 @@ interface TextAreaInputProps extends InputComponentProps {
 
 export const TextAreaInput: FC<TextAreaInputProps> = (props) => {
   const id = useId()
-  const { onValueChange, defaultValue, readOnly, label = "Input", fieldKey, ...restProps } = props
+  const { onValueChange, value, readOnly, label = "Input", fieldKey, ...restProps } = props
 
   const onInputChange: React.InputHTMLAttributes<HTMLTextAreaElement>["onBlur"] = (event) => {
     const value = event.target.value
@@ -20,10 +20,10 @@ export const TextAreaInput: FC<TextAreaInputProps> = (props) => {
 
   return (
     <div className="TextAreaInput" style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead showMaximize label={label} />
       <textarea
         id={id}
-        defaultValue={defaultValue}
+        value={value}
         onChange={onInputChange}
         readOnly={readOnly}
         tabIndex={readOnly ? -1 : undefined}

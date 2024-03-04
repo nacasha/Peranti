@@ -1,11 +1,11 @@
-import { appWindow } from "@tauri-apps/api/window"
 import { type FC, useEffect } from "react"
 
 import { fileDropService } from "src/services/file-drop-service"
+import { windowManager } from "src/services/window-manager"
 
 export const FileDropListener: FC = () => {
   const registerListener = async() => {
-    const unlisten = await appWindow.onFileDropEvent((event) => {
+    const unlisten = await windowManager.onFileDropEvent((event) => {
       if (event.payload.type === "hover") {
         if (event.payload.paths.length === 0) {
           return

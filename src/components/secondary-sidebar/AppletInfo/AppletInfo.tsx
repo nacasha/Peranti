@@ -10,7 +10,7 @@ export const AppletInfo: FC = () => {
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
 
   return (
-    <SecondarySidebarSection title="Info">
+    <SecondarySidebarSection title="Information">
       <div className="AppletInfo">
         <Item label="Name" content={activeApplet.name} />
         <Item label="Description" content={activeApplet.description} />

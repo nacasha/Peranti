@@ -59,7 +59,7 @@ export const BottomPanel: FC = () => {
     <div className="BottomPanel">
       <div className="BottomPanel-header">
         <div className="BottomPanel-title">Console Output</div>
-        <ButtonIcon icon={Icons.Close} onClick={handleClickClose} />
+        <ButtonIcon tooltip="Hide" icon={Icons.Close} onClick={handleClickClose} />
       </div>
       <div ref={contentRef} className="BottomPanel-content">
         <Console logs={logs} variant={isDarkTheme ? "dark" : "light"} />

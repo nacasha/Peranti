@@ -1,6 +1,6 @@
 import { type FC, useId } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import type { OutputComponentProps } from "src/types/OutputComponentProps.ts"
 
 import "./TextOutput.scss"
@@ -11,7 +11,7 @@ export const TextOutput: FC<OutputComponentProps> = (props) => {
 
   return (
     <div className="TextOutput" style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead label={label} />
       <input id={id} value={value} readOnly autoComplete="off" />
     </div>
   )

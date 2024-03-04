@@ -1,0 +1,30 @@
+$checkSize: 5px;
+$checkBackgroundColor: #ffffff;
+$checkColor: rgba(100, 100, 100, .25);
+
+.ColorOutput {
+  display: flex;
+  flex-direction: column;
+}
+
+.ColorOutput-content {
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  width: 100%;
+  height: 70px;
+
+  background-color: $checkBackgroundColor;
+  background-image: linear-gradient(45deg, $checkColor 25%, transparent 25%),
+    linear-gradient(135deg, $checkColor 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, $checkColor 75%),
+    linear-gradient(135deg, transparent 75%, $checkColor 75%);
+  background-size: calc(2 * $checkSize) calc(2 * $checkSize);
+  background-position: 0 0, $checkSize 0, $checkSize calc(-1 * $checkSize), 0 calc(-1 * $checkSize);
+}
+
+.ColorOutput-pallete {
+  width: 100%;
+  height: 100%;
+}

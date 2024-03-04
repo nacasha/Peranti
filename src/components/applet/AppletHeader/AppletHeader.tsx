@@ -17,9 +17,9 @@ export const AppletHeader = () => {
     <div className="AppletHeader">
       <div className="AppletHeader-inner">
         <div className="AppletHeader-button-list">
-          <ButtonIcon icon={Icons.Run} />
-          <ButtonIcon icon={Icons.Plus} />
-          <ButtonIcon icon={Icons.FullScreen} />
+          <ButtonIcon tooltip="" icon={Icons.Run} />
+          <ButtonIcon tooltip="" icon={Icons.Plus} />
+          <ButtonIcon tooltip="" icon={Icons.FullScreen} />
           {/* <Button icon={Icons.Settings} onClick={handleClickSettings}>
             Options
           </Button>

@@ -19,7 +19,7 @@ const root = style({
     backgroundColor: styleTokens.colorAccent,
     position: "absolute",
     opacity: "0",
-    transition: `all ${styleTokens.transitionSpeed}`
+    transition: `all ${styleTokens.animationSpeed}`
   },
 
   ":hover": {

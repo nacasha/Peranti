@@ -25,7 +25,7 @@ class UserSettingsService {
   constructor() {
     makeAutoObservable(this)
 
-    void appDataService.readSettingsFile().then((userSettings) => {
+    void appDataService.readUserSettingsFile().then((userSettings) => {
       this.values = Object.assign(this.values, userSettings)
       window.document.body.className = (userSettings[UserSettingsKeys.theme] ?? "dark").toString()
 
@@ -99,11 +99,11 @@ class UserSettingsService {
    * @param value
    */
   private async updateSetting(key: string, value: string) {
-    const settings = await appDataService.readSettingsFile()
+    const settings = await appDataService.readUserSettingsFile()
 
     if (key && (value !== undefined)) {
       const newSettings = { ...settings, [key]: value }
-      void appDataService.writeSettingsFile(newSettings)
+      void appDataService.writeUserSettingsFile(newSettings)
     }
   }
 }

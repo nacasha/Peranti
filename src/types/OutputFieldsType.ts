@@ -21,4 +21,6 @@ export namespace OutputFieldsType {
   export type Mermaid = ExtractType<typeof appletComponentService.outputs.Mermaid>
   export type Pintora = ExtractType<typeof appletComponentService.outputs.Pintora>
   export type React = ExtractType<typeof appletComponentService.outputs.React>
+  export type DataGrid = ExtractType<typeof appletComponentService.outputs.DataGrid>
+  export type Color = ExtractType<typeof appletComponentService.outputs.Color>
 }

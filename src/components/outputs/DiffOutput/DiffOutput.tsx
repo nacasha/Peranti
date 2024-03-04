@@ -2,8 +2,8 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 import ReactDiffViewer, { type DiffMethod } from "react-diff-viewer"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
-import { Theme } from "src/enums/theme"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
+import { Theme } from "src/enums/theme-2"
 import { interfaceStore } from "src/services/interface-store"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
@@ -26,7 +26,7 @@ export const DiffOutput: FC<DiffOutputProps> = observer((props) => {
 
   return (
     <div className="DiffOutput" style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead showMaximize label={label} />
       <div className="DiffOutput-body">
         <ReactDiffViewer
           oldValue={value.oldCode}

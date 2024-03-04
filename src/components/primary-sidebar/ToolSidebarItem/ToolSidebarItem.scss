@@ -2,13 +2,27 @@
   padding: 2px 11px;
   cursor: pointer;
   user-select: none;
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  color: var(--tool-sidebar-text-color);
 
   &:hover {
-    background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 7%);
+    background: var(--tool-sidebar-background-color-hover)
+  }
+
+  img {
+    width: 14px;
+    // filter: var(--tool-sidebar-icon-color);
   }
 
   &.active {
-    background: var(--accent-color);
-    color: white;
+    color: var(--tool-sidebar-text-color-active);
+    background-color: var(--tool-sidebar-background-color-active);
+
+    img {
+      width: 14px;
+      // filter: var(--tool-sidebar-icon-color-active);
+    }
   }
 }

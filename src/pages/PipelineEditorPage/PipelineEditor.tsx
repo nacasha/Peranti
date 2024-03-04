@@ -13,13 +13,13 @@ import "./PipelineEditor.scss"
 export const PipelineEditorContext = createContext<PipelineEditorStore>({} as any)
 
 export const PipelineEditor: FC<InputComponentProps<any>> = (props) => {
-  const { defaultValue = {}, onValueChange, readOnly } = props
+  const { value = {}, onValueChange, readOnly } = props
 
   return (
     <PipelineEditorContext.Provider
       value={new PipelineEditorStore(
-        defaultValue.nodes,
-        defaultValue.edges,
+        value.nodes,
+        value.edges,
         onValueChange,
         readOnly
       )}

@@ -3,6 +3,7 @@ import { type FC } from "react"
 import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
+import { AppletComponentContent } from "src/contexts/AppletInputContext/AppletInputContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
@@ -18,12 +19,27 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
   const { show } = useContextMenu()
 
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
+
+  /**
+   * Rendered field state
+   */
   const outputValue = useSelector(() => activeApplet.outputValues[appletOutput.key] ?? "")
+  const initialState = activeApplet.outputFieldsState[appletOutput.key]
+
+  /**
+   * Batch mode state
+   */
   const isBatchModeEnabled = useSelector(() => activeApplet.isBatchModeEnabled)
   const batchModeOutputKey = useSelector(() => activeApplet.batchModeOutputKey)
 
-  const initialState = activeApplet.outputFieldsState[appletOutput.key]
+  /**
+   * Maximized field state
+   */
+  const maximizedField = useSelector(() => activeApplet.maximizedField)
 
+  /**
+   * Component to be rendered
+   */
   const outputComponent = appletComponentService.getOutputComponent(appletOutput.component, isBatchModeEnabled)
   const Component: FC<OutputComponentProps<any>> = outputComponent.component
 
@@ -56,19 +72,25 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
     additionalProps.onStateChange = handleStateChange
   }
 
+  if (maximizedField.enabled && maximizedField.type === "output" && maximizedField.key !== appletOutput.key) {
+    return
+  }
+
   if (isBatchModeEnabled && batchModeOutputKey !== appletOutput.key) {
     return
   }
 
   return (
-    <Component
-      {...appletOutput.props}
-      key={appletOutput.key}
-      fieldKey={appletOutput.key}
-      label={appletOutput.label}
-      value={outputValue}
-      onContextMenu={handleContextMenu}
-      {...additionalProps}
-    />
+    <AppletComponentContent.Provider value={{ type: "output", fieldKey: appletOutput.key }}>
+      <Component
+        {...appletOutput.props}
+        key={appletOutput.key}
+        fieldKey={appletOutput.key}
+        label={appletOutput.label}
+        value={outputValue}
+        onContextMenu={handleContextMenu}
+        {...additionalProps}
+      />
+    </AppletComponentContent.Provider>
   )
 }

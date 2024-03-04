@@ -1,4 +1,3 @@
-import { appWindow } from "@tauri-apps/api/window"
 import { observer } from "mobx-react"
 import { type FC, useEffect, useRef, type CSSProperties, memo } from "react"
 import SimpleBar from "simplebar-react"
@@ -14,6 +13,7 @@ import { hotkeysStore } from "src/services/hotkeys-store"
 import { interfaceStore } from "src/services/interface-store"
 import { sessionHistoryStore } from "src/services/session-history-store"
 import { sessionStore } from "src/services/session-store"
+import { windowManager } from "src/services/window-manager.ts"
 
 import { sessionTabbarClasses } from "./SessionTabbar.css"
 import { SessionTabbarContextMenu } from "./SessionTabbarContextMenu.tsx"
@@ -95,10 +95,10 @@ export const SessionTabbar: FC = () => {
           const target = event.target as HTMLDivElement | null
 
           if (target?.classList.contains("simplebar-content")) {
-            void appWindow.startDragging()
+            void windowManager.startDragging()
 
             if (event.detail === 2) {
-              void appWindow.toggleMaximize()
+              void windowManager.toggleMaximize()
             }
           }
         }

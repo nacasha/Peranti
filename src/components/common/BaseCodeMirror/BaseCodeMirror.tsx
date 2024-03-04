@@ -7,7 +7,7 @@ import CodeMirror, { EditorView, type ReactCodeMirrorRef, type ReactCodeMirrorPr
 import fastDeepEqual from "fast-deep-equal"
 import { useRef, type FC, useEffect, useState, memo } from "react"
 
-import { Theme } from "src/enums/theme"
+import { Theme } from "src/enums/theme-2"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
 
@@ -131,7 +131,6 @@ const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => 
     const initialTop = Number(initialStateCodeMirror?.scroll.top ?? 0)
     const initialLeft = Number(initialStateCodeMirror?.scroll.left ?? 0)
 
-    view.contentDOM.style.height = "4859px"
     view.scrollDOM.scrollTop = initialTop
     view.scrollDOM.scrollLeft = initialLeft
 
