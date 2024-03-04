@@ -16,17 +16,23 @@ import "src/styles/libraries/simplebar.css"
 import "src/styles/libraries/tooltip.scss"
 import { styleTokens } from "src/styles/styleTokens.css"
 
+/**
+ * Use localforage to manage and persist application state,
+ * behind the scene, localeforage will use IndexedDB
+ */
 configurePersistable({
   storage: localforage,
   stringify: false
 })
 
+/**
+ * Replace default theme variables
+ */
 async function setupCustomTheme() {
   const el = document.querySelector("body")
 
   if (el) {
-    setElementVars(el, styleTokens, {
-    })
+    setElementVars(el, styleTokens, {})
   }
 }
 

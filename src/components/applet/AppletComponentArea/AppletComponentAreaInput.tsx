@@ -14,6 +14,11 @@ export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = (prop
   const { className: classNameProps } = props
 
   /**
+   * Batch mode state
+   */
+  const isBatchEnabled = useSelector(() => activeAppletStore.getActiveApplet().isBatchModeEnabled)
+
+  /**
    * Active applet info
    */
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
@@ -28,14 +33,22 @@ export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = (prop
    * Applet layout
    */
   const layoutSetting = useSelector(() => activeAppletStore.getActiveApplet().layoutSetting)
+  const { fieldsType } = layoutSetting
 
-  const classNames: ClassValue[] = ["AppletComponentAreaInput", layoutSetting.fieldsType, classNameProps]
+  const classNames: ClassValue[] = ["AppletComponentAreaInput", fieldsType, classNameProps]
   const styles: CSSProperties = {}
 
-  if (layoutSetting.fieldsType === "flex") {
-    classNames.push(layoutSetting.fieldsInputFlexDirection)
-  } else if (layoutSetting.fieldsType === "grid") {
-    styles.gridTemplate = layoutSetting.fieldsinputGridTemplate
+  /**
+   * Layout will be flex horizontally when batch mode is enabled
+   */
+  if (isBatchEnabled || maximizedField.enabled) {
+    classNames.push(...["flex", "horizontal"])
+  } else {
+    if (fieldsType === "flex") {
+      classNames.push(layoutSetting.fieldsInputFlexDirection)
+    } else if (fieldsType === "grid") {
+      styles.gridTemplate = layoutSetting.fieldsinputGridTemplate
+    }
   }
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
