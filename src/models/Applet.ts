@@ -192,11 +192,6 @@ export class Applet<
   @observable isDeleted: boolean = false
 
   /**
-   * Counter to force rerender applet viewer
-   */
-  @observable renderCounter: number = 0
-
-  /**
    * Key to store applet session state into storage
    */
   readonly state?: AppletState = undefined
@@ -1034,14 +1029,6 @@ export class Applet<
   }
 
   /**
-   * Force applet input and output components to rerender
-   */
-  @action
-  forceRerender() {
-    this.renderCounter += 1
-  }
-
-  /**
    * Manually hydrate applet state to storage
    */
   async hydrateStore() {
@@ -1130,12 +1117,13 @@ export class Applet<
       }
 
       this.setInputValues({ ...defaultInputValues, ...computedInputValues })
-      this.forceRerender()
 
       /**
        * Always run the sample even the applet has autoRun disabled
        */
-      void this.run()
+      if (!this.autoRun) {
+        void this.run()
+      }
     }
   }
 
