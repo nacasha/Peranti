@@ -30,6 +30,10 @@ export const colorConverterTool = new AppletConstructor<InputFields, OutputField
   name: "Color Converter",
   description: "Color conversions from/to Hex, RGB(A), HSL(A), HSV(A)",
   category: "Color",
+  layoutSetting: {
+    areaType: "grid",
+    areaGridTemplate: "'input' min-content 'output' 1fr"
+  },
   inputFields: [
     {
       key: "color",

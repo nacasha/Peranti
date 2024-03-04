@@ -181,6 +181,7 @@ const _themeableTokens = {
   toolSidebarTextColorActive: "tool-sidebar-text-color-active",
   toolSidebarIconColor: "tool-sidebar-icon-color",
   toolSidebarIconColorActive: "tool-sidebar-icon-color-active",
+  toolSidebarBackgroundColorHover: "tool-sidebar-background-color-hover",
   toolSidebarBackgroundColorActive: "tool-sidebar-background-color-active",
 
   /**
