@@ -54,7 +54,6 @@ class ActiveAppletStore {
     const activeApplet = this.getActiveApplet()
 
     activeApplet.resetInputAndOutputValues()
-    activeApplet.forceRerender()
   }
 }
 
