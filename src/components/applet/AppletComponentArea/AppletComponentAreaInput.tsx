@@ -47,7 +47,7 @@ export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = (prop
     if (fieldsType === "flex") {
       classNames.push(layoutSetting.fieldsInputFlexDirection)
     } else if (fieldsType === "grid") {
-      styles.gridTemplate = layoutSetting.fieldsinputGridTemplate
+      styles.gridTemplate = layoutSetting.fieldsInputGridTemplate
     }
   }
 

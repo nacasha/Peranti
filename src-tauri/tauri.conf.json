@@ -30,12 +30,13 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Peranti",
-        "width": 900,
+        "width": 1100,
         "minWidth": 600,
-        "height": 600,
+        "height": 650,
         "minHeight": 390,
         "decorations": false,
-        "fileDropEnabled": true
+        "fileDropEnabled": true,
+        "center": true
       }
     ],
     "security": {
