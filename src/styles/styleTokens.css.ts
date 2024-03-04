@@ -5,7 +5,7 @@ const _globalTokens = {
    * General
    */
   borderRadius: "border-radius",
-  transitionSpeed: "transition-speed",
+  animationSpeed: "animation-speed",
 
   /**
    * Fonts

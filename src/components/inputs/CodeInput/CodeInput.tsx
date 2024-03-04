@@ -25,8 +25,6 @@ export const CodeInput: FC<CodeInputProps> = (props) => {
     onValueChange(newValue)
   }
 
-  console.log({ defaultValue: value })
-
   return (
     <div className="CodeInput" style={{ gridArea: fieldKey }}>
       <AppletComponentHead showMaximize label={label} />

@@ -24,7 +24,7 @@ export const { ...secondarySidebarClasses } = new class {
     overflow: "hidden",
     height: 33,
     borderTop: `1px solid ${styleTokens.borderColor}`,
-    transition: `all ${styleTokens.transitionSpeed}`,
+    transition: `all ${styleTokens.animationSpeed}`,
 
     ":first-child": {
       borderTop: "none"

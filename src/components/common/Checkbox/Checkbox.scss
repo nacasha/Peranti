@@ -24,7 +24,7 @@ $border-radius: var(--border-radius);
     cursor: pointer;
     border: 1px solid var(--bc, var(--input-output-border-color));
     background: var(--b, var(--background));
-    transition: background 0.1s, border-color 0.1s, box-shadow 0.1s;
+    transition: background var(--animation-speed), border-color var(--animation-speed), box-shadow var(--animation-speed);
   }
   .Switch input[type=checkbox]:after {
     content: "";
@@ -32,7 +32,7 @@ $border-radius: var(--border-radius);
     left: 0;
     top: 0;
     position: absolute;
-    transition: transform var(--d-t, 0.1s) var(--d-t-e, ease), opacity var(--d-o, 0.1s);
+    transition: transform var(--d-t, var(--animation-speed)) var(--d-t-e, ease), opacity var(--d-o, var(--animation-speed));
   }
   .Switch input[type=checkbox]:checked {
     --b: var(--active);
