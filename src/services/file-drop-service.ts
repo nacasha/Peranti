@@ -101,7 +101,6 @@ class FileDropService {
 
           activeApplet.setInputValue(inputFieldKey, fileContent)
           activeApplet.resetInputAndOutputFieldsState()
-          activeApplet.forceRerender()
         }
       }
     } catch (exception) {

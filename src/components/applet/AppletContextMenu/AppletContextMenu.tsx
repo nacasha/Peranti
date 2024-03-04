@@ -90,7 +90,6 @@ export const AppletContextMenu: FC = () => {
 
       if (fileContent) {
         activeAppletStore.getActiveApplet().setInputValue(appletInput.key, fileContent)
-        activeAppletStore.getActiveApplet().forceRerender()
       }
     }
   }
