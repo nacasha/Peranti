@@ -1,0 +1,16 @@
+.DataGridOutput {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.DataGridOutput-content {
+  flex: 1;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+
+  .DataEditor {
+    width: 100%;
+    height: 100%;
+  }
+}

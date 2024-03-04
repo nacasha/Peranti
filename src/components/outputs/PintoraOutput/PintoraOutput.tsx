@@ -1,7 +1,7 @@
 import pintora from "@pintora/standalone"
 import { type FC, useEffect, useState, useRef } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { ZoomableContent } from "src/components/common/ZoomableContent"
 import { interfaceStore } from "src/services/interface-store"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
@@ -79,7 +79,7 @@ export const PintoraOutput: FC<PintoraOutputProps> = (props) => {
   return (
     <div className={pintoraOutputClasses.root} style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
       <div key={pintoraSyntax} ref={renderRef} className={pintoraOutputClasses.output} />
-      <ComponentLabel label={label} />
+      <AppletComponentHead showMaximize label={label} />
       <div className={pintoraOutputClasses.inner}>
         <ZoomableContent
           initialState={initialState}

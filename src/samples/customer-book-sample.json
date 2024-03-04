@@ -1,0 +1,17 @@
+[
+  {
+    "customer": "Joe Doe",
+    "book": "Structure and Interpretation of Computer Programs",
+    "due": "2016-12-05"
+  },
+  {
+    "customer": "Jason Arthur",
+    "book": "Compilers: Principles, Techniques, and Tools",
+    "due": "2016-10-22"
+  },
+  {
+    "customer": "Jason Arthur",
+    "book": "Structure and Interpretation of Computer Programs",
+    "due": "2016-12-22"
+  }
+]

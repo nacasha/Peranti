@@ -4,6 +4,8 @@ import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
+import customerBook from "./customer-book-sample.json"
+
 interface InputFields {
   json: InputFieldsType.Code
 }
@@ -94,6 +96,14 @@ export const jsonToCsvTool = new AppletConstructor<InputFields, OutputFields, Op
       component: "Checkbox",
       defaultValue: true,
       label: "Prepend Header"
+    }
+  ],
+  samples: [
+    {
+      name: "Customer Book",
+      inputValues: {
+        json: JSON.stringify(customerBook, null, 2)
+      }
     }
   ],
   action: async({ inputValues, options }) => {

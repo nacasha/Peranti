@@ -10,10 +10,26 @@ interface AppletComponentAreaContainerProps {
 }
 
 export const AppletComponentAreaContainer: FC<AppletComponentAreaContainerProps> = ({ children }) => {
+  /**
+   * Batch mode state
+   */
   const isBatchEnabled = useSelector(() => activeAppletStore.getActiveApplet().isBatchModeEnabled)
+
+  /**
+   * Field layout state
+   */
   const textAreaWordWrap = useSelector(() => interfaceStore.textAreaWordWrap)
+
+  /**
+   * Area layout
+   */
   const layoutSetting = useSelector(() => activeAppletStore.getActiveApplet().layoutSetting)
   const { areaType } = layoutSetting
+
+  /**
+   * Maximized field state
+   */
+  const maximizedField = useSelector(() => activeAppletStore.getActiveApplet().maximizedField)
 
   const classNames: ClassValue[] = ["AppletComponentArea", areaType, textAreaWordWrap && "text-area-word-wrap"]
   const styles: CSSProperties = {}
@@ -21,7 +37,7 @@ export const AppletComponentAreaContainer: FC<AppletComponentAreaContainerProps>
   /**
    * Layout will be flex horizontally when batch mode is enabled
    */
-  if (isBatchEnabled) {
+  if (isBatchEnabled || maximizedField.enabled) {
     classNames.push(...["flex", "horizontal"])
   } else {
     if (areaType === "flex") {

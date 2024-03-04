@@ -15,7 +15,7 @@
     background-color: var(--accent-color);
     position: absolute;
     opacity: 0;
-    transition: all var(--transition-speed);
+    transition: all var(--animation-speed);
   }
 
   &:hover {

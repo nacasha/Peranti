@@ -1,7 +1,7 @@
 import mermaid from "mermaid"
 import { type FC, useEffect, useState, useRef } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { ZoomableContent } from "src/components/common/ZoomableContent"
 import { Theme } from "src/enums/theme-2"
 import { interfaceStore } from "src/services/interface-store"
@@ -60,7 +60,7 @@ export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
 
   return (
     <div className={mermaidOutputClasses.root} onContextMenu={onContextMenu} style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead showMaximize label={label} />
       <div className={mermaidOutputClasses.inner}>
         <ZoomableContent
           initialState={initialState}

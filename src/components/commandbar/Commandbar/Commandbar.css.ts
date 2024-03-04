@@ -94,17 +94,22 @@ globalStyle("[cmdk-root]", {
   pointerEvents: "all",
   border: "1px solid var(--border-color)",
   maxWidth: "640px",
+  maxHeight: "500px",
   width: "100%",
+  height: "100%",
   background: contract.backgroundColor,
   borderRadius: "var(--border-radius)",
   overflow: "hidden",
   boxShadow: "var(--cmdk-shadow)",
-  transition: "transform 100ms ease",
+  transition: "all 100ms",
   outline: "none",
   display: "flex",
   flexDirection: "column",
+  transform: "translateY(10px)",
+  opacity: 0
+})
 
-  position: "absolute",
-  margin: "auto",
-  top: "25%"
+globalStyle("[cmdk-root].open", {
+  transform: "translateY(0px)",
+  opacity: 1
 })

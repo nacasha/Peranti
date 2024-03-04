@@ -131,7 +131,6 @@ const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => 
     const initialTop = Number(initialStateCodeMirror?.scroll.top ?? 0)
     const initialLeft = Number(initialStateCodeMirror?.scroll.left ?? 0)
 
-    view.contentDOM.style.height = "4859px"
     view.scrollDOM.scrollTop = initialTop
     view.scrollDOM.scrollLeft = initialLeft
 

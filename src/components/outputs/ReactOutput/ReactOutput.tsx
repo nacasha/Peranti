@@ -1,7 +1,7 @@
 import { type FC } from "react"
 import { Runner } from "react-runner"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import { reactOutputClasses } from "./ReactOutput.css"
@@ -13,7 +13,7 @@ export const ReactOutput: FC<ReactOutputProps> = (props) => {
 
   return (
     <div className={reactOutputClasses.root} style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead showMaximize label={label} />
       <div className={reactOutputClasses.outputArea}>
         <div className={reactOutputClasses.outputContent}>
           <Runner code={value} />

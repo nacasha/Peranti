@@ -1,8 +1,7 @@
 import { type FC } from "react"
 
 import { BaseCodeMirror, type BaseCodeMirrorProps } from "src/components/common/BaseCodeMirror"
-import { ComponentLabel } from "src/components/common/ComponentLabel"
-import { LargeInputWarning } from "src/components/common/LargeInputWarning"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import type { OutputComponentProps } from "src/types/OutputComponentProps.ts"
 
 import "./CodeOutput.scss"
@@ -14,15 +13,13 @@ export const CodeOutput: FC<CodeOutputProps> = (props) => {
 
   return (
     <div className="CodeOutput" style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
-      <LargeInputWarning input={value}>
-        <BaseCodeMirror
-          {...baseCodeMirrorProps}
-          value={typeof value === "string" ? value : JSON.stringify(value, null, 2)}
-          initialStateCodeMirror={initialState}
-          readOnly
-        />
-      </LargeInputWarning>
+      <AppletComponentHead showMaximize label={label} />
+      <BaseCodeMirror
+        {...baseCodeMirrorProps}
+        value={typeof value === "string" ? value : JSON.stringify(value, null, 2)}
+        initialStateCodeMirror={initialState}
+        readOnly
+      />
     </div>
   )
 }

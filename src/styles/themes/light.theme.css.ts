@@ -16,9 +16,11 @@ export const lightThemeClass = createTheme(themeableTokens, {
   buttonBorderColorActive: "#cbcccd",
   backgroundMain: "#ffffff",
   backgroundContent: "#ffffff",
+
   activitybarBackgroundColor: "#ffffff",
   activitybarItemBackgroundColorHover: "#dfdddd",
   activitybarItemBackgroundColorActive: "#d6d6d6",
+
   primarySidebarBackgroundColor: "#f6f8fa",
 
   /**
@@ -40,11 +42,17 @@ export const lightThemeClass = createTheme(themeableTokens, {
   sessionTabbarTextColorActive: "#000000",
   appletHeaderBackgroundColor: "#ffffff",
   appletViewerBackgroundColor: "#f9f9fc",
+
+  /**
+   * Tool sidebar
+   */
   toolSidebarTextColor: "#212418",
   toolSidebarTextColorActive: "#000000",
   toolSidebarIconColor: "invert(11%) sepia(7%) saturate(1891%) hue-rotate(34deg) brightness(98%) contrast(92%)",
   toolSidebarIconColorActive: "invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%)",
+  toolSidebarBackgroundColorHover: "#efefef",
   toolSidebarBackgroundColorActive: "#dfdfdf",
+
   settingsViewBackgroundColor: "#f9f9fc",
   settingsViewCardBackgroundColor: "#ffffff",
   scrollbarTrackBackgroundColor: "#ffffff",

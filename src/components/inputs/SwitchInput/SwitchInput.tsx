@@ -1,7 +1,7 @@
 import { clsx } from "clsx"
-import { type FC, useState } from "react"
+import { type FC, useState, useEffect } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./SwitchInput.scss"
@@ -11,8 +11,8 @@ interface SwitchInputProps extends InputComponentProps {
 }
 
 export const SwitchInput: FC<SwitchInputProps> = (props) => {
-  const { label, options = [], onValueChange, defaultValue, readOnly, fieldKey } = props
-  const [selectedOption, setSelectedOption] = useState<any>(defaultValue)
+  const { label, options = [], onValueChange, value, readOnly, fieldKey } = props
+  const [selectedOption, setSelectedOption] = useState<any>(value)
 
   const onClickItem = (option: typeof options[0]) => () => {
     if (readOnly) return
@@ -20,9 +20,13 @@ export const SwitchInput: FC<SwitchInputProps> = (props) => {
     onValueChange(option.value)
   }
 
+  useEffect(() => {
+    setSelectedOption(value)
+  }, [value])
+
   return (
     <div className={clsx("SwitchInput", readOnly && "read-only")} style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead label={label} />
       <div className="buttons">
         {options.map((option) => (
           <div

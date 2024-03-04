@@ -137,7 +137,7 @@ export class Applet<
   /**
    * Variable to store setTimeout when running action
    */
-  private autoRunSetTimeout?: number
+  private autoRunSetTimeout?: NodeJS.Timeout
 
   /**
    * Indicates that the applet has auto run enabled and hasn't been run
@@ -169,7 +169,7 @@ export class Applet<
   /**
    * Variable to store the setTimeout number for debounced value
    */
-  private isActionRunningDebouncedTimeout?: number
+  private isActionRunningDebouncedTimeout?: NodeJS.Timeout
 
   /**
    * Input field key when batch mode enabled
@@ -190,11 +190,6 @@ export class Applet<
    * Indicates the session has been deleted
    */
   @observable isDeleted: boolean = false
-
-  /**
-   * Counter to force rerender applet viewer
-   */
-  @observable renderCounter: number = 0
 
   /**
    * Key to store applet session state into storage
@@ -237,6 +232,23 @@ export class Applet<
   readonly hasOverriddenDefaultState: boolean = false
 
   @observable viewMode: "main" | "pipeline"
+
+  @observable maximizedField = {
+    enabled: false,
+    type: "",
+    key: ""
+  }
+
+  @action
+  toggleMaximizedFieldKey(options: typeof this.maximizedField) {
+    if (this.maximizedField.enabled === options.enabled &&
+      this.maximizedField.key === options.key &&
+      this.maximizedField.type === options.type) {
+      options.enabled = false
+    }
+
+    this.maximizedField = options
+  }
 
   /**
    * Empty applet
@@ -345,6 +357,7 @@ export class Applet<
       this.isAutoRunAndFirstTime = initialState.isAutoRunAndFirstTime ?? this.isAutoRunAndFirstTime
       this.optionValues = initialState.optionValues ?? this.optionValues
       this.viewMode = initialState.viewMode ?? this.viewMode
+      this.maximizedField = initialState.maximizedField ?? this.maximizedField
     }
 
     /**
@@ -417,7 +430,8 @@ export class Applet<
       appletId,
       isAutoRunAndFirstTime,
       optionValues,
-      viewMode
+      viewMode,
+      maximizedField
     } = this
 
     const createdAt = new Date().getTime()
@@ -441,7 +455,8 @@ export class Applet<
       appletId,
       isAutoRunAndFirstTime,
       optionValues: toJS(optionValues),
-      viewMode
+      viewMode,
+      maximizedField: toJS(maximizedField)
     }
   }
 
@@ -1014,14 +1029,6 @@ export class Applet<
   }
 
   /**
-   * Force applet input and output components to rerender
-   */
-  @action
-  forceRerender() {
-    this.renderCounter += 1
-  }
-
-  /**
    * Manually hydrate applet state to storage
    */
   async hydrateStore() {
@@ -1110,12 +1117,13 @@ export class Applet<
       }
 
       this.setInputValues({ ...defaultInputValues, ...computedInputValues })
-      this.forceRerender()
 
       /**
        * Always run the sample even the applet has autoRun disabled
        */
-      void this.run()
+      if (!this.autoRun) {
+        void this.run()
+      }
     }
   }
 

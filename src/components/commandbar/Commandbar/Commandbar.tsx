@@ -1,6 +1,7 @@
+import clsx from "clsx"
 import { Command } from "cmdk"
 import Fuse from "fuse.js"
-import { useState, type FC, useMemo, useEffect } from "react"
+import { useState, type FC, useMemo, useEffect, useLayoutEffect } from "react"
 
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { useSelector } from "src/hooks/useSelector"
@@ -47,11 +48,24 @@ export const Commandbar: FC = () => {
     setSearchKeyword("")
   }, [isOpen])
 
+  const [open, setOpen] = useState(false)
+
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      setOpen(isOpen)
+    } else {
+      setTimeout(() => {
+        setOpen(isOpen)
+      }, 1)
+    }
+  }, [isOpen])
+
   return (
     <Command.Dialog
       open={isOpen}
       onOpenChange={handleChange}
       shouldFilter={false}
+      className={clsx({ open })}
     >
       <Command.Input autoFocus value={searchKeyword} onValueChange={setSearchKeyword} />
       <Command.List>

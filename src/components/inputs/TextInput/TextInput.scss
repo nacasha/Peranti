@@ -11,7 +11,7 @@
     border: 1px solid var(--input-output-border-color);
     background-color: var(--input-output-background-color);
     font-family: var(--font-family-mono);
-    transition: all var(--transition-speed);
+    transition: all var(--animation-speed);
 
     &:hover {
       border-color: var(--input-output-border-color-hover);

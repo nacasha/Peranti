@@ -1,1 +1,1 @@
-export { ComponentLabel } from "./ComponentLabel.tsx"
+export { AppletComponentHead } from "./AppletComponentHead.tsx"

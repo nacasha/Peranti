@@ -1,7 +1,7 @@
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer"
 import { useState, type FC, useEffect } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import "./FileOutput.scss"
@@ -29,7 +29,7 @@ export const FileOutput: FC<FileOutputProps> = (props) => {
 
   return (
     <div className="FileOutput" style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead label={label} />
       {initialized && (
         <div className="FileOutput-viewer-container">
           <div className="FileOutput-viewer-body">

@@ -45,11 +45,17 @@ export const darkThemeClass = createTheme(themeableTokens, {
   sessionTabbarTextColorActive: "white",
   appletHeaderBackgroundColor: "#181818",
   appletViewerBackgroundColor: "#1e1f22",
+
+  /**
+   * Tool sidebar
+   */
   toolSidebarTextColor: "#cfcfcf",
   toolSidebarTextColorActive: "#ffffff",
   toolSidebarIconColor: "invert(99%) sepia(3%) saturate(156%) hue-rotate(232deg) brightness(106%) contrast(62%)",
   toolSidebarIconColorActive: "invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%)",
+  toolSidebarBackgroundColorHover: "#2a2b2d",
   toolSidebarBackgroundColorActive: "#2e2e33",
+
   settingsViewBackgroundColor: "#202124",
   settingsViewCardBackgroundColor: "#202124",
   scrollbarTrackBackgroundColor: "transparent",

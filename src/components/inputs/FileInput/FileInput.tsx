@@ -1,6 +1,6 @@
 import { useState, type FC, type InputHTMLAttributes, useRef } from "react"
 
-import { ComponentLabel } from "src/components/common/ComponentLabel"
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
 import "./FileInput.scss"
@@ -8,8 +8,8 @@ import "./FileInput.scss"
 interface InputFileProps extends InputComponentProps<File | null> { }
 
 export const FileInput: FC<InputFileProps> = (props) => {
-  const { label, onValueChange, defaultValue, fieldKey } = props
-  const [selectedFile, setSelectedFile] = useState<File | undefined>(() => defaultValue)
+  const { label, onValueChange, value, fieldKey } = props
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(() => value)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const onChangeFile: InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
@@ -27,7 +27,7 @@ export const FileInput: FC<InputFileProps> = (props) => {
 
   return (
     <div className="FileInput" style={{ gridArea: fieldKey }}>
-      <ComponentLabel label={label} />
+      <AppletComponentHead label={label} />
       <div>
         <div onClick={onClickChooseFile} className="FileInputPicker">
           {selectedFile?.name ?? "Click Here to Select File"}

@@ -12,8 +12,8 @@
     "active": true,
     "targets": "all",
     "resources": [
-      "extensions-runner/runner.cjs",
-      "extensions-runner/dependencies/*"
+      "extensions-runner/runner.js",
+      "extensions-runner/node_modules/*"
     ],
     "icon": [
       "icons/32x32.png",

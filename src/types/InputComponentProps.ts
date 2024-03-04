@@ -14,9 +14,9 @@ export interface InputComponentProps<T = string> {
   label?: string
 
   /**
-   * Default value of component
+   * Value of component
    */
-  defaultValue?: any
+  value?: any
 
   /**
    * Event handler when value has been changed

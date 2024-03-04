@@ -11,11 +11,13 @@
     "event:default",
 
     "dialog:allow-save",
+    "dialog:allow-open",
 
     "window:default",
     "window:allow-toggle-maximize",
     "window:allow-minimize",
     "window:allow-close",
+    "window:allow-start-dragging",
 
     "app:default",
 
@@ -35,6 +37,8 @@
     "fs:allow-exists",
     "fs:allow-read-text-file",
     "fs:allow-write-text-file",
+    "fs:write-all",
+    "fs:write-files",
 
     {
       "identifier": "shell:allow-execute",
@@ -42,7 +46,7 @@
         {
           "name": "run-extension",
           "cmd": "node",
-          "args": ["extensions-runner/runner.cjs", { "validator": "\\S+" }]
+          "args": ["extensions-runner/runner.js", { "validator": "\\S+" }]
         }
       ]
     }
