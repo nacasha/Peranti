@@ -5,7 +5,7 @@ import { TransformWrapper, TransformComponent, type ReactZoomPanPinchContentRef 
 import { Button } from "src/components/common/Button"
 import { Icons } from "src/constants/icons"
 
-import { zoomableContentClasses } from "./ZoomableContent.css"
+import "./ZoomableContent.scss"
 
 interface TransformState {
   translateX: number | undefined
@@ -183,11 +183,11 @@ export const ZoomableContent: FC<ZoomableContentProps> = (props) => {
   ]
 
   return (
-    <div className={zoomableContentClasses.root}>
-      <div className={zoomableContentClasses.body}>
+    <div className="ZoomableContent">
+      <div className="ZoomableContent-body">
         <div
           ref={(el: HTMLDivElement | null) => { setContainer(el) }}
-          className={clsx(zoomableContentClasses.content, { [zoomableContentClasses.checkered]: checkered })}
+          className={clsx("ZoomableContent-content", { checkered })}
         >
           {isContentReady && (
             <TransformWrapper
@@ -232,7 +232,7 @@ const Controls = (props: { controls: ReactZoomPanPinchContentRef, resetValue: [n
   }
 
   return (
-    <div className={zoomableContentClasses.actions}>
+    <div className="ZoomableContent-actions">
       <Button icon={Icons.Minus} onClick={handleZoomOut} />
       <Button icon={Icons.Plus} onClick={handleZoomIn} />
       <Button icon={Icons.FullScreen} onClick={handleResetZoom} />

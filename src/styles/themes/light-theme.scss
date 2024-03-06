@@ -1,0 +1,71 @@
+body.light {
+  --border-color: #cbcccd;
+  --text-color: #0f0f0f;
+  --icon-color-filter: invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%);
+  --opposite-color: #939393;
+  --app-titlebar-background-color: #ffffff;
+
+  --button-background-color: linear-gradient(0deg, #f7f7f7 0%, #ffffff 100%);
+  --button-background-color-hover: #efefef;
+  --button-background-color-active: #ececec;
+  --button-border-color: #cbcccd;
+  --button-border-color-hover: #cbcccd;
+  --button-border-color-active: #cbcccd;
+
+  --background-color-main: #ffffff;
+  --background-color-content: #ffffff;
+
+  --activitybar-background-color: #ffffff;
+  --activitybar-item-background-color-hover: #dfdddd;
+  --activitybar-item-background-color-active: #d6d6d6;
+
+  --primary-sidebar-background-color: #f6f8fa;
+
+  // Secondary Sidebar
+  --secondary-sidebar-background-color: #ffffff;
+  --secondary-sidebar-item-background-color-hover: #efefef;
+
+  --bottom-panel-background-color: #ffffff;
+
+  --statusbar-background-color: #f6f6f6;
+
+  --input-output-background-color: #ffffff;
+  --input-output-border-color: var(--border-color);
+  --input-output-border-color-hover: var(--input-output-border-color);
+  --input-output-border-color-active: var(--input-output-border-color);
+
+  --session-tabbar-background-color: #ffffff;
+  --session-tabbar-color: #ffffff;
+  --session-tabbar-color-hover: #f6f8fa;
+  --session-tabbar-text-color: #585858;
+  --session-tabbar-text-color-active: #000000;
+
+  --applet-header-background-color: #ffffff;
+  --applet-viewer-background-color: #f9f9fc;
+
+  // Tool sidebar
+  --tool-sidebar-text-color: #212418;
+  --tool-sidebar-text-color-active: #000000;
+  --tool-sidebar-icon-color: invert(11%) sepia(7%) saturate(1891%) hue-rotate(34deg) brightness(98%) contrast(92%);
+  --tool-sidebar-icon-color-active: invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%);
+  --tool-sidebar-background-color-hover: #efefef;
+  --tool-sidebar-background-color-active: #dfdfdf;
+
+  --settings-background-color: #f9f9fc;
+  --settings-card-background-color: #ffffff;
+  --scrollbar-track-background-color: #ffffff;
+  --scrollbar-thumb-background-color: #8b8b8b;
+  --scrollbar-thumb-background-color-hover: #555;
+  --scrollbar-thumb-border-radius: 4px;
+
+  // Tooltip
+  --tooltip-text-color: var(--text-color);
+  --tooltip-background-color: #ffffff;
+  --tooltip-border-color: #cbcccd;
+
+  // Dialog
+  --dialog-header-background-color: var(--dialog-content-background-color);
+  --dialog-content-background-color: #ffffff;
+  --dialog-footer-background-color: var(--dialog-content-background-color);
+  --dialog-overlay-color: rgba(0, 0, 0, 0.8);
+}

@@ -1,0 +1,18 @@
+.ReactOutput {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ReactOutput-area {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  height: 100%;
+  flex: 1;
+  background-color: #ffffff
+}
+
+.ReactOutput-content {
+  all: unset;
+  color: initial
+}

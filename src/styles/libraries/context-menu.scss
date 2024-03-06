@@ -1,0 +1,43 @@
+.contexify {
+  padding: 4;
+  box-shadow: 0 0 7px -1px rgba(0, 0, 0, 0.1);
+  animation-duration: var(--animation-speed);
+}
+
+.contexify .contexify_itemContent {
+  height: 20;
+}
+
+body.light .contexify {
+  border: 1px solid #cacaca;
+  background-color: #ffffff;
+}
+
+body.light .contexify .contexify_itemContent {
+  color: #3b3b3b;
+}
+
+body.light .contexify_item:not(.contexify_item-disabled):focus>.contexify_itemContent,
+body.light .contexify_item:not(.contexify_item-disabled):hover>.contexify_itemContent,
+body.light .contexify_submenu-isOpen,
+body.light .contexify_submenu-isOpen>.contexify_itemContent {
+  background-color: #e8e8e8;
+  color: #1d1d1d;
+}
+
+body.dark .contexify {
+  border: 1px solid #313131;
+  background-color: #1e1f22;
+}
+
+body.dark .contexify .contexify_itemContent {
+  color: #e0e0e0;
+}
+
+body.dark .contexify_item:not(.contexify_item-disabled):focus>.contexify_itemContent,
+body.dark .contexify_item:not(.contexify_item-disabled):hover>.contexify_itemContent,
+body.dark .contexify_submenu-isOpen,
+body.dark .contexify_submenu-isOpen>.contexify_itemContent {
+  background-color: #323232;
+  color: #ffffff;
+}

@@ -19,6 +19,7 @@ import { javascriptRunnerTool } from "src/applets/tools/javascript-runner-tool/j
 import jsonDiffTool from "src/applets/tools/json-diff-tool"
 import jsonFormatter from "src/applets/tools/json-formatter-tool.ts"
 import { jsonToCsvTool } from "src/applets/tools/json-to-csv-tool/json-to-csv-tool.ts"
+import { jsonToYamlTool } from "src/applets/tools/json-to-yaml-tool/json-to-yaml-tool.ts"
 import { jsonTableViewerTool } from "src/applets/tools/json-viewer-tool/json-table-viewer-tool.ts"
 import { jsonataTool } from "src/applets/tools/jsonata-tool/jsonata-tool.ts"
 import loremIpsumGeneratorTool from "src/applets/tools/lorem-ipsum-generator-tool.ts"
@@ -89,6 +90,7 @@ class AppletStore {
     [csvTableViewerTool.appletId]: csvTableViewerTool,
     [jsonTableViewerTool.appletId]: jsonTableViewerTool,
     [colorConverterTool.appletId]: colorConverterTool,
+    [jsonToYamlTool.appletId]: jsonToYamlTool,
 
     /**
      * Applet Pages

@@ -1,0 +1,57 @@
+body {
+  // Fonts
+  --font-family: Inter, serif;
+  --font-family-mono: Consolas, monospace, serif;
+  --font-size: 13px;
+  --font-weight: 400;
+
+  // Colors
+  --color-primary: #275efe;
+  --color-primary-light20: color-mix(in srgb, var(--color-primary), #ffffff 20%);
+  --color-primary-light40: color-mix(in srgb, var(--color-primary), #ffffff 40%);
+  --color-primary-light60: color-mix(in srgb, var(--color-primary), #ffffff 60%);
+  --color-primary-light80: color-mix(in srgb, var(--color-primary), #ffffff 80%);
+  --color-primary-dark20: color-mix(in srgb, var(--color-primary), #000000 20%);
+  --color-primary-dark40: color-mix(in srgb, var(--color-primary), #000000 40%);
+  --color-primary-dark60: color-mix(in srgb, var(--color-primary), #000000 60%);
+  --color-primary-dark80: color-mix(in srgb, var(--color-primary), #000000 80%);
+
+  // General
+  --border-radius: 3px;
+
+  // App Titlebar
+  --app-titlebar-height: 37px;
+
+  // Window control buttons
+  --window-control-button-width: 50px;
+  --window-control-button-height: 36px;
+
+  // Tool
+  --applet-header-height: 60px;
+
+  // Session tabbar
+  --session-tabbar-height: 37px;
+  --session-tabbar-item-max-width: 200px;
+  --session-tabbar-draggable-height: 0px;
+
+  // Animations
+  --animation-speed: 0.1s;
+
+  // Sidebar
+  --activitybar-width: 50px;
+  --activitybar-item-height: 30px;
+  --primary-sidebar-width: 250px;
+
+  // Input and output component styles
+  --input-output-fields-spacing: 15px;
+  --input-output-label-height: 20px;
+  --input-output-label-spacing: 10px;
+  --input-output-padding: 7px;
+  --input-output-font-size: 14px;
+
+  --contexify-menu-shadow: none;
+  --contexify-menu-min-width: 250px;
+  --contexify-menu-padding: 5px;
+  --contexify-menu-radius: var(--border-radius);
+  --contexify-item-content-padding: 5px 10px;
+}

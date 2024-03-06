@@ -5,7 +5,8 @@ import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons.js"
 
 import { CustomHandle } from "./CustomHandle.js"
-import { pipelineItemClasses } from "./PipelineItem.css"
+
+import "./PipelineItem.scss"
 
 const itemHeight = 25
 const itemGap = 10
@@ -35,28 +36,28 @@ export const PipelineItem: FC<PipelineItemProps> = (props) => {
   }
 
   return (
-    <div className={pipelineItemClasses.root}>
-      <div className={pipelineItemClasses.header}>
-        <div className={pipelineItemClasses.headerTitle}>
+    <div className="PipelineItem">
+      <div className="PipelineItem-header">
+        <div className="PipelineItem-header-title">
           {icon && <img src={icon} alt={title} />}
           <div>{title}</div>
         </div>
         {onClickSetting && (
-          <div className={pipelineItemClasses.headerAction}>
+          <div className="PipelineItem-header-action">
             <ButtonIcon onClick={handleClickSetting} tooltip="Customize" icon={Icons.Settings} />
           </div>
         )}
       </div>
-      <div className={pipelineItemClasses.body} style={{ height: ((itemHeight + itemGap) * numberOfFields) - itemGap }}>
-        <div className={pipelineItemClasses.bodyInner}>
+      <div className="PipelineItem-body" style={{ height: ((itemHeight + itemGap) * numberOfFields) - itemGap }}>
+        <div className="PipelineItem-body-inner">
 
-          <div className={pipelineItemClasses.handlesLeft}>
+          <div className="PipelineItem-handles-left">
             {targets.map((target, index) => (
               <PipelineItemHandle key={target.id} {...target} type="target" index={index} />
             ))}
           </div>
 
-          <div className={pipelineItemClasses.handlesRight}>
+          <div className="PipelineItem-handles-right">
             {sources.map((source, index) => (
               <PipelineItemHandle key={source.id} {...source} type="source" index={index} />
             ))}

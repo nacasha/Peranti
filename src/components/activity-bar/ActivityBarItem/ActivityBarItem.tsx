@@ -1,12 +1,13 @@
 import { clsx } from "clsx"
 import { type FC } from "react"
 
+import { Tooltip } from "src/components/common/Tooltip"
 import { useSelector } from "src/hooks/useSelector"
 import { type AppletConstructor } from "src/models/AppletConstructor"
 import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
 
-import { activitybarItemClasses } from "./ActivityBarItem.css"
+import "./ActivityBarItem.scss"
 
 interface ActivityBarItemProps {
   label: string
@@ -46,16 +47,15 @@ export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
   }
 
   const classNames = clsx([
-    activitybarItemClasses.root,
-    isActive && activitybarItemClasses.rootActive
+    "ActivityBarItem",
+    { active: isActive }
   ])
 
   return (
-    <div className={classNames} onClick={onClickItem()}>
-      <div className={activitybarItemClasses.tooltip}>
-        {label}
+    <Tooltip mouseEnterDelay={0} placement="right" overlay={label}>
+      <div className={classNames} onClick={onClickItem()}>
+        <img src={icon} alt={label}/>
       </div>
-      <img src={icon} alt={label}/>
-    </div>
+    </Tooltip>
   )
 }

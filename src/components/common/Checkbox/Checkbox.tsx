@@ -1,7 +1,4 @@
-import clsx from "clsx"
 import { useId, type FC, useState } from "react"
-
-import { checkboxClasses } from "./Checkbox.css"
 
 import "./Checkbox.scss"
 
@@ -27,7 +24,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
   }
 
   return (
-    <div className={clsx("Switch", checkboxClasses.root)}>
+    <div className="Switch">
       <input
         checked={value ?? checked}
         id={id}

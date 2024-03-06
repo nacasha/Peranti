@@ -4,7 +4,7 @@ import { Runner } from "react-runner"
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
-import { reactOutputClasses } from "./ReactOutput.css"
+import "./ReactOutput.scss"
 
 interface ReactOutputProps extends OutputComponentProps {}
 
@@ -12,10 +12,10 @@ export const ReactOutput: FC<ReactOutputProps> = (props) => {
   const { label, value, fieldKey } = props
 
   return (
-    <div className={reactOutputClasses.root} style={{ gridArea: fieldKey }}>
+    <div className="ReactOutput-root" style={{ gridArea: fieldKey }}>
       <AppletComponentHead showMaximize label={label} />
-      <div className={reactOutputClasses.outputArea}>
-        <div className={reactOutputClasses.outputContent}>
+      <div className="ReactOutput-area">
+        <div className="ReactOutput-content">
           <Runner code={value} />
         </div>
       </div>

@@ -1,0 +1,16 @@
+// Fonts
+@import "fonts/inter-font.scss";
+
+@import "app.scss";
+@import "variables.scss";
+@import "global.scss";
+
+// Themes
+@import "themes/dark-theme.scss";
+@import "themes/light-theme.scss";
+
+// Libraries
+@import "libraries/notifications.scss";
+@import "libraries/simplebar.scss";
+@import "libraries/tooltip.scss";
+@import "libraries/context-menu.scss";

@@ -2,7 +2,7 @@ import { type DetailedHTMLProps, type FC } from "react"
 
 import { Tooltip } from "../Tooltip"
 
-import { buttonIconClasses } from "./ButtonIcon.css"
+import "./ButtonIcon.scss"
 
 interface ButtonIconProps extends DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   icon: string
@@ -15,8 +15,8 @@ export const ButtonIcon: FC<ButtonIconProps> = (props) => {
 
   return (
     <Tooltip overlay={tooltip}>
-      <div className={buttonIconClasses.root} {...restProps}>
-        <img src={icon} className={buttonIconClasses.icon} style={{ width: iconSize }} />
+      <div className="ButtonIcon" {...restProps}>
+        <img src={icon} style={{ width: iconSize }} />
       </div>
     </Tooltip>
   )

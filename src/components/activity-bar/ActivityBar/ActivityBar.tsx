@@ -4,12 +4,12 @@ import { commandbarService } from "src/services/commandbar-service"
 
 import { ActivityBarItem } from "../ActivityBarItem"
 
-import { activityBarClasses } from "./ActivityBar.css"
+import "./ActivityBar.scss"
 
 export const ActivityBar = () => {
   return (
-    <div className={activityBarClasses.root}>
-      <div className={activityBarClasses.topButtons}>
+    <div className="ActivityBar">
+      <div className="ActivityBar-top">
         <ActivityBarItem
           icon={Icons.Thunder}
           label="Tools"
@@ -32,7 +32,7 @@ export const ActivityBar = () => {
         />
       </div>
 
-      <div className={activityBarClasses.bottomButtons}>
+      <div className="ActivityBar-bottom">
         <ActivityBarItem
           icon={Icons.Search}
           label="Search"

@@ -1,0 +1,40 @@
+.Button {
+  border: 1px solid var(--button-border-color);
+  background: var(--button-background-color);
+  border-radius: var(--border-radius);
+  padding: 7px 11px;
+  user-select: none;
+  font-family: var(--font-family);
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size);
+  color: var(--text-color);
+  word-break: keep-all;
+  white-space: nowrap;
+  gap: 7;
+  line-height: 1.35;
+
+  &:hover {
+    cursor: pointer;
+    border-color: var(--button-border-color-hover);
+    background: var(--button-background-color-hover);
+  }
+
+  &:active {
+    border-color: var(--button-border-color-active);
+    background: var(--button-background-color-active);
+  }
+
+  &.active {
+    border-color: var(--color-accent);
+
+    &:hover {
+      border-color: var(--color-accent);
+    }
+  }
+
+  img {
+    width: 14px;
+    filter: var(--icon-color-filter);
+  }
+}

@@ -114,8 +114,6 @@ export const jsonToCsvTool = new AppletConstructor<InputFields, OutputFields, Op
       return { csv: "" }
     }
 
-    console.log(options)
-
     const csv = json2csv(JSON.parse(json), {
       delimiter: {
         field: delimiter

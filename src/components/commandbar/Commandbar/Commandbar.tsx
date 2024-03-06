@@ -10,8 +10,6 @@ import { commandbarService } from "src/services/commandbar-service"
 import { hotkeysStore } from "src/services/hotkeys-store"
 import { sessionStore } from "src/services/session-store"
 
-import "./Commandbar.css"
-
 import "./Commandbar.scss"
 
 export const Commandbar: FC = () => {

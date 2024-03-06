@@ -7,7 +7,7 @@ import { Theme } from "src/enums/theme-2"
 import { interfaceStore } from "src/services/interface-store"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
-import { mermaidOutputClasses } from "./MermaidOutput.css"
+import "./MermaidOutput.scss"
 
 interface MermaidOutputProps extends OutputComponentProps {}
 
@@ -59,15 +59,15 @@ export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
   }, [])
 
   return (
-    <div className={mermaidOutputClasses.root} onContextMenu={onContextMenu} style={{ gridArea: fieldKey }}>
+    <div className="MermaidOutput" onContextMenu={onContextMenu} style={{ gridArea: fieldKey }}>
       <AppletComponentHead showMaximize label={label} />
-      <div className={mermaidOutputClasses.inner}>
+      <div className="MermaidOutput-inner">
         <ZoomableContent
           initialState={initialState}
           onStageChange={onStateChange}
         >
           <div
-            className={mermaidOutputClasses.svg}
+            className="MermaidOutput-svg"
             ref={renderRef}
             dangerouslySetInnerHTML={{ __html: svgString }}
           >

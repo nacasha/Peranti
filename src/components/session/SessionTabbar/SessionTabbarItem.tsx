@@ -11,8 +11,6 @@ import { appletStore } from "src/services/applet-store"
 import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
 
-import { sessionTabbarClasses } from "./SessionTabbar.css"
-
 interface TabItemProps {
   session: Session
 }
@@ -35,7 +33,7 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
     if (event.button === 0) {
       const clickedElement = event.target as HTMLDivElement
       if (clickedElement.tagName.toLowerCase() === "img" ||
-        clickedElement.classList.contains(sessionTabbarClasses.itemSessionIcon)) {
+        clickedElement.classList.contains("SessionTabbar-item-session-icon")) {
         event.stopPropagation()
         event.preventDefault()
         return
@@ -121,7 +119,7 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
     onMouseUp: (event) => {
       const elementBelowMouse = document.elementsFromPoint(event.clientX, event.clientY)
       const otherTabbar = elementBelowMouse.find((element) => (
-        element.classList.contains(sessionTabbarClasses.itemSessionBody) && !element.classList.contains("active")
+        element.classList.contains("SessionTabbar-item-session-body") && !element.classList.contains("active")
       ))
 
       if (otherTabbar) {
@@ -134,12 +132,12 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
   })
 
   return (
-    <div className={sessionTabbarClasses.itemSession}>
+    <div className="SessionTabbar-item-session">
       <div ref={draggableElementPlaceholderRef}></div>
       <div
         ref={draggableElementRef}
         key={session.sessionId}
-        className={clsx(sessionTabbarClasses.itemSessionBody, { [sessionTabbarClasses.itemSessionActive]: isActive })}
+        className={clsx("SessionTabbar-item-session-body", { active: isActive })}
         data-session-id={session.sessionId}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
@@ -147,7 +145,7 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
       >
         <div
           ref={tabLabelRef}
-          className={sessionTabbarClasses.itemSessionLabel}
+          className="SessionTabbar-item-session-label"
           contentEditable={isRenamingSession}
           onBlur={handleSessionNameInputBlur}
           suppressContentEditableWarning
@@ -155,7 +153,7 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
           {getSessionName()}
           {isActionRunning ? " ..." : ""}
         </div>
-        <div className={sessionTabbarClasses.itemSessionIcon} onClickCapture={handleCloseTab}>
+        <div className="SessionTabbar-item-session-icon" onClickCapture={handleCloseTab}>
           <img src={Icons.Close} alt="Close Tab" />
         </div>
       </div>

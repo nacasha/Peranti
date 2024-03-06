@@ -1,0 +1,22 @@
+.Notification {
+  inset: 10px !important;
+  bottom: 35px !important;
+}
+
+.Notification-item {
+  background: #1e1f22;
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--border-radius);
+  border-radius: 4px;
+  padding: 7px;
+  padding-left: 10px;
+  color: #bcbec4;
+  animation: none;
+}
+
+.Notification-item > div[role=status] {
+  word-break: normal
+}

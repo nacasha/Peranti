@@ -7,7 +7,7 @@ import { bottomPanelService } from "src/services/bottom-panel-service"
 import { interfaceStore } from "src/services/interface-store"
 import { windowManager } from "src/services/window-manager"
 
-import { windowControlsClasses } from "./WindowControls.css"
+import "./WindowControls.scss"
 
 export const WindowControls: FC = memo(() => {
   const handleClickMinimize = () => {
@@ -35,8 +35,8 @@ export const WindowControls: FC = memo(() => {
   }
 
   return (
-    <div className={windowControlsClasses.root} data-tauri-drag-region>
-      <div className={windowControlsClasses.layoutControls}>
+    <div className="WindowControls" data-tauri-drag-region>
+      <div className="WindowControls-layout-controls">
         <ButtonIcon
           tooltip="Toggle Primary Sidebar"
           onClick={handleClickPanelLeft}
@@ -53,21 +53,21 @@ export const WindowControls: FC = memo(() => {
           icon={Icons.PanelRight}
         />
       </div>
-      <div className={windowControlsClasses.windowControls}>
+      <div className="WindowControls-window-controls">
         <div
-          className={windowControlsClasses.button}
+          className="WindowControls-button"
           onClick={handleClickMinimize}
         >
           <img src={Icons.Minimize} alt="Minimize" />
         </div>
         <div
-          className={windowControlsClasses.button}
+          className="WindowControls-button"
           onClick={handleClickMaximize}
         >
           <img src={Icons.Box} alt="Maximize" />
         </div>
         <div
-          className={windowControlsClasses.button}
+          className="WindowControls-button"
           onClick={handleClickClose}
         >
           <img src={Icons.Close} alt="Close" />

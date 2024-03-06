@@ -1,0 +1,74 @@
+body.dark {
+  --border-color: #2a2a2a;
+  --text-color: #e0e0e0;
+  --icon-color-filter: invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%);
+  --opposite-color: #ffffff;
+  --app-titlebar-background-color: #1a1b1d;
+
+  // Button
+  --button-background-color: #181818;
+  --button-background-color-hover: #26282a;
+  --button-background-color-active: #2a2b2d;
+  --button-border-color: #3e3e3e;
+  --button-border-color-hover: #3e3e3e;
+  --button-border-color-active: #3e3e3e;
+
+  --background-color-main: #1a1b1d;
+  --background-color-content: #222429;
+
+  --activitybar-background-color: #181818;
+  --activitybar-item-background-color-hover: #5a5b5e;
+  --activitybar-item-background-color-active: #434549;
+
+  --primary-sidebar-background-color: #1a1b1d;
+
+  // Secondary Sidebar
+  --secondary-sidebar-background-color: #1a1b1d;
+  --secondary-sidebar-item-background-color-hover: #2a2b2d;
+
+  --bottom-panel-background-color: #181818;
+  --statusbar-background-color: #181818;
+
+  --input-output-background-color: #292a30;
+  --input-output-border-color: #353535;
+  --input-output-border-color-hover: var(--input-output-border-color);
+  --input-output-border-color-active: var(--input-output-border-color);
+
+  --session-tabbar-background-color: #1a1b1d;
+  --session-tabbar-color: #1a1b1d;
+  --session-tabbar-color-hover: #1f2022;
+  --session-tabbar-text-color: #939393;
+  --session-tabbar-text-color-active: white;
+
+  --applet-header-background-color: #181818;
+  --applet-viewer-background-color: #1e1f22;
+
+  // Tool sidebar
+  --tool-sidebar-text-color: #cfcfcf;
+  --tool-sidebar-text-color-active: #ffffff;
+  --tool-sidebar-icon-color: invert(99%) sepia(3%) saturate(156%) hue-rotate(232deg) brightness(106%) contrast(62%);
+  --tool-sidebar-icon-color-active: invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%);
+  --tool-sidebar-background-color-hover: #2a2b2d;
+  --tool-sidebar-background-color-active: #2e2e33;
+
+  // Settings view
+  --settings-background-color: #202124;
+  --settings-card-background-color: #202124;
+
+  // Scrollbar
+  --scrollbar-track-background-color: transparent;
+  --scrollbar-thumb-background-color: #393a3f;
+  --scrollbar-thumb-background-color-hover: #555;
+  --scrollbar-thumb-border-radius: 4px;
+
+  // Tooltip
+  --tooltip-text-color: var(--text-color);
+  --tooltip-background-color: #1e1f22;
+  --tooltip-border-color: #454545;
+
+  // Dialog
+  --dialog-header-background-color: var(--dialog-content-background-color);
+  --dialog-content-background-color: #1a1b1d;
+  --dialog-footer-background-color: var(--dialog-content-background-color);
+  --dialog-overlay-color: rgba(0, 0, 0, 0.8);
+}

@@ -19,27 +19,20 @@ import { WindowSizeListener } from "./components/window/WindowSizeListener"
 import { AppTitleBarStyle } from "./enums/app-titlebar-style.ts"
 import { useSelector } from "./hooks/useSelector.ts"
 import { interfaceStore } from "./services/interface-store.ts"
-import { appClasses } from "./styles/app.css.ts"
 
 const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   const titlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
   const isWindowMaximized = useSelector(() => interfaceStore.isWindowMaximized)
   const textAreaWordWrap = useSelector(() => interfaceStore.textAreaWordWrap)
 
-  const windowState = {
+  const classNames = clsx("AppRoot", {
     WindowMaximized: isWindowMaximized,
-    [appClasses.withMaximized]: isWindowMaximized,
-    [appClasses.withNotMaximized]: !isWindowMaximized,
     TextAreaWordWrap: textAreaWordWrap,
-    [appClasses.withTextAreaWordWrap]: textAreaWordWrap
-  }
-
-  const classNames = clsx(
-    "AppRoot",
-    appClasses.root,
-    (titlebarStyle === AppTitleBarStyle.Tabbar) ? appClasses.withTabbar : null,
-    windowState
-  )
+    withMaximized: isWindowMaximized,
+    withNotMaximized: !isWindowMaximized,
+    withTextAreaWordWrap: textAreaWordWrap,
+    withTabbar: titlebarStyle === AppTitleBarStyle.Tabbar
+  })
 
   useEffect(() => {
     const disableContextMenu = () => {
@@ -81,11 +74,11 @@ export const AppMain = () => {
 
       <AppTitlebar />
 
-      <div className={appClasses.container}>
+      <div className="AppContainer">
         <ActivityBar />
         <PrimarySidebar />
 
-        <div className={appClasses.content}>
+        <div className="AppContent">
           <SessionTabbar />
           <AppletViewer />
         </div>
