@@ -1,7 +1,7 @@
 import { observer } from "mobx-react"
 
 import { Checkbox } from "src/components/common/Checkbox"
-import { SelectInput } from "src/components/inputs/SelectInput"
+import { Dropdown } from "src/components/common/Dropdown"
 import { SecondarySidebarSection } from "src/components/sidebar/SecondarySidebar"
 import { activeAppletStore } from "src/services/active-applet-store"
 
@@ -38,28 +38,36 @@ export const AppletBatchMode = observer(() => {
         onChange={handleToggleBatchMode}
         label="Enable Batch Mode"
       />
-      <SelectInput
-        fieldKey=""
-        label="Input"
-        options={allowedBatchInputFields.map((input) => ({
-          label: input.label,
-          value: input.key
-        }))}
-        value={batchModeInputKey}
-        onValueChange={onChangeInputKey}
-        readOnly={isDeleted}
-      />
-      <SelectInput
-        fieldKey=""
-        label="Output"
-        options={allowedBatchOutputFields.map((output) => ({
-          label: output.label,
-          value: output.key
-        }))}
-        value={batchModeOutputKey}
-        onValueChange={onChangeOutputKey}
-        readOnly={isDeleted}
-      />
+      {isBatchModeEnabled && (
+        <>
+          <div>
+            <div>Input</div>
+            <Dropdown
+              width="100%"
+              value={batchModeInputKey}
+              options={allowedBatchInputFields.map((input) => ({
+                label: input.label,
+                value: input.key
+              }))}
+              onChange={onChangeInputKey}
+              readOnly={isDeleted}
+            />
+          </div>
+          <div>
+            <div>Output</div>
+            <Dropdown
+              width="100%"
+              value={batchModeOutputKey}
+              options={allowedBatchOutputFields.map((output) => ({
+                label: output.label,
+                value: output.key
+              }))}
+              onChange={onChangeOutputKey}
+              readOnly={isDeleted}
+            />
+          </div>
+        </>
+      )}
     </SecondarySidebarSection>
   )
 })

@@ -97,7 +97,7 @@ const _themeableTokens = {
   /**
    * Icon
    */
-  iconColorFilter: "icon-color",
+  iconColorFilter: "icon-color-filter",
 
   /**
    * Color

@@ -74,7 +74,7 @@ createGlobalTheme("body", globalTokens, {
   sessionTabbarDraggableHeight: "0px",
 
   // Animations
-  animationSpeed: "0.15s",
+  animationSpeed: "0.1s",
 
   // Sidebar
   activitybarWidth: "50px",

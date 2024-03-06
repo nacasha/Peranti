@@ -6,6 +6,9 @@ import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import "./DataGridOutput.scss"
 
+import { interfaceStore } from "src/services/interface-store"
+import { Theme } from "src/enums/theme-2"
+
 const darkTheme = {
   accentColor: "#8c96ff",
   accentLight: "rgba(202, 206, 255, 0.253)",
@@ -151,7 +154,7 @@ export const DataGridOutput: FC<DataGridOutputProps> = (props) => {
             }))
           }}
           rowMarkers="both"
-          theme={darkTheme}
+          theme={interfaceStore.theme === Theme.Dark ? darkTheme : undefined}
         />
       </div>
     </div>
