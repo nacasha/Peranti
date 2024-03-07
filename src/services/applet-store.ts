@@ -36,6 +36,7 @@ import textEditorTool from "src/applets/tools/text-editor-tool.ts"
 import textEscapeUnescapeTool from "src/applets/tools/text-escape-unescape-tool/text-escape-unescape-tool.ts"
 import textTransformTool from "src/applets/tools/text-transform-tool.ts"
 import uriEncodeDecodeTool from "src/applets/tools/uri-encode-decode-tool.ts"
+import { yamlToJsonTool } from "src/applets/tools/yaml-to-json-tool/yaml-to-json-tool.ts"
 import { type AppletConstructor } from "src/models/AppletConstructor.ts"
 import { type Preset } from "src/types/Preset.ts"
 import { mergeAppletConstructorWithPreset } from "src/utils/merge-applet-constructor-with-preset.ts"
@@ -91,6 +92,7 @@ class AppletStore {
     [jsonTableViewerTool.appletId]: jsonTableViewerTool,
     [colorConverterTool.appletId]: colorConverterTool,
     [jsonToYamlTool.appletId]: jsonToYamlTool,
+    [yamlToJsonTool.appletId]: yamlToJsonTool,
 
     /**
      * Applet Pages
