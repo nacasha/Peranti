@@ -14,7 +14,9 @@ interface GridStatOutputProps extends OutputComponentProps<Output[]> { }
 export const GridStatOutput: FC<GridStatOutputProps> = (props) => {
   let { value = [], fieldKey } = props
 
-  if (!Array.isArray(value)) {
+  if (typeof value === "string") {
+    value = JSON.parse(value)
+  } else if (!Array.isArray(value)) {
     value = []
   }
 

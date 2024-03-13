@@ -1,6 +1,7 @@
 import { jsxLanguage } from "@codemirror/lang-javascript"
 import { jsonLanguage } from "@codemirror/lang-json"
 import { markdownLanguage } from "@codemirror/lang-markdown"
+import { sqlLanguage } from "@codemirror/lang-sql"
 import { yamlLanguage } from "@codemirror/lang-yaml"
 import { githubLight } from "@uiw/codemirror-theme-github"
 import { vscodeDarkInit } from "@uiw/codemirror-theme-vscode"
@@ -15,7 +16,7 @@ import { interfaceStore } from "src/services/interface-store"
 import "./BaseCodeMirror.scss"
 
 export interface BaseCodeMirrorProps {
-  language?: "json" | "plain" | "markdown" | "javascript" | "yaml"
+  language?: "json" | "plain" | "markdown" | "javascript" | "yaml" | "sql"
 }
 
 interface InitialStateCodeMirror {
@@ -99,6 +100,8 @@ const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => 
       extensions.push(jsxLanguage)
     } else if (language === "yaml") {
       extensions.push(yamlLanguage)
+    } else if (language === "sql") {
+      extensions.push(sqlLanguage)
     }
 
     return extensions

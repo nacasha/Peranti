@@ -1,25 +1,8 @@
 import jsYaml from "js-yaml"
 
 import { AppletConstructor } from "src/models/AppletConstructor"
-import { type InputFieldsType } from "src/types/InputFieldsType"
-import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
-interface InputFields {
-  json: InputFieldsType.Code
-}
-
-interface OutputFields {
-  yaml: OutputFieldsType.Code
-}
-
-interface Options {
-  forceQuotes: InputFieldsType.Checkbox
-  quotingType: InputFieldsType.Text
-  indent: InputFieldsType.Text
-  noArrayIndent: InputFieldsType.Checkbox
-}
-
-export const jsonToYamlTool = new AppletConstructor<InputFields, OutputFields, Options>({
+export const jsonToYamlTool = new AppletConstructor({
   appletId: "json-to-yaml",
   name: "JSON to YAML",
   description: "JSON to YAML Converter",
@@ -89,7 +72,7 @@ export const jsonToYamlTool = new AppletConstructor<InputFields, OutputFields, O
       skipInvalid: true,
       forceQuotes: Boolean(forceQuotes),
       indent: Number(indent),
-      quotingType: quotingType as any,
+      quotingType,
       noArrayIndent: Boolean(noArrayIndent)
     })
 

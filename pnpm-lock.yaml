@@ -17,6 +17,9 @@ dependencies:
   '@codemirror/lang-markdown':
     specifier: ^6.2.4
     version: 6.2.4
+  '@codemirror/lang-sql':
+    specifier: ^6.6.1
+    version: 6.6.1(@codemirror/view@6.24.1)
   '@codemirror/lang-yaml':
     specifier: ^6.0.0
     version: 6.0.0(@codemirror/view@6.24.1)
@@ -38,6 +41,9 @@ dependencies:
   '@hexagon/base64':
     specifier: ^1.1.28
     version: 1.1.28
+  '@iarna/toml':
+    specifier: ^2.2.5
+    version: 2.2.5
   '@initminal/run':
     specifier: ^0.2.24
     version: 0.2.24
@@ -759,6 +765,19 @@ packages:
       '@lezer/markdown': 1.2.0
     dev: false
 
+  /@codemirror/lang-sql@6.6.1(@codemirror/view@6.24.1):
+    resolution: {integrity: sha512-tRHMLymUbL1yY8dzdrGdHVg+nMlfacOU54tjN5+VF45Syw5L3APxsFFhgdWIs4yg7OTt929Z9Ffw5qyV++kbWQ==}
+    dependencies:
+      '@codemirror/autocomplete': 6.13.0(@codemirror/language@6.10.1)(@codemirror/state@6.4.1)(@codemirror/view@6.24.1)(@lezer/common@1.2.1)
+      '@codemirror/language': 6.10.1
+      '@codemirror/state': 6.4.1
+      '@lezer/common': 1.2.1
+      '@lezer/highlight': 1.2.0
+      '@lezer/lr': 1.4.0
+    transitivePeerDependencies:
+      - '@codemirror/view'
+    dev: false
+
   /@codemirror/lang-yaml@6.0.0(@codemirror/view@6.24.1):
     resolution: {integrity: sha512-fVPapdX1oYr5HMC5bou1MHscGnNCvOHuhUW6C+V2gfIeIRcughvVfznV0OuUyHy0AdXoBCjOehjzFcmLRumu2Q==}
     dependencies:
@@ -1297,6 +1316,10 @@ packages:
   /@humanwhocodes/object-schema@2.0.2:
     resolution: {integrity: sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==}
     dev: true
+
+  /@iarna/toml@2.2.5:
+    resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
+    dev: false
 
   /@initminal/run@0.2.24:
     resolution: {integrity: sha512-6zjlO384rNqHbiozxn3wNIp24jI1aoAvb3Dk4kCLEW9U9e9E5BkAZe70PXFAJbIZJ95cHS5PH2OWnozToT3HmA==}
