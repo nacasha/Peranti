@@ -1,6 +1,5 @@
 declare module "@codemirror/lang-markdown"
 declare module "@codemirror/lang-yaml"
-declare module "@codemirror/lang-sql"
 declare module "mime-match"
 declare module "@pintora/standalone"
 declare module "react-runner"
