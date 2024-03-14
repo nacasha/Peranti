@@ -23,4 +23,15 @@
   .ToolSidebar-section-title {
     user-select: none;
   }
+
+  .ToolSidebarItem {
+    img {
+      filter: var(--tool-sidebar-icon-color);
+    }
+    &.active {
+      img {
+        filter: var(--tool-sidebar-icon-color-active);
+      }
+    }
+  }
 }

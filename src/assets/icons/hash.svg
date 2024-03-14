@@ -1,7 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg viewBox="0 0 24 24" fill="none" color="#000000" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
-  <g>
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M 24 18.154 C 24 21.382 21.382 24 18.154 24 L 5.846 24 C 2.618 24 0 21.382 0 18.154 L 0 5.846 C 0 2.618 2.618 0 5.846 0 L 18.154 0 C 21.382 0 24 2.618 24 5.846 L 24 18.154 Z" style="transform-origin: 12px 12px; fill: rgb(29, 132, 236);"/>
-  </g>
-  <path d="M 8.59 19.983 Q 7.974 19.983 7.688 19.818 Q 7.402 19.653 7.402 19.345 L 7.402 5.353 Q 7.402 4.539 8.172 4.539 L 12.638 4.539 Q 15.256 4.539 16.576 5.716 Q 17.896 6.893 17.896 9.225 Q 17.896 11.557 16.576 12.745 Q 15.256 13.933 12.638 13.933 L 10.328 13.933 L 10.328 19.345 Q 10.328 19.653 10.053 19.818 Q 9.778 19.983 9.14 19.983 Z M 10.328 11.469 L 12.638 11.469 Q 13.848 11.469 14.387 10.941 Q 14.926 10.413 14.926 9.225 Q 14.926 8.059 14.387 7.531 Q 13.848 7.003 12.638 7.003 L 10.328 7.003 Z" style="fill: rgb(255, 255, 255);"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ai ai-Hashtag" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: currentColor;"><path d="M10 3L6 21"/><path d="M18 3l-4 18"/><path d="M4 8h17"/><path d="M3 16h17"/></svg>
