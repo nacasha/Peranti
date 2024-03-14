@@ -32,7 +32,7 @@ Peranti has additional features besides the main tools, these features can helps
 Use any tool by opening a new tab without having to clear the current one. No need to worry about losing your data.
 
 <p align="center">
-  <img width="70%" src="/assets/screenshots/tabs.gif">
+  <img width="90%" src="/assets/screenshots/tabs.gif">
   <br/>
 </p>
 
@@ -40,7 +40,7 @@ Use any tool by opening a new tab without having to clear the current one. No ne
 Allows user to use the tool with multiple data separated by new line.
 
 <p align="center">
-  <img width="70%" src="/assets/screenshots/batch.gif">
+  <img width="90%" src="/assets/screenshots/batch.gif">
   <br/>
 </p>
 
@@ -48,7 +48,7 @@ Allows user to use the tool with multiple data separated by new line.
 Customize the tool input and output to match your preferences.
 
 <p align="center">
-  <img width="70%" src="/assets/screenshots/options.png">
+  <img width="90%" src="/assets/screenshots/options.png">
   <br/>
 </p>
 
