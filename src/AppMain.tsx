@@ -2,16 +2,17 @@ import NiceModal from "@ebay/nice-modal-react"
 import clsx from "clsx"
 import { useEffect, type FC, type ReactNode } from "react"
 
-import { AppThemeListener } from "./components/app/AppThemeListener/AppThemeListener.tsx"
+import { AppThemeListener } from "./components/app/AppThemeListener"
 import { AppTitlebar } from "./components/app/AppTitlebar"
 import { AppletViewer } from "./components/applet/AppletViewer"
-import { Commandbar } from "./components/commandbar/Commandbar/Commandbar.tsx"
+import { Commandbar } from "./components/commandbar/Commandbar"
 import { FileDropArea } from "./components/filedrop/FileDropArea"
 import { FileDropListener } from "./components/filedrop/FileDropListener"
-import { NotificationProvider } from "./components/notification/NotificationProvider/NotificationProvider.tsx"
+import { HotkeysListener } from "./components/hotkeys/HotkeysListener"
+import { NotificationProvider } from "./components/notification/NotificationProvider"
 import { SessionTabbar } from "./components/session/SessionTabbar"
 import { PrimarySidebar } from "./components/sidebar/PrimarySidebar"
-import { SecondarySidebarCommandbar } from "./components/sidebar/SecondarySidebar/index.ts"
+import { SecondarySidebarCommandbar } from "./components/sidebar/SecondarySidebar"
 import { WindowResizeEventListener } from "./components/window/WindowResizeEventListener"
 import { WindowSizeListener } from "./components/window/WindowSizeListener"
 import { AppTitleBarStyle } from "./enums/app-titlebar-style.ts"
@@ -69,6 +70,8 @@ export const AppMain = () => {
 
       <FileDropArea />
       <FileDropListener />
+
+      <HotkeysListener />
 
       <AppTitlebar />
 

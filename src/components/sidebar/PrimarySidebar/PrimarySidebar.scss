@@ -4,6 +4,7 @@
   max-width: var(--primary-sidebar-width);
   background-color: var(--primary-sidebar-background-color);
   display: flex;
+  flex-direction: column;
   z-index: 2;
 
   &.hidden {
@@ -14,6 +15,8 @@
   &.float-unpinned {
     position: absolute;
     left: var(--activitybar-width);
+    // TODO: Remove line below to when activitybar is enabled
+    left: 0;
     top: 0;
     bottom: 0;
     box-shadow: 0 0 4px -1px rgba(0,0,0,0.3);
@@ -25,8 +28,14 @@
   }
 }
 
+.PrimarySidebar-body {
+  width: 100%;
+  display: flex;
+  overflow: auto;
+}
+
 .PrimarySidebar-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   position: sticky;
   background-color: var(--primary-sidebar-background-color);
@@ -37,6 +46,6 @@
   align-items: center;
   padding-left: 15px;
   padding-right: 5px;
-  height: calc(var(--session-tabbar-height) - 1px);
+  min-height: calc(var(--session-tabbar-height) - 1px);
   border-bottom: 1px solid var(--border-color);
 }

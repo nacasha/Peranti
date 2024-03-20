@@ -1,14 +1,11 @@
 import { clsx } from "clsx"
 import { type ReactNode, type FC } from "react"
 
-import settingsApplet from "src/applets/pages/settings-applet"
-import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons"
 import { SidebarMode } from "src/enums/sidebar-mode"
 import { useSelector } from "src/hooks/useSelector"
 import { type AppletConstructor } from "src/models/AppletConstructor"
 import { activeAppletStore } from "src/services/active-applet-store"
-import { commandbarService } from "src/services/commandbar-service"
 import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
 import { toolSidebarService } from "src/services/tool-sidebar-service"
@@ -21,32 +18,8 @@ export const ToolSidebar: FC = () => {
   const groupByCategory = useSelector(() => toolSidebarService.groupByCategory)
   const items = useSelector(() => toolSidebarService.items)
 
-  const handleClickOpenSearch = () => {
-    commandbarService.open()
-  }
-
-  const handleClickSettings = () => {
-    sessionStore.findOrCreateSession(settingsApplet)
-  }
-
   return (
     <div className="ToolSidebar">
-      <div className="PrimarySidebar-title" data-tauri-drag-region>
-        <div>Peranti</div>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 3 }}>
-          <ButtonIcon
-            icon={Icons.Settings}
-            tooltip="Settigs"
-            onClick={handleClickSettings}
-          />
-          <ButtonIcon
-            icon={Icons.Search}
-            tooltip="Search"
-            onClick={handleClickOpenSearch}
-          />
-        </div>
-      </div>
-
       <div className="ToolSidebar-body">
         {Object.entries(items).map(([category, applets]) => (
           <div className="ToolSidebar-section" key={category}>
