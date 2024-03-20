@@ -26,7 +26,6 @@
 }
 
 .PrimarySidebar-title {
-  padding: 13px 13px 5px;
   font-size: 15px;
   font-weight: 600;
   position: sticky;
@@ -35,4 +34,9 @@
   z-index: 1;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 5px;
+  height: calc(var(--session-tabbar-height) - 1px);
+  border-bottom: 1px solid var(--border-color);
 }

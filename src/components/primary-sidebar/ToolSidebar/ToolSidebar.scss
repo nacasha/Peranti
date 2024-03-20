@@ -1,6 +1,4 @@
 .ToolSidebar {
-  padding-block: 12px;
-
   &-section {
     &:first-child {
       .ToolSidebar-section-title {
@@ -20,6 +18,10 @@
         display: block;
       }
     }
+  }
+
+  .ToolSidebar-body {
+    padding-block: 12px;
   }
 
   .ToolSidebar-section-title {
