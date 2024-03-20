@@ -1,7 +1,7 @@
 import { clsx } from "clsx"
 import { type ButtonHTMLAttributes, type DetailedHTMLProps, type FC, type ReactNode } from "react"
 
-import { buttonClasses } from "./Button.css"
+import "./Button.scss"
 
 interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
   icon?: string
@@ -14,7 +14,7 @@ export const Button: FC<ButtonProps> = (props) => {
 
   return (
     <button
-      className={clsx(buttonClasses.root, className, { [buttonClasses.active]: active })}
+      className={clsx("Button", className, { active })}
       {...restProps}
     >
       {icon && <img src={icon} alt={children?.toString()} />}

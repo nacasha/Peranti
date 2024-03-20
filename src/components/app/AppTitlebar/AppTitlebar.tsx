@@ -6,7 +6,7 @@ import { AppTitleBarStyle } from "src/enums/app-titlebar-style"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
 
-import { appTitlebarClasses } from "./AppTitlebar.css"
+import "./AppTitlebar.scss"
 
 export const AppTitlebar: FC = () => {
   const titlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
@@ -17,7 +17,7 @@ export const AppTitlebar: FC = () => {
   }
 
   return (
-    <div className={appTitlebarClasses.root} data-tauri-drag-region>
+    <div className="AppTitlebar" data-tauri-drag-region>
       <div />
       <AppletSearchBar />
 

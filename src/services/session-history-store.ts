@@ -19,6 +19,8 @@ class SessionHistoryStore {
 
   autoSaveDelayInSeconds = 1
 
+  featureEnabled = false
+
   constructor() {
     makeAutoObservable(this)
 
@@ -35,6 +37,10 @@ class SessionHistoryStore {
   }
 
   addHistory(applet: Applet) {
+    if (!this.featureEnabled) {
+      return false
+    }
+
     if (this.histories.findIndex((history) => history.sessionId === applet.sessionId) > -1) {
       return true
     }

@@ -25,7 +25,7 @@ export const jsonataTool = new AppletConstructor<InputFields, OutputFields>({
   category: "JSON",
   layoutSetting: {
     fieldsType: "grid",
-    fieldsinputGridTemplate: "'expression' 1fr 'jsonString' 3fr",
+    fieldsInputGridTemplate: "'expression' 1fr 'jsonString' 3fr",
     fieldsOutputGridTemplate: "'output' 1fr"
   },
   inputFields: [

@@ -62,7 +62,8 @@ $sidebar-width: 180px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 
     .simplebar-content {
       min-height: 100%;

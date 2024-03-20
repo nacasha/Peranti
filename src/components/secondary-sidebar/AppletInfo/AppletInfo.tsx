@@ -9,6 +9,10 @@ import "./AppletInfo.scss"
 export const AppletInfo: FC = () => {
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
 
+  if (activeApplet.appletId === "") {
+    return null
+  }
+
   return (
     <SecondarySidebarSection title="Information">
       <div className="AppletInfo">

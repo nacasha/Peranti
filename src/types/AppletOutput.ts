@@ -7,7 +7,7 @@ type ExtractOutputComponentProps<T> = T extends AppletComponent<React.FC<infer P
   ? Omit<P, keyof OutputComponentProps>
   : never
 
-export type AppletOutput<K extends Record<string, string> = any> = {
+export type AppletOutput<K extends Record<string, string> | any = any> = {
   key: Extract<keyof K, string>
   label: string
   allowBatch?: boolean

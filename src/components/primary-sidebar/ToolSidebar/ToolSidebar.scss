@@ -7,7 +7,7 @@
     }
 
     &-title {
-      padding-inline: 11px;
+      padding-inline: 15px;
       font-size: 14px;
       font-weight: 600;
       padding-bottom: 3px;
@@ -20,7 +20,22 @@
     }
   }
 
+  .ToolSidebar-body {
+    padding-block: 12px;
+  }
+
   .ToolSidebar-section-title {
     user-select: none;
+  }
+
+  .ToolSidebarItem {
+    img {
+      filter: var(--tool-sidebar-icon-color);
+    }
+    &.active {
+      img {
+        filter: var(--tool-sidebar-icon-color-active);
+      }
+    }
   }
 }

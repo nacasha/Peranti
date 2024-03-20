@@ -2,44 +2,36 @@ import NiceModal from "@ebay/nice-modal-react"
 import clsx from "clsx"
 import { useEffect, type FC, type ReactNode } from "react"
 
-import { ActivityBar } from "./components/activity-bar/ActivityBar"
-import { AppStatusbar } from "./components/app/AppStatusbar"
-import { AppThemeListener } from "./components/app/AppThemeListener/AppThemeListener.tsx"
+import { AppThemeListener } from "./components/app/AppThemeListener"
 import { AppTitlebar } from "./components/app/AppTitlebar"
 import { AppletViewer } from "./components/applet/AppletViewer"
-import { Commandbar } from "./components/commandbar/Commandbar/Commandbar.tsx"
+import { Commandbar } from "./components/commandbar/Commandbar"
 import { FileDropArea } from "./components/filedrop/FileDropArea"
 import { FileDropListener } from "./components/filedrop/FileDropListener"
-import { NotificationProvider } from "./components/notification/NotificationProvider/NotificationProvider.tsx"
+import { HotkeysListener } from "./components/hotkeys/HotkeysListener"
+import { NotificationProvider } from "./components/notification/NotificationProvider"
 import { SessionTabbar } from "./components/session/SessionTabbar"
 import { PrimarySidebar } from "./components/sidebar/PrimarySidebar"
-import { SecondarySidebarCommandbar } from "./components/sidebar/SecondarySidebar/index.ts"
+import { SecondarySidebarCommandbar } from "./components/sidebar/SecondarySidebar"
 import { WindowResizeEventListener } from "./components/window/WindowResizeEventListener"
 import { WindowSizeListener } from "./components/window/WindowSizeListener"
 import { AppTitleBarStyle } from "./enums/app-titlebar-style.ts"
 import { useSelector } from "./hooks/useSelector.ts"
 import { interfaceStore } from "./services/interface-store.ts"
-import { appClasses } from "./styles/app.css.ts"
 
 const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   const titlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
   const isWindowMaximized = useSelector(() => interfaceStore.isWindowMaximized)
   const textAreaWordWrap = useSelector(() => interfaceStore.textAreaWordWrap)
 
-  const windowState = {
+  const classNames = clsx("AppRoot", {
     WindowMaximized: isWindowMaximized,
-    [appClasses.withMaximized]: isWindowMaximized,
-    [appClasses.withNotMaximized]: !isWindowMaximized,
     TextAreaWordWrap: textAreaWordWrap,
-    [appClasses.withTextAreaWordWrap]: textAreaWordWrap
-  }
-
-  const classNames = clsx(
-    "AppRoot",
-    appClasses.root,
-    (titlebarStyle === AppTitleBarStyle.Tabbar) ? appClasses.withTabbar : null,
-    windowState
-  )
+    withMaximized: isWindowMaximized,
+    withNotMaximized: !isWindowMaximized,
+    withTextAreaWordWrap: textAreaWordWrap,
+    withTabbar: titlebarStyle === AppTitleBarStyle.Tabbar
+  })
 
   useEffect(() => {
     const disableContextMenu = () => {
@@ -79,21 +71,20 @@ export const AppMain = () => {
       <FileDropArea />
       <FileDropListener />
 
+      <HotkeysListener />
+
       <AppTitlebar />
 
-      <div className={appClasses.container}>
-        <ActivityBar />
+      <div className="AppContainer">
         <PrimarySidebar />
 
-        <div className={appClasses.content}>
+        <div className="AppContent">
           <SessionTabbar />
           <AppletViewer />
         </div>
 
         <SecondarySidebarCommandbar />
       </div>
-
-      <AppStatusbar />
     </AppRoot>
   )
 }

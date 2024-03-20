@@ -12,7 +12,7 @@ import { useSelector } from "src/hooks/useSelector"
 import { appletSidebarService } from "src/services/applet-sidebar-service"
 import { interfaceStore } from "src/services/interface-store"
 
-import { secondarySidebarClasses } from "./SecondarySidebar.css"
+import "./SecondarySidebar.scss"
 
 export const SecondarySidebarCommandbar: FC = () => {
   const isShow = useSelector(() => interfaceStore.appTitlebarStyle === AppTitleBarStyle.Commandbar)
@@ -35,12 +35,7 @@ export const SecondarySidebarTabbar: FC = () => {
 const SecondarySidebar: FC = () => {
   const isOpen = useSelector(() => appletSidebarService.isOpen)
 
-  const className = clsx([
-    secondarySidebarClasses.root,
-    {
-      [secondarySidebarClasses.rootShow]: isOpen
-    }
-  ])
+  const className = clsx(["SecondarySidebar", { show: isOpen }])
 
   return (
     <SimpleBar className={className}>

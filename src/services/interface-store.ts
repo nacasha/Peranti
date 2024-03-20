@@ -19,7 +19,7 @@ class InterfaceStore {
   isFloatingSidebar = userSettingsService.get(UserSettingsKeys.floatingSidebar, false)
 
   @userSettingsService.watch(UserSettingsKeys.titlebarStyle)
-  appTitlebarStyle = userSettingsService.get(UserSettingsKeys.titlebarStyle, AppTitlebarStyle.Commandbar)
+  appTitlebarStyle = userSettingsService.get(UserSettingsKeys.titlebarStyle, AppTitlebarStyle.Tabbar)
 
   @userSettingsService.watch(UserSettingsKeys.textAreaWordWrap)
   textAreaWordWrap = userSettingsService.get(UserSettingsKeys.textAreaWordWrap, false)

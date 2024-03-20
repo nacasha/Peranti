@@ -1,0 +1,29 @@
+.Dropdown {
+  border: 1px solid var(--input-output-border-color);
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--input-output-text-color);
+  background-color: var(--input-output-background-color);
+  gap: 10px;
+  padding: var(--input-output-padding);
+  padding-inline: 10px;
+  min-width: 120px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  img {
+    width: 13px;
+    filter: var(--icon-color-filter);
+  }
+}
+
+.DropdownMenu {
+  .contexify_item.selected > .contexify_itemContent {
+    background-color: var(--button-background-color-active);
+    border-radius: var(--border-radius);
+  }
+}

@@ -1,0 +1,57 @@
+.WindowControls {
+  display: flex;
+}
+
+.SessionTabbar {
+  .WindowControls {
+    position: absolute;
+    right: 0;
+  }
+}
+
+.WindowControls-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: var(--window-control-button-height);
+  width: var(--window-control-button-width);
+  user-select: none;
+
+  &:hover {
+    background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%);
+  }
+
+  &:last-child:hover {
+    background-color: #c42b1c;
+  }
+
+  img {
+    width: 14px;
+    filter: var(--icon-color-filter);
+  }
+}
+
+.WindowControls-layout-controls {
+  display: flex;
+  margin-right: 10px;
+  gap: 4px;
+  align-items: center;
+}
+
+.WindowControls-window-controls {
+  display: flex;
+}
+
+.AppRoot.withTabbar {
+  .WindowControls {
+    top: calc(0px - var(--session-tabbar-draggable-height));
+    padding-bottom: var(--session-tabbar-draggable-height);
+  }
+}
+
+.AppRoot.withTabbar.withMaximized {
+  .WindowControls {
+    top: 0;
+    padding-bottom: 0;
+  }
+}

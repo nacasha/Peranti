@@ -6,7 +6,7 @@ import { ZoomableContent } from "src/components/common/ZoomableContent"
 import { interfaceStore } from "src/services/interface-store"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
-import { pintoraOutputClasses } from "./PintoraOutput.css"
+import "./PintoraOutput.scss"
 
 interface PintoraOutputProps extends OutputComponentProps {}
 
@@ -77,10 +77,10 @@ export const PintoraOutput: FC<PintoraOutputProps> = (props) => {
   }, [])
 
   return (
-    <div className={pintoraOutputClasses.root} style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
-      <div key={pintoraSyntax} ref={renderRef} className={pintoraOutputClasses.output} />
+    <div className="PintoraOutput" style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
+      <div key={pintoraSyntax} ref={renderRef} className="PintoraOutput-output" />
       <AppletComponentHead showMaximize label={label} />
-      <div className={pintoraOutputClasses.inner}>
+      <div className="PintoraOutput-inner">
         <ZoomableContent
           initialState={initialState}
           onStageChange={onStateChange}

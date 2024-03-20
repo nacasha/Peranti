@@ -1,0 +1,22 @@
+.ButtonIcon {
+  display: flex;
+  align-items: center;
+  user-select: none;
+  padding: 6px;
+  border-radius: var(--border-radius);
+
+  &:hover {
+    background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%);
+    cursor: pointer;
+  }
+
+  &:active {
+    background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 7%);
+    cursor: pointer;
+  }
+
+  img {
+    width: 15px;
+    filter: var(--icon-color-filter);
+  }
+}

@@ -1,0 +1,192 @@
+.SessionTabbar {
+  position: relative;
+  background-color: var(--session-tabbar-background-color);
+  min-height: var(--session-tabbar-height);
+  height: var(--session-tabbar-height);
+
+  .simplebar-track.simplebar-horizontal {
+    height: 5px;
+    border-radius: 0;
+    pointer-events: all;
+  }
+
+  .simplebar-offset:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 6;
+  }
+
+  .simplebar-offset {
+    display: flex;
+  }
+
+  .simplebar-offset .simplebar-content-wrapper {
+    flex: 1;
+  }
+
+  .simplebar-content {
+    display: flex;
+    height: 100%;
+  }
+}
+
+.SessionTabbar-border-bottom {
+  position: absolute;
+  border-bottom: 1px solid var(--border-color);
+  inset: 0;
+}
+
+.SessionTabbar-inner {
+  display: flex;
+}
+
+.SessionTabbar-inner-body {
+  position: relative;
+  width: 100%;
+}
+
+.SessionTabbar-inner-simplebar {
+  position: absolute;
+  inset: 0;
+}
+
+.SessionTabbar-inner-simplebar-border-right {
+  position: sticky;
+  right: 0;
+  height: var(--session-tabbar-height);
+  z-index: 10;
+  border-right: 1px solid var(--border-color);
+}
+
+.SessionTabbar-item-session {
+  display: flex;
+  height: var(--session-tabbar-height);
+  max-height: var(--session-tabbar-height);
+  border-right: 1px solid var(--border-color);
+  position: relative;
+
+  &:hover {
+    background-color: var(--session-tabbar-color-hover);
+    cursor: pointer;
+
+    .SessionTabbar-item-session-icon {
+      opacity: 1;
+    }
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    border-bottom: 1px solid var(--border-color);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
+
+  &:nth-last-child(1) {
+    border-right: none;
+  }
+
+  &.icon {
+    background-color: var(--session-tabbar-color);
+    border-right: 1px solid var(--border-color) !important;
+    user-select: none;
+
+    .SessionTabbar-item-session-icon {
+      opacity: 1;
+      padding-inline: 10px;
+      border-radius: 0;
+    }
+
+    &:hover {
+      background-color: var(--session-tabbar-color-hover);
+      cursor: pointer;
+    }
+  }
+}
+
+.SessionTabbar-item-session-body {
+  background-color: var(--session-tabbar-color);
+  padding: 5px 10px;
+  padding-right: 5px;
+  padding-top: 3px;
+  user-select: none;
+  color: var(--session-tabbar-text-color);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-top: 2px solid transparent;
+  white-space: nowrap;
+
+  &.active {
+    color: var(--session-tabbar-text-color-active);
+    background-color: var(--applet-viewer-background-color);
+    z-index: 7;
+    border-top: 3px solid var(--color-primary);
+  }
+}
+
+.SessionTabbar-item-session-label {
+  max-width: var(--session-tabbar-item-max-width);
+  overflow: hidden;
+
+  &[contenteditable=\"false\"] {
+    text-overflow: ellipsis;
+  }
+}
+
+.SessionTabbar-item-session-icon {
+  display: flex;
+  border-radius: var(--border-radius);
+  padding: 3px;
+  opacity: 0;
+
+  &:hover {
+    background-color: var(--button-background-color-hover);
+  }
+
+  img {
+    width: 13px;
+    filter: var(--icon-color-filter);
+  }
+}
+
+.SessionTabbar-window-extra-drag {
+  background-color: var(--session-tabbar-background-color);
+}
+
+.SessionTabbarList {
+  display: flex;
+
+  &:empty ~ .SessionTabbar-inner-simplebar-border-right {
+    display: none;
+  }
+}
+
+.AppRoot.withTabbar {
+  .SessionTabbar-inner-simplebar {
+    right: calc(var(--window-control-button-width) * 6);
+  }
+}
+
+.AppRoot.withTabbar.withNotMaximized {
+  .SessionTabbar-item-session::before {
+    border-top: 1px solid var(--border-color);
+  }
+}
+
+.AppRoot.withTabbar.withNotMaximized {
+  .SessionTabbar-window-extra-drag {
+    height: var(--session-tabbar-draggable-height);
+  }
+}
+
+.AppRoot.withTabbar.withMaximized {
+  .SessionTabbar-window-extra-drag {
+    height: 0;
+  }
+}

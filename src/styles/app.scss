@@ -1,0 +1,40 @@
+.AppRoot {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  line-height: 24px;
+  font-weight: var(--font-weight);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  font-smooth: antialiased;
+
+  * {
+    outline: none
+  }
+}
+
+.AppContainer {
+  display: flex;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: var(--background-main);
+  position: relative
+}
+
+.AppContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--background-content)
+}

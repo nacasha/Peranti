@@ -1,0 +1,25 @@
+.ActivityBar {
+  width: 100%;
+  max-width: var(--activitybar-width);
+  overflow: auto;
+  background-color: var(--activitybar-background-color);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  padding-block: 5px;
+  padding-left: 1px;
+  border-right: 1px solid var(--border-color);
+}
+
+.ActivityBar-top {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ActivityBar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}

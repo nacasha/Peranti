@@ -1,6 +1,6 @@
 import { type FC } from "react"
 
-import { SelectInput } from "src/components/inputs/SelectInput"
+import { Dropdown } from "src/components/common/Dropdown"
 import { AppTitleBarStyle } from "src/enums/app-titlebar-style"
 import { interfaceStore } from "src/services/interface-store"
 
@@ -12,13 +12,12 @@ export const AppTitleBarStyleSelect: FC = () => {
   }
 
   return (
-    <SelectInput<AppTitleBarStyle>
-      fieldKey=""
+    <Dropdown<AppTitleBarStyle>
       options={[
         { label: "Commandbar", value: AppTitleBarStyle.Commandbar },
         { label: "Tabbar", value: AppTitleBarStyle.Tabbar }
       ]}
-      onValueChange={onChange}
+      onChange={onChange}
       value={appTitlebarStyle}
     />
   )

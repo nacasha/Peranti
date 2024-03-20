@@ -1,5 +1,5 @@
-:root {
-  --app-bg: var(--gray1);
+body.light {
+  --commandbar-background-color: var(--gray1);
   --cmdk-shadow: 0 16px 20px rgb(0 0 0 / 20%);
 
   --lowContrast: #ffffff;
@@ -45,8 +45,8 @@
   --blue12: hsl(211, 100%, 15%);
 }
 
-.dark {
-  --app-bg: var(--gray1);
+body.dark {
+  --commandbar-background-color: var(--gray1);
 
   --lowContrast: #000000;
   --highContrast: #ffffff;
@@ -92,7 +92,28 @@
 }
 
 [cmdk-root] {
-  font-size: 13px;
+  pointer-events: all;
+  border: 1px solid var(--border-color);
+  max-width: 640px;
+  max-height: 500px;
+  width: 100%;
+  height: 100%;
+  background: var(--commandbar-background-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--cmdk-shadow);
+  transition: all 100ms;
+  outline: none;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(10px);
+  opacity: 0;
+  font-size: 13px;;
+}
+
+[cmdk-root].open {
+  transform: translateY(0px);
+  opacity: 1;
 }
 
 [cmdk-dialog] {

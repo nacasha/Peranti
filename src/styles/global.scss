@@ -1,0 +1,34 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--text-color);
+}
+
+input, text, select, option {
+  color: var(--text-color);
+}
+
+:root {
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track-background-color);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb-background-color);
+    border-radius: var(--scrollbar-thumb-border-radius);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-background-color-hover);
+  }
+}

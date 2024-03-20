@@ -15,9 +15,10 @@ import { sessionHistoryStore } from "src/services/session-history-store"
 import { sessionStore } from "src/services/session-store"
 import { windowManager } from "src/services/window-manager.ts"
 
-import { sessionTabbarClasses } from "./SessionTabbar.css"
 import { SessionTabbarContextMenu } from "./SessionTabbarContextMenu.tsx"
 import { SessionTabbarItem } from "./SessionTabbarItem.tsx"
+
+import "./SessionTabbar.scss"
 
 export const SessionTabbar: FC = () => {
   const appTitlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
@@ -115,22 +116,22 @@ export const SessionTabbar: FC = () => {
   }, [scrollBarRef, appTitlebarStyle])
 
   return (
-    <div className={sessionTabbarClasses.root}>
+    <div className="SessionTabbar">
       {/* Below component was outside the root */}
-      <div className={sessionTabbarClasses.windowExtraDrag} data-tauri-drag-region></div>
-      <div className={sessionTabbarClasses.rootBorderBottom} data-tauri-drag-region />
+      <div className="SessionTabbar-window-extra-drag" data-tauri-drag-region></div>
+      <div className="SessionTabbar-border-bottom" data-tauri-drag-region />
 
-      <div className={sessionTabbarClasses.inner}>
+      <div className="SessionTabbar-inner">
         <TabbarActions />
 
-        <div className={sessionTabbarClasses.innerBody} data-tauri-drag-region>
-          <div className={sessionTabbarClasses.innerSimplebar}>
+        <div className="SessionTabbar-inner-body" data-tauri-drag-region>
+          <div className="SessionTabbar-inner-simplebar">
             <SimpleBar
               style={{ width: "100%" }}
               scrollableNodeProps={{ ref: scrollBarRef }}
             >
               <TabbarList />
-              <div className={sessionTabbarClasses.innerSimplebarBorderRight}></div>
+              <div className="SessionTabbar-inner-simplebar-border-right"></div>
             </SimpleBar>
           </div>
         </div>
@@ -146,7 +147,7 @@ const TabbarList = observer(() => {
   const sessions = sessionStore.getRunningSessionOfActiveApplet()
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="SessionTabbarList">
       {sessions.map((session) => (
         <SessionTabbarItem
           key={session.sessionId.concat(session.sessionName ?? "")}
@@ -201,8 +202,8 @@ const SessionTabbarItemIcon: FC<SessionTabbarItemIconProps> = memo((props) => {
 
   return (
     <Tooltip overlay={label}>
-      <div onClick={onClick} className={sessionTabbarClasses.itemIcon} style={style}>
-        <div className={sessionTabbarClasses.itemSessionIcon}>
+      <div onClick={onClick} className="SessionTabbar-item-session icon" style={style}>
+        <div className="SessionTabbar-item-session-icon">
           <img src={icon} alt={label} />
         </div>
       </div>

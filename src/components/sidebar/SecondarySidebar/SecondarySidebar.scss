@@ -1,0 +1,60 @@
+.SecondarySidebar {
+  width: 250px;
+  margin-right: -250px;
+  background-color: var(--secondary-sidebar-background-color);
+
+  &.show {
+    border-left: 1px solid var(--border-color);
+    margin-right: 0;
+  }
+}
+
+.SecondarySidebarSection {
+  overflow: hidden;
+  height: 33px;
+  border-top: 1px solid var(--border-color);
+  transition: all var(--animation-speed);
+
+  &:first-child {
+    border-top: none;
+  }
+
+  &.expanded {
+    height: fit-content;
+  }
+}
+
+.SecondarySidebarSection-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 2;
+  user-select: none;
+  padding: 3px 8px;
+
+  &:hover {
+    cursor: pointer;
+  };
+
+  &:nth-child(1) {
+    border-top: none;
+  }
+
+  img {
+    width: 12px;
+    filter: var(--icon-color-filter)
+  }
+}
+
+.SecondarySidebarSection-title {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.SecondarySidebarSection-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

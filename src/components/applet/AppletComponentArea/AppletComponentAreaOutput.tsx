@@ -20,6 +20,11 @@ export const AppletComponentAreaOutput: FC<AppletComponentAreaOutpuProps> = (pro
   const outputFields = useSelector(() => activeAppletStore.getActiveApplet().getOutputFields())
 
   /**
+   * Batch mode state
+   */
+  const isBatchEnabled = useSelector(() => activeAppletStore.getActiveApplet().isBatchModeEnabled)
+
+  /**
    * Maximized field state
    */
   const maximizedField = useSelector(() => activeAppletStore.getActiveApplet().maximizedField)
@@ -28,14 +33,22 @@ export const AppletComponentAreaOutput: FC<AppletComponentAreaOutpuProps> = (pro
    * Applet layout
    */
   const layoutSetting = useSelector(() => activeAppletStore.getActiveApplet().layoutSetting)
+  const { fieldsType } = layoutSetting
 
-  const classNames: ClassValue[] = ["AppletComponentAreaOutput", layoutSetting.fieldsType, classNameProps]
+  const classNames: ClassValue[] = ["AppletComponentAreaOutput", fieldsType, classNameProps]
   const styles: CSSProperties = {}
 
-  if (layoutSetting.fieldsType === "flex") {
-    classNames.push(layoutSetting.fieldsOutputFlexDirection)
-  } else if (layoutSetting.fieldsType === "grid") {
-    styles.gridTemplate = layoutSetting.fieldsOutputGridTemplate
+  /**
+   * Layout will be flex horizontally when batch mode is enabled
+   */
+  if (isBatchEnabled || maximizedField.enabled) {
+    classNames.push(...["flex", "horizontal"])
+  } else {
+    if (fieldsType === "flex") {
+      classNames.push(layoutSetting.fieldsOutputFlexDirection)
+    } else if (fieldsType === "grid") {
+      styles.gridTemplate = layoutSetting.fieldsOutputGridTemplate
+    }
   }
 
   if (maximizedField.enabled && maximizedField.type !== "output") {

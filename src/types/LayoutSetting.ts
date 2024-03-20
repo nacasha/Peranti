@@ -51,7 +51,7 @@ interface FieldsTypeGrid {
   /**
    * Input area gridTemplate when layout type is grid
    */
-  fieldsinputGridTemplate?: string
+  fieldsInputGridTemplate?: string
 
   /**
    * Output area gridTemplate when layout type is grid
