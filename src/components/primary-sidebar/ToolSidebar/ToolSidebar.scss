@@ -1,4 +1,6 @@
 .ToolSidebar {
+  padding-block: 12px;
+
   &-section {
     &:first-child {
       .ToolSidebar-section-title {
@@ -7,7 +9,7 @@
     }
 
     &-title {
-      padding-inline: 11px;
+      padding-inline: 15px;
       font-size: 14px;
       font-weight: 600;
       padding-bottom: 3px;

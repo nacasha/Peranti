@@ -20,7 +20,6 @@ export const ToolSidebar: FC = () => {
 
   return (
     <div className="ToolSidebar">
-      <div className="PrimarySidebar-title">Tools</div>
       {Object.entries(items).map(([category, applets]) => (
         <div className="ToolSidebar-section" key={category}>
           <div className={clsx("ToolSidebar-section-title", groupByCategory && "show")}>
@@ -57,14 +56,6 @@ const ToolSidebarInnerItem: FC<ToolSidebarInnerItemProps> = ({ appletConstructor
       interfaceStore.hideSidebar()
     }
   }
-
-  // const icons: Record<string, string> = {
-  //   [AppletType.Extension]: Icons.Extension,
-  //   [AppletType.Tool]: Icons.Tool,
-  //   [AppletType.Pipeline]: Icons.Hash
-  // }
-
-  // const appletIcon = icons[appletConstructor.type ?? "Tool"] ?? Icons.Tool
 
   return (
     <ToolSidebarItem

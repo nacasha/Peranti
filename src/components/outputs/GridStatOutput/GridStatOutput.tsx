@@ -21,6 +21,7 @@ export const GridStatOutput: FC<GridStatOutputProps> = (props) => {
       value = []
     }
   } catch (error) {
+    value = []
     console.log(error)
   }
 

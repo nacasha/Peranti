@@ -2,8 +2,6 @@ import NiceModal from "@ebay/nice-modal-react"
 import clsx from "clsx"
 import { useEffect, type FC, type ReactNode } from "react"
 
-import { ActivityBar } from "./components/activity-bar/ActivityBar"
-import { AppStatusbar } from "./components/app/AppStatusbar"
 import { AppThemeListener } from "./components/app/AppThemeListener/AppThemeListener.tsx"
 import { AppTitlebar } from "./components/app/AppTitlebar"
 import { AppletViewer } from "./components/applet/AppletViewer"
@@ -75,7 +73,6 @@ export const AppMain = () => {
       <AppTitlebar />
 
       <div className="AppContainer">
-        <ActivityBar />
         <PrimarySidebar />
 
         <div className="AppContent">
@@ -85,8 +82,6 @@ export const AppMain = () => {
 
         <SecondarySidebarCommandbar />
       </div>
-
-      <AppStatusbar />
     </AppRoot>
   )
 }
