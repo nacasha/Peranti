@@ -58,7 +58,7 @@ Easily find tool using search function.
 </p>
 
 ## Settings
-Customer the application appearance and other features.
+Customize the application appearance and other features.
 
 <p align="center">
   <img width="90%" src="./assets/screenshots/settings.png">
