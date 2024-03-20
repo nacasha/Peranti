@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="128" align="center" src="/assets/logo.png">
+  <img width="128" align="center" src="./assets/logo.png">
 </p>
 <h1 align="center">
   Peranti
@@ -7,7 +7,7 @@
 <p align="center">Next Generation Developer Toolbox</p>
 
 <p align="center">
-  <img src="/assets/screenshots/peranti.png">
+  <img src="./assets/screenshots/peranti.png">
   <br/>
 </p>
 
@@ -25,22 +25,19 @@ Available tools:
 - *More tools are coming!*
 
 # Features
-
-Peranti has additional features besides the main tools, these features can helps developer to get even more productive!
-
 ## Tabs
-Use any tool by opening a new tab without having to clear the current one. No need to worry about losing your data.
+Use tool by opening a new tab without having to clear current input.
 
 <p align="center">
-  <img width="90%" src="/assets/screenshots/tabs.gif">
+  <img width="90%" src="./assets/screenshots/tabs.gif">
   <br/>
 </p>
 
 ## Batch Mode
-Allows user to use the tool with multiple data separated by new line.
+Allows user to use the tool with multiple input separated by new line.
 
 <p align="center">
-  <img width="90%" src="/assets/screenshots/batch.gif">
+  <img width="90%" src="./assets/screenshots/batch.gif">
   <br/>
 </p>
 
@@ -48,7 +45,23 @@ Allows user to use the tool with multiple data separated by new line.
 Customize the tool input and output to match your preferences.
 
 <p align="center">
-  <img width="90%" src="/assets/screenshots/options.png">
+  <img width="90%" src="./assets/screenshots/options.png">
+  <br/>
+</p>
+
+## Search
+Easily find tool using search function.
+
+<p align="center">
+  <img width="90%" src="./assets/screenshots/search.png">
+  <br/>
+</p>
+
+## Settings
+Customer the application appearance and other features.
+
+<p align="center">
+  <img width="90%" src="./assets/screenshots/settings.png">
   <br/>
 </p>
 
