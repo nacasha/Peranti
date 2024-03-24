@@ -242,6 +242,9 @@ dependencies:
   remark-gfm:
     specifier: ^4.0.0
     version: 4.0.0
+  reset-css:
+    specifier: ^5.0.2
+    version: 5.0.2
   rxjs:
     specifier: ^7.8.1
     version: 7.8.1
@@ -7522,6 +7525,10 @@ packages:
 
   /requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
+    dev: false
+
+  /reset-css@5.0.2:
+    resolution: {integrity: sha512-YtgUGSq5z5W0NPSjsBW7ys7rtWa8P8AiE7S6Fg3d1TQCPpAodgYyLuZYlU0AOsLtprk/fC9ormHN/0pAavVIDw==}
     dev: false
 
   /resize-observer-polyfill@1.5.1:
