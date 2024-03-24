@@ -39,6 +39,8 @@ export const appDataService = {
   },
 
   async prepareUserSettingsJSONFile() {
+    await this.prepareAppDataFolder()
+
     try {
       if (!(await exists(FileNames.UserSettings, { baseDir: BaseDirectory.AppData }))) {
         await writeTextFile(FileNames.UserSettings, "{}", { baseDir: BaseDirectory.AppData })
