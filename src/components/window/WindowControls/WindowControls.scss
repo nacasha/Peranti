@@ -1,5 +1,6 @@
 .WindowControls {
   display: flex;
+  height: var(--window-control-button-height);
 }
 
 .SessionTabbar {

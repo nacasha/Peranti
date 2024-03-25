@@ -67,6 +67,13 @@ class ExtensionsService {
     const extensionEntries = await appDataService.readExtensionsFolder()
 
     /**
+     * Return if there are no extension entries
+     */
+    if (!extensionEntries) {
+      return []
+    }
+
+    /**
      * Iterate all folder in extensions folder
      */
     for (const extensionEntry of extensionEntries) {
