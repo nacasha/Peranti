@@ -48,7 +48,7 @@ export const PrimarySidebar = observer(() => {
         <div style={{ display: "flex", justifyContent: "space-between", gap: 3 }}>
           <ButtonIcon
             icon={Icons.Settings}
-            tooltip="Settigs"
+            tooltip="Settings"
             onClick={handleClickSettings}
           />
           <ButtonIcon

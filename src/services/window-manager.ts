@@ -1,6 +1,8 @@
 import { type EventCallback } from "@tauri-apps/api/event"
 import { getCurrent, type FileDropEvent } from "@tauri-apps/api/webviewWindow"
 
+import { isRunningInTauri } from "src/utils/is-running-in-tauri"
+
 export const windowManager = {
   /**
    * Minimize application window
@@ -44,7 +46,11 @@ export const windowManager = {
    * @returns
    */
   async onFileDropEvent(handler: EventCallback<FileDropEvent>) {
-    return await getCurrent().onFileDropEvent(handler)
+    if (isRunningInTauri) {
+      return await getCurrent().onFileDropEvent(handler)
+    }
+
+    return () => {}
   },
 
   /**
@@ -53,6 +59,9 @@ export const windowManager = {
    * @returns
    */
   async isMaximized() {
-    return await getCurrent().isMaximized()
+    if (isRunningInTauri) {
+      return await getCurrent().isMaximized()
+    }
+    return true
   }
 }

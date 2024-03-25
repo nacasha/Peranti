@@ -4,7 +4,7 @@ import { makePersistable } from "mobx-persist-store"
 import { StorageKeys } from "src/constants/storage-keys"
 
 class AppletSidebarService {
-  isOpen: boolean = false
+  isOpen: boolean = true
 
   constructor() {
     makeAutoObservable(this)
