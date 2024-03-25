@@ -1,5 +1,6 @@
 import { appDataDir } from "@tauri-apps/api/path"
 import { BaseDirectory, mkdir, exists, readDir, writeTextFile } from "@tauri-apps/plugin-fs"
+import localforage from "localforage"
 
 import { FileNames } from "src/constants/file-names.js"
 import { Folders } from "src/constants/folders"
@@ -9,6 +10,10 @@ import { isRunningInTauri } from "src/utils/is-running-in-tauri.js"
 import { fileService } from "./file-service.js"
 
 export const appDataService = {
+  browserStore: localforage.createInstance({
+    name: "user-settings"
+  }),
+
   async prepareAppDataFolder() {
     if (isRunningInTauri) {
       const baseFolder = await appDataDir()
@@ -81,9 +86,9 @@ export const appDataService = {
       } catch (exception) {
         return {} as any
       }
+    } else {
+      return await localforage.getItem("user-settings") ?? {}
     }
-
-    return {} as any
   },
 
   async writeUserSettingsFile(settings: any) {
@@ -95,6 +100,8 @@ export const appDataService = {
       } catch (exception) {
         console.log("Failed to write ".concat(FileNames.UserSettings))
       }
+    } else {
+      await localforage.setItem("user-settings", settings)
     }
   }
 }

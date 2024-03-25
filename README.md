@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="128" align="center" src="./assets/logo.png">
+  <img width="128" align="center" src="./assets/logo/logo.png">
 </p>
 <h1 align="center">
   Peranti

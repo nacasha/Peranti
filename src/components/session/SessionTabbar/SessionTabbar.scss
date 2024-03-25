@@ -173,6 +173,12 @@
   }
 }
 
+.AppRoot.withTabbar.withRunningInBrowser {
+  .SessionTabbar-inner-simplebar {
+    right: calc(var(--window-control-button-width) * 2.5);
+  }
+}
+
 .AppRoot.withTabbar.withNotMaximized {
   .SessionTabbar-item-session::before {
     border-top: 1px solid var(--border-color);
