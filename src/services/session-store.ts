@@ -30,7 +30,7 @@ class SessionStore {
   @userSettingsService.watch(UserSettingsKeys.tabbarGroupTabsByTool)
   groupTabsByTool: boolean = userSettingsService.get(
     UserSettingsKeys.tabbarGroupTabsByTool,
-    false
+    true
   )
 
   /**

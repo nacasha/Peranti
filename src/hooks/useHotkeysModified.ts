@@ -5,7 +5,8 @@ export function useHotkeysModified(...args: Parameters<typeof useHotkeys>) {
     ...(args[2] ?? {}),
     enableOnFormTags: ["input", "textarea", "select"],
     enableOnContentEditable: true,
-    splitKey: "||"
+    splitKey: "||",
+    preventDefault: true
   }
 
   useHotkeys(...args)
