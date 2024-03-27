@@ -33,6 +33,8 @@ import prefixSuffixLines from "src/applets/tools/prefix-suffix-lines-tool.ts"
 import { reactRunnerTool } from "src/applets/tools/react-runner-tool/react-runner-tool.ts"
 import removeDuplicateList from "src/applets/tools/remove-duplicate-lines-tool.ts"
 import sortList from "src/applets/tools/sort-list-tool.ts"
+import sqlFormatterTool from "src/applets/tools/sql-formatter/sql-formatter.ts"
+import sqlMinifyTool from "src/applets/tools/sql-minify/sql-minify.ts"
 import textEditorTool from "src/applets/tools/text-editor-tool.ts"
 import textEscapeUnescapeTool from "src/applets/tools/text-escape-unescape-tool/text-escape-unescape-tool.ts"
 import textTransformTool from "src/applets/tools/text-transform-tool.ts"
@@ -95,6 +97,8 @@ class AppletStore {
     [jsonToYamlTool.appletId]: jsonToYamlTool,
     [yamlToJsonTool.appletId]: yamlToJsonTool,
     [jsonToTomlTool.appletId]: jsonToTomlTool,
+    [sqlFormatterTool.appletId]: sqlFormatterTool,
+    [sqlMinifyTool.appletId]: sqlMinifyTool,
 
     /**
      * Applet Pages
@@ -111,6 +115,7 @@ class AppletStore {
       appletId: "prefix-suffix-lines",
       presetId: "sql-where-query",
       name: "SQL Where Query",
+      category: "SQL",
       inputValues: {
         prefix: "'",
         suffix: "',"

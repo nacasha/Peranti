@@ -72,7 +72,7 @@ class UserSettingsService {
   }
 
   /**
-   * Listed to store and its keys
+   * Listed to store and its keys to persist value into user settings
    *
    * @param store
    */

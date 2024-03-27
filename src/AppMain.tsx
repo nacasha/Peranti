@@ -18,6 +18,7 @@ import { WindowSizeListener } from "./components/window/WindowSizeListener"
 import { AppTitleBarStyle } from "./enums/app-titlebar-style.ts"
 import { useSelector } from "./hooks/useSelector.ts"
 import { interfaceStore } from "./services/interface-store.ts"
+import { isRunningInTauri } from "./utils/is-running-in-tauri.ts"
 
 const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   const titlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
@@ -25,12 +26,12 @@ const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   const textAreaWordWrap = useSelector(() => interfaceStore.textAreaWordWrap)
 
   const classNames = clsx("AppRoot", {
-    WindowMaximized: isWindowMaximized,
-    TextAreaWordWrap: textAreaWordWrap,
     withMaximized: isWindowMaximized,
     withNotMaximized: !isWindowMaximized,
     withTextAreaWordWrap: textAreaWordWrap,
-    withTabbar: titlebarStyle === AppTitleBarStyle.Tabbar
+    withTabbar: titlebarStyle === AppTitleBarStyle.Tabbar,
+    withRunningInTauri: isRunningInTauri,
+    withRunningInBrowser: !isRunningInTauri
   })
 
   useEffect(() => {

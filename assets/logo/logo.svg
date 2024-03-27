@@ -10,16 +10,29 @@
       <stop offset="1" style="stop-color: rgb(37.131% 11.331% 12.749%)"/>
     </radialGradient>
     <radialGradient gradientUnits="userSpaceOnUse" cx="176.301" cy="309.37" r="105.544" id="gradient-3" gradientTransform="matrix(1.992002, 0.029748, -0.025082, 1.679518, -154.934167, -234.912977)">
-      <stop offset="0" style="stop-color: rgb(0, 44, 145);"/>
+      <stop offset="0" style="stop-color: rgb(19, 58, 147);"/>
       <stop offset="1" style="stop-color: rgb(39, 94, 254);"/>
     </radialGradient>
+    <linearGradient gradientUnits="userSpaceOnUse" x1="250" y1="181.388" x2="250" y2="316.236" id="gradient-5" gradientTransform="matrix(-0.081559, -0.996668, 0.920654, -0.075339, 97.362664, 509.813221)">
+      <stop offset="0" style="stop-color: rgb(44, 182, 196);"/>
+      <stop offset="1" style="stop-color: rgb(44, 182, 196);"/>
+    </linearGradient>
+    <linearGradient gradientUnits="userSpaceOnUse" x1="182.231" y1="250.657" x2="182.231" y2="360.162" id="gradient-4" gradientTransform="matrix(0.940251, 0.339382, -0.35928, 0.982039, 105.200858, -74.592413)">
+      <stop offset="0" style="stop-color: rgb(44, 182, 196);"/>
+      <stop offset="1" style="stop-color: rgb(17, 160, 207);"/>
+    </linearGradient>
   </defs>
-  <g transform="matrix(1.600871, 0, 0, 1.600871, 0, -0.000015)" style="transform-origin: 250px 250px;">
-    <g transform="matrix(1.157133, 0, 0, 1.157133, -39.283245, -37.908554)" style="">
-      <ellipse style="fill: url('#gradient-1'); paint-order: fill; stroke: url('#gradient-2'); stroke-miterlimit: 4.42; stroke-width: 0px; visibility: hidden;" cx="250" cy="248.812" rx="134.199" ry="134.199"/>
-      <ellipse style="stroke-width: 50px; fill: rgba(216, 216, 216, 0); stroke: url('#gradient-3');" cx="250" cy="248.812" rx="105.544" ry="105.544"/>
-      <ellipse style="fill: rgba(155, 143, 171, 0); stroke: rgb(71, 118, 255); stroke-width: 48.5851px;" cx="250" cy="248.812" rx="67.424" ry="67.424"/>
-      <rect x="178.671" y="250.657" width="7.12" height="109.505" style="fill: rgb(255, 255, 255); stroke-dashoffset: -21px; stroke-miterlimit: 1; stroke-linejoin: round; stroke-linecap: square; stroke: rgb(71, 118, 255); stroke-width: 41.0274px;"/>
+  <g>
+    <g>
+      <g>
+        <g>
+          <g style="" transform="matrix(1.912286, 0, 0, 1.912286, -228.071365, -225.799576)">
+            <ellipse style="stroke-width: 50px; fill: rgba(216, 216, 216, 0); stroke: url('#gradient-3');" cx="250" cy="248.812" rx="105.544" ry="105.544"/>
+            <ellipse style="fill: rgba(155, 143, 171, 0); stroke-width: 48.5851px; stroke: url('#gradient-5'); stroke-miterlimit: 4.83;" cx="250" cy="248.812" rx="67.424" ry="67.424"/>
+            <rect x="178.671" y="250.657" width="7.12" height="108.119" style="fill: rgb(255, 255, 255); stroke-dashoffset: -21px; stroke-miterlimit: 1; stroke-linejoin: round; stroke-linecap: square; stroke-width: 41.0274px; stroke: url('#gradient-4');"/>
+          </g>
+        </g>
+      </g>
     </g>
   </g>
 </svg>

@@ -9,7 +9,6 @@ import { FileDropActionSelect } from "src/components/settings/FileDropActionSele
 import { FileDropFillTabbarName } from "src/components/settings/FileDropFillTabbarName"
 import { SettingsCard, SettingsCardItem } from "src/components/settings/SettingsCard"
 import { SettingsItemSwitch } from "src/components/settings/SettingsItemSwitch"
-import { SidebarMode } from "src/components/settings/SidebarMode"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
 import { appDataService } from "src/services/app-data-service"
@@ -47,13 +46,6 @@ export const SettingsPage: FC = () => {
 
         <SettingsCardItem label="Title Bar Style">
           <AppTitleBarStyleSelect />
-        </SettingsCardItem>
-
-        <SettingsCardItem
-          label="Floating Sidebar"
-          description="Primary sidebar will automatically hidden after opening tool"
-        >
-          <SidebarMode />
         </SettingsCardItem>
 
         <SettingsCardItem label="Text Area Word Wrap">

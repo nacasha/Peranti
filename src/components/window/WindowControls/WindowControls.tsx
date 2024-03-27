@@ -9,6 +9,8 @@ import { windowManager } from "src/services/window-manager"
 
 import "./WindowControls.scss"
 
+import { isRunningInTauri } from "src/utils/is-running-in-tauri"
+
 export const WindowControls: FC = memo(() => {
   const handleClickMinimize = () => {
     void windowManager.minimize()
@@ -53,26 +55,28 @@ export const WindowControls: FC = memo(() => {
           icon={Icons.PanelRight}
         />
       </div>
-      <div className="WindowControls-window-controls">
-        <div
-          className="WindowControls-button"
-          onClick={handleClickMinimize}
-        >
-          <img src={Icons.Minimize} alt="Minimize" />
+      {isRunningInTauri && (
+        <div className="WindowControls-window-controls">
+          <div
+            className="WindowControls-button"
+            onClick={handleClickMinimize}
+          >
+            <img src={Icons.Minimize} alt="Minimize" />
+          </div>
+          <div
+            className="WindowControls-button"
+            onClick={handleClickMaximize}
+          >
+            <img src={Icons.Box} alt="Maximize" />
+          </div>
+          <div
+            className="WindowControls-button"
+            onClick={handleClickClose}
+          >
+            <img src={Icons.Close} alt="Close" />
+          </div>
         </div>
-        <div
-          className="WindowControls-button"
-          onClick={handleClickMaximize}
-        >
-          <img src={Icons.Box} alt="Maximize" />
-        </div>
-        <div
-          className="WindowControls-button"
-          onClick={handleClickClose}
-        >
-          <img src={Icons.Close} alt="Close" />
-        </div>
-      </div>
+      )}
     </div>
   )
 }, () => true)
