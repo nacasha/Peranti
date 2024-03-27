@@ -2,12 +2,12 @@ import { type DataEditorProps, DataEditor, GridCellKind } from "@glideapps/glide
 import { useCallback, type FC, useState, useEffect } from "react"
 
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
+import { Theme } from "src/enums/theme-2"
+import { useSelector } from "src/hooks/useSelector"
+import { interfaceStore } from "src/services/interface-store"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
 import "./DataGridOutput.scss"
-
-import { interfaceStore } from "src/services/interface-store"
-import { Theme } from "src/enums/theme-2"
 
 const darkTheme = {
   accentColor: "#8c96ff",
@@ -93,6 +93,8 @@ export const DataGridOutput: FC<DataGridOutputProps> = (props) => {
   const [data, setData] = useState<any[]>([])
   const [columns, setColumns] = useState<any[]>([])
 
+  const theme = useSelector(() => interfaceStore.theme)
+
   const getData = useCallback<DataEditorProps["getCellContent"]>(
     ([col, row]) => {
       let content = ""
@@ -154,7 +156,7 @@ export const DataGridOutput: FC<DataGridOutputProps> = (props) => {
             }))
           }}
           rowMarkers="both"
-          theme={interfaceStore.theme === Theme.Dark ? darkTheme : undefined}
+          theme={theme === Theme.Dark ? darkTheme : undefined}
         />
       </div>
     </div>

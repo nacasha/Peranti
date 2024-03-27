@@ -100,6 +100,10 @@ class InterfaceStore {
     this.isWindowMaximized = value
   }
 
+  toggleTextAreaWordWrap() {
+    this.textAreaWordWrap = !this.textAreaWordWrap
+  }
+
   get isDarkTheme() {
     return this.theme === Theme.Dark
   }

@@ -13,6 +13,16 @@ input, text, select, option {
   color: var(--text-color);
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  appearance: textfield;
+}
+
 :root {
   ::-webkit-scrollbar {
     width: 7px;
