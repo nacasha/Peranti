@@ -19,6 +19,14 @@ export function useDragAndDropJS(options: Options = {}) {
   const draggableElementPlaceholderRef = useRef<HTMLDivElement>(null)
 
   const startDragging = (event: MouseEvent) => {
+    if (event.buttons === 0) {
+      setIsDragging(false)
+      setMouseDownPosition(undefined)
+      setIsMouseDown(false)
+      stopDragging()
+      return
+    }
+
     const root = document.querySelector<HTMLDivElement>(".AppRoot")
     if (draggableElementRef.current && draggableElementPlaceholderRef.current && root) {
       draggableElementPlaceholderRef.current.style.width = `${draggableElementRef.current.clientWidth + 1}px`

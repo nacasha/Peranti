@@ -10,6 +10,7 @@ import Documents from "src/assets/icons/documents.svg"
 import Download from "src/assets/icons/download.svg"
 import Extension from "src/assets/icons/extension.svg"
 import Extensions from "src/assets/icons/extensions.svg"
+import Feedback from "src/assets/icons/feedback.svg"
 import FilterSolid from "src/assets/icons/filter-solid.svg"
 import Filter from "src/assets/icons/filter.svg"
 import Folder from "src/assets/icons/folder.svg"
@@ -35,19 +36,26 @@ import RunFilled from "src/assets/icons/run-filled.svg"
 import Run from "src/assets/icons/run.svg"
 import Search from "src/assets/icons/search.svg"
 import Settings from "src/assets/icons/settings.svg"
+import ThemeDark from "src/assets/icons/theme-dark.svg"
+import ThemeLight from "src/assets/icons/theme-light.svg"
 import ThreeLineHorizontal from "src/assets/icons/three-line-horizontal.svg"
 import ThreeLineVertical from "src/assets/icons/three-line-vertical.svg"
 import Thunder from "src/assets/icons/thunder.svg"
 import Tool from "src/assets/icons/tool.svg"
 import Trash from "src/assets/icons/trash.svg"
 import Untrash from "src/assets/icons/untrash.svg"
+import WordWrap from "src/assets/icons/word-wrap.svg"
 
 export const Icons = {
   Back,
+  WordWrap,
   NormalScreen,
   Tool,
   Filter,
   FilterSolid,
+  Feedback,
+  ThemeDark,
+  ThemeLight,
   Folder,
   Extensions,
   PanelBottom,

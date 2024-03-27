@@ -1,0 +1,33 @@
+.Statusbar {
+  border-top: 1px solid var(--border-color);
+  padding: 0 2px;
+  height: 26px;
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--statusbar-background-color);
+}
+
+.Statusbar-section {
+  display: flex;
+  gap: 3px;
+}
+
+.Statusbar-item {
+  padding: 0 5px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 11.3px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: var(--statusbar-item-background-color-hover);
+  }
+
+  img {
+    width: 12px;
+    filter: var(--icon-color-filter);
+  }
+}

@@ -1,7 +1,4 @@
-import NiceModal from "@ebay/nice-modal-react"
-import clsx from "clsx"
-import { useEffect, type FC, type ReactNode } from "react"
-
+import { AppRoot } from "./AppRoot.js"
 import { AppThemeListener } from "./components/app/AppThemeListener"
 import { AppTitlebar } from "./components/app/AppTitlebar"
 import { AppletViewer } from "./components/applet/AppletViewer"
@@ -13,50 +10,9 @@ import { NotificationProvider } from "./components/notification/NotificationProv
 import { SessionTabbar } from "./components/session/SessionTabbar"
 import { PrimarySidebar } from "./components/sidebar/PrimarySidebar"
 import { SecondarySidebarCommandbar } from "./components/sidebar/SecondarySidebar"
+import { Statusbar } from "./components/statusbar/Statusbar"
 import { WindowResizeEventListener } from "./components/window/WindowResizeEventListener"
 import { WindowSizeListener } from "./components/window/WindowSizeListener"
-import { AppTitleBarStyle } from "./enums/app-titlebar-style.ts"
-import { useSelector } from "./hooks/useSelector.ts"
-import { interfaceStore } from "./services/interface-store.ts"
-import { isRunningInTauri } from "./utils/is-running-in-tauri.ts"
-
-const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
-  const titlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
-  const isWindowMaximized = useSelector(() => interfaceStore.isWindowMaximized)
-  const textAreaWordWrap = useSelector(() => interfaceStore.textAreaWordWrap)
-
-  const classNames = clsx("AppRoot", {
-    withMaximized: isWindowMaximized,
-    withNotMaximized: !isWindowMaximized,
-    withTextAreaWordWrap: textAreaWordWrap,
-    withTabbar: titlebarStyle === AppTitleBarStyle.Tabbar,
-    withRunningInTauri: isRunningInTauri,
-    withRunningInBrowser: !isRunningInTauri
-  })
-
-  useEffect(() => {
-    const disableContextMenu = () => {
-      if (window.location.hostname !== "tauri.localhost") {
-        return
-      }
-
-      document.addEventListener("contextmenu", e => {
-        e.preventDefault()
-        return false
-      }, { capture: true })
-    }
-
-    disableContextMenu()
-  }, [])
-
-  return (
-    <NiceModal.Provider>
-      <div className={classNames}>
-        {children}
-      </div>
-    </NiceModal.Provider>
-  )
-}
 
 export const AppMain = () => {
   return (
@@ -86,6 +42,8 @@ export const AppMain = () => {
 
         <SecondarySidebarCommandbar />
       </div>
+
+      <Statusbar />
     </AppRoot>
   )
 }
