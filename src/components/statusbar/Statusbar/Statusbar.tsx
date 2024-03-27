@@ -1,5 +1,4 @@
-import { Icons } from "src/constants/icons"
-
+import { StatusbarItemSendFeedback } from "../StatusbarItemSendFeedback"
 import { StatusbarItemTheme } from "../StatusbarItemTheme"
 import { StatusbarItemWordWrap } from "../StatusbarItemWordWrap"
 
@@ -10,21 +9,14 @@ export const Statusbar = () => {
     <div className="Statusbar">
       <div className="Statusbar-section">
         <div className="Statusbar-item">
-          v0.0.4
+          {__APP_VERSION__}
         </div>
       </div>
 
       <div className="Statusbar-section">
         <StatusbarItemTheme />
         <StatusbarItemWordWrap />
-        <div className="Statusbar-item">
-          <img src={Icons.History} alt="Theme" />
-          Changelog
-        </div>
-        <div className="Statusbar-item">
-          <img src={Icons.Feedback} alt="Theme" />
-          Send Feedback
-        </div>
+        <StatusbarItemSendFeedback />
       </div>
     </div>
   )

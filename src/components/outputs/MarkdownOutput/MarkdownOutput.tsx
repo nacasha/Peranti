@@ -16,7 +16,7 @@ export const MarkdownOutput: FC<MarkdownOutputProps> = (props) => {
     <div className="MarkdownOutput" onContextMenu={onContextMenu} style={{ gridArea: fieldKey }}>
       <AppletComponentHead showMaximize label={label} />
       <div className="MarkdownOutput-inner">
-        <div className="body">
+        <div className="body markdown-body">
           <Markdown remarkPlugins={[remarkGfm]}>
             {value}
           </Markdown>

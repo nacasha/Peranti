@@ -27,6 +27,8 @@
 
     "tray:default",
 
+    "shell:allow-open",
+
     "clipboard-manager:allow-write",
 
     {

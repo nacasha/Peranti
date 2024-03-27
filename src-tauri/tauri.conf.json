@@ -1,6 +1,6 @@
 {
   "productName": "Peranti",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "identifier": "Peranti",
   "build": {
     "beforeDevCommand": "pnpm dev",

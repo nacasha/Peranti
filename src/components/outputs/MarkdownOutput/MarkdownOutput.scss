@@ -1,3 +1,17 @@
+.AppRoot {
+  &.dark {
+    .MarkdownOutput {
+      @import "github-markdown-css/github-markdown-light.css";
+    }
+  }
+
+  &.light {
+    .MarkdownOutput {
+      @import "github-markdown-css/github-markdown-dark.css";
+    }
+  }
+}
+
 .MarkdownOutput {
   display: flex;
   flex-direction: column;
