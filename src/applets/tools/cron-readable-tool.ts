@@ -1,24 +1,15 @@
+import cronParser from "cron-parser"
 import cronstrue from "cronstrue"
 
 import { AppletConstructor } from "src/models/AppletConstructor"
-import { type InputFieldsType } from "src/types/InputFieldsType"
-import { type OutputFieldsType } from "src/types/OutputFieldsType"
 
-interface InputFields {
-  input: InputFieldsType.Code
-}
-
-interface OutputFields {
-  output: OutputFieldsType.Code
-}
-
-const cronReadableTool = new AppletConstructor<InputFields, OutputFields>({
+const cronReadableTool = new AppletConstructor({
   appletId: "cron-parser",
   name: "CRON Parser",
   category: "Date Time",
   layoutSetting: {
     areaType: "grid",
-    areaGridTemplate: "'input' min-content 'output' min-content"
+    areaGridTemplate: "'input' min-content 'output' auto"
   },
   inputFields: [
     {
@@ -38,6 +29,11 @@ const cronReadableTool = new AppletConstructor<InputFields, OutputFields>({
       label: "Output",
       component: "Text",
       allowBatch: true
+    },
+    {
+      key: "schedule",
+      label: "Next Schedule",
+      component: "Code"
     }
   ],
   samples: [
@@ -56,7 +52,7 @@ const cronReadableTool = new AppletConstructor<InputFields, OutputFields>({
     {
       name: "Sample 3",
       inputValues: {
-        input: "0 08-17 * * 5-0"
+        input: "0 08-17 * * 5-7"
       }
     },
     {
@@ -73,18 +69,19 @@ const cronReadableTool = new AppletConstructor<InputFields, OutputFields>({
       return { output: "" }
     }
 
-    const inputLines = input.split("\n")
+    try {
+      const output = cronstrue.toString(input)
+      const interval = cronParser.parseExpression(input)
 
-    const outputLines = inputLines.map((line) => {
-      try {
-        return cronstrue.toString(line)
-      } catch {
-        return "Invalid CRON Format"
+      const generatedInterval = []
+      for (let index = 0; index < 10; index++) {
+        generatedInterval.push(interval.next().toString())
       }
-    })
-    const output = outputLines.join("\n")
 
-    return { output }
+      return { output, schedule: generatedInterval.join("\n") }
+    } catch (error) {
+      return { output: "Invalid CRON Format", schedule: "Invalid CRON Format" }
+    }
   }
 })
 

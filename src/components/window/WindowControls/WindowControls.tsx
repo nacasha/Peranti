@@ -2,14 +2,13 @@ import { memo, type FC } from "react"
 
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons"
-import { appletSidebarService } from "src/services/applet-sidebar-service"
 import { bottomPanelService } from "src/services/bottom-panel-service"
 import { interfaceStore } from "src/services/interface-store"
+import { secondarySidebarService } from "src/services/secondary-sidebar-service"
 import { windowManager } from "src/services/window-manager"
+import { isRunningInTauri } from "src/utils/is-running-in-tauri"
 
 import "./WindowControls.scss"
-
-import { isRunningInTauri } from "src/utils/is-running-in-tauri"
 
 export const WindowControls: FC = memo(() => {
   const handleClickMinimize = () => {
@@ -25,7 +24,7 @@ export const WindowControls: FC = memo(() => {
   }
 
   const handleClickPanelRight = () => {
-    appletSidebarService.toggle()
+    secondarySidebarService.toggle()
   }
 
   const handleClickPanelLeft = () => {

@@ -22,6 +22,10 @@
   &.expanded {
     height: fit-content;
   }
+
+  &.hidden {
+    display: none;
+  }
 }
 
 .SecondarySidebarSection-header {

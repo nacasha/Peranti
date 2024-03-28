@@ -3,6 +3,8 @@ import BackspaceFill from "src/assets/icons/backspace-fill.svg"
 import Box from "src/assets/icons/box.svg"
 import Check from "src/assets/icons/check.svg"
 import ChevronDown from "src/assets/icons/chevron-down.svg"
+import ChevronLeft from "src/assets/icons/chevron-left.svg"
+import ChevronRight from "src/assets/icons/chevron-right.svg"
 import ChevronUp from "src/assets/icons/chevron-up.svg"
 import Clean from "src/assets/icons/clean.svg"
 import Close from "src/assets/icons/close.svg"
@@ -48,6 +50,8 @@ import WordWrap from "src/assets/icons/word-wrap.svg"
 
 export const Icons = {
   Back,
+  ChevronLeft,
+  ChevronRight,
   WordWrap,
   NormalScreen,
   Tool,

@@ -1,6 +1,7 @@
 import { type FC } from "react"
 
 import { SecondarySidebarSection } from "src/components/sidebar/SecondarySidebar"
+import { SecondarySidebarSections } from "src/constants/secondary-sidebar-sections"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
@@ -11,12 +12,13 @@ export const AppletOptions = () => {
   const options = useSelector(() => activeAppletStore.getActiveApplet().options)
   const readOnly = useSelector(() => activeAppletStore.getActiveApplet().isDeleted)
 
-  if (options.length === 0) {
-    return null
-  }
-
   return (
-    <SecondarySidebarSection title="Options" padding>
+    <SecondarySidebarSection
+      sectionKey={SecondarySidebarSections.Options}
+      title="Options"
+      hidden={options.length === 0}
+      padding
+    >
       {options.map((option) => (
         <div key={option.key} className="AppletSidebarItem">
           <AppletSidebarItem

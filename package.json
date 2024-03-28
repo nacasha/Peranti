@@ -60,6 +60,7 @@
     "colord": "^2.9.3",
     "compose-function": "^3.0.3",
     "console-feed": "^3.5.0",
+    "cron-parser": "^4.9.0",
     "cronstrue": "^2.48.0",
     "dayjs": "^1.11.10",
     "fast-deep-equal": "^3.1.3",

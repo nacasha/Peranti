@@ -2,6 +2,7 @@ import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
 import { SecondarySidebarSection } from "src/components/sidebar/SecondarySidebar"
+import { SecondarySidebarSections } from "src/constants/secondary-sidebar-sections"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 
@@ -14,12 +15,12 @@ export const AppletSampleSelector: FC = () => {
     activeAppletStore.getActiveApplet().fillInputValuesWithSample(sample)
   }
 
-  if (!hasSample || isDeleted) {
-    return null
-  }
-
   return (
-    <SecondarySidebarSection title="Samples" padding>
+    <SecondarySidebarSection
+      sectionKey={SecondarySidebarSections.Samples}
+      title="Samples"
+      hidden={!hasSample || isDeleted} padding
+    >
       {samples.map((sample, index) => (
         <Button
           key={sample.name.concat(index.toString())}

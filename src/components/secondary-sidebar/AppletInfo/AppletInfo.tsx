@@ -1,6 +1,7 @@
 import { type FC } from "react"
 
 import { SecondarySidebarSection } from "src/components/sidebar/SecondarySidebar"
+import { SecondarySidebarSections } from "src/constants/secondary-sidebar-sections"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 
@@ -9,12 +10,12 @@ import "./AppletInfo.scss"
 export const AppletInfo: FC = () => {
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
 
-  if (activeApplet.appletId === "") {
-    return null
-  }
-
   return (
-    <SecondarySidebarSection title="Information">
+    <SecondarySidebarSection
+      sectionKey={SecondarySidebarSections.Info}
+      title="Information"
+      hidden={activeApplet.appletId === ""}
+    >
       <div className="AppletInfo">
         <Item label="Name" content={activeApplet.name} />
         <Item label="Description" content={activeApplet.description} />
