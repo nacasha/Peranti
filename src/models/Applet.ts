@@ -227,7 +227,7 @@ export class Applet<
   @observable optionValues: any = {}
 
   /**
-   * Indicates that the applet has input values overridden by preset
+   * Indicates inputs values of the applet is overridden by preset
    */
   readonly hasOverriddenDefaultState: boolean = false
 

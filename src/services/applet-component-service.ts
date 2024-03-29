@@ -11,6 +11,7 @@ import { TextAreaInput } from "src/components/inputs/TextAreaInput-2"
 import { TextInput } from "src/components/inputs/TextInput"
 import { CodeOutput } from "src/components/outputs/CodeOutput"
 import { ColorOutput } from "src/components/outputs/ColorOutput"
+import { ColorPalleteOutput } from "src/components/outputs/ColorPalleteOutput"
 import { DataGridOutput } from "src/components/outputs/DataGridOutput"
 import { DiffOutput } from "src/components/outputs/DiffOutput"
 import { FileOutput } from "src/components/outputs/FileOutput"
@@ -154,6 +155,10 @@ class AppletComponentService {
 
     Color: new AppletComponent({
       component: ColorOutput
+    }),
+
+    ColorPallete: new AppletComponent({
+      component: ColorPalleteOutput
     })
   }
 

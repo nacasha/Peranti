@@ -10,8 +10,9 @@
 }
 
 .SecondarySidebarSection {
+  --input-output-label-spacing: 5px;
+
   overflow: hidden;
-  height: 33px;
   border-top: 1px solid var(--border-color);
   transition: all var(--animation-speed);
 
@@ -19,8 +20,8 @@
     border-top: none;
   }
 
-  &.expanded {
-    height: fit-content;
+  &:not(.expanded) {
+    max-height: 33px
   }
 
   &.hidden {
@@ -35,6 +36,7 @@
   line-height: 2;
   user-select: none;
   padding: 3px 8px;
+  font-weight: 500;
 
   &:hover {
     cursor: pointer;
@@ -61,4 +63,5 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  font-size: 12px;
 }

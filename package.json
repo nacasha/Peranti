@@ -58,6 +58,7 @@
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
     "colord": "^2.9.3",
+    "colorthief": "^2.4.0",
     "compose-function": "^3.0.3",
     "console-feed": "^3.5.0",
     "cron-parser": "^4.9.0",
