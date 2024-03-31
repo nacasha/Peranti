@@ -4,6 +4,7 @@ import toast from "react-hot-toast"
 import { RunInput } from "src/components/inputs/ButtonInput"
 import { CheckboxInput } from "src/components/inputs/CheckboxInput"
 import { CodeInput } from "src/components/inputs/CodeInput"
+import { ColorPickerInput } from "src/components/inputs/ColorPickerInput"
 import { FileInput } from "src/components/inputs/FileInput"
 import { SelectInput } from "src/components/inputs/SelectInput"
 import { SwitchInput } from "src/components/inputs/SwitchInput"
@@ -80,6 +81,10 @@ class AppletComponentService {
 
     PipelineEditor: new AppletComponent({
       component: PipelineEditor
+    }),
+
+    ColorPicker: new AppletComponent({
+      component: ColorPickerInput
     })
   }
 

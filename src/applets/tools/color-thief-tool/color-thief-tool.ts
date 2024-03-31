@@ -5,7 +5,7 @@ import { AppletConstructor } from "src/models/AppletConstructor"
 export const colorThiefTool = new AppletConstructor({
   appletId: "color-thief",
   name: "Color Thief",
-  description: "Extract / Grab the color palette from an image",
+  description: "Extract / Grab the dominant and color palette from an image file",
   category: "Color",
   layoutSetting: {
     areaType: "grid",
