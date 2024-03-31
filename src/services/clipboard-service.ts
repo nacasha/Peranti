@@ -1,7 +1,7 @@
 import { writeText } from "@tauri-apps/plugin-clipboard-manager"
 
 export class ClipboardService {
-  static async copyText(text: string) {
+  static async copyAsText(text: string) {
     await writeText(`${text}`)
   }
 }

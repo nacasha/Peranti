@@ -6,6 +6,9 @@ import base64EncodeDecodeTool from "src/applets/tools/base64-encode-decode-tool.
 import base64ToFileTool from "src/applets/tools/base64-to-file-tool.ts"
 import characterCounterTool from "src/applets/tools/character-counter-tool.ts"
 import { colorConverterTool } from "src/applets/tools/color-converter-tool/color-converter-tool.ts"
+import { colorExtractTool } from "src/applets/tools/color-extract-tool/color-extract-tool.ts"
+import { colorPalleteGeneratorTool } from "src/applets/tools/color-pallete-generator-tool/color-pallete-generator-tool.ts"
+import { colorTintsAndShadesTool } from "src/applets/tools/color-tints-and-shades-tool/color-tints-and-shades-tool.ts"
 import compareListTool from "src/applets/tools/compare-list-tool.ts"
 import cronReadableTool from "src/applets/tools/cron-readable-tool.ts"
 import { csvTableViewerTool } from "src/applets/tools/csv-viewer-tool/csv-table-viewer-tool.ts"
@@ -99,6 +102,9 @@ class AppletStore {
     [jsonToTomlTool.appletId]: jsonToTomlTool,
     [sqlFormatterTool.appletId]: sqlFormatterTool,
     [sqlMinifyTool.appletId]: sqlMinifyTool,
+    [colorExtractTool.appletId]: colorExtractTool,
+    [colorPalleteGeneratorTool.appletId]: colorPalleteGeneratorTool,
+    [colorTintsAndShadesTool.appletId]: colorTintsAndShadesTool,
 
     /**
      * Applet Pages

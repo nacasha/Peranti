@@ -1,10 +1,22 @@
 export class AppletComponent<T = any, B = any> {
+  /**
+   * Main component
+   */
   readonly component: T
 
+  /**
+   * Batch mode component
+   */
   readonly batchComponent?: B
 
+  /**
+   * Type of content will be put into clipboard
+   */
   readonly copyAs?: "text" | "file" | "image"
 
+  /**
+   * Type of content when saving into file
+   */
   readonly saveAs?: "text" | "image"
 
   readonly pasteFrom?: "text"

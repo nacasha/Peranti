@@ -4,6 +4,7 @@ import toast from "react-hot-toast"
 import { RunInput } from "src/components/inputs/ButtonInput"
 import { CheckboxInput } from "src/components/inputs/CheckboxInput"
 import { CodeInput } from "src/components/inputs/CodeInput"
+import { ColorPickerInput } from "src/components/inputs/ColorPickerInput"
 import { FileInput } from "src/components/inputs/FileInput"
 import { SelectInput } from "src/components/inputs/SelectInput"
 import { SwitchInput } from "src/components/inputs/SwitchInput"
@@ -11,6 +12,7 @@ import { TextAreaInput } from "src/components/inputs/TextAreaInput-2"
 import { TextInput } from "src/components/inputs/TextInput"
 import { CodeOutput } from "src/components/outputs/CodeOutput"
 import { ColorOutput } from "src/components/outputs/ColorOutput"
+import { ColorPalleteOutput } from "src/components/outputs/ColorPalleteOutput"
 import { DataGridOutput } from "src/components/outputs/DataGridOutput"
 import { DiffOutput } from "src/components/outputs/DiffOutput"
 import { FileOutput } from "src/components/outputs/FileOutput"
@@ -79,6 +81,10 @@ class AppletComponentService {
 
     PipelineEditor: new AppletComponent({
       component: PipelineEditor
+    }),
+
+    ColorPicker: new AppletComponent({
+      component: ColorPickerInput
     })
   }
 
@@ -154,6 +160,10 @@ class AppletComponentService {
 
     Color: new AppletComponent({
       component: ColorOutput
+    }),
+
+    ColorPallete: new AppletComponent({
+      component: ColorPalleteOutput
     })
   }
 

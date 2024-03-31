@@ -3,6 +3,7 @@ import { observer } from "mobx-react"
 import { Checkbox } from "src/components/common/Checkbox"
 import { Dropdown } from "src/components/common/Dropdown"
 import { SecondarySidebarSection } from "src/components/sidebar/SecondarySidebar"
+import { SecondarySidebarSections } from "src/constants/secondary-sidebar-sections"
 import { activeAppletStore } from "src/services/active-applet-store"
 
 export const AppletBatchMode = observer(() => {
@@ -27,12 +28,13 @@ export const AppletBatchMode = observer(() => {
     activeApplet.setBatchModeOutputKey(outputKey)
   }
 
-  if (!hasBatchMode) {
-    return null
-  }
-
   return (
-    <SecondarySidebarSection padding title="Batch Mode">
+    <SecondarySidebarSection
+      sectionKey={SecondarySidebarSections.BatchMode}
+      hidden={!hasBatchMode}
+      title="Batch Mode"
+      padding
+    >
       <Checkbox
         value={isBatchModeEnabled}
         onChange={handleToggleBatchMode}

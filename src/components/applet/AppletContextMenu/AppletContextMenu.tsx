@@ -76,7 +76,7 @@ export const AppletContextMenu: FC = () => {
 
       if (copiedValue) {
         if (copyAs === "text") {
-          void ClipboardService.copyText(copiedValue)
+          void ClipboardService.copyAsText(copiedValue)
         }
       }
     }
