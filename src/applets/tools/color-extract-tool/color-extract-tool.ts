@@ -2,9 +2,9 @@ import ColorThief from "colorthief"
 
 import { AppletConstructor } from "src/models/AppletConstructor"
 
-export const colorThiefTool = new AppletConstructor({
-  appletId: "color-thief",
-  name: "Color Thief",
+export const colorExtractTool = new AppletConstructor({
+  appletId: "color-extract",
+  name: "Color Extract",
   description: "Extract / Grab the dominant and color palette from an image file",
   category: "Color",
   layoutSetting: {
