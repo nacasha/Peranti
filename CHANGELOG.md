@@ -1,3 +1,9 @@
+# 0.0.6
+- Added color pallete generator tool
+- Added color tints and shades generator tool
+- Added color extractor tool
+- Added cron next schedule output field
+
 # 0.0.5
 - Added Application Statusbar
 - Fixed Markdown tool preview
