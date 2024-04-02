@@ -22,6 +22,8 @@ tauri-plugin-clipboard-manager = { version = "2.0.0-beta.1" }
 tauri-plugin-fs = "2.0.0-beta.1"
 tauri-plugin-dialog = "2.0.0-beta.1"
 tauri-plugin-shell = "2.0.0-beta.1"
+tauri-plugin-window-state = "2.0.0-beta.1"
+tauri-plugin-http = "2.0.0-beta.3"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

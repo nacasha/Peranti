@@ -13,12 +13,9 @@ interface OutputFields {
 }
 
 async function getFavicon(url: any) {
-  // Make a request to the website's root
-  const response = await httpClient.get(`https://www.google.com/s2/favicons?domain=${url}&sz=180`, {
-    responseType: "arraybuffer"
+  return await httpClient(`https://www.google.com/s2/favicons?domain=${url}&sz=180`, {
+    method: "GET"
   })
-
-  return response
 }
 
 const faviconGrabberTool = new AppletConstructor<InputFields, OutputFields>({
@@ -73,13 +70,18 @@ const faviconGrabberTool = new AppletConstructor<InputFields, OutputFields>({
   ],
   action: async({ inputValues }) => {
     const { websiteUrl } = inputValues
-    const result = await getFavicon(websiteUrl)
+    const arrayBuffer = await getFavicon(websiteUrl)
 
-    const binaryArray = (result?.data ?? []) as number[]
-    const base64String = btoa(String.fromCharCode.apply(null, binaryArray))
-    const dataUrl = `data:image/png;base64,${base64String}`
+    console.log(arrayBuffer)
 
-    return { output: dataUrl }
+    if (arrayBuffer) {
+      const base64String = btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(arrayBuffer))))
+      const dataUrl = `data:image/png;base64,${base64String}`
+
+      return { output: dataUrl }
+    }
+
+    return { output: "" }
   }
 })
 
