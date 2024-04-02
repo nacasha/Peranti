@@ -17,7 +17,7 @@ export const httpClient = async(path: string, options: Options): Promise<ArrayBu
     }
 
     const response = await fetch(path, {
-      method: options.method,
+      method: options.method
     })
 
     return await response.arrayBuffer()
