@@ -1,3 +1,8 @@
+# 0.0.7
+- Added settings to change editor font family
+- Added settings to change editor font size
+- Restore last window size
+
 # 0.0.6
 - Added color pallete generator tool
 - Added color tints and shades generator tool

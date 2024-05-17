@@ -3,6 +3,8 @@ import { makeAutoObservable, reaction } from "mobx"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { appDataService } from "src/services/app-data-service"
 
+import { globalStyleVariables } from "./global-style-variables.js"
+
 class UserSettingsService {
   /**
    * User settings value
@@ -25,12 +27,28 @@ class UserSettingsService {
   constructor() {
     makeAutoObservable(this)
 
-    void appDataService.readUserSettingsFile().then((userSettings) => {
-      this.values = Object.assign(this.values, userSettings)
-      window.document.body.className = (userSettings[UserSettingsKeys.theme] ?? "dark").toString()
+    void appDataService.readUserSettingsFile().then((u) => { this.initialized(u) })
+  }
 
-      this.setIsLoaded(true)
-    })
+  /**
+   * Initialize application preferences based on user settings
+   *
+   * @param userSettings
+   */
+  initialized(userSettings: any) {
+    this.values = Object.assign(this.values, userSettings)
+
+    /**
+     * Set application theme
+     */
+    window.document.body.className = (userSettings[UserSettingsKeys.theme] ?? "dark").toString()
+
+    /**
+     * Set editor font family on load user settings
+     */
+    globalStyleVariables.set("--font-family-mono", userSettings[UserSettingsKeys.editorFontFamily])
+
+    this.setIsLoaded(true)
   }
 
   /**

@@ -15,7 +15,7 @@ interface OutputFields {
 
 const jsonDiffTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "json-diff",
-  name: "JSON Diff",
+  name: "JSON Compare Diff",
   category: "JSON",
   layoutSetting: {
     areaType: "grid",
