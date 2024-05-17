@@ -74,9 +74,15 @@ dependencies:
   '@tauri-apps/plugin-fs':
     specifier: 2.0.0-beta.1
     version: 2.0.0-beta.1
+  '@tauri-apps/plugin-http':
+    specifier: 2.0.0-beta.2
+    version: 2.0.0-beta.2
   '@tauri-apps/plugin-shell':
     specifier: 2.0.0-beta.1
     version: 2.0.0-beta.1
+  '@tauri-apps/plugin-window-state':
+    specifier: github:tauri-apps/tauri-plugin-window-state#v2
+    version: github.com/tauri-apps/tauri-plugin-window-state/b82e51f77e0c015ab07d555af1c6e805f8a2d0fe
   '@types/compose-function':
     specifier: ^0.0.33
     version: 0.0.33
@@ -2079,6 +2085,16 @@ packages:
     engines: {node: '>= 18', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
     dev: false
 
+  /@tauri-apps/api@2.0.0-beta.4:
+    resolution: {integrity: sha512-Nxtj28NYUo5iwYkpYslxmOPkdI2WkELU2e3UH9nbJm9Ydki2CQwJVGQxx4EANtdZcMNsEsUzRqaDTvEUYH1l6w==}
+    engines: {node: '>= 18', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
+    dev: false
+
+  /@tauri-apps/api@2.0.0-beta.6:
+    resolution: {integrity: sha512-ay3kAXYQoqC3rX4Vr3y6uGwrBhRPM7UQqZ9wr1VYzN6lkcMIcu7+UBvytmcfXDlVctqFoMQJafn6+dK/Oqh8+Q==}
+    engines: {node: '>= 18', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
+    dev: false
+
   /@tauri-apps/cli-darwin-arm64@2.0.0-beta.6:
     resolution: {integrity: sha512-G1KJhWB8SgITE2iwWmOoyMhykljz7sGxQL5BnNLHLeyNvc6DwkgQ0AObkmFTz2JLnstWQ/kKyg/uoQNMNA/wyQ==}
     engines: {node: '>= 10'}
@@ -2202,6 +2218,12 @@ packages:
     resolution: {integrity: sha512-FGBzluMLMT4PGk7oJ8io/m+C2pd9kN5GrUDDayFKAd9D8/SaE8cqIJAhfq0VTfYGy1SeqFvP6gJFbdkS4PB8Jg==}
     dependencies:
       '@tauri-apps/api': 2.0.0-beta.2
+    dev: false
+
+  /@tauri-apps/plugin-http@2.0.0-beta.2:
+    resolution: {integrity: sha512-g/FA/w/+a2uQQlXoVTy5HXIi/YZo3q3lnxhKkwCWE/IZOMoraDlTzM/H+MB9hUaubLAnuPUMth5LaeFC9jwdRw==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-beta.4
     dev: false
 
   /@tauri-apps/plugin-shell@2.0.0-beta.1:
@@ -9115,4 +9137,12 @@ packages:
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
+    dev: false
+
+  github.com/tauri-apps/tauri-plugin-window-state/b82e51f77e0c015ab07d555af1c6e805f8a2d0fe:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-window-state/tar.gz/b82e51f77e0c015ab07d555af1c6e805f8a2d0fe}
+    name: '@tauri-apps/plugin-window-state'
+    version: 2.0.0-beta.2
+    dependencies:
+      '@tauri-apps/api': 2.0.0-beta.6
     dev: false

@@ -1,7 +1,7 @@
 body {
   // Fonts
-  --font-family: "InterApp", -apple-system, BlinkMacSystemFont, "San Francisco", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Segoe UI", "Fira Sans", Roboto, Oxygen, Ubuntu, "Droid Sans", "Arial", sans-serif;
-  --font-family-mono: Consolas, monospace, serif;
+  --font-family: "InterApp", -apple-system, BlinkMacSystemFont;
+  --font-family-mono: "JetBrains Mono";
   --font-size: 13px;
   --font-weight: 400;
 
@@ -47,7 +47,7 @@ body {
   --input-output-label-height: 20px;
   --input-output-label-spacing: 10px;
   --input-output-padding: 7px;
-  --input-output-font-size: 14px;
+  --input-output-font-size: 13px;
 
   --contexify-menu-shadow: none;
   --contexify-menu-min-width: 250px;

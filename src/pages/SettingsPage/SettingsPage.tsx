@@ -8,6 +8,7 @@ import { AppTitleBarStyleSelect } from "src/components/settings/AppTitlebarStyle
 import { FileDropActionSelect } from "src/components/settings/FileDropActionSelect"
 import { FileDropFillTabbarName } from "src/components/settings/FileDropFillTabbarName"
 import { SettingsCard, SettingsCardItem } from "src/components/settings/SettingsCard"
+import { SettingsItemInput } from "src/components/settings/SettingsItemInput"
 import { SettingsItemSwitch } from "src/components/settings/SettingsItemSwitch"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
@@ -16,6 +17,8 @@ import { sessionStore } from "src/services/session-store"
 import { toolSidebarService } from "src/services/tool-sidebar-service"
 
 import "./SettingsPage.scss"
+
+import { interfaceStore } from "src/services/interface-store"
 
 export const SettingsPage: FC = () => {
   const handleClickResetAppData = () => {
@@ -50,6 +53,22 @@ export const SettingsPage: FC = () => {
 
         <SettingsCardItem label="Text Area Word Wrap">
           <TextAreaWordWrapSwitch />
+        </SettingsCardItem>
+      </SettingsCard>
+
+      <SettingsCard title="Fonts">
+        <SettingsCardItem label="Editor Font Family">
+          <SettingsItemInput
+            defaultValue={interfaceStore.editorFontFamily}
+            onChange={(value) => { interfaceStore.setEditorFontFamily(value) }}
+          />
+        </SettingsCardItem>
+
+        <SettingsCardItem label="Editor Font Size">
+          <SettingsItemInput
+            defaultValue={interfaceStore.editorFontSize}
+            onChange={(value) => { interfaceStore.setEditorFontSize(value) }}
+          />
         </SettingsCardItem>
       </SettingsCard>
 

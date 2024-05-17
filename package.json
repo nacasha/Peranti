@@ -1,7 +1,7 @@
 {
   "name": "peranti",
   "private": true,
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "engines": {
     "node": ">=18.17.0"
@@ -43,7 +43,9 @@
     "@tauri-apps/plugin-clipboard-manager": "2.0.0-beta.1",
     "@tauri-apps/plugin-dialog": "2.0.0-beta.1",
     "@tauri-apps/plugin-fs": "2.0.0-beta.1",
+    "@tauri-apps/plugin-http": "2.0.0-beta.2",
     "@tauri-apps/plugin-shell": "2.0.0-beta.1",
+    "@tauri-apps/plugin-window-state": "github:tauri-apps/tauri-plugin-window-state#v2",
     "@types/compose-function": "^0.0.33",
     "@types/js-yaml": "^4.0.9",
     "@types/md5": "^2.3.5",

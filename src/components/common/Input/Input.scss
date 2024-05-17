@@ -2,17 +2,14 @@
   border-radius: var(--border-radius);
   padding: var(--input-output-padding);
   outline: none !important;
-  font-size: var(--input-output-font-size);
   line-height: 1;
+  height: 17px;
   text-wrap: nowrap;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-output-border-color);
   background-color: var(--input-output-background-color);
   font-family: var(--font-family-mono);
   transition: all var(--animation-speed);
-
-  &:hover {
-    border: 1px solid var(--color-primary-light-60);
-  }
+  min-width: 100px;
 
   &:focus {
     border: 1px solid var(--color-primary);

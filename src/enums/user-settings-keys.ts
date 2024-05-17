@@ -4,6 +4,8 @@ export enum UserSettingsKeys {
   floatingSidebar = "appearance.floatingSidebar",
   titlebarStyle = "appearance.titlebarStyle",
   textAreaWordWrap = "appearance.textAreaWordWrap",
+  editorFontFamily = "appearance.editorFontFamily",
+  editorFontSize = "appearance.editorFontSize",
 
   // File Drop
   fileDropAction = "filedrop.action",
