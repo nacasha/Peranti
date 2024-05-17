@@ -1,5 +1,6 @@
 import { makeAutoObservable, reaction } from "mobx"
 
+import { UserSettingsDefault } from "src/enums/user-settings-default.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { appDataService } from "src/services/app-data-service"
 
@@ -27,26 +28,28 @@ class UserSettingsService {
   constructor() {
     makeAutoObservable(this)
 
-    void appDataService.readUserSettingsFile().then((u) => { this.initialized(u) })
+    void appDataService.readUserSettingsFile().then((rawUserSettings) => { this.initialized(rawUserSettings) })
   }
 
   /**
    * Initialize application preferences based on user settings
    *
-   * @param userSettings
+   * Default value from each service of watched keys will not be reflected in here,
+   * which means the value will be undefined if not exists in `settings.json`
+   * @param rawUserSettings
    */
-  initialized(userSettings: any) {
-    this.values = Object.assign(this.values, userSettings)
+  initialized(rawUserSettings: any) {
+    this.values = Object.assign(this.values, rawUserSettings)
 
     /**
      * Set application theme
      */
-    window.document.body.className = (userSettings[UserSettingsKeys.theme] ?? "dark").toString()
+    window.document.body.className = (rawUserSettings[UserSettingsKeys.theme] ?? UserSettingsDefault[UserSettingsKeys.theme]).toString()
 
     /**
      * Set editor font family on load user settings
      */
-    globalStyleVariables.set("--font-family-mono", userSettings[UserSettingsKeys.editorFontFamily])
+    globalStyleVariables.set("--font-family-mono", rawUserSettings[UserSettingsKeys.editorFontFamily] ?? UserSettingsDefault[UserSettingsKeys.editorFontFamily])
 
     this.setIsLoaded(true)
   }
