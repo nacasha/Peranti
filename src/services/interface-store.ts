@@ -2,6 +2,7 @@ import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
+import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
 import { StorageKeys } from "src/constants/storage-keys"
 import { AppTitleBarStyle as AppTitlebarStyle } from "src/enums/app-titlebar-style"
 import { SidebarMode } from "src/enums/sidebar-mode"
@@ -9,7 +10,7 @@ import { Theme } from "src/enums/theme-2.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { getWindowSize } from "src/utils/get-window-size"
 
-import { globalStyleVariables } from "./global-style-variables.js"
+import { globalStyles } from "./global-styles.js"
 import { userSettingsService } from "./user-settings-service.js"
 
 class InterfaceStore {
@@ -160,12 +161,12 @@ class InterfaceStore {
 
   setEditorFontFamily(newEditorFontFamily: string) {
     this.editorFontFamily = newEditorFontFamily
-    globalStyleVariables.set("--font-family-mono", newEditorFontFamily)
+    globalStyles.setVariable(GlobalStyleVariables.editorFontFamily, newEditorFontFamily)
   }
 
   setEditorFontSize(newEditorFontSize: string) {
     this.editorFontSize = newEditorFontSize
-    globalStyleVariables.set("--input-output-font-size", `${newEditorFontSize}px`)
+    globalStyles.setVariable(GlobalStyleVariables.editorFontSize, `${newEditorFontSize}px`)
   }
 
   get isDarkTheme() {

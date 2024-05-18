@@ -1,10 +1,11 @@
 import { makeAutoObservable, reaction } from "mobx"
 
+import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
 import { UserSettingsDefault } from "src/enums/user-settings-default.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { appDataService } from "src/services/app-data-service"
 
-import { globalStyleVariables } from "./global-style-variables.js"
+import { globalStyles } from "./global-styles.js"
 
 class UserSettingsService {
   /**
@@ -49,7 +50,10 @@ class UserSettingsService {
     /**
      * Set editor font family on load user settings
      */
-    globalStyleVariables.set("--font-family-mono", rawUserSettings[UserSettingsKeys.editorFontFamily] ?? UserSettingsDefault[UserSettingsKeys.editorFontFamily])
+    globalStyles.setVariable(
+      GlobalStyleVariables.editorFontFamily,
+      rawUserSettings[UserSettingsKeys.editorFontFamily] ?? UserSettingsDefault[UserSettingsKeys.editorFontFamily]
+    )
 
     this.setIsLoaded(true)
   }

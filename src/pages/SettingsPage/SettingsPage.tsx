@@ -13,12 +13,11 @@ import { SettingsItemSwitch } from "src/components/settings/SettingsItemSwitch"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
 import { appDataService } from "src/services/app-data-service"
+import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
 import { toolSidebarService } from "src/services/tool-sidebar-service"
 
 import "./SettingsPage.scss"
-
-import { interfaceStore } from "src/services/interface-store"
 
 export const SettingsPage: FC = () => {
   const handleClickResetAppData = () => {
