@@ -7,14 +7,34 @@
 <p align="center">Next Generation Developer Toolbox</p>
 
 <p align="center">
-  <img src="./assets/screenshots/peranti.png">
-  <br/>
+  <a style="text-decoration:none" href="https://github.com/nacasha/Peranti/releases" target="_blank">
+  <img alt="Windows" src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white">
+  </a>
+  <a style="text-decoration:none" href="https://github.com/nacasha/Peranti/releases" target="_blank">
+    <img alt="Linux" src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black">
+  </a>
+  <a style="text-decoration:none" href="https://github.com/nacasha/Peranti/releases" target="_blank">
+    <img alt="macOS" src="https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=F0F0F0">
+  </a>
+  <a style="text-decoration:none" href="https://peranti.vercel.app/" target="_blank">
+    <img alt="Online" src="https://img.shields.io/badge/Online-1f5bc6?style=for-the-badge&link=https://peranti.vercel.app/">
+  </a>
 </p>
 
-> [!NOTE]
-> Application are under heavy development, missing features will be added soon and minor bugs are expected.
+<p align="center">
+  <img src="./assets/screenshots/peranti.png">
+</p>
 
-Peranti is a desktop application that contains a collection of small tools to helps developer with their common tasks, such as format or minify JSON, convert timestamps, encode or decode text, hash, and many more, without having to worry about their data privacy. It's completely offline, no data will be collected, free, and open source.
+<p align="center">
+  <a style="text-decoration:none" href="https://github.com/nacasha/Peranti/releases" target="_blank">
+    <img alt="Latest Release" src="https://img.shields.io/github/v/release/nacasha/Peranti">
+  </a>
+  <a style="text-decoration:none" href="https://peranti.vercel.app" target="_blank">
+    <img alt="Website" src="https://img.shields.io/website?url=https%3A%2F%2Fperanti.vercel.app%2F">
+  </a>
+</p>
+
+Peranti is a cross-platform desktop application that contains a collection of small tools to helps developer with their common tasks, such as format or minify JSON, convert timestamps, encode or decode text, hash, and many more, without having to worry about their data privacy. It's completely offline, no data will be collected, free, and open source.
 
 Available tools:
 - **JSON**: JSON Format / Minify,  JSON Diff,  JSON to CSV,  JSON to YAML,  JSONata
