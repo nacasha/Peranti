@@ -3,7 +3,7 @@ import { type FC } from "react"
 import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
-import { AppletComponentContent } from "src/contexts/AppletInputContext/AppletInputContext"
+import { AppletComponentContext } from "src/contexts/AppletInputContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
@@ -86,7 +86,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   }
 
   return (
-    <AppletComponentContent.Provider value={{ type: "input", fieldKey: appletInput.key }}>
+    <AppletComponentContext.Provider value={{ type: "input", fieldKey: appletInput.key }}>
       <Component
         {...appletInput.props}
         key={appletInput.key}
@@ -98,6 +98,6 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
         onContextMenu={handleContextMenu}
         {...additionalProps}
       />
-    </AppletComponentContent.Provider>
+    </AppletComponentContext.Provider>
   )
 }

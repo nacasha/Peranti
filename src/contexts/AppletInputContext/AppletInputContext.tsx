@@ -5,4 +5,4 @@ interface AppletComponentContextValue {
   fieldKey: string
 }
 
-export const AppletComponentContent = createContext<AppletComponentContextValue>({} as any)
+export const AppletComponentContext = createContext<AppletComponentContextValue>({} as any)

@@ -1,7 +1,7 @@
 import { useContext, type FC, memo } from "react"
 
 import { Icons } from "src/constants/icons"
-import { AppletComponentContent } from "src/contexts/AppletInputContext/AppletInputContext"
+import { AppletComponentContext } from "src/contexts/AppletInputContext"
 import { activeAppletStore } from "src/services/active-applet-store"
 
 import { ButtonIcon } from "../ButtonIcon"
@@ -15,7 +15,7 @@ interface AppletComponentHeadProps {
 
 export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) => {
   const { label, showMaximize } = props
-  const componentContext = useContext(AppletComponentContent)
+  const componentContext = useContext(AppletComponentContext)
 
   const handleClickMaximize = () => {
     activeAppletStore.getActiveApplet().toggleMaximizedFieldKey({
