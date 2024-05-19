@@ -6,3 +6,5 @@ vite.config.ts
 
 scripts
 packages
+
+src-tauri
