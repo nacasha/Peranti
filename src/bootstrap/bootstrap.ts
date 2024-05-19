@@ -6,6 +6,9 @@ import "react-contexify/ReactContexify.css"
 import "reactflow/dist/style.css"
 import "simplebar-react/dist/simplebar.min.css"
 
+/**
+ * Import UserSettingsService to instiate the class and load the user settings.json file
+ */
 import "src/services/user-settings-service"
 import "src/styles/root.scss"
 
