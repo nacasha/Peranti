@@ -16,7 +16,7 @@ export const rustInvokerService = {
   async runExtension(options: RunExtensionOptions) {
     const command = Command.create(
       "run-extension",
-      ["scripts/extension-runner.js", JSON.stringify(options)]
+      ["extensions-runner/runner.js", JSON.stringify(options)]
     )
 
     command.stdout.addListener("data", (e) => {
