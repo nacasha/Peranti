@@ -173,6 +173,12 @@
   }
 }
 
+.AppRoot.withTabbar.withMacOS {
+  .SessionTabbar-inner-simplebar {
+    right: calc(var(--window-control-button-width) * 3);
+  }
+}
+
 .AppRoot.withTabbar.withRunningInBrowser {
   .SessionTabbar-inner-simplebar {
     right: calc(var(--window-control-button-width) * 2.5);

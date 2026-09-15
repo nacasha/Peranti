@@ -6,7 +6,8 @@ const defaultType = "application/octet-stream"
 
 export function createFileFromUint32Array(uint32Array: Uint8Array, filePath: string) {
   // Convert Uint32Array to Uint8Array
-  const uint8Array = new Uint8Array(uint32Array.buffer)
+  // TS 5.7+ types TypedArray.buffer as ArrayBufferLike, which Blob won't accept
+  const uint8Array = new Uint8Array(uint32Array.buffer as ArrayBuffer)
 
   // Create a Blob from the Uint8Array
   const blob = new Blob([uint8Array], { type: mime.getType(filePath) ?? defaultType })

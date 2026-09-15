@@ -7,3 +7,11 @@
   background-color: var(--app-titlebar-background-color);
   border-bottom: 1px solid var(--border-color);
 }
+
+.AppTitlebar-macos-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  height: var(--session-tabbar-height);
+}

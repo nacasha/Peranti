@@ -6,7 +6,13 @@ import { windowManager } from "src/services/window-manager"
 export const FileDropListener: FC = () => {
   const registerListener = async() => {
     const unlisten = await windowManager.onFileDropEvent((event) => {
-      if (event.payload.type === "hover") {
+      // "over" fires continuously while dragging but carries no paths, so the
+      // hovering state set by "enter" is simply left untouched.
+      if (event.payload.type === "over") {
+        return
+      }
+
+      if (event.payload.type === "enter") {
         if (event.payload.paths.length === 0) {
           return
         }

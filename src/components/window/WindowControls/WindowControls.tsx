@@ -6,6 +6,7 @@ import { bottomPanelService } from "src/services/bottom-panel-service"
 import { interfaceStore } from "src/services/interface-store"
 import { secondarySidebarService } from "src/services/secondary-sidebar-service"
 import { windowManager } from "src/services/window-manager"
+import { isMacOS } from "src/utils/get-os"
 import { isRunningInTauri } from "src/utils/is-running-in-tauri"
 
 import "./WindowControls.scss"
@@ -54,7 +55,7 @@ export const WindowControls: FC = memo(() => {
           icon={Icons.PanelRight}
         />
       </div>
-      {isRunningInTauri && (
+      {isRunningInTauri && !isMacOS && (
         <div className="WindowControls-window-controls">
           <div
             className="WindowControls-button"
@@ -69,7 +70,7 @@ export const WindowControls: FC = memo(() => {
             <img src={Icons.Box} alt="Maximize" />
           </div>
           <div
-            className="WindowControls-button"
+            className="WindowControls-button WindowControls-button--close"
             onClick={handleClickClose}
           >
             <img src={Icons.Close} alt="Close" />

@@ -1,35 +1,37 @@
 {
-  "identifier": "migrated",
-  "description": "permissions that were migrated from v1",
+  "identifier": "main-capability",
+  "description": "permissions granted to the main window",
   "local": true,
   "windows": [
     "main"
   ],
   "permissions": [
-    "path:default",
+    "core:path:default",
 
-    "event:default",
+    "core:event:default",
 
     "dialog:allow-save",
     "dialog:allow-open",
 
-    "window:default",
-    "window:allow-toggle-maximize",
-    "window:allow-minimize",
-    "window:allow-close",
-    "window:allow-start-dragging",
+    "core:window:default",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-minimize",
+    "core:window:allow-close",
+    "core:window:allow-start-dragging",
 
-    "app:default",
+    "core:app:default",
 
-    "resources:default",
+    "core:resources:default",
 
-    "menu:default",
+    "core:menu:default",
 
-    "tray:default",
+    "core:tray:default",
+
+    "window-state:default",
 
     "shell:allow-open",
 
-    "clipboard-manager:allow-write",
+    "clipboard-manager:allow-write-text",
 
     "http:allow-fetch",
     {
@@ -46,7 +48,11 @@
     },
     "fs:default",
     "fs:allow-exists",
+    "fs:allow-mkdir",
+    "fs:allow-read-dir",
+    "fs:allow-read-file",
     "fs:allow-read-text-file",
+    "fs:allow-write-file",
     "fs:allow-write-text-file",
     "fs:write-all",
     "fs:write-files",
@@ -65,8 +71,6 @@
   "platforms": [
     "linux",
     "macOS",
-    "windows",
-    "android",
-    "iOS"
+    "windows"
   ]
 }

@@ -253,8 +253,9 @@ class AppletComponentService {
   async openFileAndReadFromComponent(component: AppletComponent) {
     const selectedFilePath = await open()
 
+    // Since plugin-dialog v2 `open()` resolves to the path itself, not a file object
     if (selectedFilePath && !Array.isArray(selectedFilePath)) {
-      return await this.readFileFromComponent(component, selectedFilePath.path)
+      return await this.readFileFromComponent(component, selectedFilePath)
     }
   }
 }

@@ -25,6 +25,12 @@ body {
   }
 }
 
+.AppRoot.withRunningInTauri.withMacOS.withNotMaximized {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--app-titlebar-background-color);
+}
+
 .AppContainer {
   display: flex;
   height: 100%;

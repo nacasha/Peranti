@@ -49,3 +49,9 @@
   min-height: calc(var(--session-tabbar-height) - 1px);
   border-bottom: 1px solid var(--border-color);
 }
+
+.AppRoot.withTabbar.withRunningInTauri.withMacOS {
+  .PrimarySidebar-title {
+    padding-left: 80px;
+  }
+}

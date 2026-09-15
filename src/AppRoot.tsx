@@ -5,6 +5,7 @@ import { useEffect, type FC, type ReactNode } from "react"
 import { AppTitleBarStyle } from "./enums/app-titlebar-style.ts"
 import { useSelector } from "./hooks/useSelector.ts"
 import { interfaceStore } from "./services/interface-store.ts"
+import { isMacOS, isWindows } from "./utils/get-os.ts"
 import { isRunningInTauri } from "./utils/is-running-in-tauri.ts"
 
 export const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
@@ -18,7 +19,9 @@ export const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
     withTextAreaWordWrap: textAreaWordWrap,
     withTabbar: titlebarStyle === AppTitleBarStyle.Tabbar,
     withRunningInTauri: isRunningInTauri,
-    withRunningInBrowser: !isRunningInTauri
+    withRunningInBrowser: !isRunningInTauri,
+    withMacOS: isMacOS,
+    withWindows: isWindows,
   })
 
   useEffect(() => {

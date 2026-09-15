@@ -1,5 +1,6 @@
 import { type EventCallback } from "@tauri-apps/api/event"
-import { getCurrent, type FileDropEvent } from "@tauri-apps/api/webviewWindow"
+import { type DragDropEvent } from "@tauri-apps/api/webview"
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow"
 
 import { isRunningInTauri } from "src/utils/is-running-in-tauri"
 
@@ -8,35 +9,35 @@ export const windowManager = {
    * Minimize application window
    */
   async minimize() {
-    await getCurrent().minimize()
+    await getCurrentWebviewWindow().minimize()
   },
 
   /**
    * Toggle maximize application window
    */
   async toggleMaximize() {
-    await getCurrent().toggleMaximize()
+    await getCurrentWebviewWindow().toggleMaximize()
   },
 
   /**
    * Close application window
    */
   async close() {
-    await getCurrent().close()
+    await getCurrentWebviewWindow().close()
   },
 
   /**
    * Set focus on application window
    */
   async setFocus() {
-    await getCurrent().setFocus()
+    await getCurrentWebviewWindow().setFocus()
   },
 
   /**
    * Start drag / move the application window
    */
   async startDragging() {
-    await getCurrent().startDragging()
+    await getCurrentWebviewWindow().startDragging()
   },
 
   /**
@@ -45,9 +46,9 @@ export const windowManager = {
    * @param handler
    * @returns
    */
-  async onFileDropEvent(handler: EventCallback<FileDropEvent>) {
+  async onFileDropEvent(handler: EventCallback<DragDropEvent>) {
     if (isRunningInTauri) {
-      return await getCurrent().onFileDropEvent(handler)
+      return await getCurrentWebviewWindow().onDragDropEvent(handler)
     }
 
     return () => {}
@@ -60,7 +61,7 @@ export const windowManager = {
    */
   async isMaximized() {
     if (isRunningInTauri) {
-      return await getCurrent().isMaximized()
+      return await getCurrentWebviewWindow().isMaximized()
     }
     return true
   }

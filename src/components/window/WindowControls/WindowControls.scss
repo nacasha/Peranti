@@ -22,7 +22,7 @@
     background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%);
   }
 
-  &:last-child:hover {
+  &--close:hover {
     background-color: #c42b1c;
   }
 
