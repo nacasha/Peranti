@@ -14,6 +14,8 @@ interface InputFields {
 interface OutputFields {
   localDateTime: OutputFieldsType.Text
   utcDateTime: OutputFieldsType.Text
+  localIsoDateTime: OutputFieldsType.Text
+  utcIsoDateTime: OutputFieldsType.Text
 }
 
 const millisecondsToDate = new AppletConstructor<InputFields, OutputFields>({
@@ -48,6 +50,18 @@ const millisecondsToDate = new AppletConstructor<InputFields, OutputFields>({
       label: "Local Date Time",
       component: "Text",
       allowBatch: true
+    },
+    {
+      key: "utcIsoDateTime",
+      label: "UTC ISO-8601",
+      component: "Text",
+      allowBatch: true
+    },
+    {
+      key: "localIsoDateTime",
+      label: "Local ISO-8601",
+      component: "Text",
+      allowBatch: true
     }
   ],
   samples: [
@@ -68,15 +82,17 @@ const millisecondsToDate = new AppletConstructor<InputFields, OutputFields>({
   action: ({ inputValues }) => {
     const { milliseconds } = inputValues
     if (milliseconds.trim().length === 0) {
-      return { localDateTime: "", utcDateTime: "" }
+      return { localDateTime: "", utcDateTime: "", localIsoDateTime: "", utcIsoDateTime: "" }
     }
 
     const dayJsInstance = dayjs(Number(milliseconds))
 
     const localDateTime = dayJsInstance.format("YYYY-MM-DD HH:mm:ss")
     const utcDateTime = dayJsInstance.utc().format("YYYY-MM-DD HH:mm:ss")
+    const localIsoDateTime = dayJsInstance.format("YYYY-MM-DDTHH:mm:ss.SSSZ")
+    const utcIsoDateTime = dayJsInstance.utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
 
-    return { utcDateTime, localDateTime }
+    return { utcDateTime, localDateTime, utcIsoDateTime, localIsoDateTime }
   }
 })
 

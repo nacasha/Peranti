@@ -6,6 +6,10 @@ name: "2. Publish"
 # Ordering is deliberate: the commit job runs first and `publish` needs it, so
 # a failed push leaves the release still in draft rather than shipping a
 # version that never landed in git.
+#
+# If there is no draft but the newest published release is ahead of the code,
+# it runs in "version-only" mode: commit the bump to catch git up, skip the
+# publish step (there is nothing left to publish).
 on:
   workflow_dispatch:
     inputs:
@@ -32,7 +36,12 @@ jobs:
       tag: ${{ steps.detect.outputs.tag }}
       version: ${{ steps.detect.outputs.version }}
       release_id: ${{ steps.detect.outputs.release_id }}
+      mode: ${{ steps.detect.outputs.mode }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
       - name: Resolve the draft release
         id: detect
         env:
@@ -45,6 +54,13 @@ jobs:
           # A draft has no git tag yet, so everything here goes through the
           # releases API by tag_name rather than `gh release view`.
           RELEASES=$(gh api "repos/$REPO/releases" --paginate)
+          LOCAL_VERSION=$(jq -r '.version' package.json)
+
+          # "catch-up": the release is already public but the default branch
+          # never got its bump commit (e.g. the version-commit job failed, or
+          # the release was published by hand). Nothing left to publish, so we
+          # only land the version in git.
+          MODE="publish"
 
           if [ -n "$INPUT_TAG" ]; then
             TAG="$INPUT_TAG"
@@ -54,14 +70,20 @@ jobs:
               exit 1
             fi
             if [ "$(echo "$MATCH" | jq -r '.draft')" != "true" ]; then
-              echo "::error::$TAG is already published."
-              exit 1
+              MODE="version-only"
             fi
           else
             MATCH=$(echo "$RELEASES" | jq -r '[.[] | select(.draft)] | first // empty')
             if [ -z "$MATCH" ]; then
-              echo "::error::No draft release found. Run \"1. Release\" first."
-              exit 1
+              MODE="version-only"
+              MATCH=$(echo "$RELEASES" | jq -r '
+                [.[] | select(.draft | not) | select(.tag_name | test("^v?[0-9]+\\.[0-9]+\\.[0-9]+$"))]
+                | sort_by(.tag_name | ltrimstr("v") | split(".") | map(tonumber))
+                | last // empty')
+              if [ -z "$MATCH" ]; then
+                echo "::error::No draft release found. Run \"1. Release\" first."
+                exit 1
+              fi
             fi
             TAG=$(echo "$MATCH" | jq -r '.tag_name')
           fi
@@ -72,13 +94,29 @@ jobs:
             exit 1
           fi
 
+          if [ "$MODE" = "version-only" ]; then
+            if [ "$VERSION" = "$LOCAL_VERSION" ]; then
+              echo "::error::$TAG is already published and the code is already at $VERSION. Nothing to do."
+              exit 1
+            fi
+            # Only ever move forward — an older published release must not roll
+            # the working version back.
+            NEWEST=$(printf '%s\n%s\n' "$VERSION" "$LOCAL_VERSION" | sort -V | tail -n1)
+            if [ "$NEWEST" != "$VERSION" ]; then
+              echo "::error::$TAG is already published, but the code is at $LOCAL_VERSION (newer). Refusing to downgrade."
+              exit 1
+            fi
+            echo "::notice::$TAG is already published; syncing the code from $LOCAL_VERSION to $VERSION without publishing."
+          fi
+
           {
             echo "tag=$TAG"
             echo "version=$VERSION"
+            echo "mode=$MODE"
             echo "release_id=$(echo "$MATCH" | jq -r '.id')"
           } >> "$GITHUB_OUTPUT"
 
-          echo "Publishing $TAG (version $VERSION)"
+          echo "$MODE: $TAG (version $VERSION, code at $LOCAL_VERSION)"
 
   version-commit:
     needs: detect
@@ -117,6 +155,7 @@ jobs:
 
   publish:
     needs: [detect, version-commit]
+    if: needs.detect.outputs.mode == 'publish'
     runs-on: ubuntu-latest
     steps:
       - name: Publish the release
