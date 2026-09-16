@@ -1,12 +1,107 @@
-name: "Release"
+name: "1. Release (build & draft)"
 
+# Step 1 of 2. Computes the next version from the bump you pick, builds every
+# platform at that version, and leaves a DRAFT release behind. Nothing is
+# committed and nothing is public until you verify the draft and run
+# "2. Publish", which commits the bump and flips the draft live.
+#
+# GitHub only shows the Run workflow button for workflows on the DEFAULT
+# branch, so this file has to stay on `main` even when dispatched elsewhere.
 on:
-  push:
-    branches:
-      - release
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump"
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      prerelease:
+        description: "Mark the release as a prerelease"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  publish-tauri:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      changelog: ${{ steps.changelog.outputs.changelog }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history and tags, so the changelog can diff against the last one.
+          fetch-depth: 0
+
+      - name: Compute next version
+        id: version
+        env:
+          BUMP: ${{ inputs.bump }}
+        run: |
+          set -euo pipefail
+
+          CURRENT=$(python3 -c "import json; print(json.load(open('package.json'))['version'])")
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+
+          case "$BUMP" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+            *) echo "::error::Unknown bump type: $BUMP"; exit 1 ;;
+          esac
+
+          NEW="${MAJOR}.${MINOR}.${PATCH}"
+          echo "version=$NEW" >> "$GITHUB_OUTPUT"
+          echo "Bumping $CURRENT -> $NEW ($BUMP)"
+
+      - name: Check the target version is free
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          # tauri-action uploads into an existing release rather than failing on
+          # a tag collision, so without this check a re-run after publishing
+          # would silently attach new binaries to a shipped release.
+          STATE=$(gh api "repos/${{ github.repository }}/releases" --paginate \
+            --jq ".[] | select(.tag_name==\"v$VERSION\") | if .draft then \"draft\" else \"published\" end" | head -1)
+
+          if [ "$STATE" = "published" ]; then
+            echo "::error::v$VERSION is already published. Choose a larger bump, or delete that release first."
+            exit 1
+          elif [ "$STATE" = "draft" ]; then
+            echo "::notice::An unpublished draft for v$VERSION exists; this run replaces its assets."
+          fi
+
+      - name: Build changelog
+        id: changelog
+        run: |
+          set -euo pipefail
+
+          PREV=$(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)
+          # `[auto-version]` is the marker publish.yml puts on its bump commits,
+          # which are noise in release notes.
+          LOG=$(git log "$PREV"..HEAD --no-merges --pretty=format:"- %s (%h)" | grep -v '\[auto-version\]' || true)
+          [ -n "$LOG" ] || LOG="- No changes recorded since $PREV"
+
+          {
+            echo "changelog<<__CHANGELOG__"
+            echo "$LOG"
+            echo "__CHANGELOG__"
+          } >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: prepare
     permissions:
       contents: write
     strategy:
@@ -17,6 +112,13 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
+
+      # Working tree only, on each runner. The commit that records this bump is
+      # made by "2. Publish" after the draft has been checked, so an abandoned
+      # release leaves no trace in git history.
+      - name: Apply version ${{ needs.prepare.outputs.version }}
+        shell: bash
+        run: bash .github/scripts/set-version.sh "${{ needs.prepare.outputs.version }}"
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -40,12 +142,124 @@ jobs:
       - name: Install frontend dependencies
         run: bun install --frozen-lockfile
 
+      # Apple credentials are promoted into the job environment here rather
+      # than declared as `env:` on the build step below, because this is the
+      # only way to omit them entirely.
+      #
+      # Tauri's bundler matches on `var_os("APPLE_CERTIFICATE")` with no
+      # emptiness check, and GitHub sets an `env:` key to "" when its secret is
+      # missing. Declaring them inline would therefore hand Tauri a zero-byte
+      # certificate and fail the macOS build on any fork that has no secrets
+      # configured, instead of just producing an unsigned bundle.
+      #
+      # Tauri also creates its own temporary keychain internally
+      # (tauri_macos_sign::Keychain::with_certificate), so the manual
+      # `security create-keychain` / `security import` steps that circulate in
+      # most workflows are unnecessary, and KEYCHAIN_PASSWORD is never read.
+      - name: Configure Apple signing and notarization
+        if: matrix.platform == 'macos-latest'
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+
+          # Heredoc form, so a certificate that was base64'd with line wrapping
+          # can't break out of the env file.
+          put() {
+            {
+              echo "$1<<__TAURI_APPLE_ENV__"
+              echo "$2"
+              echo "__TAURI_APPLE_ENV__"
+            } >> "$GITHUB_ENV"
+          }
+
+          if [ -z "$APPLE_CERTIFICATE" ] || [ -z "$APPLE_SIGNING_IDENTITY" ]; then
+            echo "::notice::Apple signing secrets absent - building an unsigned macOS bundle."
+            exit 0
+          fi
+
+          put APPLE_CERTIFICATE "$APPLE_CERTIFICATE"
+          put APPLE_CERTIFICATE_PASSWORD "$APPLE_CERTIFICATE_PASSWORD"
+          put APPLE_SIGNING_IDENTITY "$APPLE_SIGNING_IDENTITY"
+
+          if [ -z "$APPLE_ID" ] || [ -z "$APPLE_PASSWORD" ] || [ -z "$APPLE_TEAM_ID" ]; then
+            echo "::warning::Signing without notarization - APPLE_ID, APPLE_PASSWORD and APPLE_TEAM_ID must all be set."
+            exit 0
+          fi
+
+          put APPLE_ID "$APPLE_ID"
+          put APPLE_PASSWORD "$APPLE_PASSWORD"
+          put APPLE_TEAM_ID "$APPLE_TEAM_ID"
+
+          echo "::notice::Apple signing and notarization enabled."
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__
-          releaseName: "Peranti v__VERSION__"
-          releaseBody: "See the assets to download this version and install."
+          tagName: v${{ needs.prepare.outputs.version }}
+          releaseName: "Peranti v${{ needs.prepare.outputs.version }}"
+          releaseBody: ${{ needs.prepare.outputs.changelog }}
+          # Always a draft. "2. Publish" is what makes a release public.
           releaseDraft: true
-          prerelease: false
+          prerelease: ${{ inputs.prerelease }}
+
+      # Tauri notarizes and staples the .app, but only *signs* the DMG it wraps
+      # it in — macos/app.rs calls notarize(), macos/dmg/mod.rs never does
+      # (tauri-apps/tauri#7533). The DMG is the file first-time users download
+      # and quarantine lands on the wrapper, so without this second pass they
+      # get "Apple cannot check it for malicious software" even though the app
+      # inside is notarized. The .app.tar.gz needs nothing: the app it contains
+      # is already stapled.
+      #
+      # `env.APPLE_ID` is only populated when the configure step above found a
+      # full set of credentials, so this is skipped on unsigned builds.
+      - name: Notarize and staple the DMG
+        if: matrix.platform == 'macos-latest' && env.APPLE_ID != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: v${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          # Built by hand rather than with `mapfile`, which is bash 4+ while
+          # macOS runners still ship bash 3.2 as /bin/bash.
+          DMGS=()
+          while IFS= read -r line; do
+            DMGS+=("$line")
+          done < <(find src-tauri/target -type f -name '*.dmg')
+
+          if [ "${#DMGS[@]}" -eq 0 ]; then
+            echo "::error::No DMG found under src-tauri/target"
+            exit 1
+          fi
+
+          for DMG in "${DMGS[@]}"; do
+            NAME=$(basename "$DMG")
+            echo "::group::Notarizing $NAME"
+
+            xcrun notarytool submit "$DMG" \
+              --apple-id "$APPLE_ID" \
+              --password "$APPLE_PASSWORD" \
+              --team-id "$APPLE_TEAM_ID" \
+              --wait
+
+            xcrun stapler staple "$DMG"
+
+            # Ask Gatekeeper the question a user's Mac will ask, instead of
+            # assuming it passed because the secrets happened to be present.
+            spctl -a -t open --context context:primary-signature -v "$DMG"
+
+            # tauri-action has already attached the pre-stapling DMG, so the
+            # stapled one has to overwrite it. --clobber replaces same-named
+            # assets, and gh resolves draft releases by their pending tag.
+            gh release upload "$TAG" "$DMG" --clobber --repo "${{ github.repository }}"
+
+            echo "::endgroup::"
+            echo "::notice::$NAME notarized, stapled and re-uploaded."
+          done

@@ -1,0 +1,148 @@
+name: "2. Publish"
+
+# Step 2 of 2. Takes the draft left by "1. Release", commits the version bump
+# it was built at, and makes the release public.
+#
+# Ordering is deliberate: the commit job runs first and `publish` needs it, so
+# a failed push leaves the release still in draft rather than shipping a
+# version that never landed in git.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to publish (leave empty to use the newest draft)"
+        required: false
+        type: string
+      latest:
+        description: "Mark as the latest release"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.detect.outputs.tag }}
+      version: ${{ steps.detect.outputs.version }}
+      release_id: ${{ steps.detect.outputs.release_id }}
+    steps:
+      - name: Resolve the draft release
+        id: detect
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+
+          # A draft has no git tag yet, so everything here goes through the
+          # releases API by tag_name rather than `gh release view`.
+          RELEASES=$(gh api "repos/$REPO/releases" --paginate)
+
+          if [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"
+            MATCH=$(echo "$RELEASES" | jq -r --arg t "$TAG" '[.[] | select(.tag_name==$t)] | first // empty')
+            if [ -z "$MATCH" ]; then
+              echo "::error::No release found for tag $TAG"
+              exit 1
+            fi
+            if [ "$(echo "$MATCH" | jq -r '.draft')" != "true" ]; then
+              echo "::error::$TAG is already published."
+              exit 1
+            fi
+          else
+            MATCH=$(echo "$RELEASES" | jq -r '[.[] | select(.draft)] | first // empty')
+            if [ -z "$MATCH" ]; then
+              echo "::error::No draft release found. Run \"1. Release\" first."
+              exit 1
+            fi
+            TAG=$(echo "$MATCH" | jq -r '.tag_name')
+          fi
+
+          VERSION="${TAG#v}"
+          if ! echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Tag $TAG does not carry a bare x.y.z version."
+            exit 1
+          fi
+
+          {
+            echo "tag=$TAG"
+            echo "version=$VERSION"
+            echo "release_id=$(echo "$MATCH" | jq -r '.id')"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Publishing $TAG (version $VERSION)"
+
+  version-commit:
+    needs: detect
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit the version bump
+        id: commit
+        env:
+          VERSION: ${{ needs.detect.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          bash .github/scripts/set-version.sh "$VERSION"
+
+          # Re-running publish for an already-committed version is a no-op
+          # rather than an error, so the job stays safe to retry.
+          if git diff --quiet; then
+            echo "::notice::Already at $VERSION; nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json src-tauri/tauri.conf.json src-tauri/Cargo.toml src-tauri/Cargo.lock
+          git commit -m "release: v$VERSION [auto-version]"
+          git push
+
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: [detect, version-commit]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_ID: ${{ needs.detect.outputs.release_id }}
+          TAG: ${{ needs.detect.outputs.tag }}
+          NEW_SHA: ${{ needs.version-commit.outputs.sha }}
+          MAKE_LATEST: ${{ inputs.latest }}
+        run: |
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+
+          # The draft was built before the bump commit existed, so by default
+          # its tag would be created against the parent commit — one whose
+          # package.json still holds the previous version. Repointing it while
+          # the release is still a draft (the only time target_commitish is
+          # mutable) means `git checkout $TAG` gives a tree that matches $TAG.
+          if [ -n "$NEW_SHA" ]; then
+            gh api -X PATCH "repos/$REPO/releases/$RELEASE_ID" \
+              -f target_commitish="$NEW_SHA" > /dev/null
+            echo "Tag will be created at $NEW_SHA"
+          fi
+
+          gh api -X PATCH "repos/$REPO/releases/$RELEASE_ID" \
+            -F draft=false \
+            -f make_latest="$MAKE_LATEST" > /dev/null
+
+          echo "::notice::Published $TAG -> ${{ github.server_url }}/$REPO/releases/tag/$TAG"
