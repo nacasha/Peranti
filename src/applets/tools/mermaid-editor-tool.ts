@@ -12,6 +12,7 @@ interface OutputFields {
 
 const mermaidEditorTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "mermaid-editor",
+  fileExtensions: ["mmd", "mermaid"],
   name: "Mermaid",
   category: "Diagram",
   description: "JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically",

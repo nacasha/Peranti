@@ -18,6 +18,7 @@ interface Options {
 
 const jsonFormatter = new AppletConstructor<InputFields, OutputFields, Options>({
   appletId: "json-formatter",
+  fileExtensions: ["json"],
   name: "JSON Formatter",
   description: "JSON Format/Minify/Pretty/Beautify",
   category: "JSON",

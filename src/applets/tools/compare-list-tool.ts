@@ -15,6 +15,7 @@ interface OutputFields {
 
 const compareListTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "compare-lines",
+  fileExtensions: ["txt", "csv"],
   name: "Compare List",
   category: "List",
   layoutSetting: {

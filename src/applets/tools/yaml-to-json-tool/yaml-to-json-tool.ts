@@ -14,6 +14,7 @@ interface OutputFields {
 
 export const yamlToJsonTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "yaml-to-json",
+  fileExtensions: ["yaml", "yml"],
   name: "YAML to JSON",
   description: "YAML to JSON Converter",
   category: "YAML",

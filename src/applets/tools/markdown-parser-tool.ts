@@ -12,6 +12,7 @@ interface OutputFields {
 
 const markdownParserTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "markdown-editor",
+  fileExtensions: ["md", "markdown"],
   name: "Markdown Editor",
   category: "Editor",
   inputFields: [

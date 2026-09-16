@@ -20,6 +20,7 @@ interface OutputFields {
 
 export const jsonataTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "jsonata",
+  fileExtensions: ["json"],
   name: "JSONata",
   description: "JSON query and transformation language",
   category: "JSON",

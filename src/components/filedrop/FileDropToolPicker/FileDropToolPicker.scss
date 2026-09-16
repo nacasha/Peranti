@@ -1,0 +1,146 @@
+.FileDropToolPicker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 0;
+}
+
+.FileDropToolPicker-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.FileDropToolPicker-label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+.FileDropToolPicker-hint {
+  font-weight: var(--font-weight);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.FileDropToolPicker-search {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--input-output-border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--input-output-background-color);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+
+  &::placeholder {
+    color: var(--text-subtle);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--focus-ring);
+  }
+}
+
+.FileDropToolPicker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  // Roughly five rows, so the card keeps a stable height whether the drop
+  // matches three tools or forty.
+  max-height: 208px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: var(--space-1);
+}
+
+.FileDropToolPicker-empty {
+  padding: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--text-subtle);
+  text-align: center;
+}
+
+.FileDropToolPicker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--text-color);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 100ms var(--ease-out), border-color 100ms var(--ease-out);
+
+  &:hover {
+    background-color: var(--button-background-color-hover);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  // Tools that declare every dropped extension get a quiet primary wash, so the
+  // best candidates are findable without pushing everything else out of reach.
+  &[data-match="full"] {
+    border-color: color-mix(in srgb, var(--color-primary), transparent 70%);
+    background-color: color-mix(in srgb, var(--color-primary), transparent 92%);
+  }
+}
+
+.FileDropToolPicker-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.FileDropToolPicker-item-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow: hidden;
+  font-size: var(--font-size);
+  line-height: var(--line-height-tight);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.FileDropToolPicker-item-tag {
+  flex-shrink: 0;
+  padding: 0 5px;
+  border-radius: var(--radius-sm);
+  background-color: var(--button-background-color-active);
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.FileDropToolPicker-item-category {
+  font-size: var(--font-size-xs);
+  color: var(--text-subtle);
+}
+
+.FileDropToolPicker-item-match {
+  flex-shrink: 0;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+}

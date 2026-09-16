@@ -14,6 +14,7 @@ interface OutputFields {
 
 const mathEvaluatorTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "math-evaluator",
+  fileExtensions: ["txt"],
   name: "Math Evaluator",
   category: "Math",
   inputFields: [

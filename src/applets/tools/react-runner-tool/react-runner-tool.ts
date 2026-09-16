@@ -12,6 +12,7 @@ interface OutputFields {
 
 export const reactRunnerTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "react-runner",
+  fileExtensions: ["jsx", "tsx", "js"],
   name: "React Runner",
   description: "Run your React code on the go",
   category: "React",

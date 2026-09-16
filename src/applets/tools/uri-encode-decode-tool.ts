@@ -13,6 +13,7 @@ interface OutputFields {
 
 const uriEncodeDecodeTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "uri-encode-decode",
+  fileExtensions: ["txt"],
   name: "URI Encode Decode",
   category: "Encode / Decode",
   inputFields: [

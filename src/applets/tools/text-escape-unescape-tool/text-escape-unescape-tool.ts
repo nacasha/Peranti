@@ -15,6 +15,7 @@ interface OutputFields {
 
 const textEscapeUnescapeTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "text-escape-unescape-tool",
+  fileExtensions: ["txt"],
   name: "Text Escape / Unescape",
   category: "Text",
   inputFields: [

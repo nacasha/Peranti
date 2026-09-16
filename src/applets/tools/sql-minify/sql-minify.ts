@@ -4,6 +4,7 @@ import { AppletConstructor } from "src/models/AppletConstructor"
 
 const sqlMinifyTool = new AppletConstructor({
   appletId: "sql-minify",
+  fileExtensions: ["sql"],
   name: "SQL Minify",
   description: "Minifies PostgreSQL scripts",
   category: "SQL",

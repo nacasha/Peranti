@@ -12,6 +12,7 @@ interface OutputFields {
 
 const removeDuplicateList = new AppletConstructor<InputFields, OutputFields>({
   appletId: "remove-duplicate-list",
+  fileExtensions: ["txt", "csv"],
   name: "Remove Duplicate List",
   category: "List",
   inputFields: [

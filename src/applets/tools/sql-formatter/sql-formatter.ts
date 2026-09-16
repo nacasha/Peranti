@@ -4,6 +4,7 @@ import { AppletConstructor } from "src/models/AppletConstructor"
 
 const sqlFormatterTool = new AppletConstructor({
   appletId: "sql-formatter",
+  fileExtensions: ["sql"],
   name: "SQL Formatter",
   description: "Pretty-printing SQL queries with format: GCP BigQuery, IBM DB2, Apache Hive, MariaDB, MySQL, TiDB, Couchbase N1QL, Oracle PL/SQL, PostgreSQL, Amazon Redshift, SingleStoreDB, Snowflake, Spark, SQL Server Transact-SQL, Trino (and Presto)",
   category: "SQL",

@@ -28,6 +28,13 @@ export class AppletConstructor<
   hasOverriddenDefaultState?: boolean
   options?: Array<AppletOption<OptionKeys>>
 
+  /**
+   * Lowercase file extensions (without the dot) this applet is meant to receive
+   * from a file drop, e.g. ["json"]. Used to rank tools in the file drop picker.
+   * Omitting it means the applet accepts any file it can read as text.
+   */
+  fileExtensions?: string[]
+
   constructor(data: AppletConstructor<InputFields, OutputFields, OptionKeys>) {
     this.appletId = data.appletId
     this.name = data.name
@@ -45,5 +52,6 @@ export class AppletConstructor<
     this.hasOverriddenDefaultState = data.hasOverriddenDefaultState
     this.description = data.description
     this.options = data.options
+    this.fileExtensions = data.fileExtensions
   }
 }

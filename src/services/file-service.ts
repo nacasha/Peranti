@@ -1,6 +1,6 @@
 import { appDataDir, resolve } from "@tauri-apps/api/path"
 import { save } from "@tauri-apps/plugin-dialog"
-import { BaseDirectory, readDir, readFile, readTextFile, writeFile } from "@tauri-apps/plugin-fs"
+import { BaseDirectory, readDir, readFile, readTextFile, stat, writeFile } from "@tauri-apps/plugin-fs"
 import * as base64 from "js-base64"
 
 import { removeBase64Header } from "src/utils/base-64"
@@ -14,6 +14,25 @@ class FileService {
 
   async readFileAsBinary(filePath: string, appData?: boolean) {
     return await readFile(filePath, appData ? { baseDir: BaseDirectory.AppData } : undefined)
+  }
+
+  /**
+   * Reads size / kind metadata for a path. Returns undefined instead of throwing
+   * so callers can degrade to showing just the file name when the path sits
+   * outside the fs scope or disappears between the drag and the read.
+   */
+  async statFile(filePath: string) {
+    try {
+      const metadata = await stat(filePath)
+
+      return {
+        size: metadata.size,
+        isDirectory: metadata.isDirectory,
+        modifiedAt: metadata.mtime ?? undefined
+      }
+    } catch (exception) {
+      return undefined
+    }
   }
 
   async resolveFilePath(...paths: string[]) {

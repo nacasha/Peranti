@@ -12,6 +12,7 @@ interface OutputFields {
 
 const pintoraEditorTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "pintora-editor",
+  fileExtensions: ["pintora", "txt"],
   name: "Pintora",
   category: "Diagram",
   description: "Pintora is a javascript text-to-diagrams library that works in both browser and Node.js",

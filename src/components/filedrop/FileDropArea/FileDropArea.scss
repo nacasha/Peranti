@@ -5,68 +5,348 @@
   position: fixed;
   z-index: 10;
   inset: 0;
-  flex-direction: column;
-  backdrop-filter: blur(3px);
+  padding: var(--space-5);
   border-radius: var(--border-radius);
+  backdrop-filter: blur(6px);
+  animation: FileDropArea-fade 160ms var(--ease-out);
+
+  // A soft primary wash from the centre reads as "the window is the target",
+  // without tinting the whole app the way a flat overlay colour would.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      circle at 50% 42%,
+      color-mix(in srgb, var(--color-primary), transparent 86%),
+      transparent 62%
+    );
+    pointer-events: none;
+  }
 }
 
-.FileDropArea-body {
+.FileDropArea-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 460px;
+  max-height: 100%;
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  background-color: var(--bg-raised);
+  box-shadow: var(--shadow-lg);
+  animation: FileDropArea-rise 200ms var(--ease-out);
+
+  // Dashed outline drawn as an inset ring so it hugs the rounded corners and
+  // does not fight the card's own border-radius the way `border` would.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1.5px dashed color-mix(in srgb, var(--color-primary), transparent 55%);
+    border-radius: calc(var(--radius-xl) - 4px);
+    pointer-events: none;
+  }
+}
+
+.FileDropArea[data-mode="choose"] .FileDropArea-card {
+  // The tool picker needs the room, and the list inside it scrolls rather than
+  // pushing the card past the window.
+  max-width: 520px;
+}
+
+.FileDropArea[data-mode="choose"] .FileDropArea-card::before {
+  // Once the files have landed, the dashed "target" affordance is no longer
+  // meaningful — a plain hairline keeps the card calm while choosing.
+  border-style: solid;
+  border-color: var(--border-subtle);
+}
+
+.FileDropArea-header {
+  display: flex;
   align-items: center;
+  gap: var(--space-3);
+}
+
+.FileDropArea-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  color: var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary), transparent 88%);
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.FileDropArea[data-mode="hover"] .FileDropArea-icon svg {
+  animation: FileDropArea-nudge 1.6s ease-in-out infinite;
+}
+
+.FileDropArea-icon-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 18px;
+  text-align: center;
+}
+
+.FileDropArea-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.FileDropArea-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--text-color);
+}
+
+.FileDropArea-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
 
   strong {
-    color: #c54718;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-color);
   }
 }
 
-.FileDropArea-prompt {
+.FileDropArea-files {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.FileDropArea-file {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-sunken);
+}
+
+.FileDropArea-file-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: 9px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+
+  // Hue comes from the extension so each file type is recognisable at a glance;
+  // saturation and lightness stay fixed so nothing blows out against the card.
+  color: hsl(var(--badge-hue, 220) 65% 72%);
+  background-color: hsl(var(--badge-hue, 220) 55% 50% / 0.16);
+}
+
+.FileDropArea-file-info {
+  display: flex;
   flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
 
-  .FileDropArea-prompt-text {
-    text-align: center;
-    font-size: 18px;
+.FileDropArea-file-name {
+  overflow: hidden;
+  font-size: var(--font-size);
+  line-height: var(--line-height-tight);
+  color: var(--text-color);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.FileDropArea-file-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-subtle);
+
+  .FileDropArea-file-meta-part {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .FileDropArea-prompt-selection {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    gap: 12px;
-    margin: 30px 0;
-  }
-
-  .FileDropArea-prompt-item {
-    border: 1px solid #3d3d3e;
-    background-color: #2e3135;
-    padding: 5px 10px;
-    border-radius: var(--border-radius);
-    text-align: center;
-    user-select: none;
-
-    &:hover {
-      background-color: #3a3e44;
-      cursor: pointer;
-    }
+  // Dot separators live in CSS so the markup stays a plain list of facts.
+  .FileDropArea-file-meta-part + .FileDropArea-file-meta-part::before {
+    content: "·";
+    margin-right: var(--space-2);
   }
 }
 
-.FileDropArea-text {
-  font-size: 30px;
+.FileDropArea-file--more {
+  justify-content: center;
+  background-color: transparent;
+  font-size: var(--font-size-xs);
+  color: var(--text-subtle);
+}
+
+.FileDropArea-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 0;
+}
+
+.FileDropArea-action {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background-color: var(--button-background-color);
+  color: var(--text-color);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms var(--ease-out), border-color 120ms var(--ease-out);
+
+  &:hover {
+    border-color: var(--color-primary);
+    background-color: color-mix(in srgb, var(--color-primary), transparent 90%);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+}
+
+.FileDropArea-action-title {
+  font-size: var(--font-size);
+  font-weight: var(--font-weight-medium);
+
+  strong {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+  }
+}
+
+.FileDropArea-action-description {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-tight);
+  color: var(--text-subtle);
+
+  strong {
+    font-weight: var(--font-weight);
+    color: var(--text-muted);
+  }
+}
+
+.FileDropArea-cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  padding: var(--space-2);
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--button-background-color-hover);
+    color: var(--text-color);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  kbd {
+    padding: 1px 5px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+  }
+}
+
+@keyframes FileDropArea-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes FileDropArea-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes FileDropArea-nudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .FileDropArea,
+  .FileDropArea-card,
+  .FileDropArea[data-mode="hover"] .FileDropArea-icon svg {
+    animation: none;
+  }
 }
 
 .AppRoot.dark {
   .FileDropArea {
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.55);
   }
 }
 
 .AppRoot.light {
   .FileDropArea {
-    background-color: rgba(255,255,255,0.5);
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+
+  // The badge tints are tuned for dark surfaces; on light ones they need to go
+  // darker rather than lighter to keep contrast against the sunken row.
+  .FileDropArea-file-badge {
+    color: hsl(var(--badge-hue, 220) 60% 38%);
+    background-color: hsl(var(--badge-hue, 220) 55% 45% / 0.14);
   }
 }

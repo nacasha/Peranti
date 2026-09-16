@@ -13,6 +13,7 @@ interface OutputFields {
 
 export const jsonTableViewerTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "json-table-viewer",
+  fileExtensions: ["json"],
   name: "JSON Table Viewer",
   description: "View JSON data format in pretty spreadsheet view",
   category: "JSON",

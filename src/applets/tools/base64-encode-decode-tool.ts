@@ -13,6 +13,7 @@ interface OutputFields {
 
 const base64EncodeDecodeTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "base64-encode-decode",
+  fileExtensions: ["txt"],
   name: "Base64 Encode Decode",
   category: "Encode / Decode",
   inputFields: [

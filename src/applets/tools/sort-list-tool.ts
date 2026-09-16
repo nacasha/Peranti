@@ -12,6 +12,7 @@ interface OutputFields {
 
 const sortList = new AppletConstructor<InputFields, OutputFields>({
   appletId: "sort-list",
+  fileExtensions: ["txt", "csv"],
   name: "Sort List",
   category: "List",
   inputFields: [

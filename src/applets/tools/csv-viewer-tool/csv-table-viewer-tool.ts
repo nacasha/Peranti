@@ -14,6 +14,7 @@ interface OutputFields {
 
 export const csvTableViewerTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "csv-table-viewer",
+  fileExtensions: ["csv", "tsv"],
   name: "CSV Viewer",
   description: "View CSV data format in pretty spreadsheet view",
   category: "CSV",

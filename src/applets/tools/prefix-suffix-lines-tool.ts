@@ -14,6 +14,7 @@ interface OutputFields {
 
 const prefixSuffixLines = new AppletConstructor<InputFields, OutputFields>({
   appletId: "prefix-suffix-lines",
+  fileExtensions: ["txt", "csv"],
   name: "Prefix Suffix Lines",
   category: "List",
   inputFields: [

@@ -8,7 +8,7 @@ class HotkeysStore {
   private readonly defaultKeys = {
     ESCAPE: "escape",
     OPEN_COMMANDBAR: "mod+k || mod+p",
-    TAB_NEW_EDITOR: "mod+n",
+    TAB_NEW_EDITOR: "mod+n || mod+t",
     TAB_CLOSE: "mod+w",
     TAB_CYCLE_NEXT: "ctrl+tab",
     TAB_CYCLE_PREV: "ctrl+shift+tab",

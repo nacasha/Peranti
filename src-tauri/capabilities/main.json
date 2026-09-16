@@ -48,6 +48,7 @@
     },
     "fs:default",
     "fs:allow-exists",
+    "fs:allow-stat",
     "fs:allow-mkdir",
     "fs:allow-read-dir",
     "fs:allow-read-file",

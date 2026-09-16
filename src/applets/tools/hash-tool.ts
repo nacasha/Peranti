@@ -19,6 +19,7 @@ interface OutputFields {
 
 const hashTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "hash",
+  fileExtensions: ["txt"],
   name: "Hash Generator",
   description: "Encrypt text or file to MD5 / SHA1 / SHA256 / SHA512",
   category: "Generator",

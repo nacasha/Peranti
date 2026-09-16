@@ -7,6 +7,7 @@ interface InputFields {
 
 const textEditorTool = new AppletConstructor<InputFields>({
   appletId: "text-editor",
+  fileExtensions: ["txt", "log", "md"],
   name: "Text Editor",
   category: "Editor",
   inputFields: [

@@ -12,6 +12,7 @@ interface OutputFields {
 
 const characterCounterTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "character-counter",
+  fileExtensions: ["txt", "md"],
   name: "Text Counter",
   category: "Text",
   layoutSetting: {
