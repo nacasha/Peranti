@@ -102,6 +102,11 @@ jobs:
 
   build:
     needs: prepare
+    # The Apple credentials live as environment secrets rather than repository
+    # secrets, and GitHub only injects those into a job that names the
+    # environment. Without this line `secrets.APPLE_CERTIFICATE` silently
+    # resolves to "" and the macOS bundle goes out unsigned.
+    environment: release
     permissions:
       contents: write
     strategy:
