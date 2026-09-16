@@ -63,42 +63,6 @@ fn main() {
             reveal_file_manager,
         ])
         .plugin(tauri_plugin_clipboard_manager::init())
-        .setup(|app| {
-            #[cfg(target_os = "macos")]
-            {
-                use tauri::Manager;
-                if let Some(window) = app.get_webview_window("main") {
-                    set_macos_window_radius(&window, 12.0);
-                }
-            }
-            Ok(())
-        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-}
-
-#[cfg(target_os = "macos")]
-fn set_macos_window_radius(window: &tauri::WebviewWindow, radius: f64) {
-    use objc::{class, msg_send, sel, sel_impl};
-
-    if let Ok(ns_window) = window.ns_window() {
-        unsafe {
-            let ns_window = ns_window as *mut objc::runtime::Object;
-
-            // Make the NSWindow itself transparent so the corners don't show a background
-            let clear: *mut objc::runtime::Object = msg_send![class!(NSColor), clearColor];
-            let _: () = msg_send![ns_window, setBackgroundColor: clear];
-            let _: () = msg_send![ns_window, setOpaque: false];
-
-            // Round the content view layer
-            let content_view: *mut objc::runtime::Object = msg_send![ns_window, contentView];
-            let _: () = msg_send![content_view, setWantsLayer: true];
-            let layer: *mut objc::runtime::Object = msg_send![content_view, layer];
-            let _: () = msg_send![layer, setCornerRadius: radius];
-            let _: () = msg_send![layer, setMasksToBounds: true];
-
-            // Recompute the shadow so it follows the rounded shape
-            let _: () = msg_send![ns_window, invalidateShadow];
-        }
-    }
 }

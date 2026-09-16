@@ -8,10 +8,8 @@
   border-bottom: 1px solid var(--border-color);
 }
 
-.AppTitlebar-macos-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  height: var(--session-tabbar-height);
+// Leave room for the system traffic lights, which macOS draws on top of the
+// titlebar area when the window uses the "Overlay" title bar style.
+.AppRoot.withRunningInTauri.withMacOS .AppTitlebar {
+  padding-left: 78px;
 }

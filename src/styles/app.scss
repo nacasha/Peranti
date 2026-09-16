@@ -25,9 +25,9 @@ body {
   }
 }
 
-.AppRoot.withRunningInTauri.withMacOS.withNotMaximized {
-  border-radius: 12px;
-  overflow: hidden;
+// macOS rounds and clips the window frame itself, so the app only supplies a
+// background; adding a CSS radius here would cut the corners twice.
+.AppRoot.withRunningInTauri.withMacOS {
   background-color: var(--app-titlebar-background-color);
 }
 
