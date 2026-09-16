@@ -43,6 +43,12 @@
   display: flex;
 }
 
+// Collapsed out by default; the rule further down gives it width only in the
+// one case that needs it (macOS + Tauri + tabbar mode + sidebar hidden).
+.SessionTabbar-macos-inset {
+  display: none;
+}
+
 .SessionTabbar-inner-body {
   position: relative;
   width: 100%;
@@ -65,7 +71,6 @@
   display: flex;
   height: var(--session-tabbar-height);
   max-height: var(--session-tabbar-height);
-  border-right: 1px solid var(--border-color);
   position: relative;
 
   &:hover {
@@ -119,14 +124,17 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  // Both states carry the same 2px so activating a tab tints the strip
+  // instead of nudging the label down a pixel.
   border-top: 2px solid transparent;
   white-space: nowrap;
+  transition: color var(--animation-speed), background-color var(--animation-speed);
 
   &.active {
     color: var(--session-tabbar-text-color-active);
     background-color: var(--applet-viewer-background-color);
     z-index: 7;
-    border-top: 3px solid var(--color-primary);
+    border-top: 2px solid var(--color-primary);
   }
 }
 
@@ -176,6 +184,17 @@
 .AppRoot.withTabbar.withMacOS {
   .SessionTabbar-inner-simplebar {
     right: calc(var(--window-control-button-width) * 3);
+  }
+}
+
+// In tabbar mode AppTitlebar renders nothing, so the sidebar header is what
+// holds the traffic lights clear. Hide the sidebar and the tabbar inherits
+// that job — `.AppContent` is the next sibling of `.PrimarySidebar`, so the
+// hidden state can be read straight off the DOM with no extra store wiring.
+.AppRoot.withTabbar.withRunningInTauri.withMacOS {
+  .PrimarySidebar.hidden + .AppContent .SessionTabbar-macos-inset {
+    display: block;
+    flex: 0 0 var(--macos-traffic-lights-inset);
   }
 }
 

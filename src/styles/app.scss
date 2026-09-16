@@ -1,9 +1,23 @@
 body {
-  font-smooth: antialiased;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  // No `-webkit-font-smoothing: antialiased` on purpose. It turns off subpixel
+  // rendering on macOS, which thins every stroke — the usual cause of Inter
+  // looking weak at 13px, especially light-on-dark. The default is heavier and
+  // reads more solidly.
   text-rendering: optimizeLegibility;
   font-synthesis: none;
+
+  // Verified against the bundled Inter 3.019 rather than from memory:
+  //   ss02 → disambiguation; serifed capital `I`, tailed `l`, and friends,
+  //          so I/l/1 stop collapsing into each other.
+  //   ss01 → alternate digits; flat-top 3, open 4/6/9.
+  //   calt → contextual alternates.
+  // cv11 is deliberately NOT here: it swaps in the single-storey `a`, which
+  // reads closer to `o` and costs more clarity than it gains.
+  font-feature-settings: "ss02" 1, "ss01" 1, "calt" 1;
+
+  // Digits share one advance width, so numbers in tables and the statusbar
+  // stop shifting as they change.
+  font-variant-numeric: tabular-nums;
 }
 
 .AppRoot {
@@ -17,7 +31,7 @@ body {
 
   font-family: var(--font-family);
   font-size: var(--font-size);
-  line-height: 24px;
+  line-height: var(--line-height);
   font-weight: var(--font-weight);
 
   * {
@@ -36,7 +50,7 @@ body {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: var(--background-main);
+  background-color: var(--background-color-main);
   position: relative
 }
 
@@ -46,5 +60,5 @@ body {
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  background-color: var(--background-content)
+  background-color: var(--background-color-content)
 }

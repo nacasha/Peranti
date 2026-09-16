@@ -2,7 +2,9 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background: var(--background-main);
+  // Was `--background-main`, which no theme declares — the window had no
+  // background of its own until this matched the theme variable.
+  background: var(--background-color-main);
 }
 
 body {
@@ -10,7 +12,8 @@ body {
   color: var(--text-color);
 }
 
-input, text, select, option {
+input, text, select, option, textarea, button {
+  font-family: inherit;
   color: var(--text-color);
 }
 
@@ -24,10 +27,14 @@ input[type=number] {
   appearance: textfield;
 }
 
+::selection {
+  background: color-mix(in srgb, var(--color-primary), transparent 70%);
+}
+
 :root {
   ::-webkit-scrollbar {
-    width: 7px;
-    height: 7px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
@@ -37,9 +44,18 @@ input[type=number] {
   ::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb-background-color);
     border-radius: var(--scrollbar-thumb-border-radius);
+    // Padding drawn with a transparent border, so the thumb reads as a
+    // floating pill rather than filling the gutter edge to edge.
+    border: 2px solid transparent;
+    background-clip: content-box;
   }
 
   ::-webkit-scrollbar-thumb:hover {
     background: var(--scrollbar-thumb-background-color-hover);
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
   }
 }

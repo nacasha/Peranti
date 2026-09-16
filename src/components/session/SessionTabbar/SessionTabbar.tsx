@@ -122,6 +122,11 @@ export const SessionTabbar: FC = () => {
       <div className="SessionTabbar-border-bottom" data-tauri-drag-region />
 
       <div className="SessionTabbar-inner">
+        {/* Only takes up space once the sidebar collapses and the tabbar
+            becomes the leftmost thing under the macOS traffic lights.
+            Sized entirely from CSS (see SessionTabbar.scss). */}
+        <div className="SessionTabbar-macos-inset" data-tauri-drag-region />
+
         <TabbarActions />
 
         <div className="SessionTabbar-inner-body" data-tauri-drag-region>

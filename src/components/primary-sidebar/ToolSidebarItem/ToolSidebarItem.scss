@@ -1,11 +1,16 @@
 .ToolSidebarItem {
-  padding: 4px 13px;
+  padding: 4px 9px;
+  // Inset from the panel edge so hover reads as a rounded row rather than a
+  // full-bleed band running into the sidebar border.
+  margin: 1px 6px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   user-select: none;
   display: flex;
   gap: 7px;
   align-items: center;
   color: var(--tool-sidebar-text-color);
+  transition: background-color var(--animation-speed), color var(--animation-speed);
 
   &:hover {
     background: var(--tool-sidebar-background-color-hover)

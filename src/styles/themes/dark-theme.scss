@@ -1,76 +1,137 @@
 body.dark {
-  --border-color: #2a2a2a;
-  --text-color: #e0e0e0;
-  --icon-color-filter: invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%);
+  // ───────────────────────────────────────────────────────────────
+  // Surfaces
+  // ───────────────────────────────────────────────────────────────
+  // Four steps of elevation. Separation comes from these steps first and
+  // borders second, which is what lets the borders stay nearly invisible.
+  --bg-base: #16171a;     // window chrome: titlebar, activity bar, sidebars, statusbar
+  --bg-surface: #1c1d21;  // main content
+  --bg-raised: #232529;   // dialogs, menus, tooltips — things that float
+  --bg-sunken: #121316;   // input wells
+
+  // ───────────────────────────────────────────────────────────────
+  // Borders
+  // ───────────────────────────────────────────────────────────────
+  // Translucent, so a border picks up whatever surface it sits on instead of
+  // being a fixed grey that only looks right on one background.
+  --border-subtle: rgba(255, 255, 255, 0.06);   // panel separators
+  --border-default: rgba(255, 255, 255, 0.10);  // control outlines
+  --border-strong: rgba(255, 255, 255, 0.16);   // hover / emphasis
+
+  --border-color: var(--border-subtle);
+
+  // ───────────────────────────────────────────────────────────────
+  // Elevation
+  // ───────────────────────────────────────────────────────────────
+  // Dark surfaces swallow shadow, so these run roughly 2x the light values.
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.30), 0 1px 1px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.40), 0 1px 3px rgba(0, 0, 0, 0.30);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.35);
+
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 75%);
+
+  // ───────────────────────────────────────────────────────────────
+  // Text
+  // ───────────────────────────────────────────────────────────────
+  --text-color: #ececee;
+  // Kept close to the body colour on purpose — "secondary" should still be
+  // comfortably readable, not greyed out to the edge of legibility.
+  --text-muted: #b3b4ba;
+  --text-subtle: #8b8d94;
   --opposite-color: #ffffff;
-  --app-titlebar-background-color: #1a1b1d;
+  --icon-color-filter: invert(90%) sepia(6%) saturate(178%) hue-rotate(187deg) brightness(94%) contrast(88%);
 
-  // Button
-  --button-background-color: #181818;
-  --button-background-color-hover: #26282a;
-  --button-background-color-active: #2a2b2d;
-  --button-border-color: #3e3e3e;
-  --button-border-color-hover: #3e3e3e;
-  --button-border-color-active: #3e3e3e;
+  // ───────────────────────────────────────────────────────────────
+  // Application chrome
+  // ───────────────────────────────────────────────────────────────
+  --app-titlebar-background-color: var(--bg-base);
 
-  --background-color-main: #1a1b1d;
-  --background-color-content: #222429;
+  --background-color-main: var(--bg-base);
+  --background-color-content: var(--bg-surface);
 
-  --activitybar-background-color: #181818;
-  --activitybar-item-background-color-hover: #5a5b5e;
-  --activitybar-item-background-color-active: #434549;
+  --activitybar-background-color: var(--bg-base);
+  --activitybar-item-background-color-hover: rgba(255, 255, 255, 0.07);
+  --activitybar-item-background-color-active: rgba(255, 255, 255, 0.11);
 
-  --primary-sidebar-background-color: #1a1b1d;
+  --primary-sidebar-background-color: var(--bg-base);
 
-  // Secondary Sidebar
-  --secondary-sidebar-background-color: #1a1b1d;
-  --secondary-sidebar-item-background-color-hover: #2a2b2d;
+  --secondary-sidebar-background-color: var(--bg-base);
+  --secondary-sidebar-item-background-color-hover: rgba(255, 255, 255, 0.05);
 
-  --bottom-panel-background-color: #181818;
+  --bottom-panel-background-color: var(--bg-base);
 
-  --statusbar-background-color: #181818;
-  --statusbar-item-background-color-hover: #272727;
+  --statusbar-background-color: var(--bg-base);
+  --statusbar-item-background-color-hover: rgba(255, 255, 255, 0.07);
 
-  --input-output-background-color: #292a30;
-  --input-output-border-color: #353535;
-  --input-output-border-color-hover: var(--input-output-border-color);
-  --input-output-border-color-active: var(--input-output-border-color);
+  --applet-header-background-color: var(--bg-base);
+  --applet-viewer-background-color: var(--bg-surface);
 
-  --session-tabbar-background-color: #1a1b1d;
-  --session-tabbar-color: #1a1b1d;
-  --session-tabbar-color-hover: #1f2022;
-  --session-tabbar-text-color: #939393;
-  --session-tabbar-text-color-active: white;
+  // ───────────────────────────────────────────────────────────────
+  // Controls
+  // ───────────────────────────────────────────────────────────────
+  --button-background-color: rgba(255, 255, 255, 0.04);
+  --button-background-color-hover: rgba(255, 255, 255, 0.08);
+  --button-background-color-active: rgba(255, 255, 255, 0.12);
+  --button-border-color: var(--border-default);
+  --button-border-color-hover: var(--border-strong);
+  --button-border-color-active: var(--border-strong);
 
-  --applet-header-background-color: #181818;
-  --applet-viewer-background-color: #1e1f22;
+  --input-output-background-color: var(--bg-sunken);
+  --input-output-text-color: var(--text-color);
+  --input-output-border-color: var(--border-default);
+  --input-output-border-color-hover: var(--border-strong);
+  --input-output-border-color-active: var(--color-primary);
 
+  // ───────────────────────────────────────────────────────────────
+  // Session tabbar
+  // ───────────────────────────────────────────────────────────────
+  --session-tabbar-background-color: var(--bg-base);
+  --session-tabbar-color: transparent;
+  --session-tabbar-color-hover: rgba(255, 255, 255, 0.04);
+  --session-tabbar-text-color: var(--text-muted);
+  --session-tabbar-text-color-active: #ffffff;
+
+  // ───────────────────────────────────────────────────────────────
   // Tool sidebar
+  // ───────────────────────────────────────────────────────────────
   --tool-sidebar-text-color: #cfcfcf;
   --tool-sidebar-text-color-active: #ffffff;
   --tool-sidebar-icon-color: invert(99%) sepia(3%) saturate(156%) hue-rotate(232deg) brightness(106%) contrast(62%);
   --tool-sidebar-icon-color-active: invert(98%) sepia(1%) saturate(321%) hue-rotate(234deg) brightness(116%) contrast(100%);
-  --tool-sidebar-background-color-hover: #2a2b2d;
-  --tool-sidebar-background-color-active: #2e2e33;
+  --tool-sidebar-background-color-hover: rgba(255, 255, 255, 0.05);
+  --tool-sidebar-background-color-active: rgba(255, 255, 255, 0.09);
 
-  // Settings view
-  --settings-background-color: #202124;
-  --settings-card-background-color: #202124;
+  // ───────────────────────────────────────────────────────────────
+  // Settings
+  // ───────────────────────────────────────────────────────────────
+  --settings-background-color: var(--bg-surface);
+  --settings-card-background-color: var(--bg-raised);
 
+  // ───────────────────────────────────────────────────────────────
   // Scrollbar
+  // ───────────────────────────────────────────────────────────────
   --scrollbar-track-background-color: transparent;
-  --scrollbar-thumb-background-color: #393a3f;
-  --scrollbar-thumb-background-color-hover: #555;
+  --scrollbar-thumb-background-color: rgba(255, 255, 255, 0.14);
+  --scrollbar-thumb-background-color-hover: rgba(255, 255, 255, 0.26);
   --scrollbar-thumb-border-radius: 4px;
 
-  // Tooltip
+  // ───────────────────────────────────────────────────────────────
+  // Overlays
+  // ───────────────────────────────────────────────────────────────
   --tooltip-text-color: var(--text-color);
-  --tooltip-background-color: #1e1f22;
-  --tooltip-border-color: #454545;
+  --tooltip-background-color: var(--bg-raised);
+  --tooltip-border-color: var(--border-default);
 
-  // Dialog
+  --menu-background-color: var(--bg-raised);
+  --menu-border-color: var(--border-default);
+  --menu-item-text-color: var(--text-color);
+  --menu-item-background-color-hover: rgba(255, 255, 255, 0.08);
+  --menu-item-text-color-hover: #ffffff;
+
   --dialog-header-background-color: var(--dialog-content-background-color);
-  --dialog-content-background-color: #1a1b1d;
+  --dialog-content-background-color: var(--bg-raised);
   --dialog-footer-background-color: var(--dialog-content-background-color);
-  --dialog-overlay-color: rgba(0, 0, 0, 0.8);
+  --dialog-overlay-color: rgba(0, 0, 0, 0.65);
+  // Dialog.scss reads the `-background-color` spelling; keep both in sync.
+  --dialog-overlay-background-color: var(--dialog-overlay-color);
 }

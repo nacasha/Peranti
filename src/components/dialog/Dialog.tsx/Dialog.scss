@@ -16,6 +16,7 @@
 
   .DialogOverlay {
     background-color: var(--dialog-overlay-background-color);
+    backdrop-filter: blur(3px);
     position: absolute;
     inset: 0;
     z-index: 0;
@@ -24,17 +25,19 @@
   .Dialog {
     z-index: 1;
     margin: auto;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-default);
+    box-shadow: var(--shadow-lg);
     background-color: var(--dialog-content-background-color);
     width: 100%;
     max-width: 400px;
     height: auto;
-    transform: translateY(10px);
-    transition: all var(--animation-speed) ease-out;
+    overflow: hidden;
+    transform: translateY(10px) scale(0.98);
+    transition: transform var(--animation-speed) var(--ease-out), opacity var(--animation-speed) var(--ease-out);
 
     &.show {
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
     }
   }
 
@@ -42,8 +45,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 15px;
-    border-bottom: 1px solid var(--border-color);
+    padding: 14px 18px 10px;
+    font-weight: var(--font-weight-semibold);
     background-color: var(--dialog-header-background-color);
   }
 
@@ -51,7 +54,7 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-    padding: 15px;
+    padding: 4px 18px 18px;
     max-height: 75vh;
     overflow: auto;
     background-color: var(--dialog-content-background-color);
@@ -62,7 +65,7 @@
     flex-direction: column;
     align-items: end;
     gap: 15px;
-    padding: 15px;
+    padding: 0 18px 18px;
     background-color: var(--dialog-footer-background-color);
   }
 }

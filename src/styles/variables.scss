@@ -1,12 +1,35 @@
 body {
-  // Fonts
-  --font-family: "InterApp", -apple-system, BlinkMacSystemFont;
-  --font-family-mono: "JetBrains Mono";
-  --font-size: 13px;
-  --font-weight: 400;
+  // ───────────────────────────────────────────────────────────────
+  // Typography
+  // ───────────────────────────────────────────────────────────────
+  // "InterApp" is the self-hosted Inter in styles/fonts/inter-font.scss, so
+  // the app renders in Inter even on machines that have never installed it.
+  // The rest of the stack only matters if those files fail to load.
+  --font-family: "InterApp", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-family-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
-  // Colors
-  --color-primary: #275efe;
+  --font-size: 13px;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-lg: 15px;
+  --font-size-xl: 20px;
+
+  --font-weight: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  // Unitless so it tracks font-size instead of locking every row to 24px.
+  --line-height: 1.6;
+  --line-height-tight: 1.4;
+
+  // No global negative tracking. Inter is already optically spaced for UI
+  // sizes; tightening it only closes up the counters and costs legibility.
+  // Display-size headings set their own where it actually helps.
+
+  // ───────────────────────────────────────────────────────────────
+  // Accent
+  // ───────────────────────────────────────────────────────────────
+  --color-primary: #3b82f6;
   --color-primary-light20: color-mix(in srgb, var(--color-primary), #ffffff 20%);
   --color-primary-light40: color-mix(in srgb, var(--color-primary), #ffffff 40%);
   --color-primary-light60: color-mix(in srgb, var(--color-primary), #ffffff 60%);
@@ -16,10 +39,41 @@ body {
   --color-primary-dark60: color-mix(in srgb, var(--color-primary), #000000 60%);
   --color-primary-dark80: color-mix(in srgb, var(--color-primary), #000000 80%);
 
-  // General
-  --border-radius: 3px;
+  // Alias kept for components that reached for an accent colour that was
+  // never actually declared (Button.scss `.active`).
+  --color-accent: var(--color-primary);
 
+  // ───────────────────────────────────────────────────────────────
+  // Radius
+  // ───────────────────────────────────────────────────────────────
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+
+  // Legacy alias — every existing `var(--border-radius)` call site moves
+  // from 3px to 6px through this one line.
+  --border-radius: var(--radius-md);
+
+  // ───────────────────────────────────────────────────────────────
+  // Spacing
+  // ───────────────────────────────────────────────────────────────
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+
+  // ───────────────────────────────────────────────────────────────
+  // Motion
+  // ───────────────────────────────────────────────────────────────
+  --animation-speed: 0.15s;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  // ───────────────────────────────────────────────────────────────
   // App Titlebar
+  // ───────────────────────────────────────────────────────────────
   --app-titlebar-height: 37px;
 
   // Window control buttons
@@ -29,13 +83,16 @@ body {
   // Tool
   --applet-header-height: 60px;
 
+  // Width the macOS traffic lights need reserved at the top-left. Whichever
+  // element is leftmost on the top row has to carry this: the titlebar in
+  // Titlebar mode, the sidebar header in Tabbar mode, or the tabbar itself
+  // once the sidebar collapses.
+  --macos-traffic-lights-inset: 78px;
+
   // Session tabbar
   --session-tabbar-height: 37px;
   --session-tabbar-item-max-width: 200px;
   --session-tabbar-draggable-height: 0px;
-
-  // Animations
-  --animation-speed: 0.15s;
 
   // Sidebar
   --activitybar-width: 50px;
@@ -49,9 +106,12 @@ body {
   --input-output-padding: 7px;
   --input-output-font-size: 13px;
 
-  --contexify-menu-shadow: none;
+  // ───────────────────────────────────────────────────────────────
+  // Context menu (contexify)
+  // ───────────────────────────────────────────────────────────────
+  --contexify-menu-shadow: var(--shadow-md);
   --contexify-menu-min-width: 250px;
   --contexify-menu-padding: 5px;
-  --contexify-menu-radius: var(--border-radius);
-  --contexify-item-content-padding: 5px 10px;
+  --contexify-menu-radius: var(--radius-lg);
+  --contexify-item-content-padding: 6px 10px;
 }

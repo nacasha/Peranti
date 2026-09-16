@@ -12,7 +12,9 @@
   word-break: keep-all;
   white-space: nowrap;
   gap: 7px;
-  line-height: 1.35;
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-medium);
+  transition: background-color var(--animation-speed), border-color var(--animation-speed), box-shadow var(--animation-speed);
 
   &:hover {
     cursor: pointer;
@@ -23,6 +25,11 @@
   &:active {
     border-color: var(--button-border-color-active);
     background: var(--button-background-color-active);
+  }
+
+  &:focus-visible {
+    border-color: var(--color-primary);
+    box-shadow: var(--focus-ring);
   }
 
   &.active {

@@ -11,5 +11,5 @@
 // Leave room for the system traffic lights, which macOS draws on top of the
 // titlebar area when the window uses the "Overlay" title bar style.
 .AppRoot.withRunningInTauri.withMacOS .AppTitlebar {
-  padding-left: 78px;
+  padding-left: var(--macos-traffic-lights-inset);
 }

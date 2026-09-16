@@ -3,8 +3,9 @@
   max-width: 700px;
 
   .SettingsCard-title {
-    font-weight: 600;
-    font-size: 20px;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-xl);
+    letter-spacing: -0.01em;
     margin-bottom: 15px;
     margin-left: 5px;
   }
@@ -12,7 +13,9 @@
   .SettingsCard-body {
     background-color: var(--settings-card-background-color);
     border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
   }
 }
 
@@ -24,13 +27,17 @@
   align-items: center;
   border-bottom: 1px solid var(--border-color);
 
+  &:last-child {
+    border-bottom: none;
+  }
+
   .SettingsCardItem-text {
     display: flex;
     flex-direction: column;
   }
 
   .SettingsCardItem-description {
-    opacity: 0.8;
+    color: var(--text-muted);
   }
 
   .SettingsCardItem-value {

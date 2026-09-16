@@ -1,16 +1,25 @@
 .rc-tooltip {
   pointer-events: none;
   opacity: 1;
-  background-color: var(--tooltip-background-color);
+  background-color: transparent;
+}
+
+// rc-tooltip's bootstrap_white stylesheet builds the arrow from two hardcoded
+// white triangles, which never tracked the dark theme. Dropping it entirely.
+.rc-tooltip-arrow,
+.rc-tooltip-arrow-inner {
+  display: none;
 }
 
 .rc-tooltip-inner {
   min-height: auto;
   user-select: none;
-  font-size: 13px;
-  padding: 5px 7px;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-tight);
+  padding: 5px 9px;
   color: var(--tooltip-text-color);
   border: 1px solid var(--tooltip-border-color);
-  border-radius: var(--border-radius);
-  background-color: unset;
+  border-radius: var(--radius-md);
+  background-color: var(--tooltip-background-color);
+  box-shadow: var(--shadow-md);
 }

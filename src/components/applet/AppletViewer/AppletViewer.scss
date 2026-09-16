@@ -51,9 +51,11 @@ $sidebar-width: 180px;
       border-radius: var(--border-radius);
       user-select: none;
       cursor: pointer;
+      transition: background-color var(--animation-speed);
 
+      // Was a hardcoded #fcfcfc, which read as a near-white flash in dark mode.
       &:hover {
-        background-color: #fcfcfc;
+        background-color: var(--button-background-color-hover);
       }
     }
   }

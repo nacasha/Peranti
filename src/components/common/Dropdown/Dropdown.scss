@@ -10,9 +10,11 @@
   padding: var(--input-output-padding);
   padding-inline: 10px;
   min-width: 120px;
+  transition: border-color var(--animation-speed), background-color var(--animation-speed);
 
   &:hover {
     cursor: pointer;
+    border-color: var(--input-output-border-color-hover);
   }
 
   img {
@@ -23,7 +25,7 @@
 
 .DropdownMenu {
   .contexify_item.selected > .contexify_itemContent {
-    background-color: var(--button-background-color-active);
-    border-radius: var(--border-radius);
+    background-color: var(--menu-item-background-color-hover);
+    border-radius: var(--radius-sm);
   }
 }

@@ -19,7 +19,7 @@
     left: 0;
     top: 0;
     bottom: 0;
-    box-shadow: 0 0 4px -1px rgba(0,0,0,0.3);
+    box-shadow: var(--shadow-lg);
     z-index: 3;
 
     &.hidden {
@@ -35,8 +35,11 @@
 }
 
 .PrimarySidebar-title {
-  font-size: 14px;
-  font-weight: 600;
+  // Reverted from the 12px uppercase micro-label — it looked tidy but tiny
+  // caps at 12px are among the least legible things you can put in a sidebar.
+  font-size: var(--font-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color);
   position: sticky;
   background-color: var(--primary-sidebar-background-color);
   top: 0;
@@ -52,6 +55,6 @@
 
 .AppRoot.withTabbar.withRunningInTauri.withMacOS {
   .PrimarySidebar-title {
-    padding-left: 80px;
+    padding-left: var(--macos-traffic-lights-inset);
   }
 }
