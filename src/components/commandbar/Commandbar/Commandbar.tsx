@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import { Command } from "cmdk"
 import Fuse from "fuse.js"
-import { useState, type FC, useMemo, useEffect, useLayoutEffect } from "react"
+import { useState, type FC, useMemo, useEffect, useLayoutEffect, useRef } from "react"
 
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { useSelector } from "src/hooks/useSelector"
@@ -48,6 +48,23 @@ export const Commandbar: FC = () => {
 
   const [open, setOpen] = useState(false)
 
+  const listRef = useRef<HTMLDivElement>(null)
+  const [selectedValue, setSelectedValue] = useState("")
+
+  /**
+   * Results are filtered outside of cmdk (`shouldFilter={false}`), so cmdk cannot tell
+   * that the list changed: it keeps the previously selected item and scrolls it back
+   * into view, leaving the list parked in the middle. Re-select the first result and
+   * pin the list to the top on every new search instead.
+   */
+  useLayoutEffect(() => {
+    setSelectedValue(filteredItems[0]?.item.key ?? "")
+
+    if (listRef.current) {
+      listRef.current.scrollTop = 0
+    }
+  }, [filteredItems])
+
   useLayoutEffect(() => {
     if (!isOpen) {
       setOpen(isOpen)
@@ -63,10 +80,12 @@ export const Commandbar: FC = () => {
       open={isOpen}
       onOpenChange={handleChange}
       shouldFilter={false}
+      value={selectedValue}
+      onValueChange={setSelectedValue}
       className={clsx({ open })}
     >
       <Command.Input autoFocus value={searchKeyword} onValueChange={setSearchKeyword} />
-      <Command.List>
+      <Command.List ref={listRef}>
         <Command.Empty>No results found.</Command.Empty>
         {filteredItems.map((item) => {
           const { key, label, description, shortcut } = item.item

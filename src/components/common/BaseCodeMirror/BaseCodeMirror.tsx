@@ -73,7 +73,7 @@ const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => 
     ...codeMirrorProps
   } = props
 
-  const isDarkMode = useSelector(() => interfaceStore.theme === Theme.Dark)
+  const isDarkMode = useSelector(() => interfaceStore.resolvedTheme === Theme.Dark)
   const textAreaWordWrapEnabled = useSelector(() => interfaceStore.textAreaWordWrap)
 
   const editorComponentRef = useRef<ReactCodeMirrorRef>(null)

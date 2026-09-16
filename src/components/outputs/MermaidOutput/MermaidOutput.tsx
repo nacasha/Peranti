@@ -52,7 +52,7 @@ export const MermaidOutput: FC<MermaidOutputProps> = (props) => {
   useEffect(() => {
     mermaid.mermaidAPI.initialize({
       securityLevel: "loose",
-      theme: interfaceStore.theme === Theme.Dark ? "dark" : "default"
+      theme: interfaceStore.resolvedTheme === Theme.Dark ? "dark" : "default"
     })
 
     setMermaidSyntax(value.concat(" "))

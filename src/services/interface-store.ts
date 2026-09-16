@@ -6,8 +6,9 @@ import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
 import { StorageKeys } from "src/constants/storage-keys"
 import { AppTitleBarStyle as AppTitlebarStyle } from "src/enums/app-titlebar-style"
 import { SidebarMode } from "src/enums/sidebar-mode"
-import { Theme } from "src/enums/theme-2.js"
+import { type ResolvedTheme, Theme } from "src/enums/theme-2.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
+import { getSystemTheme, resolveTheme, watchSystemTheme } from "src/utils/get-system-theme"
 import { getWindowSize } from "src/utils/get-window-size"
 
 import { globalStyles } from "./global-styles.js"
@@ -16,10 +17,16 @@ import { userSettingsService } from "./user-settings-service.js"
 class InterfaceStore {
   /**
    * User theme preference
-   * Dark or Light
+   * Dark, Light, or System (follows the operating system color scheme)
    */
   @userSettingsService.watch(UserSettingsKeys.theme)
   theme: Theme = userSettingsService.get(UserSettingsKeys.theme, Theme.Dark)
+
+  /**
+   * Current operating system color scheme, kept in sync with `prefers-color-scheme`.
+   * Only used when the preference is `Theme.System`.
+   */
+  systemTheme: ResolvedTheme = getSystemTheme()
 
   /**
    * Sidebar view mode
@@ -92,6 +99,8 @@ class InterfaceStore {
     this.recalculateWindowSize()
     this.setupPersistence()
     userSettingsService.watchStore(this)
+
+    watchSystemTheme((theme) => { this.setSystemTheme(theme) })
   }
 
   /**
@@ -143,8 +152,12 @@ class InterfaceStore {
     this.sidebarActiveMenuId = menuId
   }
 
-  setTheme(theme: any) {
+  setTheme(theme: Theme) {
     this.theme = theme
+  }
+
+  setSystemTheme(theme: ResolvedTheme) {
+    this.systemTheme = theme
   }
 
   setAppTitlebarStyle(style: AppTitlebarStyle) {
@@ -169,8 +182,16 @@ class InterfaceStore {
     globalStyles.setVariable(GlobalStyleVariables.editorFontSize, `${newEditorFontSize}px`)
   }
 
+  /**
+   * Theme applied to the interface, with `Theme.System` resolved to the
+   * current operating system color scheme.
+   */
+  get resolvedTheme(): ResolvedTheme {
+    return resolveTheme(this.theme, this.systemTheme)
+  }
+
   get isDarkTheme() {
-    return this.theme === Theme.Dark
+    return this.resolvedTheme === Theme.Dark
   }
 }
 

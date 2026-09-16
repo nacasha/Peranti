@@ -8,13 +8,14 @@ export const ThemeSelect: FC = () => {
   const { theme } = interfaceStore
 
   const onChange = (value: string) => {
-    interfaceStore.setTheme(value)
+    interfaceStore.setTheme(value as Theme)
   }
 
   return (
     <Dropdown
       defaultValue={theme}
       options={[
+        { label: "System", value: Theme.System },
         { label: "Dark", value: Theme.Dark },
         { label: "Light", value: Theme.Light }
       ]}

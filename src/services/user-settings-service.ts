@@ -1,9 +1,11 @@
 import { makeAutoObservable, reaction } from "mobx"
 
 import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
+import { type Theme } from "src/enums/theme-2.js"
 import { UserSettingsDefault } from "src/enums/user-settings-default.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { appDataService } from "src/services/app-data-service"
+import { resolveTheme } from "src/utils/get-system-theme"
 
 import { globalStyles } from "./global-styles.js"
 
@@ -43,9 +45,12 @@ class UserSettingsService {
     this.values = Object.assign(this.values, rawUserSettings)
 
     /**
-     * Set application theme
+     * Set application theme, resolving `Theme.System` against the operating system
+     * color scheme so the first paint already matches the final theme
      */
-    window.document.body.className = (rawUserSettings[UserSettingsKeys.theme] ?? UserSettingsDefault[UserSettingsKeys.theme]).toString()
+    window.document.body.className = resolveTheme(
+      (rawUserSettings[UserSettingsKeys.theme] ?? UserSettingsDefault[UserSettingsKeys.theme]) as Theme
+    )
 
     /**
      * Set editor font family on load user settings

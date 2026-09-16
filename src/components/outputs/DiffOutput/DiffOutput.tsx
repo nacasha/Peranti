@@ -36,7 +36,7 @@ export const DiffOutput: FC<DiffOutputProps> = observer((props) => {
           rightTitle={rightTitle}
           splitView={splitView}
           showDiffOnly={false}
-          useDarkTheme={interfaceStore.theme === Theme.Dark}
+          useDarkTheme={interfaceStore.resolvedTheme === Theme.Dark}
           styles={{
             variables: {
               dark: {

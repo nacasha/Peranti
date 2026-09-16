@@ -93,7 +93,7 @@ export const DataGridOutput: FC<DataGridOutputProps> = (props) => {
   const [data, setData] = useState<any[]>([])
   const [columns, setColumns] = useState<any[]>([])
 
-  const theme = useSelector(() => interfaceStore.theme)
+  const theme = useSelector(() => interfaceStore.resolvedTheme)
 
   const getData = useCallback<DataEditorProps["getCellContent"]>(
     ([col, row]) => {
