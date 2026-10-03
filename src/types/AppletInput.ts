@@ -40,6 +40,9 @@ export type AppletInput<K extends Record<string, string> | any = any> = {
   component: "File"
   props?: ExtractInputComponentProps<typeof appletComponentService.inputs.File>
 } | {
+  component: "Files"
+  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Files>
+} | {
   component: "Code"
   props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Code>
 } | {

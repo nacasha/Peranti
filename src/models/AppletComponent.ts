@@ -21,7 +21,7 @@ export class AppletComponent<T = any, B = any> {
 
   readonly pasteFrom?: "text"
 
-  readonly readFileAs?: "text" | "file"
+  readonly readFileAs?: "text" | "file" | "files"
 
   constructor(options: {
     component: T
@@ -29,7 +29,7 @@ export class AppletComponent<T = any, B = any> {
     copyAs?: "text" | "file" | "image"
     saveAs?: "text" | "image"
     pasteFrom?: "text"
-    readFileAs?: "text" | "file"
+    readFileAs?: "text" | "file" | "files"
   }) {
     this.component = options.component
     this.batchComponent = options.batchComponent

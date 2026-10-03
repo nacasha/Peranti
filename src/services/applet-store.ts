@@ -21,6 +21,7 @@ import hashTool from "src/applets/tools/hash-tool.ts"
 import { javascriptRunnerTool } from "src/applets/tools/javascript-runner-tool/javascript-runner-tool.ts"
 import jsonDiffTool from "src/applets/tools/json-diff-tool"
 import jsonFormatter from "src/applets/tools/json-formatter-tool.ts"
+import jsonMergeTool from "src/applets/tools/json-merge-tool.ts"
 import { jsonToCsvTool } from "src/applets/tools/json-to-csv-tool/json-to-csv-tool.ts"
 import { jsonToTomlTool } from "src/applets/tools/json-to-toml-tool/json-to-toml-tool.ts"
 import { jsonToYamlTool } from "src/applets/tools/json-to-yaml-tool/json-to-yaml-tool.ts"
@@ -74,6 +75,7 @@ class AppletStore {
     [generateUuidTool.appletId]: generateUuidTool,
     [generateRandomStringTool.appletId]: generateRandomStringTool,
     [jsonFormatter.appletId]: jsonFormatter,
+    [jsonMergeTool.appletId]: jsonMergeTool,
     [cronReadableTool.appletId]: cronReadableTool,
     [mathEvaluatorTool.appletId]: mathEvaluatorTool,
     [characterCounterTool.appletId]: characterCounterTool,

@@ -616,7 +616,9 @@ export class Applet<
   setInputValue(key: string, value: unknown, options: { markAsModified: boolean } = { markAsModified: true }) {
     const newInputValues = { ...this.inputValues, [key]: value }
 
-    const inputValuesHasChanged = value instanceof File
+    // File has no enumerable keys, so deep equal treats any two files as equal
+    const isFileValue = value instanceof File || (Array.isArray(value) && value.some((item) => item instanceof File))
+    const inputValuesHasChanged = isFileValue
       ? true
       : !fastDeepEqual(this.inputValues, newInputValues)
 

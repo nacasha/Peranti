@@ -5,7 +5,7 @@ import { RunInput } from "src/components/inputs/ButtonInput"
 import { CheckboxInput } from "src/components/inputs/CheckboxInput"
 import { CodeInput } from "src/components/inputs/CodeInput"
 import { ColorPickerInput } from "src/components/inputs/ColorPickerInput"
-import { FileInput } from "src/components/inputs/FileInput"
+import { FileInput, FilesInput } from "src/components/inputs/FileInput"
 import { SelectInput } from "src/components/inputs/SelectInput"
 import { SwitchInput } from "src/components/inputs/SwitchInput"
 import { TextAreaInput } from "src/components/inputs/TextAreaInput-2"
@@ -70,6 +70,11 @@ class AppletComponentService {
     File: new AppletComponent({
       component: FileInput,
       readFileAs: "file"
+    }),
+
+    Files: new AppletComponent({
+      component: FilesInput,
+      readFileAs: "files"
     }),
 
     Code: new AppletComponent({
@@ -234,13 +239,34 @@ class AppletComponentService {
       if (readFileAs === "text") {
         const fileContent = await fileService.readFileAsText(filePath)
         return convertCRLFtoLF(fileContent)
-      } else if (readFileAs === "file") {
+      } else if (readFileAs === "file" || readFileAs === "files") {
         const file = await fileService.readFileAsBinary(filePath)
         return createFileFromUint32Array(file, getFileNameFromPath(filePath))
       }
     } catch (exception) {
       toast.error(`Unable to read ${fileName} as ${readFileAs}`)
     }
+  }
+
+  /**
+   * Read several files at once. Components reading as "files" get every file
+   * as a single File[] value, other components only get the first file.
+   *
+   * @param component
+   * @param filePaths
+   * @returns
+   */
+  async readFilesFromComponent(component: AppletComponent, filePaths: string[]) {
+    if (component.readFileAs !== "files") {
+      return await this.readFileFromComponent(component, filePaths[0])
+    }
+
+    const files = await Promise.all(
+      filePaths.map(async(filePath) => await this.readFileFromComponent(component, filePath))
+    )
+    const readFiles = files.filter((file): file is File => file instanceof File)
+
+    return readFiles.length > 0 ? readFiles : undefined
   }
 
   /**
@@ -251,6 +277,16 @@ class AppletComponentService {
    * @returns
    */
   async openFileAndReadFromComponent(component: AppletComponent) {
+    if (component.readFileAs === "files") {
+      const selectedFilePaths = await open({ multiple: true })
+
+      if (selectedFilePaths && selectedFilePaths.length > 0) {
+        return await this.readFilesFromComponent(component, selectedFilePaths)
+      }
+
+      return
+    }
+
     const selectedFilePath = await open()
 
     // Since plugin-dialog v2 `open()` resolves to the path itself, not a file object

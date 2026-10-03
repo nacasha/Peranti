@@ -3,6 +3,7 @@ import toast from "react-hot-toast"
 
 import { FileDropAction } from "src/enums/file-drop-action.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
+import { type AppletComponent } from "src/models/AppletComponent.js"
 import { appletComponentService } from "src/services/applet-component-service.js"
 import { getDirectoryFromPath } from "src/utils/get-directory-from-path.js"
 import { getFileExtension } from "src/utils/get-file-extension.js"
@@ -104,7 +105,35 @@ class FileDropService {
     this.droppedFileDetails = []
   }
 
-  async readFileAndOpenSession(filePath: string, newSession: boolean = false) {
+  /**
+   * Groups the dropped paths by how they will be read: an input reading as
+   * "files" takes every path at once, other inputs take one path per session.
+   */
+  private getDroppedPathGroups(component?: AppletComponent) {
+    if (component?.readFileAs === "files") {
+      return [[...this.droppedFilePaths]]
+    }
+
+    return this.droppedFilePaths.map((filePath) => [filePath])
+  }
+
+  private getActiveAppletFileComponent() {
+    const activeApplet = activeAppletStore.getActiveApplet()
+
+    if (activeApplet.appletId === "") {
+      return
+    }
+
+    const [inputFields, isAvailableOnBatchMode] = activeApplet.getInputFieldsWithReadableFile()
+
+    if (inputFields.length === 0) {
+      return
+    }
+
+    return appletComponentService.getInputComponent(inputFields[0].component, isAvailableOnBatchMode)
+  }
+
+  async readFileAndOpenSession(filePaths: string[], newSession: boolean = false) {
     const activeApplet = activeAppletStore.getActiveApplet()
 
     if (activeApplet.appletId === "") {
@@ -121,10 +150,10 @@ class FileDropService {
 
     const { key: inputFieldKey, component } = inputFields[0]
     const inputComponent = appletComponentService.getInputComponent(component, isAvailableOnBatchMode)
-    const fileName = getFileNameFromPath(filePath)
+    const fileName = getFileNameFromPath(filePaths[0])
 
     try {
-      const fileContent = await appletComponentService.readFileFromComponent(inputComponent, filePath)
+      const fileContent = await appletComponentService.readFilesFromComponent(inputComponent, filePaths)
 
       if (fileContent) {
         const sessionName = this.droppedFileReplaceSessionName ? fileName : undefined
@@ -181,13 +210,13 @@ class FileDropService {
     }
 
     const inputComponent = appletComponentService.getInputComponent(target.component, target.isBatch)
-    const filePaths = [...this.droppedFilePaths]
+    const pathGroups = this.getDroppedPathGroups(inputComponent)
 
-    for (const filePath of filePaths) {
-      const fileName = getFileNameFromPath(filePath)
+    for (const filePaths of pathGroups) {
+      const fileName = getFileNameFromPath(filePaths[0])
 
       try {
-        const fileContent = await appletComponentService.readFileFromComponent(inputComponent, filePath)
+        const fileContent = await appletComponentService.readFilesFromComponent(inputComponent, filePaths)
 
         if (fileContent === undefined) {
           continue
@@ -224,27 +253,30 @@ class FileDropService {
   }
 
   async replaceCurrentSession() {
-    for (let index = 0; index < this.droppedFilePaths.length; index++) {
-      const filePath = this.droppedFilePaths[index]
-      await this.readFileAndOpenSession(filePath)
+    const pathGroups = this.getDroppedPathGroups(this.getActiveAppletFileComponent())
+
+    for (const filePaths of pathGroups) {
+      await this.readFileAndOpenSession(filePaths)
     }
 
     this.resetState()
   }
 
   async replaceCurrentSessionAndOpenNew() {
-    for (let index = 0; index < this.droppedFilePaths.length; index++) {
-      const filePath = this.droppedFilePaths[index]
-      await this.readFileAndOpenSession(filePath, index > 0)
+    const pathGroups = this.getDroppedPathGroups(this.getActiveAppletFileComponent())
+
+    for (let index = 0; index < pathGroups.length; index++) {
+      await this.readFileAndOpenSession(pathGroups[index], index > 0)
     }
 
     this.resetState()
   }
 
   async openInNewSession() {
-    for (let index = 0; index < this.droppedFilePaths.length; index++) {
-      const filePath = this.droppedFilePaths[index]
-      await this.readFileAndOpenSession(filePath, true)
+    const pathGroups = this.getDroppedPathGroups(this.getActiveAppletFileComponent())
+
+    for (const filePaths of pathGroups) {
+      await this.readFileAndOpenSession(filePaths, true)
     }
 
     this.resetState()

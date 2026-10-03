@@ -17,3 +17,27 @@
     border-color: var(--input-output-border-color-hover);
   }
 }
+
+.FileInputList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.FileInputListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.FileInputListItemName {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.FileInputListClear {
+  align-self: flex-start;
+}
