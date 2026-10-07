@@ -1,6 +1,7 @@
 body.light {
   --commandbar-background-color: var(--bg-raised);
-  --cmdk-shadow: var(--shadow-lg);
+  // Tight shadow: lifts the panel without a wide blur halo
+  --cmdk-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 6px 16px -6px rgba(0, 0, 0, 0.14);
 
   --lowContrast: #ffffff;
   --highContrast: #000000;
@@ -48,7 +49,7 @@ body.light {
 body.dark {
   --commandbar-background-color: var(--bg-raised);
   // Was declared only in body.light, so the dark command bar rendered flat.
-  --cmdk-shadow: var(--shadow-lg);
+  --cmdk-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 16px -6px rgba(0, 0, 0, 0.45);
 
   --lowContrast: #000000;
   --highContrast: #ffffff;
@@ -92,181 +93,188 @@ body.dark {
   --blue11: hsl(210, 100%, 66.1%);
   --blue12: hsl(206, 98%, 95.8%);
 }
-
-[cmdk-root] {
-  pointer-events: all;
-  border: 1px solid var(--line);
-  max-width: 640px;
-  max-height: 500px;
-  width: 100%;
-  height: 100%;
-  background: var(--commandbar-background-color);
-  border-radius: var(--radius-xl);
-  color: var(--text-color);
-  overflow: hidden;
-  box-shadow: var(--cmdk-shadow);
-  transition: transform 150ms var(--ease-out), opacity 150ms var(--ease-out);
-  outline: none;
-  display: flex;
-  flex-direction: column;
-  transform: translateY(10px) scale(0.98);
-  opacity: 0;
-  font-size: var(--font-size);
-}
-
-[cmdk-root].open {
-  transform: translateY(0px) scale(1);
-  opacity: 1;
-}
-
 [cmdk-dialog] {
   position: fixed;
   inset: 0;
   z-index: 100;
   display: flex;
-  padding: 40px;
+  // Anchored to the top, right where the titlebar search sits
+  padding: 6px 16px 40px;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   pointer-events: none !important;
 }
 
-[cmdk-input] {
-  border: none;
-  padding: 16px 18px;
+[cmdk-root] {
+  pointer-events: all;
+  border: 1px solid var(--line);
+  max-width: 600px;
+  max-height: min(600px, 100%);
+  width: 100%;
+  background: var(--commandbar-background-color);
+  border-radius: var(--radius-lg);
+  color: var(--text-color);
+  overflow: hidden;
+  box-shadow: var(--cmdk-shadow);
+  transition: transform 120ms var(--ease-out), opacity 120ms var(--ease-out);
   outline: none;
-  // `--bg` was never declared anywhere; transparent is what it resolved to.
+  display: flex;
+  flex-direction: column;
+  transform: translateY(-4px);
+  opacity: 0;
+  font-size: var(--font-size);
+}
+
+[cmdk-root].open {
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+.Commandbar-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  color: var(--faint);
+}
+
+[cmdk-input] {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  padding: 11px 0 9px;
+  outline: none;
   background: transparent;
   color: var(--text-color);
-  border-bottom: 1px solid var(--line);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size);
 
   &::placeholder {
     color: var(--faint);
   }
 }
 
-[cmdk-vercel-badge] {
-  height: 20px;
-  background: var(--grayA3);
-  display: inline-flex;
-  align-items: center;
-  padding: 0 8px;
-  color: var(--grayA11);
-  border-radius: var(--border-radius);
-  margin: 4px 0 4px 4px;
-  user-select: none;
-  text-transform: capitalize;
-  font-weight: 500;
-}
-
-[cmdk-item] {
-  content-visibility: auto;
-  cursor: pointer;
-  border-radius: var(--radius-md);
+.Commandbar-filters {
   display: flex;
   align-items: center;
-  padding: 10px;
-  user-select: none;
-  will-change: background, color;
-  transition: all 150ms ease;
-  transition-property: none;
-  margin: 1px 8px;
-  justify-content: space-between;
+  gap: 2px;
+  padding: 0 8px 8px;
+  border-bottom: 1px solid var(--line);
+}
 
-  .text {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: 3px;
+.Commandbar-filter {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
 
-    .title {
-      font-weight: 500;
-    }
-
-    .description {
-      color: var(--muted);
-      font-size: 12px;
-    }
-  }
-
-  &[data-selected='true'] {
-    background: var(--accent-soft);
-    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 45%, transparent);
+  &:hover {
     color: var(--text-color);
   }
 
-  &[data-disabled='true'] {
-    color: var(--gray8);
-    cursor: not-allowed;
+  &.active {
+    color: var(--text-color);
+    background: color-mix(in oklch, var(--text-color) 8%, transparent);
   }
+}
 
-  &:active {
-    transition-property: background;
-    background: var(--gray4);
-  }
+.Commandbar-filters-hint {
+  margin-left: auto;
+  padding-right: 4px;
+  color: var(--faint);
+  font-size: 11px;
 
-  & + [cmdk-item] {
-    margin-top: 4px;
-  }
-
-  svg {
-    width: 18px;
-    height: 18px;
+  kbd {
+    font-family: inherit;
+    font-size: 10px;
+    padding: 0 4px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
   }
 }
 
 [cmdk-list] {
   overflow: auto;
   overscroll-behavior: contain;
-  transition: 100ms ease;
-  transition-property: height;
-  padding: 7px 0;
+  padding: 4px 6px 6px;
 }
 
-[cmdk-vercel-shortcuts] {
-  display: flex;
-  margin-left: auto;
-  gap: 8px;
+[cmdk-group] {
+  position: relative;
+  padding: 2px 0;
 
-  kbd {
-    min-width: 20px;
-    padding: 4px;
-    height: 20px;
-    border-radius: var(--border-radius);
-    font-family: var(--font-family-mono);
-    font-size: 10.5px;
-    color: var(--muted);
-    border: 1px solid var(--line);
-    background: var(--raised);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-transform: uppercase;
+  & + [cmdk-group] {
+    margin-top: 4px;
   }
 }
 
-[cmdk-separator] {
-  height: 1px;
-  width: 100%;
-  background: var(--gray5);
-  margin: 4px 0;
-}
-
-*:not([hidden]) + [cmdk-group] {
-  margin-top: 8px;
-}
-
+// Group name sits on the right of the group's first row
 [cmdk-group-heading] {
-  user-select: none;
-  color: var(--faint);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 0 10px;
+  position: absolute;
+  top: 2px;
+  right: 10px;
+  height: 28px;
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  user-select: none;
+  pointer-events: none;
+  color: var(--faint);
+  font-size: 11px;
+}
+
+[cmdk-group-items] > [cmdk-item]:first-child {
+  padding-right: 90px;
+}
+
+[cmdk-item] {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+
+  &[data-selected='true'] {
+    background: color-mix(in oklch, var(--text-color) 7%, transparent);
+  }
+
+  &[data-disabled='true'] {
+    color: var(--gray8);
+    cursor: not-allowed;
+  }
+}
+
+.Commandbar-dot {
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  margin: 0 2px;
+  border-radius: 50%;
+  background: var(--faint);
+}
+
+.Commandbar-label {
+  flex-shrink: 0;
+}
+
+.Commandbar-meta {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--faint);
+  font-size: var(--font-size-sm);
+}
+
+.Commandbar-excerpt {
+  font-family: var(--font-family-mono);
 }
 
 [cmdk-empty] {
@@ -274,6 +282,5 @@ body.dark {
   align-items: center;
   justify-content: center;
   height: 48px;
-  white-space: pre-wrap;
-  color: var(--gray11);
+  color: var(--muted);
 }

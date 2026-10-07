@@ -7,16 +7,16 @@ import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { Icons } from "src/constants/icons"
 import { useDragAndDropJS } from "src/hooks/useDragAndDropJS"
 import { useSelector } from "src/hooks/useSelector.ts"
-import { appletStore } from "src/services/applet-store"
 import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
+import { getSessionDisplayName } from "src/utils/get-session-display-name"
 
 interface TabItemProps {
   session: Session
 }
 
 export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
-  const { sessionId, sessionName, sessionSequenceNumber, appletId } = session
+  const { sessionId } = session
   const isRenamingSession = useSelector(() => sessionStore.renamingSessionId === session.sessionId)
   const isActive = useSelector(() => sessionStore.activeSessionId === session.sessionId)
   const isActionRunning = useSelector(() => sessionStore.sessions.find((s) => s.sessionId === session.sessionId)?.isActionRunning)
@@ -24,10 +24,7 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
 
   const { show } = useContextMenu()
 
-  const getSessionName = () => {
-    if (sessionName) return sessionName
-    return appletStore.mapOfLoadedAppletsName[appletId]?.concat(`-${sessionSequenceNumber}`)
-  }
+  const getSessionName = () => getSessionDisplayName(session)
 
   const handleMouseDown: MouseEventHandler = (event) => {
     if (event.button === 0) {
