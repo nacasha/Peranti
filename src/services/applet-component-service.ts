@@ -45,6 +45,7 @@ class AppletComponentService {
 
     TextArea: new AppletComponent({
       component: TextAreaInput,
+      maximizable: true,
       copyAs: "text",
       readFileAs: "text"
     }),
@@ -79,6 +80,7 @@ class AppletComponentService {
 
     Code: new AppletComponent({
       component: CodeInput,
+      maximizable: true,
       copyAs: "text",
       saveAs: "text",
       readFileAs: "text"
@@ -89,7 +91,8 @@ class AppletComponentService {
     }),
 
     ColorPicker: new AppletComponent({
-      component: ColorPickerInput
+      component: ColorPickerInput,
+      maximizable: true
     })
   }
 
@@ -99,12 +102,14 @@ class AppletComponentService {
   readonly outputs = {
     Code: new AppletComponent({
       component: CodeOutput,
+      maximizable: true,
       copyAs: "text",
       saveAs: "text"
     }),
 
     Diff: new AppletComponent({
-      component: DiffOutput
+      component: DiffOutput,
+      maximizable: true
     }),
 
     File: new AppletComponent({
@@ -121,17 +126,20 @@ class AppletComponentService {
 
     Image: new AppletComponent({
       component: ImageOutput,
+      maximizable: true,
       saveAs: "image"
     }),
 
     Markdown: new AppletComponent({
       component: MarkdownOutput,
+      maximizable: true,
       copyAs: "text",
       saveAs: "text"
     }),
 
     TextArea: new AppletComponent({
       component: TextAreaOutput,
+      maximizable: true,
       copyAs: "text",
       saveAs: "text"
     }),
@@ -144,15 +152,18 @@ class AppletComponentService {
     }),
 
     Mermaid: new AppletComponent({
-      component: MermaidOutput
+      component: MermaidOutput,
+      maximizable: true
     }),
 
     Pintora: new AppletComponent({
-      component: PintoraOutput
+      component: PintoraOutput,
+      maximizable: true
     }),
 
     React: new AppletComponent({
-      component: ReactOutput
+      component: ReactOutput,
+      maximizable: true
     }),
 
     Settings: new AppletComponent({
@@ -160,7 +171,8 @@ class AppletComponentService {
     }),
 
     DataGrid: new AppletComponent({
-      component: DataGridOutput
+      component: DataGridOutput,
+      maximizable: true
     }),
 
     Color: new AppletComponent({

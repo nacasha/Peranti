@@ -251,6 +251,40 @@ export class Applet<
   }
 
   /**
+   * Input and output fields that can be maximized, inputs first
+   */
+  getMaximizableFields() {
+    const { isBatchModeEnabled } = this
+
+    const inputs = this.getInputFields()
+      .filter((field) => appletComponentService.getInputComponent(field.component, isBatchModeEnabled).maximizable)
+      .map((field) => ({ type: "input", key: field.key, label: field.label || field.key }))
+
+    const outputs = this.getOutputFields()
+      .filter((field) => appletComponentService.getOutputComponent(field.component, isBatchModeEnabled).maximizable)
+      .map((field) => ({ type: "output", key: field.key, label: field.label || field.key }))
+
+    return [...inputs, ...outputs]
+  }
+
+  /**
+   * Switch the maximized field to the next maximizable field, looping back to the first
+   */
+  @action
+  maximizeNextField() {
+    const fields = this.getMaximizableFields()
+    if (fields.length === 0) {
+      return
+    }
+
+    const { type, key } = this.maximizedField
+    const currentIndex = fields.findIndex((field) => field.type === type && field.key === key)
+    const nextField = fields[(currentIndex + 1) % fields.length]
+
+    this.maximizedField = { enabled: true, type: nextField.type, key: nextField.key }
+  }
+
+  /**
    * Empty applet
    *
    * @returns

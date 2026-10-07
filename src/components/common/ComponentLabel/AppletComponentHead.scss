@@ -18,6 +18,74 @@
   text-overflow: ellipsis;
 }
 
+// Maximized fields: a split button. The chevron half opens the field picker,
+// the label half cycles to the next input / output. The negative margin pulls
+// the button toward the card edge so it doesn't push the header content right.
+.AppletComponentHead-switch {
+  display: inline-flex;
+  align-items: stretch;
+  min-width: 0;
+  height: 26px;
+  margin-left: -9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color var(--animation-speed);
+
+  &:hover {
+    border-color: color-mix(in oklch, var(--line), var(--text-color) 15%);
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color var(--animation-speed), color var(--animation-speed);
+
+    &:hover {
+      background: var(--hover);
+    }
+
+    &:active {
+      background: var(--accent-soft);
+    }
+  }
+}
+
+.AppletComponentHead-switch .AppletComponentHead-switchLabel {
+  padding: 0 8px;
+}
+
+.AppletComponentHead-switch .AppletComponentHead-switchToggle {
+  flex: none;
+  justify-content: center;
+  width: 24px;
+  padding: 0;
+  border-right: 1px solid var(--line);
+
+  svg {
+    flex: none;
+    color: var(--icon-color);
+    transition: color var(--animation-speed);
+  }
+
+  &:hover svg {
+    color: var(--text-color);
+  }
+}
+
+.AppletComponentHead-menu .AppletComponentHead-menuGroup > .contexify_itemContent {
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  color: var(--muted);
+  opacity: 1;
+}
+
 .AppletComponentHead-title {
   display: flex;
   align-items: center;

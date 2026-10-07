@@ -23,6 +23,11 @@ export class AppletComponent<T = any, B = any> {
 
   readonly readFileAs?: "text" | "file" | "files"
 
+  /**
+   * Component can be maximized to fill the applet area
+   */
+  readonly maximizable?: boolean
+
   constructor(options: {
     component: T
     batchComponent?: B
@@ -30,7 +35,9 @@ export class AppletComponent<T = any, B = any> {
     saveAs?: "text" | "image"
     pasteFrom?: "text"
     readFileAs?: "text" | "file" | "files"
+    maximizable?: boolean
   }) {
+    this.maximizable = options.maximizable
     this.component = options.component
     this.batchComponent = options.batchComponent
     this.copyAs = options.copyAs
