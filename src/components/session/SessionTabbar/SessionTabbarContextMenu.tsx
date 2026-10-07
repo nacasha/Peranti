@@ -1,7 +1,8 @@
 import { type FC } from "react"
-import { type ItemParams, Item, Separator } from "react-contexify"
+import { type ItemParams, Separator } from "react-contexify"
 
-import { ContextMenu } from "src/components/common/ContextMenu"
+import { ContextMenu, ContextMenuItem } from "src/components/common/ContextMenu"
+import { Icons } from "src/constants/icons"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
@@ -40,31 +41,36 @@ export const SessionTabbarContextMenu: FC = () => {
 
   return (
     <ContextMenu id={ContextMenuKeys.SessionTabbar}>
-      <Item
-        id="copy"
+      <ContextMenuItem
+        id="close"
+        icon={Icons.Close}
         onClick={handleCloseSession}
       >
         Close
-      </Item>
-      <Item
-        id="paste"
+      </ContextMenuItem>
+      <ContextMenuItem
+        id="close-others"
+        icon={Icons.CloseOthers}
         onClick={handleCloseOtherSession}
       >
         Close Others
-      </Item>
-      <Item
-        id="pick-from-file"
+      </ContextMenuItem>
+      <ContextMenuItem
+        id="close-all"
+        icon={Icons.CloseAll}
+        danger
         onClick={handleCloseAllSession}
       >
         Close All
-      </Item>
+      </ContextMenuItem>
       <Separator />
-      <Item
-        id="save-to-file"
+      <ContextMenuItem
+        id="rename"
+        icon={Icons.Rename}
         onClick={handleRenameSession}
       >
         Rename
-      </Item>
+      </ContextMenuItem>
     </ContextMenu>
   )
 }

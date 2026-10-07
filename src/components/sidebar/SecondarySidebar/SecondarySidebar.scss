@@ -1,19 +1,42 @@
+// The inspector: a 280px card floating beside the panes. Hidden by a negative
+// margin of exactly its own width, so it takes up no space and the panes keep
+// their 8px gutter to the window edge; the slide stays a pure margin transition.
 .SecondarySidebar {
-  width: 250px;
-  margin-right: -250px;
+  box-sizing: border-box;
+  flex: none;
+  width: 280px;
+  margin: 0 -280px var(--card-gap) 0;
   background-color: var(--secondary-sidebar-background-color);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  visibility: hidden;
+  transition: margin var(--animation-speed) var(--ease-out), visibility var(--animation-speed);
 
   &.show {
-    border-left: 1px solid var(--border-color);
-    margin-right: 0;
+    margin-right: var(--card-gap);
+    visibility: visible;
+  }
+
+  // An open inspector with nothing to show (e.g. on the home screen) would be
+  // an empty card, so it stays tucked away until a section appears.
+  &.show:not(:has(.SecondarySidebarSection:not(.hidden))) {
+    margin-right: -280px;
+    visibility: hidden;
   }
 }
 
+// Inside the applet viewer the panes already end in an 8px gap.
+.AppletViewer .SecondarySidebar.show {
+  margin-left: 0;
+}
+
 .SecondarySidebarSection {
-  --input-output-label-spacing: 5px;
+  --input-output-label-spacing: 6px;
 
   overflow: hidden;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--line);
   transition: all var(--animation-speed);
 
   &:first-child {
@@ -21,7 +44,7 @@
   }
 
   &:not(.expanded) {
-    max-height: 33px
+    max-height: 41px
   }
 
   &.hidden {
@@ -32,23 +55,28 @@
 .SecondarySidebarSection-header {
   display: flex;
   align-items: center;
-  gap: 5px;
-  line-height: 2;
+  gap: 6px;
+  height: 40px;
   user-select: none;
-  padding: 3px 8px;
-  font-weight: 500;
+  padding: 0 14px 0 18px;
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  color: var(--faint);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 
   &:hover {
     cursor: pointer;
+    color: var(--muted);
   };
 
   &:nth-child(1) {
     border-top: none;
   }
 
-  img {
-    width: 12px;
-    filter: var(--icon-color-filter)
+  svg {
+    flex: none;
+    color: var(--icon-color);
   }
 }
 
@@ -63,5 +91,25 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-size: 12px;
+  font-size: 12.5px;
+}
+
+// Samples read as a plain list, not a stack of outlined buttons.
+.SecondarySidebarSection-body:has(> .AppletSampleSelector-item) {
+  gap: 2px;
+}
+
+.Button.AppletSampleSelector-item {
+  height: 34px;
+  padding: 0 10px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+  font-weight: var(--font-weight);
+
+  &:hover {
+    border-color: transparent;
+    background: var(--hover);
+    color: var(--text-color);
+  }
 }

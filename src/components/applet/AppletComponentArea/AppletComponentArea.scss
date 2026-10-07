@@ -1,9 +1,11 @@
 $padding: var(--input-output-fields-spacing);
 
+// Cards sit flush with the sidebar on the left; the other edges keep the
+// same 8px gap the cards keep between each other.
 .AppletComponentArea {
   flex: 1;
   gap: $padding;
-  padding: $padding;
+  padding: 0 var(--card-gap) var(--card-gap) 0;
 
   &.grid {
     display: grid;

@@ -1,20 +1,23 @@
+// Ghost by default, as the design's pane actions ("Copy", "Clear", "Export"):
+// muted text, a hairline outline, and a soft fill on hover.
 .Button {
+  height: 30px;
   border: 1px solid var(--button-border-color);
   background: var(--button-background-color);
-  border-radius: var(--border-radius);
-  padding: 7px 11px;
+  border-radius: var(--radius-lg);
+  padding: 0 12px;
   user-select: none;
   font-family: var(--font-family);
   display: flex;
   align-items: center;
-  font-size: var(--font-size);
+  font-size: 12.5px;
   color: var(--text-color);
   word-break: keep-all;
   white-space: nowrap;
-  gap: 7px;
+  gap: 6px;
   line-height: var(--line-height-tight);
   font-weight: var(--font-weight-medium);
-  transition: background-color var(--animation-speed), border-color var(--animation-speed), box-shadow var(--animation-speed);
+  transition: background-color var(--animation-speed), border-color var(--animation-speed), box-shadow var(--animation-speed), color var(--animation-speed);
 
   &:hover {
     cursor: pointer;
@@ -28,20 +31,32 @@
   }
 
   &:focus-visible {
-    border-color: var(--color-primary);
+    border-color: var(--accent);
     box-shadow: var(--focus-ring);
   }
 
   &.active {
-    border-color: var(--color-accent);
+    color: var(--accent-ink);
+    border-color: transparent;
+    background: var(--accent-soft);
 
     &:hover {
-      border-color: var(--color-accent);
+      border-color: transparent;
     }
   }
 
-  img {
-    width: 14px;
-    filter: var(--icon-color-filter);
+  svg {
+    flex: none;
+    color: var(--icon-color);
+    transition: color var(--animation-speed);
+  }
+
+  &:hover svg {
+    color: var(--text-color);
+  }
+
+  // An active (toggled-on) button tints its icon with its text.
+  &.active svg {
+    color: currentColor;
   }
 }

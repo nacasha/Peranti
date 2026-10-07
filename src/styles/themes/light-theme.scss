@@ -1,134 +1,131 @@
 body.light {
-  // ───────────────────────────────────────────────────────────────
-  // Surfaces
-  // ───────────────────────────────────────────────────────────────
-  // The old light theme was white-on-white-on-white, which forced the borders
-  // to carry the whole layout. Tinting the chrome lets them step back.
-  --bg-base: #f7f8fa;     // window chrome: titlebar, activity bar, sidebars, statusbar
-  --bg-surface: #ffffff;  // main content
-  --bg-raised: #ffffff;   // dialogs, menus, tooltips — separated by shadow
-  --bg-sunken: #f1f3f5;   // wells and inset areas
+  // Design palette (Peranti Redesign v2)
+  // Light grey canvas with white cards floating on it.
+  --bg: #f3f3f5;
+  --panel: #ffffff;
+  --raised: #f7f7f9;
+  --hover: rgba(0, 0, 0, 0.035);
+  --line: rgba(0, 0, 0, 0.075);
+  --muted: #6a6a75;
+  --faint: #a3a3ad;
+  --accent-ink: color-mix(in oklch, var(--accent) 75%, black);
+  --node: color-mix(in oklch, var(--accent) 12%, white);
+  // Card shadow presets for the "Card Shadow" setting, which points
+  // --card-shadow at one of them. Kept tight (small offset and blur, no
+  // spread) so cards read as lifted, never glowing.
+  --card-shadow-none: none;
+  --card-shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --card-shadow-medium: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --card-shadow-strong: 0 2px 5px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.07);
+  --card-shadow: var(--card-shadow-subtle);
+  --popover-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.08);
 
-  // ───────────────────────────────────────────────────────────────
+  // Surfaces (legacy names, mapped onto the design palette)
+  --bg-base: var(--bg);
+  --bg-surface: var(--panel);
+  --bg-raised: var(--panel);
+  --bg-sunken: var(--raised);
+
   // Borders
-  // ───────────────────────────────────────────────────────────────
-  --border-subtle: rgba(0, 0, 0, 0.06);
-  --border-default: rgba(0, 0, 0, 0.10);
+  --border-subtle: var(--line);
+  --border-default: rgba(0, 0, 0, 0.1);
   --border-strong: rgba(0, 0, 0, 0.16);
 
   --border-color: var(--border-subtle);
 
-  // ───────────────────────────────────────────────────────────────
   // Elevation
-  // ───────────────────────────────────────────────────────────────
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.16), 0 4px 10px rgba(0, 0, 0, 0.08);
+  --shadow-sm: var(--card-shadow);
+  --shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-lg: var(--popover-shadow);
 
-  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 80%);
+  --focus-ring: 0 0 0 3px color-mix(in oklch, var(--accent), transparent 80%);
 
-  // ───────────────────────────────────────────────────────────────
   // Text
-  // ───────────────────────────────────────────────────────────────
-  --text-color: #121316;
-  // Kept close to the body colour on purpose — "secondary" should still be
-  // comfortably readable, not greyed out to the edge of legibility.
-  --text-muted: #4b4c53;
-  --text-subtle: #6d6e75;
+  --text-color: #18181c;
+  --text-muted: var(--muted);
+  --text-subtle: var(--faint);
   --opposite-color: #939393;
-  --icon-color-filter: invert(23%) sepia(1%) saturate(4546%) hue-rotate(38deg) brightness(105%) contrast(85%);
+  // Lucide icons draw in currentColor; this is the resting tint.
+  --icon-color: var(--muted);
 
-  // ───────────────────────────────────────────────────────────────
   // Application chrome
-  // ───────────────────────────────────────────────────────────────
-  --app-titlebar-background-color: var(--bg-base);
+  --app-titlebar-background-color: var(--bg);
 
-  --background-color-main: var(--bg-base);
-  --background-color-content: var(--bg-surface);
+  --background-color-main: var(--bg);
+  --background-color-content: var(--bg);
 
-  --activitybar-background-color: var(--bg-base);
-  --activitybar-item-background-color-hover: rgba(0, 0, 0, 0.06);
-  --activitybar-item-background-color-active: rgba(0, 0, 0, 0.10);
+  --activitybar-background-color: var(--bg);
+  --activitybar-item-background-color-hover: var(--hover);
+  --activitybar-item-background-color-active: var(--accent-soft);
 
-  --primary-sidebar-background-color: var(--bg-base);
+  --primary-sidebar-background-color: var(--bg);
 
-  --secondary-sidebar-background-color: var(--bg-base);
-  --secondary-sidebar-item-background-color-hover: rgba(0, 0, 0, 0.04);
+  --secondary-sidebar-background-color: var(--panel);
+  --secondary-sidebar-item-background-color-hover: var(--hover);
 
-  --bottom-panel-background-color: var(--bg-base);
+  --bottom-panel-background-color: var(--panel);
 
-  --statusbar-background-color: var(--bg-base);
-  --statusbar-item-background-color-hover: rgba(0, 0, 0, 0.06);
+  --statusbar-background-color: var(--bg);
+  --statusbar-item-background-color-hover: var(--hover);
 
-  --applet-header-background-color: var(--bg-base);
-  --applet-viewer-background-color: var(--bg-surface);
+  --applet-header-background-color: var(--panel);
+  --applet-viewer-background-color: var(--bg);
 
-  // ───────────────────────────────────────────────────────────────
   // Controls
-  // ───────────────────────────────────────────────────────────────
-  --button-background-color: #ffffff;
-  --button-background-color-hover: #f4f5f7;
-  --button-background-color-active: #eceef1;
-  --button-border-color: var(--border-default);
+  --button-background-color: var(--panel);
+  --button-background-color-hover: var(--raised);
+  --button-background-color-active: #eeeef1;
+  --button-border-color: var(--line);
   --button-border-color-hover: var(--border-strong);
   --button-border-color-active: var(--border-strong);
 
-  --input-output-background-color: #ffffff;
+  --input-output-background-color: var(--raised);
   --input-output-text-color: var(--text-color);
-  --input-output-border-color: var(--border-default);
+  --input-output-border-color: var(--line);
   --input-output-border-color-hover: var(--border-strong);
-  --input-output-border-color-active: var(--color-primary);
+  --input-output-border-color-active: var(--accent);
 
-  // ───────────────────────────────────────────────────────────────
   // Session tabbar
-  // ───────────────────────────────────────────────────────────────
-  --session-tabbar-background-color: var(--bg-base);
+  --session-tabbar-background-color: var(--bg);
   --session-tabbar-color: transparent;
-  --session-tabbar-color-hover: rgba(0, 0, 0, 0.04);
-  --session-tabbar-text-color: var(--text-muted);
-  --session-tabbar-text-color-active: #000000;
+  --session-tabbar-color-hover: var(--hover);
+  --session-tabbar-text-color: var(--muted);
+  --session-tabbar-text-color-active: var(--text-color);
 
-  // ───────────────────────────────────────────────────────────────
   // Tool sidebar
-  // ───────────────────────────────────────────────────────────────
-  --tool-sidebar-text-color: #212418;
-  --tool-sidebar-text-color-active: #000000;
-  --tool-sidebar-icon-color: invert(11%) sepia(7%) saturate(1891%) hue-rotate(34deg) brightness(98%) contrast(92%);
-  --tool-sidebar-icon-color-active: invert(0%) sepia(98%) saturate(0%) hue-rotate(162deg) brightness(93%) contrast(101%);
-  --tool-sidebar-background-color-hover: rgba(0, 0, 0, 0.05);
-  --tool-sidebar-background-color-active: rgba(0, 0, 0, 0.09);
+  --tool-sidebar-text-color: var(--muted);
+  --tool-sidebar-text-color-active: var(--text-color);
+  --tool-sidebar-background-color-hover: var(--hover);
+  --tool-sidebar-background-color-active: var(--accent-soft);
 
-  // ───────────────────────────────────────────────────────────────
   // Settings
-  // ───────────────────────────────────────────────────────────────
-  --settings-background-color: var(--bg-sunken);
-  --settings-card-background-color: var(--bg-raised);
+  --settings-background-color: var(--bg);
+  --settings-card-background-color: var(--panel);
 
-  // ───────────────────────────────────────────────────────────────
   // Scrollbar
-  // ───────────────────────────────────────────────────────────────
   --scrollbar-track-background-color: transparent;
-  --scrollbar-thumb-background-color: rgba(0, 0, 0, 0.18);
-  --scrollbar-thumb-background-color-hover: rgba(0, 0, 0, 0.32);
-  --scrollbar-thumb-border-radius: 4px;
+  --scrollbar-thumb-background-color: rgba(0, 0, 0, 0.12);
+  --scrollbar-thumb-background-color-hover: rgba(0, 0, 0, 0.24);
+  --scrollbar-thumb-border-radius: 10px;
 
-  // ───────────────────────────────────────────────────────────────
   // Overlays
-  // ───────────────────────────────────────────────────────────────
   --tooltip-text-color: var(--text-color);
-  --tooltip-background-color: var(--bg-raised);
-  --tooltip-border-color: var(--border-default);
+  --tooltip-background-color: var(--panel);
+  --tooltip-border-color: var(--line);
 
-  --menu-background-color: var(--bg-raised);
-  --menu-border-color: var(--border-default);
+  --menu-background-color: var(--panel);
+  --menu-border-color: var(--line);
   --menu-item-text-color: var(--text-color);
-  --menu-item-background-color-hover: rgba(0, 0, 0, 0.06);
-  --menu-item-text-color-hover: #000000;
+  --menu-item-background-color-hover: var(--hover);
+  --menu-item-text-color-hover: var(--text-color);
+  // Tight and close, no wide glow: a soft short drop.
+  --menu-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --danger-color: #dc2626;
 
   --dialog-header-background-color: var(--dialog-content-background-color);
-  --dialog-content-background-color: var(--bg-raised);
+  --dialog-content-background-color: var(--panel);
   --dialog-footer-background-color: var(--dialog-content-background-color);
-  --dialog-overlay-color: rgba(15, 17, 20, 0.45);
+  --dialog-overlay-color: rgba(15, 15, 20, 0.35);
   // Dialog.scss reads the `-background-color` spelling; keep both in sync.
   --dialog-overlay-background-color: var(--dialog-overlay-color);
 }

@@ -4,7 +4,10 @@ import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
 import { ConfirmDialog } from "src/components/dialog/ConfirmDialog"
+import { AccentColorPicker } from "src/components/settings/AccentColorPicker"
 import { AppTitleBarStyleSelect } from "src/components/settings/AppTitlebarStyleSelect"
+import { CardShadowSelect } from "src/components/settings/CardShadowSelect"
+import { CornerRadiusSelect } from "src/components/settings/CornerRadiusSelect"
 import { FileDropActionSelect } from "src/components/settings/FileDropActionSelect"
 import { FileDropFillTabbarName } from "src/components/settings/FileDropFillTabbarName"
 import { SettingsCard, SettingsCardItem } from "src/components/settings/SettingsCard"
@@ -12,6 +15,7 @@ import { SettingsItemInput } from "src/components/settings/SettingsItemInput"
 import { SettingsItemSwitch } from "src/components/settings/SettingsItemSwitch"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
+import { ToolSidebarDensitySelect } from "src/components/settings/ToolSidebarDensitySelect"
 import { appDataService } from "src/services/app-data-service"
 import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
@@ -46,12 +50,43 @@ export const SettingsPage: FC = () => {
           <ThemeSelect />
         </SettingsCardItem>
 
+        <SettingsCardItem
+          label="Accent Color"
+          description="Highlights, active items and focus rings"
+        >
+          <AccentColorPicker />
+        </SettingsCardItem>
+
         <SettingsCardItem label="Title Bar Style">
           <AppTitleBarStyleSelect />
         </SettingsCardItem>
 
         <SettingsCardItem label="Text Area Word Wrap">
           <TextAreaWordWrapSwitch />
+        </SettingsCardItem>
+
+        <SettingsCardItem
+          label="Show Status Bar"
+          description="Version, theme and word wrap shortcuts along the bottom"
+        >
+          <SettingsItemSwitch
+            defaultChecked={interfaceStore.showStatusbar}
+            onChange={(value) => { interfaceStore.setShowStatusbar(value) }}
+          />
+        </SettingsCardItem>
+
+        <SettingsCardItem
+          label="Corner Radius"
+          description="Roundness of cards, tabs, buttons and menus"
+        >
+          <CornerRadiusSelect />
+        </SettingsCardItem>
+
+        <SettingsCardItem
+          label="Card Shadow"
+          description="Drop shadow under input, output and sidebar cards"
+        >
+          <CardShadowSelect />
         </SettingsCardItem>
       </SettingsCard>
 
@@ -84,28 +119,18 @@ export const SettingsPage: FC = () => {
       </SettingsCard>
 
       <SettingsCard title="Tool Sidebar">
-        <SettingsCardItem
-          label="Sort Tool name A-Z"
-        >
-          <SettingsItemSwitch
-            defaultChecked={toolSidebarService.sortNameAZ}
-            onChange={(value) => { toolSidebarService.setSortNameAZ(value) }}
-          />
-        </SettingsCardItem>
         <SettingsCardItem label="Group By Category">
           <SettingsItemSwitch
             defaultChecked={toolSidebarService.groupByCategory}
             onChange={(value) => { toolSidebarService.setGroupByCategory(value) }}
           />
         </SettingsCardItem>
+
         <SettingsCardItem
-          label="Sort Category name A-Z"
-          description="No effect when Group By Category is disabled"
+          label="Item Density"
+          description="Vertical spacing of the tool list items and category headers"
         >
-          <SettingsItemSwitch
-            defaultChecked={toolSidebarService.sortCategoryAZ}
-            onChange={(value) => { toolSidebarService.setSortCategoryAZ(value) }}
-          />
+          <ToolSidebarDensitySelect />
         </SettingsCardItem>
       </SettingsCard>
 

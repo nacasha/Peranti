@@ -38,9 +38,15 @@ interface Props extends BaseCodeMirrorProps, Omit<ReactCodeMirrorProps, "theme" 
 const darkTheme = vscodeDarkInit({
   settings: {
     fontFamily: "Monolisa",
-    foreground: "#bcbec4",
-    background: "#292a30",
-    gutterBackground: "#292a30"
+    foreground: "#ececef",
+    // Transparent so the editor takes the pane card's colour.
+    background: "transparent",
+    gutterBackground: "transparent",
+    gutterForeground: "#5d5d68",
+    // CSS values, so they follow the user's accent colour setting
+    caret: "var(--accent)",
+    selection: "color-mix(in srgb, var(--accent) 28%, transparent)",
+    selectionMatch: "color-mix(in srgb, var(--accent) 16%, transparent)"
   }
 })
 

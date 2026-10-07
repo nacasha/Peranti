@@ -1,7 +1,3 @@
-body.light .simplebar-scrollbar:before {
-  background: #878883
-}
-
-body.dark .simplebar-scrollbar:before {
-  background: rgba(255,255,255,0.2)
+body .simplebar-scrollbar:before {
+  background: var(--scrollbar-thumb-background-color-hover);
 }

@@ -1,8 +1,9 @@
 import { type ComponentProps, type FC } from "react"
-import { Item, type ItemParams } from "react-contexify"
+import { type Item, type ItemParams } from "react-contexify"
 
-import { ContextMenu } from "src/components/common/ContextMenu"
+import { ContextMenu, ContextMenuItem } from "src/components/common/ContextMenu"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
+import { Icons } from "src/constants/icons"
 import { type AppletComponent } from "src/models/AppletComponent"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
@@ -96,34 +97,38 @@ export const AppletContextMenu: FC = () => {
 
   return (
     <ContextMenu id={ContextMenuKeys.AppletComponent}>
-      <Item
+      <ContextMenuItem
         id="copy"
+        icon={Icons.Copy}
         onClick={handleClickCopy}
         hidden={isHideCopy}
       >
         Copy
-      </Item>
-      <Item
+      </ContextMenuItem>
+      <ContextMenuItem
         id="paste"
+        icon={Icons.Paste}
         onClick={handleClickCopy}
         hidden={isHidePaste}
       >
         Paste
-      </Item>
-      <Item
+      </ContextMenuItem>
+      <ContextMenuItem
         id="pick-from-file"
+        icon={Icons.PickFile}
         onClick={(itemParams) => { void handleClickPickFile(itemParams) }}
         hidden={isHidePasteFromFile}
       >
         Pick File and Drop Here
-      </Item>
-      <Item
+      </ContextMenuItem>
+      <ContextMenuItem
         id="save-to-file"
+        icon={Icons.SaveToFile}
         onClick={handleClickSaveToFile}
         hidden={isHideSaveAsFile}
       >
         Save To File
-      </Item>
+      </ContextMenuItem>
     </ContextMenu>
   )
 }

@@ -100,7 +100,7 @@
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
-  border-radius: 9px;
+  border-radius: calc(9px * var(--radius-scale));
   background-color: var(--color-primary);
   color: #ffffff;
   font-size: var(--font-size-xs);

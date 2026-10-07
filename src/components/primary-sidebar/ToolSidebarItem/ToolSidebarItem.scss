@@ -1,33 +1,55 @@
 .ToolSidebarItem {
-  padding: 4px 9px;
-  // Inset from the panel edge so hover reads as a rounded row rather than a
-  // full-bleed band running into the sidebar border.
-  margin: 1px 6px;
-  border-radius: var(--radius-md);
+  position: relative;
+  height: var(--tool-sidebar-item-height);
+  padding: 0 10px;
+  margin: 0 12px;
+  border-radius: calc(8px * var(--radius-scale));
   cursor: pointer;
   user-select: none;
   display: flex;
-  gap: 7px;
+  gap: 8px;
   align-items: center;
   color: var(--tool-sidebar-text-color);
+  white-space: nowrap;
   transition: background-color var(--animation-speed), color var(--animation-speed);
+
+  > div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // Accent bar on the left edge of the active row.
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    border-radius: 2px;
+    background: transparent;
+  }
 
   &:hover {
     background: var(--tool-sidebar-background-color-hover)
   }
 
-  img {
-    width: 14px;
-    // filter: var(--tool-sidebar-icon-color);
+  svg {
+    flex: none;
+    color: var(--icon-color);
   }
 
   &.active {
     color: var(--tool-sidebar-text-color-active);
     background-color: var(--tool-sidebar-background-color-active);
+    font-weight: var(--font-weight-medium);
 
-    img {
-      width: 14px;
-      // filter: var(--tool-sidebar-icon-color-active);
+    &::before {
+      background: var(--accent);
+    }
+
+    svg {
+      color: currentColor;
     }
   }
 }

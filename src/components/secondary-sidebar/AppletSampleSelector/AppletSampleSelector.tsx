@@ -23,6 +23,7 @@ export const AppletSampleSelector: FC = () => {
     >
       {samples.map((sample, index) => (
         <Button
+          className="AppletSampleSelector-item"
           key={sample.name.concat(index.toString())}
           onClick={() => { handleClickSample(sample) }}
         >

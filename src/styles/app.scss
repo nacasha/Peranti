@@ -62,3 +62,10 @@ body {
   overflow: hidden;
   background-color: var(--background-color-content)
 }
+
+// With no docked sidebar to its left, the content keeps the same 8px gutter
+// from the window edge that the cards keep everywhere else.
+.PrimarySidebar.hidden + .AppContent,
+.PrimarySidebar.float-unpinned + .AppContent {
+  padding-left: var(--card-gap);
+}

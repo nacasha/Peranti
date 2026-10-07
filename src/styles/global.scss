@@ -28,9 +28,13 @@ input[type=number] {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-primary), transparent 70%);
+  background: color-mix(in oklch, var(--accent), transparent 70%);
 }
 
+input::placeholder,
+textarea::placeholder {
+  color: var(--faint);
+}
 :root {
   ::-webkit-scrollbar {
     width: 10px;

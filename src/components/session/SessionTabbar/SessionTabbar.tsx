@@ -4,7 +4,7 @@ import SimpleBar from "simplebar-react"
 
 import { Tooltip } from "src/components/common/Tooltip/Tooltip.tsx"
 import { WindowControls } from "src/components/window/WindowControls"
-import { Icons } from "src/constants/icons"
+import { Icons, type Icon as IconType } from "src/constants/icons"
 import { AppTitleBarStyle } from "src/enums/app-titlebar-style"
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { useSelector } from "src/hooks/useSelector.ts"
@@ -23,6 +23,10 @@ import "./SessionTabbar.scss"
 export const SessionTabbar: FC = () => {
   const appTitlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
   const scrollBarRef = useRef<HTMLDivElement>(null)
+
+  const handleClickShowSidebar = () => {
+    interfaceStore.showSidebar()
+  }
 
   useHotkeysModified(hotkeysStore.keys.TAB_NEW_EDITOR, (event) => {
     event.preventDefault()
@@ -127,6 +131,17 @@ export const SessionTabbar: FC = () => {
             Sized entirely from CSS (see SessionTabbar.scss). */}
         <div className="SessionTabbar-macos-inset" data-tauri-drag-region />
 
+        {/* The sidebar header carries this toggle while the sidebar is open;
+            once hidden, the tabbar is the leftmost row and takes it over.
+            Shown only in that state, from CSS (see SessionTabbar.scss). */}
+        <div className="SessionTabbar-sidebar-toggle">
+          <SessionTabbarItemIcon
+            onClick={handleClickShowSidebar}
+            label="Show Sidebar"
+            icon={Icons.PanelLeft}
+          />
+        </div>
+
         <TabbarActions />
 
         <div className="SessionTabbar-inner-body" data-tauri-drag-region>
@@ -198,18 +213,18 @@ const TabbarActions = () => {
 interface SessionTabbarItemIconProps {
   onClick: () => any
   label: string
-  icon: string
+  icon: IconType
   style?: CSSProperties
 }
 
 const SessionTabbarItemIcon: FC<SessionTabbarItemIconProps> = memo((props) => {
-  const { onClick, label, icon, style } = props
+  const { onClick, label, icon: Icon, style } = props
 
   return (
     <Tooltip overlay={label}>
       <div onClick={onClick} className="SessionTabbar-item-session icon" style={style}>
         <div className="SessionTabbar-item-session-icon">
-          <img src={icon} alt={label} />
+          <Icon size={14} aria-label={label} />
         </div>
       </div>
     </Tooltip>

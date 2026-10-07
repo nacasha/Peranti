@@ -1,27 +1,63 @@
-// Driven by the theme's menu tokens rather than per-theme hexes, so the two
-// themes can't drift apart the way the hardcoded values had.
-.contexify {
-  box-shadow: var(--shadow-md);
-  animation-duration: var(--animation-speed);
+// Context menus (react-contexify), minimal style: a quiet panel, compact
+// rows with a leading icon, a soft hover fill, and a tight shadow.
+//
+// The library reads its own variable names (camelCase, e.g. `minWidth`) and
+// its theme classes (`contexify_theme-dark/-light`) set item colours of their
+// own. Scoping under `body` outranks those theme classes; every value comes
+// from the app's theme tokens so both themes stay in step.
+body .contexify {
+  --contexify-menu-minWidth: 200px;
+  --contexify-menu-padding: 4px;
+  --contexify-menu-radius: var(--radius-lg);
+  --contexify-menu-bgColor: var(--menu-background-color);
+  --contexify-menu-shadow: var(--menu-shadow);
+  --contexify-separator-color: var(--line);
+  --contexify-separator-margin: 4px 6px;
+  --contexify-itemContent-padding: 0 8px;
+  --contexify-activeItem-radius: var(--radius-md);
+  --contexify-item-color: var(--menu-item-text-color);
+  --contexify-activeItem-color: var(--menu-item-text-color-hover);
+  --contexify-activeItem-bgColor: var(--menu-item-background-color-hover);
+  --contexify-rightSlot-color: var(--faint);
+  --contexify-activeRightSlot-color: var(--muted);
+
   border: 1px solid var(--menu-border-color);
-  background-color: var(--menu-background-color);
+  font-size: 12.5px;
+  animation-duration: var(--animation-speed);
 }
 
-.contexify .contexify_itemContent {
-  color: var(--menu-item-text-color);
-  border-radius: var(--radius-sm);
+body .contexify_itemContent {
+  height: 28px;
+  gap: 8px;
   transition: background-color var(--animation-speed), color var(--animation-speed);
 }
 
-.contexify_item:not(.contexify_item-disabled):focus > .contexify_itemContent,
-.contexify_item:not(.contexify_item-disabled):hover > .contexify_itemContent,
-.contexify_submenu-isOpen,
-.contexify_submenu-isOpen > .contexify_itemContent {
-  background-color: var(--menu-item-background-color-hover);
-  color: var(--menu-item-text-color-hover);
+// Leading icon slot (ContextMenuItem). Always 14px wide, so labels line up
+// whether or not a row has an icon.
+.ContextMenuItem-icon {
+  flex: none;
+  width: 14px;
+  color: var(--icon-color);
+  transition: color var(--animation-speed);
+
+  .contexify_item:not(.contexify_item-disabled):hover &,
+  .contexify_item:not(.contexify_item-disabled):focus & {
+    color: var(--menu-item-text-color-hover);
+  }
 }
 
-.contexify_separator {
-  background-color: var(--border-default);
-  margin: 4px 6px;
+// Destructive items (e.g. Close All) tint red on hover.
+.contexify_item.danger:not(.contexify_item-disabled):hover > .contexify_itemContent,
+.contexify_item.danger:not(.contexify_item-disabled):focus > .contexify_itemContent {
+  color: var(--danger-color);
+
+  .ContextMenuItem-icon {
+    color: var(--danger-color);
+  }
+}
+
+body .contexify_separator {
+  height: 1px;
+  background-color: var(--contexify-separator-color);
+  margin: var(--contexify-separator-margin);
 }

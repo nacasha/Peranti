@@ -1,12 +1,14 @@
 .WindowControls {
   display: flex;
-  height: var(--window-control-button-height);
+  align-items: center;
+  height: var(--session-tabbar-height);
 }
 
 .SessionTabbar {
   .WindowControls {
     position: absolute;
     right: 0;
+    top: 0;
   }
 }
 
@@ -14,28 +16,37 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  height: var(--window-control-button-height);
+  height: var(--session-tabbar-height);
   width: var(--window-control-button-width);
   user-select: none;
+  transition: background-color var(--animation-speed);
 
   &:hover {
-    background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%);
+    background: var(--hover);
   }
 
   &--close:hover {
     background-color: #c42b1c;
   }
 
-  img {
-    width: 14px;
-    filter: var(--icon-color-filter);
+  svg {
+    flex: none;
+    color: var(--icon-color);
+  }
+
+  &:hover svg {
+    color: var(--text-color);
+  }
+
+  &--close:hover svg {
+    color: #ffffff;
   }
 }
 
 .WindowControls-layout-controls {
   display: flex;
-  margin-right: 10px;
-  gap: 4px;
+  margin: 0 10px;
+  gap: 2px;
   align-items: center;
 }
 

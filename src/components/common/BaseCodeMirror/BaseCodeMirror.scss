@@ -22,7 +22,22 @@
     }
 
     .cm-editor.cm-focused {
-      outline: 2px solid cyan
+      outline: none;
+    }
+
+    // Light theme ships its own white; let the card show through there too.
+    .cm-editor,
+    .cm-gutters {
+      background-color: transparent;
+    }
+
+    .cm-gutters {
+      border-right: none;
+      color: var(--faint);
+    }
+
+    .cm-content {
+      padding-block: 14px;
     }
 
     .cm-editor .cm-content, .cm-gutter {

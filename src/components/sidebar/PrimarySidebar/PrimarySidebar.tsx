@@ -33,6 +33,10 @@ export const PrimarySidebar = observer(() => {
     ? SidebarMode.FloatUnpinned
     : sidebarModeStore
 
+  const handleClickToggleSidebar = () => {
+    interfaceStore.toggleSidebar()
+  }
+
   const handleClickSearch = () => {
     commandbarService.open()
   }
@@ -44,8 +48,12 @@ export const PrimarySidebar = observer(() => {
   return (
     <div className={clsx("PrimarySidebar", sidebarMode, !isSidebarShow && "hidden")}>
       <div className="PrimarySidebar-title" data-tauri-drag-region>
-        <div>Peranti</div>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 3 }}>
+        <ButtonIcon
+          icon={Icons.PanelLeft}
+          tooltip="Hide Sidebar"
+          onClick={handleClickToggleSidebar}
+        />
+        <div className="PrimarySidebar-actions">
           <ButtonIcon
             icon={Icons.Settings}
             tooltip="Settings"

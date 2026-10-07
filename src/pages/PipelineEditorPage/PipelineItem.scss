@@ -15,10 +15,12 @@
 
 .PipelineItem-header-title {
   display: flex;
+  align-items: center;
+  gap: 10px;
 
-  img {
-    width: 15px;
-    margin-right: 10px;
+  svg {
+    flex: none;
+    color: var(--icon-color);
   }
 }
 

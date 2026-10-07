@@ -1,22 +1,30 @@
 .ButtonIcon {
-  display: flex;
-  align-items: center;
+  display: grid;
+  place-items: center;
+  flex: none;
+  min-width: 28px;
+  height: 28px;
   user-select: none;
-  padding: 6px;
-  border-radius: var(--border-radius);
+  border-radius: var(--radius-md);
+  transition: background-color var(--animation-speed);
 
   &:hover {
-    background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 10%);
+    background: var(--hover);
     cursor: pointer;
   }
 
   &:active {
-    background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 7%);
+    background: var(--accent-soft);
     cursor: pointer;
   }
 
-  img {
-    width: 15px;
-    filter: var(--icon-color-filter);
+  svg {
+    flex: none;
+    color: var(--icon-color);
+    transition: color var(--animation-speed);
+  }
+
+  &:hover svg {
+    color: var(--text-color);
   }
 }

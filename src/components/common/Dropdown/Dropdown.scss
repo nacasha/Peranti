@@ -17,15 +17,28 @@
     border-color: var(--input-output-border-color-hover);
   }
 
-  img {
-    width: 13px;
-    filter: var(--icon-color-filter);
+  svg {
+    flex: none;
+    color: var(--icon-color);
   }
 }
 
+// Option list: the selected row carries a trailing check rather than a fill,
+// so hover and selection never look the same.
 .DropdownMenu {
+  .DropdownMenu-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .DropdownMenu-check {
+    flex: none;
+    color: var(--accent);
+  }
+
   .contexify_item.selected > .contexify_itemContent {
-    background-color: var(--menu-item-background-color-hover);
-    border-radius: var(--radius-sm);
+    font-weight: var(--font-weight-medium);
   }
 }

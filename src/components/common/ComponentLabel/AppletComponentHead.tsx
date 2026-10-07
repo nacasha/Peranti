@@ -27,9 +27,14 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
 
   return (
     <div className="AppletComponentHead">
-      <label className="AppletComponentHead-label">
-        {label}
-      </label>
+      <div className="AppletComponentHead-title">
+        <label className="AppletComponentHead-label">
+          {label}
+        </label>
+        {componentContext.type === "output" && (
+          <span className="AppletComponentHead-badge">Read-only</span>
+        )}
+      </div>
       <div className="AppletComponentHead-buttons">
         {showMaximize && (
           <ButtonIcon

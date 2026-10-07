@@ -1,10 +1,16 @@
-import { makeAutoObservable, reaction } from "mobx"
+import { makeAutoObservable, reaction, toJS } from "mobx"
 
+import { CornerRadiusScale } from "src/constants/corner-radius-scale"
 import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
+import { ToolSidebarItemHeight } from "src/constants/tool-sidebar-item-height"
+import { type CardShadow } from "src/enums/card-shadow"
+import { type CornerRadius } from "src/enums/corner-radius"
 import { type Theme } from "src/enums/theme-2.js"
+import { type ToolSidebarDensity } from "src/enums/tool-sidebar-density"
 import { UserSettingsDefault } from "src/enums/user-settings-default.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { appDataService } from "src/services/app-data-service"
+import { getCardShadowVariable } from "src/utils/get-card-shadow-variable"
 import { resolveTheme } from "src/utils/get-system-theme"
 
 import { globalStyles } from "./global-styles.js"
@@ -58,6 +64,29 @@ class UserSettingsService {
     globalStyles.setVariable(
       GlobalStyleVariables.editorFontFamily,
       rawUserSettings[UserSettingsKeys.editorFontFamily] ?? UserSettingsDefault[UserSettingsKeys.editorFontFamily]
+    )
+
+    /**
+     * Set interface corner radius and card shadow on load user settings
+     */
+    const cornerRadius: CornerRadius = rawUserSettings[UserSettingsKeys.cornerRadius] ?? UserSettingsDefault[UserSettingsKeys.cornerRadius]
+    globalStyles.setVariable(GlobalStyleVariables.radiusScale, CornerRadiusScale[cornerRadius] ?? "1")
+
+    const cardShadow: CardShadow = rawUserSettings[UserSettingsKeys.cardShadow] ?? UserSettingsDefault[UserSettingsKeys.cardShadow]
+    globalStyles.setVariable(GlobalStyleVariables.cardShadow, getCardShadowVariable(cardShadow))
+
+    /**
+     * Set tool sidebar item density on load user settings
+     */
+    const toolSidebarDensity: ToolSidebarDensity = rawUserSettings[UserSettingsKeys.toolSidebarDensity] ?? UserSettingsDefault[UserSettingsKeys.toolSidebarDensity]
+    globalStyles.setVariable(GlobalStyleVariables.toolSidebarItemHeight, ToolSidebarItemHeight[toolSidebarDensity] ?? "32px")
+
+    /**
+     * Set accent colour on load user settings
+     */
+    globalStyles.setVariable(
+      GlobalStyleVariables.accentColor,
+      rawUserSettings[UserSettingsKeys.accentColor] ?? UserSettingsDefault[UserSettingsKeys.accentColor]
     )
 
     this.setIsLoaded(true)
@@ -115,7 +144,9 @@ class UserSettingsService {
         reaction(
           () => store[storeKey],
           (value) => {
-            void this.updateSetting(settingKey, value)
+            // Plain copy: observable arrays/objects are proxies, which the
+            // browser's IndexedDB storage can't clone
+            void this.updateSetting(settingKey, toJS(value))
           }
         )
       })

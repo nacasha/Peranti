@@ -1,15 +1,16 @@
+// The sidebar sits directly on the window canvas — no border, no own panel —
+// so the floating cards to its right carry all the separation.
 .PrimarySidebar {
-  border-right: 1px solid var(--border-color);
   width: 100%;
   max-width: var(--primary-sidebar-width);
   background-color: var(--primary-sidebar-background-color);
   display: flex;
   flex-direction: column;
   z-index: 2;
+  transition: margin-left 0.22s cubic-bezier(0.2, 0.7, 0.2, 1);
 
   &.hidden {
     margin-left: calc(0px - var(--primary-sidebar-width));
-    border-right: none;
   }
 
   &.float-unpinned {
@@ -19,6 +20,7 @@
     left: 0;
     top: 0;
     bottom: 0;
+    border-right: 1px solid var(--line);
     box-shadow: var(--shadow-lg);
     z-index: 3;
 
@@ -35,10 +37,9 @@
 }
 
 .PrimarySidebar-title {
-  // Reverted from the 12px uppercase micro-label — it looked tidy but tiny
-  // caps at 12px are among the least legible things you can put in a sidebar.
-  font-size: var(--font-size);
+  font-size: 13.5px;
   font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
   color: var(--text-color);
   position: sticky;
   background-color: var(--primary-sidebar-background-color);
@@ -47,10 +48,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-left: 15px;
-  padding-right: 5px;
-  min-height: calc(var(--session-tabbar-height) - 1px);
-  border-bottom: 1px solid var(--border-color);
+  gap: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+  min-height: var(--session-tabbar-height);
+  user-select: none;
+}
+
+.PrimarySidebar-actions {
+  display: flex;
+  gap: 2px;
 }
 
 .AppRoot.withTabbar.withRunningInTauri.withMacOS {

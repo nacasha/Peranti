@@ -78,6 +78,7 @@
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "lorem-ipsum": "^2.0.8",
+    "lucide-react": "^1.52.0",
     "marked": "^12.0.0",
     "math-expression-evaluator": "^2.0.5",
     "md5": "^2.3.0",

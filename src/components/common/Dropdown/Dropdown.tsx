@@ -132,7 +132,7 @@ export const Dropdown: <T extends string>(props: DropdownProps<T>) => JSX.Elemen
       >
         <span>{getSelectionLabel()}</span>
         <span>
-          <img src={Icons.ChevronDown} />
+          <Icons.ChevronDown size={14} aria-hidden />
         </span>
       </button>
 
@@ -149,9 +149,10 @@ export const Dropdown: <T extends string>(props: DropdownProps<T>) => JSX.Elemen
             data={option}
             className={option.value === selectedValue ? "selected" : ""}
           >
-            <div>
-              <span>{option.label}</span>
-            </div>
+            <span className="DropdownMenu-label">{option.label}</span>
+            {option.value === selectedValue && (
+              <Icons.Check className="DropdownMenu-check" size={14} aria-hidden />
+            )}
           </Item>
         ))}
       </Menu>

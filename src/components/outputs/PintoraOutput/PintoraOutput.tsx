@@ -3,6 +3,7 @@ import { type FC, useEffect, useState, useRef } from "react"
 
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { ZoomableContent } from "src/components/common/ZoomableContent"
+import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 
@@ -15,6 +16,7 @@ export const PintoraOutput: FC<PintoraOutputProps> = (props) => {
 
   const renderRef = useRef<HTMLDivElement>(null)
   const [pintoraSyntax, setPintoraSyntax] = useState(() => value)
+  const isDarkTheme = useSelector(() => interfaceStore.isDarkTheme)
 
   const [svgSize, setSvgSize] = useState({ width: 0, height: 0 })
   const [svgContent, setSvgContent] = useState("")
@@ -40,7 +42,7 @@ export const PintoraOutput: FC<PintoraOutputProps> = (props) => {
           },
           config: {
             themeConfig: {
-              theme: interfaceStore.isDarkTheme ? "dark" : "default",
+              theme: isDarkTheme ? "dark" : "default",
               themeVariables: {
                 canvasBackground: "transparent"
               }
@@ -59,7 +61,7 @@ export const PintoraOutput: FC<PintoraOutputProps> = (props) => {
    */
   useEffect(() => {
     void renderPintora(pintoraSyntax)
-  }, [pintoraSyntax, renderRef])
+  }, [pintoraSyntax, renderRef, isDarkTheme])
 
   /**
    * We use another variable to store pintora syntax
@@ -78,7 +80,7 @@ export const PintoraOutput: FC<PintoraOutputProps> = (props) => {
 
   return (
     <div className="PintoraOutput" style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
-      <div key={pintoraSyntax} ref={renderRef} className="PintoraOutput-output" />
+      <div key={`${pintoraSyntax}-${isDarkTheme}`} ref={renderRef} className="PintoraOutput-output" />
       <AppletComponentHead showMaximize label={label} />
       <div className="PintoraOutput-inner">
         <ZoomableContent

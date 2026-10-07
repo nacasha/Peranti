@@ -49,10 +49,9 @@
       background: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 7%);
     }
 
-    img {
-      width: 12px;
-      margin-right: 5px;
-      filter: var(--icon-color-filter);
+    svg {
+      flex: none;
+      color: var(--icon-color);
     }
   }
 }

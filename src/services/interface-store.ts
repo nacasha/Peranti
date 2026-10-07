@@ -2,12 +2,17 @@ import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
+import { DefaultAccentColor } from "src/constants/accent-colors"
+import { CornerRadiusScale } from "src/constants/corner-radius-scale"
 import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
 import { StorageKeys } from "src/constants/storage-keys"
 import { AppTitleBarStyle as AppTitlebarStyle } from "src/enums/app-titlebar-style"
+import { CardShadow } from "src/enums/card-shadow"
+import { CornerRadius } from "src/enums/corner-radius"
 import { SidebarMode } from "src/enums/sidebar-mode"
 import { type ResolvedTheme, Theme } from "src/enums/theme-2.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
+import { getCardShadowVariable } from "src/utils/get-card-shadow-variable"
 import { getSystemTheme, resolveTheme, watchSystemTheme } from "src/utils/get-system-theme"
 import { getWindowSize } from "src/utils/get-window-size"
 
@@ -59,6 +64,30 @@ class InterfaceStore {
    */
   @userSettingsService.watch(UserSettingsKeys.editorFontSize)
   editorFontSize = userSettingsService.get(UserSettingsKeys.editorFontSize, 13)
+
+  /**
+   * Roundness of every corner in the interface
+   */
+  @userSettingsService.watch(UserSettingsKeys.cornerRadius)
+  cornerRadius: CornerRadius = userSettingsService.get(UserSettingsKeys.cornerRadius, CornerRadius.Default)
+
+  /**
+   * Drop shadow strength of the floating cards
+   */
+  @userSettingsService.watch(UserSettingsKeys.cardShadow)
+  cardShadow: CardShadow = userSettingsService.get(UserSettingsKeys.cardShadow, CardShadow.Subtle)
+
+  /**
+   * Show the statusbar along the bottom of the window
+   */
+  @userSettingsService.watch(UserSettingsKeys.showStatusbar)
+  showStatusbar: boolean = userSettingsService.get(UserSettingsKeys.showStatusbar, true)
+
+  /**
+   * Accent colour used for highlights, focus rings and active states
+   */
+  @userSettingsService.watch(UserSettingsKeys.accentColor)
+  accentColor: string = userSettingsService.get(UserSettingsKeys.accentColor, DefaultAccentColor)
 
   /**
    * State of sidebar show
@@ -180,6 +209,25 @@ class InterfaceStore {
   setEditorFontSize(newEditorFontSize: string) {
     this.editorFontSize = newEditorFontSize
     globalStyles.setVariable(GlobalStyleVariables.editorFontSize, `${newEditorFontSize}px`)
+  }
+
+  setCornerRadius(cornerRadius: CornerRadius) {
+    this.cornerRadius = cornerRadius
+    globalStyles.setVariable(GlobalStyleVariables.radiusScale, CornerRadiusScale[cornerRadius])
+  }
+
+  setAccentColor(color: string) {
+    this.accentColor = color
+    globalStyles.setVariable(GlobalStyleVariables.accentColor, color)
+  }
+
+  setShowStatusbar(value: boolean) {
+    this.showStatusbar = value
+  }
+
+  setCardShadow(cardShadow: CardShadow) {
+    this.cardShadow = cardShadow
+    globalStyles.setVariable(GlobalStyleVariables.cardShadow, getCardShadowVariable(cardShadow))
   }
 
   /**

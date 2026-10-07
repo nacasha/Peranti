@@ -50,7 +50,7 @@ export const SecondarySidebarSection: FC<SecondarySidebarSectionProps> = (props)
     >
       <div onClick={handleClickTitle} className="SecondarySidebarSection-header">
         <div>
-          <img src={expanded ? Icons.ChevronDown : Icons.ChevronRight} />
+          {expanded ? <Icons.ChevronDown size={12} /> : <Icons.ChevronRight size={12} />}
         </div>
         <div className="SecondarySidebarSection-title">
           {title}

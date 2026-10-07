@@ -16,7 +16,7 @@ export const StatusbarItemTheme = () => {
   const isDarkTheme = useSelector(() => interfaceStore.isDarkTheme)
 
   const label = THEME_LABEL[theme]
-  const icon = isDarkTheme ? Icons.ThemeDark : Icons.ThemeLight
+  const Icon = isDarkTheme ? Icons.ThemeDark : Icons.ThemeLight
 
   const handleClick = () => {
     const nextIndex = (THEME_CYCLE.indexOf(theme) + 1) % THEME_CYCLE.length
@@ -25,7 +25,7 @@ export const StatusbarItemTheme = () => {
 
   return (
     <div className="Statusbar-item" onClick={handleClick}>
-      <img src={icon} alt="Theme" />
+      <Icon size={12} aria-hidden />
       Theme: {label}
     </div>
   )

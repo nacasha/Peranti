@@ -6,9 +6,9 @@ $border-radius: var(--border-radius);
     align-items: center;
   }
   .Switch input[type=checkbox] {
-    --active: #275EFE;
+    --active: var(--accent);
     --active-inner: #fff;
-    --focus: 0px rgba(39, 94, 254, .3);
+    --focus: 3px color-mix(in oklch, var(--accent), transparent 75%);
     --border: var(--border-color);
     --border-hover: var(--border-color);
     --background: var(--input-output-background-color);

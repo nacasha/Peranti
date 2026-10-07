@@ -29,7 +29,11 @@ body {
   // ───────────────────────────────────────────────────────────────
   // Accent
   // ───────────────────────────────────────────────────────────────
-  --color-primary: #3b82f6;
+  // --accent is the design token; --color-primary is the legacy name every
+  // older stylesheet reads. Both resolve to the same violet.
+  --accent: #8b5cf6;
+  --accent-soft: color-mix(in oklch, var(--accent) 16%, transparent);
+  --color-primary: var(--accent);
   --color-primary-light20: color-mix(in srgb, var(--color-primary), #ffffff 20%);
   --color-primary-light40: color-mix(in srgb, var(--color-primary), #ffffff 40%);
   --color-primary-light60: color-mix(in srgb, var(--color-primary), #ffffff 60%);
@@ -46,10 +50,23 @@ body {
   // ───────────────────────────────────────────────────────────────
   // Radius
   // ───────────────────────────────────────────────────────────────
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
-  --radius-xl: 14px;
+  // Every radius multiplies by --radius-scale, which the "Corner Radius"
+  // setting overrides (see constants/corner-radius-scale.ts). Hardcoded
+  // radii elsewhere use the same calc() so the whole UI scales together.
+  --radius-scale: 1;
+  --radius-sm: calc(5px * var(--radius-scale));
+  --radius-md: calc(7px * var(--radius-scale));
+  --radius-lg: calc(9px * var(--radius-scale));
+  --radius-xl: calc(12px * var(--radius-scale));
+  --radius-card: calc(14px * var(--radius-scale));
+
+  // Tool sidebar row height, overridden by the "Item Density" setting
+  // (see constants/tool-sidebar-item-height.ts)
+  --tool-sidebar-item-height: 32px;
+
+  // Gap between the floating cards and the window edge
+  --card-gap: 8px;
+  --card-header-height: 46px;
 
   // Legacy alias — every existing `var(--border-radius)` call site moves
   // from 3px to 6px through this one line.
@@ -74,7 +91,7 @@ body {
   // ───────────────────────────────────────────────────────────────
   // App Titlebar
   // ───────────────────────────────────────────────────────────────
-  --app-titlebar-height: 37px;
+  --app-titlebar-height: 46px;
 
   // Window control buttons
   --window-control-button-width: 50px;
@@ -89,29 +106,26 @@ body {
   // once the sidebar collapses.
   --macos-traffic-lights-inset: 78px;
 
+  // Same job once the sidebar is hidden and the tabbar is leftmost. Smaller
+  // because the tabbar's show-sidebar button already sits behind the content
+  // gutter (8px), the tabbar padding (6px) and an item gap (2px); 62px leaves
+  // it the same distance from the zoom button as the sidebar header's toggle.
+  --macos-traffic-lights-inset-collapsed: 62px;
+
   // Session tabbar
-  --session-tabbar-height: 37px;
+  --session-tabbar-height: 46px;
   --session-tabbar-item-max-width: 200px;
   --session-tabbar-draggable-height: 0px;
 
   // Sidebar
   --activitybar-width: 50px;
   --activitybar-item-height: 30px;
-  --primary-sidebar-width: 250px;
+  --primary-sidebar-width: 256px;
 
   // Input and output component styles
-  --input-output-fields-spacing: 15px;
+  --input-output-fields-spacing: 8px;
   --input-output-label-height: 20px;
   --input-output-label-spacing: 10px;
   --input-output-padding: 7px;
   --input-output-font-size: 13px;
-
-  // ───────────────────────────────────────────────────────────────
-  // Context menu (contexify)
-  // ───────────────────────────────────────────────────────────────
-  --contexify-menu-shadow: var(--shadow-md);
-  --contexify-menu-min-width: 250px;
-  --contexify-menu-padding: 5px;
-  --contexify-menu-radius: var(--radius-lg);
-  --contexify-item-content-padding: 6px 10px;
 }

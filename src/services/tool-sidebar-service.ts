@@ -1,9 +1,13 @@
 import { makeAutoObservable } from "mobx"
 
+import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
+import { ToolSidebarItemHeight } from "src/constants/tool-sidebar-item-height"
+import { ToolSidebarDensity } from "src/enums/tool-sidebar-density"
 import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
 import { type AppletConstructor } from "src/models/AppletConstructor.js"
 
 import { appletStore } from "./applet-store.js"
+import { globalStyles } from "./global-styles.js"
 import { userSettingsService } from "./user-settings-service.js"
 
 /**
@@ -20,22 +24,22 @@ class ToolSidebarService {
   )
 
   /**
-   * Sort all applets by its name
+   * Categories the user has collapsed. Stored as names rather than indexes so
+   * the state survives re-sorting and newly loaded extensions.
    */
-  @userSettingsService.watch(UserSettingsKeys.toolSidebarSortToolNameAZ)
-  sortNameAZ: boolean = userSettingsService.get(
-    UserSettingsKeys.toolSidebarSortToolNameAZ,
-    true
+  @userSettingsService.watch(UserSettingsKeys.toolSidebarCollapsedCategories)
+  collapsedCategories: string[] = userSettingsService.get(
+    UserSettingsKeys.toolSidebarCollapsedCategories,
+    []
   )
 
   /**
-   * When `groupByCategory` is enabled, this value will be used to
-   * sort the category name
+   * Row height of the tool items
    */
-  @userSettingsService.watch(UserSettingsKeys.toolSidebarSortCategoryNameAZ)
-  sortCategoryAZ: boolean = userSettingsService.get(
-    UserSettingsKeys.toolSidebarSortCategoryNameAZ,
-    true
+  @userSettingsService.watch(UserSettingsKeys.toolSidebarDensity)
+  density: ToolSidebarDensity = userSettingsService.get(
+    UserSettingsKeys.toolSidebarDensity,
+    ToolSidebarDensity.Default
   )
 
   /**
@@ -88,26 +92,16 @@ class ToolSidebarService {
     })
 
     /**
-     * Sort by applets name if enabled
+     * Always sort applets and categories by name, A-Z. Case-insensitive, so
+     * e.g. "Color" comes before "CSV" rather than after it.
      */
-    if (this.sortNameAZ) {
-      listOfCategoriesAndApplets = Object.fromEntries(
-        Object.entries(listOfCategoriesAndApplets).map(([category, applets]) => {
-          return [category, applets.sort((a, b) => a.name < b.name ? -1 : 0)]
-        })
-      )
-    }
+    const byName = (a: string, b: string) => a.localeCompare(b, undefined, { sensitivity: "base" })
 
-    /**
-     * Sort by applet categories if enabled
-     */
-    if (this.sortCategoryAZ) {
-      listOfCategoriesAndApplets = Object.fromEntries(
-        Object.entries(listOfCategoriesAndApplets).sort(([categoryA], [categoryB]) => {
-          return categoryA < categoryB ? -1 : 0
-        })
-      )
-    }
+    listOfCategoriesAndApplets = Object.fromEntries(
+      Object.entries(listOfCategoriesAndApplets)
+        .map(([category, applets]) => [category, applets.sort((a, b) => byName(a.name, b.name))] as const)
+        .sort(([categoryA], [categoryB]) => byName(categoryA, categoryB))
+    )
 
     /**
      * Remove applet category with empty applets
@@ -126,14 +120,19 @@ class ToolSidebarService {
     this.setupItems()
   }
 
-  setSortNameAZ(value: boolean) {
-    this.sortNameAZ = value
-    this.setupItems()
+  setDensity(density: ToolSidebarDensity) {
+    this.density = density
+    globalStyles.setVariable(GlobalStyleVariables.toolSidebarItemHeight, ToolSidebarItemHeight[density])
   }
 
-  setSortCategoryAZ(value: boolean) {
-    this.sortCategoryAZ = value
-    this.setupItems()
+  isCategoryCollapsed(category: string) {
+    return this.collapsedCategories.includes(category)
+  }
+
+  toggleCategory(category: string) {
+    this.collapsedCategories = this.isCategoryCollapsed(category)
+      ? this.collapsedCategories.filter((name) => name !== category)
+      : [...this.collapsedCategories, category]
   }
 }
 

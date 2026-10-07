@@ -6,6 +6,10 @@ export enum UserSettingsKeys {
   textAreaWordWrap = "appearance.textAreaWordWrap",
   editorFontFamily = "appearance.editorFontFamily",
   editorFontSize = "appearance.editorFontSize",
+  cornerRadius = "appearance.cornerRadius",
+  cardShadow = "appearance.cardShadow",
+  showStatusbar = "appearance.showStatusbar",
+  accentColor = "appearance.accentColor",
 
   // File Drop
   fileDropAction = "filedrop.action",
@@ -13,8 +17,8 @@ export enum UserSettingsKeys {
 
   // Tool sidebar
   toolSidebarGroupByCategory = "toolsidebar.groupByCategory",
-  toolSidebarSortToolNameAZ = "toolsidebar.sortToolNameAZ",
-  toolSidebarSortCategoryNameAZ = "toolsidebar.sortCategoryNameAZ",
+  toolSidebarCollapsedCategories = "toolsidebar.collapsedCategories",
+  toolSidebarDensity = "toolsidebar.density",
 
   // Tool tabbar
   tabbarEnableMultipleSession = "tabbar.enableMultipleSession",

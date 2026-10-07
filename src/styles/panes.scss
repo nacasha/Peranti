@@ -1,0 +1,273 @@
+// Field cards (Peranti Redesign v2)
+//
+// Every input and output component renders as one card on the window canvas:
+// a 46px header carrying the label and actions, then the control as the body.
+// The lists live here instead of in each component so the whole set stays in
+// step. Inside a card the control drops its own border — the card is the frame.
+
+// Panes whose body grows to fill the card (editors, previews, viewers).
+$pane-components: (
+  ".CodeInput",
+  ".TextAreaInput",
+  ".CodeOutput",
+  ".TextAreaOutput",
+  ".MarkdownOutput",
+  ".MermaidOutput",
+  ".PintoraOutput",
+  ".DiffOutput",
+  ".ImageOutput",
+  ".DataGridOutput",
+  ".ReactOutput",
+  ".FileOutput",
+);
+
+// Fields whose body is a single compact control.
+$field-components: (
+  ".TextInput",
+  ".SelectInput",
+  ".SwitchInput",
+  ".FileInput",
+  ".ColorPickerInput",
+  ".TextOutput",
+  ".ColorOutput",
+  ".ColorPalleteOutput",
+);
+
+// Fields with no separate label row (the label lives inside the control).
+$headless-components: (
+  ".CheckboxInput",
+  ".GridStatOutput",
+);
+
+// Scoped under `body` so these outrank the components' own stylesheets, which
+// load later with selectors of the same weight (e.g. `.TextInput input`).
+body {
+  #{$pane-components},
+  #{$field-components},
+  #{$headless-components} {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    min-height: 0;
+    transition: border-color var(--animation-speed), box-shadow var(--animation-speed);
+
+    > .AppletComponentHead {
+      height: var(--card-header-height);
+      flex: none;
+      margin: 0;
+      padding: 0 10px 0 16px;
+      border-bottom: 1px solid var(--line);
+
+      .AppletComponentHead-label {
+        font-size: var(--font-size);
+        font-weight: var(--font-weight-medium);
+        color: var(--text-color);
+      }
+    }
+  }
+
+  // The card border picks up the accent while you type in it.
+  #{$pane-components},
+  #{$field-components},
+  #{$headless-components} {
+    &:focus-within {
+      border-color: color-mix(in oklch, var(--accent) 45%, transparent);
+    }
+  }
+
+  // Read-only outputs never take focus styling.
+  .CodeOutput,
+  .TextAreaOutput,
+  .TextOutput {
+    &:focus-within {
+      border-color: var(--line);
+    }
+  }
+
+  // ── Pane bodies ────────────────────────────────────────────────────────────
+
+  #{$pane-components} {
+    .CodeMirrorContainer,
+    .MarkdownOutput-inner,
+    .DiffOutput-body,
+    .DataGridOutput-content,
+    .ReactOutput-area,
+    > textarea {
+      border: 0;
+      border-radius: 0;
+      background-color: transparent;
+
+      &:hover,
+      &:focus,
+      &:focus-within {
+        border: 0;
+      }
+    }
+
+    > textarea {
+      padding: 16px 18px;
+      line-height: 22px;
+    }
+
+    .MarkdownOutput-inner .body {
+      padding: 0 18px;
+    }
+  }
+
+  .FileOutput #react-doc-viewer #proxy-renderer {
+    border: 0 !important;
+    border-radius: 0;
+    background: transparent !important;
+  }
+
+  // The React preview renders arbitrary user markup that assumes white paper.
+  .ReactOutput .ReactOutput-area {
+    background-color: #ffffff;
+  }
+
+  // Error overlay sits below the 46px card header.
+  .AppletComponentError {
+    top: var(--card-header-height);
+    border-radius: 0;
+  }
+
+  // Outputs read in the accent ink, as in the design's result pane.
+  .TextAreaOutput > textarea,
+  .TextOutput > input {
+    color: var(--accent-ink);
+  }
+
+  // Visualisation panes sit on a dotted grid.
+  .MermaidOutput-inner,
+  .PintoraOutput-inner,
+  .ImageOutput-inner {
+    background-image: radial-gradient(var(--line) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+
+  // ── Field bodies ───────────────────────────────────────────────────────────
+
+  // Single-line text: the input is the whole body, flush with the card.
+  .TextInput > input,
+  .TextOutput > input {
+    height: 44px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+    font-size: var(--input-output-font-size);
+    line-height: 22px;
+
+    &:hover,
+    &:focus {
+      border: 0;
+      box-shadow: none;
+    }
+  }
+
+  // With no border of its own, an empty field needs a hint that it's typeable.
+  .TextInput > input:not([readonly]) {
+    cursor: text;
+    transition: background-color var(--animation-speed);
+
+    &:hover {
+      background-color: var(--hover);
+    }
+
+    &:focus {
+      background-color: transparent;
+    }
+  }
+
+  .SelectInput .Dropdown {
+    height: 44px;
+    padding: 0 14px 0 16px;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+
+    &:hover {
+      border: 0;
+      background-color: var(--hover);
+    }
+  }
+
+  .SwitchInput .buttons {
+    margin: 10px 12px;
+  }
+
+  .FileInput > div:last-child {
+    padding: 12px;
+  }
+
+  .FileInput .FileInputPicker {
+    margin-bottom: 0;
+    padding: 18px;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-lg);
+    background-color: var(--raised);
+    color: var(--muted);
+    text-align: center;
+    transition: border-color var(--animation-speed), color var(--animation-speed);
+
+    &:hover {
+      border-color: color-mix(in oklch, var(--accent) 45%, transparent);
+      color: var(--text-color);
+    }
+  }
+
+  .FileInput .FileInputList {
+    margin: 10px 0 0;
+  }
+
+  .ColorPickerInput .rc-color-picker-panel {
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+  }
+
+  // Swatches run edge to edge under the header.
+  .ColorOutput .ColorOutput-content {
+    border: 0;
+    border-radius: 0;
+  }
+
+  .ColorPalleteOutput .ColorPalleteOutput-content {
+    padding: 12px;
+  }
+
+  // ── Headless fields ────────────────────────────────────────────────────────
+
+  .CheckboxInput {
+    min-height: 44px;
+    align-items: center;
+    padding: 0 16px;
+  }
+
+  .GridStatOutput {
+    border: 1px solid var(--line);
+    background-color: var(--panel);
+
+    .GridStatOutput-item {
+      flex: 1;
+      padding: 12px 16px;
+      border-right: 1px solid var(--line);
+
+      &:last-child {
+        border-right: 0;
+      }
+    }
+
+    .GridStatOutput-item-label {
+      font-size: 11.5px;
+      color: var(--faint);
+    }
+
+    .GridStatOutput-item-value {
+      font-family: var(--font-family-mono);
+      color: var(--accent-ink);
+    }
+  }
+}

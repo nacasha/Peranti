@@ -2,14 +2,46 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   user-select: none;
   margin-bottom: var(--input-output-label-spacing);
 }
 
+// Plain fields: a quiet label above the control. Pane cards restyle this as
+// their header (see styles/panes.scss).
 .AppletComponentHead-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
+.AppletComponentHead-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+// Marks output cards, which the user can copy from but not edit.
+.AppletComponentHead-badge {
+  flex: none;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: calc(6px * var(--radius-scale));
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  color: var(--muted);
+  background: var(--hover);
+  border: 1px solid var(--line);
 }
 
 .AppletComponentHead-buttons {
-
+  display: flex;
+  gap: 2px;
 }

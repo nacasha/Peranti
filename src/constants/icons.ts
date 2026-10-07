@@ -1,101 +1,136 @@
-import Back from "src/assets/icons/back.svg"
-import BackspaceFill from "src/assets/icons/backspace-fill.svg"
-import Box from "src/assets/icons/box.svg"
-import Check from "src/assets/icons/check.svg"
-import ChevronDown from "src/assets/icons/chevron-down.svg"
-import ChevronLeft from "src/assets/icons/chevron-left.svg"
-import ChevronRight from "src/assets/icons/chevron-right.svg"
-import ChevronUp from "src/assets/icons/chevron-up.svg"
-import Clean from "src/assets/icons/clean.svg"
-import Close from "src/assets/icons/close.svg"
-import Documents from "src/assets/icons/documents.svg"
-import Download from "src/assets/icons/download.svg"
-import Extension from "src/assets/icons/extension.svg"
-import Extensions from "src/assets/icons/extensions.svg"
-import Feedback from "src/assets/icons/feedback.svg"
-import FilterSolid from "src/assets/icons/filter-solid.svg"
-import Filter from "src/assets/icons/filter.svg"
-import Folder from "src/assets/icons/folder.svg"
-import FullScreen from "src/assets/icons/fullscreen.svg"
-import Gear from "src/assets/icons/gear.svg"
-import Hash from "src/assets/icons/hash.svg"
-import History from "src/assets/icons/history.svg"
-import Home from "src/assets/icons/home.svg"
-import Layers2 from "src/assets/icons/layers-2.svg"
-import Layers from "src/assets/icons/layers.svg"
-import Minimize from "src/assets/icons/minimize.svg"
-import Minus from "src/assets/icons/minus.svg"
-import Newspaper from "src/assets/icons/newspaper.svg"
-import NormalScreen from "src/assets/icons/normal-screen.svg"
-import PanelBottom from "src/assets/icons/panel-bottom.svg"
-import PanelLeft from "src/assets/icons/panel-left.svg"
-import PanelRight from "src/assets/icons/panel-right.svg"
-import Plus from "src/assets/icons/plus.svg"
-import Refresh from "src/assets/icons/refresh.svg"
-import Reset from "src/assets/icons/reset.svg"
-import Restore from "src/assets/icons/restore.svg"
-import RunFilled from "src/assets/icons/run-filled.svg"
-import Run from "src/assets/icons/run.svg"
-import Search from "src/assets/icons/search.svg"
-import Settings from "src/assets/icons/settings.svg"
-import ThemeDark from "src/assets/icons/theme-dark.svg"
-import ThemeLight from "src/assets/icons/theme-light.svg"
-import ThreeLineHorizontal from "src/assets/icons/three-line-horizontal.svg"
-import ThreeLineVertical from "src/assets/icons/three-line-vertical.svg"
-import Thunder from "src/assets/icons/thunder.svg"
-import Tool from "src/assets/icons/tool.svg"
-import Trash from "src/assets/icons/trash.svg"
-import Untrash from "src/assets/icons/untrash.svg"
-import WordWrap from "src/assets/icons/word-wrap.svg"
-
-export const Icons = {
-  Back,
+import {
+  ArchiveRestore,
+  ArrowLeft,
+  ArrowRightFromLine,
+  ArrowRightToLine,
+  Blocks,
+  Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
-  WordWrap,
-  NormalScreen,
-  Tool,
-  Filter,
-  FilterSolid,
-  Feedback,
-  ThemeDark,
-  ThemeLight,
+  ChevronUp,
+  ClipboardPaste,
+  Copy,
+  CopyX,
+  Delete,
+  Download,
+  Eraser,
+  Files,
   Folder,
-  Extensions,
+  FolderOpen,
+  Funnel,
+  Hash,
+  House,
+  Layers,
+  Layers2,
+  ListX,
+  type LucideIcon,
+  type LucideProps,
+  Maximize,
+  Menu,
+  MessageSquare,
+  Minimize,
+  Minus,
+  Moon,
+  Newspaper,
+  PanelBottom,
+  PanelLeft,
+  PanelRight,
+  Pencil,
+  Play,
+  Plus,
+  Puzzle,
+  RefreshCw,
+  RotateCcw,
+  RotateCcwClock,
+  Save,
+  Search,
+  Settings,
+  SlidersHorizontal,
+  Square,
+  Sun,
+  TextWrap,
+  Trash,
+  Workflow,
+  Wrench,
+  X,
+  Zap
+} from "lucide-react"
+import { createElement, forwardRef } from "react"
+
+/**
+ * Filled variant of an outline Lucide icon, for toggles whose "on" state
+ * reads as solid (e.g. Group Tabs By Tool)
+ */
+const filled = (Icon: LucideIcon): LucideIcon => forwardRef<SVGSVGElement, LucideProps>(
+  (props, ref) => createElement(Icon, { ...props, ref, fill: "currentColor" })
+)
+
+/**
+ * Every icon in the app, from Lucide (https://lucide.dev). Keys are the app's
+ * own names so call sites read by purpose, not by Lucide's naming.
+ */
+export const Icons = {
+  Back: ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  WordWrap: TextWrap,
+  NormalScreen: Minimize,
+  Tool: Wrench,
+  Filter: Funnel,
+  FilterSolid: filled(Funnel),
+  Feedback: MessageSquare,
+  ThemeDark: Moon,
+  ThemeLight: Sun,
+  Folder,
+  Extensions: Blocks,
   PanelBottom,
   Check,
   ChevronDown,
   ChevronUp,
   Search,
-  Documents,
+  Documents: Files,
   Trash,
-  Untrash,
-  BackspaceFill,
-  Box,
-  Clean,
-  Close,
+  Untrash: ArchiveRestore,
+  BackspaceFill: Delete,
+  Box: Square,
+  Clean: Eraser,
+  Close: X,
   Download,
-  Gear,
+  Gear: Settings,
   Hash,
-  FullScreen,
-  Extension,
-  History,
-  Home,
+  FullScreen: Maximize,
+  Extension: Puzzle,
+  History: RotateCcwClock,
+  Home: House,
   Layers,
   Layers2,
-  Minimize,
+  Minimize: Minus,
   Newspaper,
   PanelLeft,
   Plus,
-  Refresh,
+  Refresh: RefreshCw,
   PanelRight,
-  Reset,
+  Reset: RotateCcw,
   Minus,
-  Restore,
-  Run,
-  RunFilled,
-  Settings,
-  ThreeLineHorizontal,
-  ThreeLineVertical,
-  Thunder
-}
+  Restore: ArchiveRestore,
+  Run: Play,
+  RunFilled: filled(Play),
+  Settings: SlidersHorizontal,
+  ThreeLineHorizontal: Menu,
+  ThreeLineVertical: Workflow,
+  Thunder: Zap,
+
+  // Context menu actions
+  Copy,
+  Paste: ClipboardPaste,
+  PickFile: FolderOpen,
+  SaveToFile: Save,
+  CloseOthers: ListX,
+  CloseAll: CopyX,
+  Rename: Pencil,
+  AddInput: ArrowRightToLine,
+  AddOutput: ArrowRightFromLine
+} satisfies Record<string, LucideIcon>
+
+export type { LucideIcon as Icon }

@@ -31,9 +31,9 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
 
   const handleMouseDown: MouseEventHandler = (event) => {
     if (event.button === 0) {
-      const clickedElement = event.target as HTMLDivElement
-      if (clickedElement.tagName.toLowerCase() === "img" ||
-        clickedElement.classList.contains("SessionTabbar-item-session-icon")) {
+      // The close button (or the SVG/path inside it) handles its own click
+      const clickedElement = event.target as Element
+      if (clickedElement.closest(".SessionTabbar-item-session-icon")) {
         event.stopPropagation()
         event.preventDefault()
         return
@@ -154,7 +154,7 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
           {isActionRunning ? " ..." : ""}
         </div>
         <div className="SessionTabbar-item-session-icon" onClickCapture={handleCloseTab}>
-          <img src={Icons.Close} alt="Close Tab" />
+          <Icons.Close size={12} aria-label="Close Tab" />
         </div>
       </div>
     </div>
