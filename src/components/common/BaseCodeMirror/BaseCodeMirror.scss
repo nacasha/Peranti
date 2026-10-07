@@ -40,6 +40,25 @@
       padding-block: 14px;
     }
 
+    // Find panel docks above the text as a bar, so it never covers content
+    .cm-panels.cm-panels-top {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      color: var(--text-color);
+    }
+
+    .cm-searchMatch {
+      background-color: color-mix(in oklch, var(--accent) 20%, transparent);
+      outline: 1px solid color-mix(in oklch, var(--accent) 45%, transparent);
+      border-radius: 2px;
+    }
+
+    .cm-searchMatch.cm-searchMatch-selected,
+    .cm-searchMatch-selected .cm-searchMatch {
+      background-color: color-mix(in oklch, var(--accent) 50%, transparent);
+      outline-color: var(--accent);
+    }
+
     .cm-editor .cm-content, .cm-gutter {
       font-family: var(--font-family-mono);
       font-size: calc(1px + var(--input-output-font-size));

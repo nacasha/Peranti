@@ -1,9 +1,12 @@
 import {
   ArchiveRestore,
+  ArrowDown,
   ArrowLeft,
   ArrowRightFromLine,
   ArrowRightToLine,
+  ArrowUp,
   Blocks,
+  CaseSensitive,
   Check,
   ChevronDown,
   ChevronLeft,
@@ -41,6 +44,9 @@ import {
   Plus,
   Puzzle,
   RefreshCw,
+  Regex,
+  Replace,
+  ReplaceAll,
   RotateCcw,
   RotateCcwClock,
   Save,
@@ -51,6 +57,7 @@ import {
   Sun,
   TextWrap,
   Trash,
+  WholeWord,
   Workflow,
   Wrench,
   X,
@@ -130,7 +137,16 @@ export const Icons = {
   CloseAll: CopyX,
   Rename: Pencil,
   AddInput: ArrowRightToLine,
-  AddOutput: ArrowRightFromLine
+  AddOutput: ArrowRightFromLine,
+
+  // Editor find & replace
+  ArrowUp,
+  ArrowDown,
+  MatchCase: CaseSensitive,
+  MatchWholeWord: WholeWord,
+  Regex,
+  Replace,
+  ReplaceAll
 } satisfies Record<string, LucideIcon>
 
 export type { LucideIcon as Icon }

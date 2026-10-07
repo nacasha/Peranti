@@ -3,6 +3,7 @@ import { jsonLanguage } from "@codemirror/lang-json"
 import { markdownLanguage } from "@codemirror/lang-markdown"
 import { MySQL } from "@codemirror/lang-sql"
 import { yamlLanguage } from "@codemirror/lang-yaml"
+import { search } from "@codemirror/search"
 import { githubLight } from "@uiw/codemirror-theme-github"
 import { vscodeDarkInit } from "@uiw/codemirror-theme-vscode"
 import CodeMirror, { EditorView, type ReactCodeMirrorRef, type ReactCodeMirrorProps, type ViewUpdate, EditorSelection } from "@uiw/react-codemirror"
@@ -12,6 +13,7 @@ import { useRef, type FC, useEffect, useState, memo } from "react"
 import { Theme } from "src/enums/theme-2"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
+import { createSearchPanel } from "src/utils/create-search-panel"
 
 import "./BaseCodeMirror.scss"
 
@@ -49,6 +51,9 @@ const darkTheme = vscodeDarkInit({
     selectionMatch: "color-mix(in srgb, var(--accent) 16%, transparent)"
   }
 })
+
+// Ctrl/Cmd+F opens the app's own find & replace panel
+const searchPanel = search({ top: true, createPanel: createSearchPanel })
 
 const basicSetup = {
   highlightActiveLine: false,
@@ -93,7 +98,7 @@ const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => 
     : undefined
 
   const getExtensions = () => {
-    const extensions = []
+    const extensions = [searchPanel]
 
     if (textAreaWordWrapEnabled) {
       extensions.push(EditorView.lineWrapping)

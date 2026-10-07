@@ -12,6 +12,7 @@
         "@codemirror/lang-sql": "^6.6.1",
         "@codemirror/lang-yaml": "^6.0.0",
         "@codemirror/language": "^6.10.1",
+        "@codemirror/search": "^6.7.2",
         "@cyntler/react-doc-viewer": "^1.14.1",
         "@ebay/nice-modal-react": "^1.2.13",
         "@fortune-sheet/react": "^0.19.2",
