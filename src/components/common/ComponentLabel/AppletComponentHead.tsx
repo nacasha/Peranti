@@ -1,11 +1,13 @@
-import { useContext, useId, useRef, useState, type FC, memo } from "react"
+import { useContext, useEffect, useId, useRef, useState, type FC, memo } from "react"
 import { Item, type ItemParams, Menu, Separator, useContextMenu } from "react-contexify"
 
 import { Icons } from "src/constants/icons"
 import { AppletComponentContext } from "src/contexts/AppletInputContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
+import { copyComponentValue } from "src/utils/copy-component-value"
 import { runViewTransition } from "src/utils/run-view-transition"
+import { saveComponentValue } from "src/utils/save-component-value"
 
 import { ButtonIcon } from "../ButtonIcon"
 import { Tooltip } from "../Tooltip"
@@ -27,6 +29,10 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
   const { show } = useContextMenu({ id: menuId })
   const switcherRef = useRef<HTMLDivElement>(null)
   const [fields, setFields] = useState<MaximizableField[]>([])
+  const [isCopied, setIsCopied] = useState(false)
+  const copiedTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
+
+  useEffect(() => () => { clearTimeout(copiedTimeoutRef.current) }, [])
 
   const maximizedField = useSelector(() => activeAppletStore.getActiveApplet().maximizedField)
   const isMaximized = maximizedField.enabled &&
@@ -45,6 +51,33 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
         key: componentContext.fieldKey
       })
     }, isMaximized ? "field-restoring" : "field-maximizing")
+  }
+
+  const getFieldValue = () => {
+    const applet = activeAppletStore.getActiveApplet()
+
+    return componentContext.type === "output"
+      ? applet.getOutputValue(componentContext.fieldKey)
+      : applet.getInputValue(componentContext.fieldKey)
+  }
+
+  const handleClickCopy = async() => {
+    if (!componentContext.component) {
+      return
+    }
+
+    const isSuccess = await copyComponentValue(componentContext.component, getFieldValue())
+    if (isSuccess) {
+      clearTimeout(copiedTimeoutRef.current)
+      setIsCopied(true)
+      copiedTimeoutRef.current = setTimeout(() => { setIsCopied(false) }, 1500)
+    }
+  }
+
+  const handleClickSave = () => {
+    if (componentContext.component) {
+      void saveComponentValue(componentContext.component, getFieldValue())
+    }
   }
 
   const handleClickLabel = () => {
@@ -128,6 +161,23 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
         )}
       </div>
       <div className="AppletComponentHead-buttons">
+        {componentContext.component?.copyAs && (
+          <ButtonIcon
+            className={isCopied ? "ButtonIcon is-copied" : "ButtonIcon"}
+            tooltip={isCopied ? "Copied" : "Copy"}
+            icon={isCopied ? Icons.Check : Icons.Copy}
+            iconSize={12}
+            onClick={() => { void handleClickCopy() }}
+          />
+        )}
+        {componentContext.component?.saveAs && (
+          <ButtonIcon
+            tooltip="Save to File"
+            icon={Icons.SaveToFile}
+            iconSize={12}
+            onClick={handleClickSave}
+          />
+        )}
         {showMaximize && (
           <ButtonIcon
             tooltip={isMaximized ? "Restore" : "Maximize"}

@@ -47,6 +47,7 @@ class AppletComponentService {
       component: TextAreaInput,
       maximizable: true,
       copyAs: "text",
+      saveAs: "text",
       readFileAs: "text"
     }),
 

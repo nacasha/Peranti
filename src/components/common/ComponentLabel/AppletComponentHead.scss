@@ -112,4 +112,9 @@
 .AppletComponentHead-buttons {
   display: flex;
   gap: 2px;
+
+  // Copy button turns into a checkmark briefly after a successful copy
+  .ButtonIcon.is-copied {
+    color: var(--accent);
+  }
 }
