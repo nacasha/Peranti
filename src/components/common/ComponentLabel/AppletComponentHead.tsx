@@ -11,6 +11,7 @@ import { saveComponentValue } from "src/utils/save-component-value"
 
 import { Button } from "../Button"
 import { ButtonIcon } from "../ButtonIcon"
+import { PopoverConfirm } from "../PopoverConfirm"
 import { Tooltip } from "../Tooltip"
 
 import "./AppletComponentHead.scss"
@@ -90,15 +91,45 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
   const isBatchModeEnabled = useSelector(() => activeAppletStore.getActiveApplet().isBatchModeEnabled)
 
   const handleClickBatchMode = () => {
-    activeAppletStore.getActiveApplet().toggleBatchMode()
+    activeAppletStore.toggleBatchMode()
   }
 
+  const batchModeOutputKey = useSelector(() => activeAppletStore.getActiveApplet().batchModeOutputKey)
+
+  const getBatchOutputFields = (): MaximizableField[] => activeAppletStore.getActiveApplet()
+    .getOutputFields()
+    .filter((output) => output.allowBatch)
+    .map((output) => ({ type: "output", key: output.key, label: output.label }))
+
+  /**
+   * Batch mode shows a single output, so offer the same switcher as maximized
+   * fields when more than one output allows batch
+   */
+  const isBatchOutputSwitcher = !isMaximized &&
+    isBatchModeEnabled &&
+    componentContext.type === "output" &&
+    getBatchOutputFields().length > 1
+  const hasSwitcher = isMaximized || isBatchOutputSwitcher
+  const selectedField = isBatchOutputSwitcher
+    ? { type: "output", key: batchModeOutputKey }
+    : maximizedField
+
   const handleClickLabel = () => {
+    if (isBatchOutputSwitcher) {
+      const batchFields = getBatchOutputFields()
+      const currentIndex = batchFields.findIndex((field) => field.key === batchModeOutputKey)
+      const nextField = batchFields[(currentIndex + 1) % batchFields.length]
+      activeAppletStore.getActiveApplet().setBatchModeOutputKey(nextField.key)
+      return
+    }
+
     activeAppletStore.getActiveApplet().maximizeNextField()
   }
 
   const handleClickSwitcher = (event: React.MouseEvent) => {
-    setFields(activeAppletStore.getActiveApplet().getMaximizableFields())
+    setFields(isBatchOutputSwitcher
+      ? getBatchOutputFields()
+      : activeAppletStore.getActiveApplet().getMaximizableFields())
 
     const rect = switcherRef.current?.getBoundingClientRect()
     show({
@@ -109,9 +140,14 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
 
   const handleSelectField = (params: ItemParams<any, MaximizableField>) => {
     const field = params.data
-    const isCurrentField = field?.type === maximizedField.type && field?.key === maximizedField.key
+    const isCurrentField = field?.type === selectedField.type && field?.key === selectedField.key
 
     if (field && !isCurrentField) {
+      if (isBatchOutputSwitcher) {
+        activeAppletStore.getActiveApplet().setBatchModeOutputKey(field.key)
+        return
+      }
+
       activeAppletStore.getActiveApplet().toggleMaximizedFieldKey({
         enabled: true,
         type: field.type,
@@ -123,7 +159,7 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
   const renderFieldItems = (type: string) => fields
     .filter((field) => field.type === type)
     .map((field) => {
-      const isSelected = field.type === maximizedField.type && field.key === maximizedField.key
+      const isSelected = field.type === selectedField.type && field.key === selectedField.key
 
       return (
         <Item
@@ -144,7 +180,7 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
   return (
     <div className="AppletComponentHead">
       <div className="AppletComponentHead-title">
-        {isMaximized
+        {hasSwitcher
           ? (
             <div className="AppletComponentHead-switch" ref={switcherRef}>
               <Tooltip overlay="Select input / output">
@@ -175,14 +211,19 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
       </div>
       <div className="AppletComponentHead-buttons">
         {componentContext.showBatchModeButton && (
-          <Button
-            className={isBatchModeEnabled ? "AppletComponentHead-batch is-active" : "AppletComponentHead-batch"}
-            icon={Icons.Layers}
-            iconSize={13}
-            onClick={handleClickBatchMode}
+          <PopoverConfirm
+            confirmation={() => activeAppletStore.getToggleBatchModeConfirmation()}
+            onConfirm={handleClickBatchMode}
           >
-            Batch
-          </Button>
+            <Button
+              className={isBatchModeEnabled ? "AppletComponentHead-batch is-active" : "AppletComponentHead-batch"}
+              icon={Icons.Layers}
+              iconSize={13}
+              onClick={handleClickBatchMode}
+            >
+              Batch
+            </Button>
+          </PopoverConfirm>
         )}
         {componentContext.showRegenerateButton && (
           <Button
@@ -214,6 +255,7 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
         )}
         {showMaximize && (
           <ButtonIcon
+            className={isMaximized ? "ButtonIcon is-restore" : "ButtonIcon"}
             tooltip={isMaximized ? "Restore" : "Maximize"}
             icon={isMaximized ? Icons.NormalScreen : Icons.FullScreen}
             iconSize={13}
@@ -222,7 +264,7 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
         )}
       </div>
 
-      {isMaximized && (
+      {hasSwitcher && (
         <Menu id={menuId} className="DropdownMenu AppletComponentHead-menu">
           {hasInputFields && <Item disabled className="AppletComponentHead-menuGroup">Inputs</Item>}
           {renderFieldItems("input")}

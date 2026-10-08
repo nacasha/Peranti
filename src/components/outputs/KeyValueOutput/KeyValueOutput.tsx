@@ -8,8 +8,13 @@ import { parseKeyValueRows, type KeyValueFields, type KeyValueValues } from "src
 
 import "./KeyValueOutput.scss"
 
-interface KeyValueOutputProps extends OutputComponentProps<KeyValueValues | string> {
+export interface KeyValueOutputProps extends OutputComponentProps<KeyValueValues | string> {
   fields?: KeyValueFields
+
+  /**
+   * Card title. Outputs with the same `label` are rendered together as one card
+   */
+  label?: string
 }
 
 export const KeyValueOutput: FC<KeyValueOutputProps> = (props) => {
@@ -42,8 +47,8 @@ export const KeyValueOutput: FC<KeyValueOutputProps> = (props) => {
             <span className="KeyValueOutput-label">{row.label}</span>
             <span className="KeyValueOutput-value">{row.value}</span>
             {copiedIndex === index
-              ? <Icons.CopyDone className="KeyValueOutput-icon is-copied" size={15} aria-hidden />
-              : <Icons.Copy className="KeyValueOutput-icon" size={15} aria-hidden />}
+              ? <Icons.CopyDone className="KeyValueOutput-icon is-copied" size={13} aria-hidden />
+              : <Icons.Copy className="KeyValueOutput-icon" size={13} aria-hidden />}
           </button>
         ))}
       </div>

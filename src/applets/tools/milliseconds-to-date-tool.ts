@@ -15,7 +15,12 @@ interface InputFields {
 }
 
 interface OutputFields {
-  result: OutputFieldsType.KeyValue
+  seconds: OutputFieldsType.KeyValue
+  iso8601: OutputFieldsType.KeyValue
+  rfc2822: OutputFieldsType.KeyValue
+  localTime: OutputFieldsType.KeyValue
+  relativeTime: OutputFieldsType.KeyValue
+  dayOfYear: OutputFieldsType.KeyValue
 }
 
 const millisecondsToDate = new AppletConstructor<InputFields, OutputFields>({
@@ -32,6 +37,7 @@ const millisecondsToDate = new AppletConstructor<InputFields, OutputFields>({
       label: "Milliseconds",
       component: "Text",
       defaultValue: "",
+      allowBatch: true,
       props: {
         autoFocus: true
       }
@@ -39,20 +45,46 @@ const millisecondsToDate = new AppletConstructor<InputFields, OutputFields>({
   ],
   outputFields: [
     {
-      key: "result",
-      label: "Result",
+      key: "seconds",
+      label: "Seconds (Unix)",
+      allowBatch: true,
       component: "KeyValue",
-      props: {
-        fields: {
-          milliseconds: { label: "Milliseconds" },
-          seconds: { label: "Seconds (Unix)" },
-          iso8601: { label: "ISO 8601" },
-          rfc2822: { label: "RFC 2822" },
-          localTime: { label: "Local time" },
-          relativeTime: { label: "Relative" },
-          dayOfYear: { label: "Day of year" }
-        }
-      }
+      props: { label: "Result" }
+    },
+    {
+      key: "iso8601",
+      label: "ISO 8601",
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
+    },
+    {
+      key: "rfc2822",
+      label: "RFC 2822",
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
+    },
+    {
+      key: "localTime",
+      label: "Local time",
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
+    },
+    {
+      key: "relativeTime",
+      label: "Relative",
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
+    },
+    {
+      key: "dayOfYear",
+      label: "Day of year",
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
     }
   ],
   samples: [
@@ -69,17 +101,13 @@ const millisecondsToDate = new AppletConstructor<InputFields, OutputFields>({
     const dayJsInstance = dayjs(time)
     const isValid = milliseconds.trim().length > 0 && dayJsInstance.isValid()
 
-    // Every value stays empty while the input is empty or invalid, so the table keeps its shape
     return {
-      result: {
-        milliseconds: isValid ? time : "",
-        seconds: isValid ? Math.floor(time / 1000) : "",
-        iso8601: isValid ? dayJsInstance.utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]") : "",
-        rfc2822: isValid ? dayJsInstance.utc().format("ddd, DD MMM YYYY HH:mm:ss [GMT]") : "",
-        localTime: isValid ? dayJsInstance.format("YYYY-MM-DD HH:mm:ss") : "",
-        relativeTime: isValid ? formatShortRelativeTime(time) : "",
-        dayOfYear: isValid ? dayJsInstance.dayOfYear() : ""
-      }
+      seconds: isValid ? `${Math.floor(time / 1000)}` : "",
+      iso8601: isValid ? dayJsInstance.utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]") : "",
+      rfc2822: isValid ? dayJsInstance.utc().format("ddd, DD MMM YYYY HH:mm:ss [GMT]") : "",
+      localTime: isValid ? dayJsInstance.format("YYYY-MM-DD HH:mm:ss") : "",
+      relativeTime: isValid ? formatShortRelativeTime(time) : "",
+      dayOfYear: isValid ? `${dayJsInstance.dayOfYear()}` : ""
     }
   }
 })

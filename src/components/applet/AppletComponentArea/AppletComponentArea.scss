@@ -4,6 +4,7 @@ $padding: var(--input-output-fields-spacing);
 // same 8px gap the cards keep between each other.
 .AppletComponentArea {
   flex: 1;
+  min-width: 0;
   gap: $padding;
   padding: 0 var(--card-gap) var(--card-gap) 0;
   position: relative;
@@ -55,8 +56,16 @@ $padding: var(--input-output-fields-spacing);
   .AppletComponentAreaInput, .AppletComponentAreaOutput {
     overflow: hidden;
     position: relative;
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 0;
     gap: $padding;
+
+    // Side by side in a flex row, each field takes an equal share and can
+    // shrink below its content width instead of pushing the sibling area
+    &.flex.horizontal > * {
+      flex: 1 1 0;
+      min-width: 0;
+    }
 
     &.grid {
       display: grid;

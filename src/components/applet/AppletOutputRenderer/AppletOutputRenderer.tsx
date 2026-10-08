@@ -12,10 +12,15 @@ import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
 
 interface AppletOutputRendererProps {
   appletOutput: AppletOutput
+
+  /**
+   * KeyValue fields rendered together as one card, `appletOutput` is the first of them
+   */
+  groupedOutputs?: AppletOutput[]
 }
 
 export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
-  const { appletOutput } = props
+  const { appletOutput, groupedOutputs } = props
   const { show } = useContextMenu()
 
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
@@ -23,7 +28,15 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
   /**
    * Rendered field state
    */
-  const outputValue = useSelector(() => activeApplet.outputValues[appletOutput.key] ?? "")
+  const outputValue = useSelector(() => {
+    if (!groupedOutputs) {
+      return activeApplet.outputValues[appletOutput.key] ?? ""
+    }
+
+    return Object.fromEntries(
+      groupedOutputs.map((output) => [output.key, activeApplet.outputValues[output.key] ?? ""])
+    )
+  })
   const initialState = activeApplet.outputFieldsState[appletOutput.key]
 
   /**
@@ -76,9 +89,28 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
     return
   }
 
-  if (isBatchModeEnabled && batchModeOutputKey !== appletOutput.key) {
+  /**
+   * Batch mode shows only the selected output, unless this output is the maximized one
+   */
+  const isMaximizedOutput = maximizedField.enabled &&
+    maximizedField.type === "output" &&
+    maximizedField.key === appletOutput.key
+
+  if (isBatchModeEnabled && batchModeOutputKey !== appletOutput.key && !isMaximizedOutput) {
     return
   }
+
+  /**
+   * Each grouped field becomes one row, labelled with the field label
+   */
+  if (groupedOutputs) {
+    additionalProps.fields = Object.fromEntries(
+      groupedOutputs.map((output) => [output.key, { label: output.label }])
+    )
+  }
+  const label = groupedOutputs && appletOutput.component === "KeyValue"
+    ? appletOutput.props?.label
+    : appletOutput.label
 
   return (
     <AppletComponentContext.Provider value={{
@@ -92,7 +124,7 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
         {...appletOutput.props}
         key={appletOutput.key}
         fieldKey={appletOutput.key}
-        label={appletOutput.label}
+        label={label}
         value={outputValue}
         onContextMenu={handleContextMenu}
         {...additionalProps}

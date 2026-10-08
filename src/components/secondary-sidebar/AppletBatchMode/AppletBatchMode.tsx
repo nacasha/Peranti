@@ -2,6 +2,7 @@ import { observer } from "mobx-react"
 
 import { Checkbox } from "src/components/common/Checkbox"
 import { Dropdown } from "src/components/common/Dropdown"
+import { PopoverConfirm } from "src/components/common/PopoverConfirm"
 import { SecondarySidebarSection } from "src/components/sidebar/SecondarySidebar"
 import { SecondarySidebarSections } from "src/constants/secondary-sidebar-sections"
 import { activeAppletStore } from "src/services/active-applet-store"
@@ -14,7 +15,7 @@ export const AppletBatchMode = observer(() => {
   const { isBatchModeEnabled, batchModeOutputKey, batchModeInputKey, isDeleted } = activeApplet
 
   const handleToggleBatchMode = (value: boolean) => {
-    activeAppletStore.getActiveApplet().setBatchMode(value)
+    activeAppletStore.setBatchMode(value)
   }
 
   const allowedBatchInputFields = inputFields.filter((input) => input.allowBatch)
@@ -35,11 +36,17 @@ export const AppletBatchMode = observer(() => {
       title="Batch Mode"
       padding
     >
-      <Checkbox
-        value={isBatchModeEnabled}
-        onChange={handleToggleBatchMode}
-        label="Enable Batch Mode"
-      />
+      <PopoverConfirm
+        confirmation={() => activeAppletStore.getToggleBatchModeConfirmation()}
+        onConfirm={() => { handleToggleBatchMode(false) }}
+        placement="bottomLeft"
+      >
+        <Checkbox
+          value={isBatchModeEnabled}
+          onChange={handleToggleBatchMode}
+          label="Enable Batch Mode"
+        />
+      </PopoverConfirm>
       {isBatchModeEnabled && (
         <>
           <div>

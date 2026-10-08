@@ -3,6 +3,7 @@ import { type CSSProperties, type FC } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
+import { groupKeyValueOutputs } from "src/utils/group-key-value-outputs"
 
 import { AppletOutputRenderer } from "../AppletOutputRenderer"
 
@@ -55,6 +56,13 @@ export const AppletComponentAreaOutput: FC<AppletComponentAreaOutpuProps> = (pro
     return
   }
 
+  /**
+   * Batch and maximize work on a single field, so grouping only applies to the normal view
+   */
+  const outputGroups = isBatchEnabled || maximizedField.enabled
+    ? outputFields.map((output) => [output])
+    : groupKeyValueOutputs(outputFields)
+
   if (outputFields.length === 0) {
     return null
   }
@@ -64,10 +72,11 @@ export const AppletComponentAreaOutput: FC<AppletComponentAreaOutpuProps> = (pro
       className={clsx(classNames)}
       style={styles}
     >
-      {outputFields.map((outputComponent) => (
+      {outputGroups.map((group) => (
         <AppletOutputRenderer
-          key={activeApplet.sessionId.concat(outputComponent.key)}
-          appletOutput={outputComponent}
+          key={activeApplet.sessionId.concat(group[0].key, group.length > 1 ? "-group" : "")}
+          appletOutput={group[0]}
+          groupedOutputs={group.length > 1 ? group : undefined}
         />
       ))}
     </div>

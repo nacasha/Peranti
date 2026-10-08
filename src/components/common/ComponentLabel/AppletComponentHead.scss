@@ -123,10 +123,47 @@
     font-size: var(--font-size-sm);
   }
 
-  // Batch mode is a toggle, so show when it's on
+  // Batch mode is a toggle: when on, it turns into a solid accent pill so it
+  // reads as "mode engaged" rather than just another ghost action
   .AppletComponentHead-batch.is-active {
-    color: var(--accent);
+    color: #ffffff;
+    border-color: transparent;
+    background: var(--accent);
+
+    svg,
+    &:hover svg {
+      color: currentColor;
+    }
+
+    &:hover {
+      border-color: transparent;
+      background: color-mix(in oklch, var(--accent) 88%, black);
+    }
+
+    &:active {
+      background: color-mix(in oklch, var(--accent) 80%, black);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent), transparent 75%);
+    }
+  }
+
+  // While maximized, the restore button is the way back, so it stays tinted
+  .ButtonIcon.is-restore {
     background: var(--accent-soft);
+
+    svg {
+      color: var(--accent-ink);
+    }
+
+    &:hover {
+      background: color-mix(in oklch, var(--accent) 26%, transparent);
+    }
+
+    &:hover svg {
+      color: var(--accent-ink);
+    }
   }
 
   // Copy button turns into a checkmark briefly after a successful copy

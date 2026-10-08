@@ -1,3 +1,4 @@
+import { type KeyValueOutputProps } from "src/components/outputs/KeyValueOutput/KeyValueOutput.tsx"
 import { type AppletComponent } from "src/models/AppletComponent.ts"
 import { type appletComponentService } from "src/services/applet-component-service.ts"
 
@@ -74,5 +75,9 @@ export type AppletOutput<K extends Record<string, string> | any = any> = {
   props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.ColorPallete>
 } | {
   component: "KeyValue"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.KeyValue>
+  /**
+   * `label` is the card title. KeyValue fields sharing the same `label` are
+   * rendered together as one card, one row per field.
+   */
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.KeyValue> & Pick<KeyValueOutputProps, "label">
 })

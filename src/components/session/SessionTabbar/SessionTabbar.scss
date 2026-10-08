@@ -89,6 +89,7 @@
   display: flex;
   align-items: center;
   flex: none;
+  gap: 2px;
 
   // Last icon button gets a gap before the tab list
   > .SessionTabbar-item-session.icon:last-child {

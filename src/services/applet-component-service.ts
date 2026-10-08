@@ -217,6 +217,7 @@ class AppletComponentService {
 
     KeyValue: new AppletComponent({
       component: KeyValueOutput,
+      batchComponent: "Code",
       hideInHistory: true
     })
   }
