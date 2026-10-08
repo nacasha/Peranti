@@ -72,4 +72,7 @@ export type AppletOutput<K extends Record<string, string> | any = any> = {
 } | {
   component: "ColorPallete"
   props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.ColorPallete>
+} | {
+  component: "KeyValue"
+  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.KeyValue>
 })

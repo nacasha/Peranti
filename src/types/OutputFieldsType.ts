@@ -23,4 +23,5 @@ export namespace OutputFieldsType {
   export type React = ExtractType<typeof appletComponentService.outputs.React>
   export type DataGrid = ExtractType<typeof appletComponentService.outputs.DataGrid>
   export type Color = ExtractType<typeof appletComponentService.outputs.Color>
+  export type KeyValue = ExtractType<typeof appletComponentService.outputs.KeyValue>
 }

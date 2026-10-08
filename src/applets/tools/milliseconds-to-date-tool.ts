@@ -1,21 +1,21 @@
 import dayjs from "dayjs"
+import dayOfYear from "dayjs/plugin/dayOfYear"
 import utc from "dayjs/plugin/utc"
 
 import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
+import { formatShortRelativeTime } from "src/utils/format-short-relative-time"
 
 dayjs.extend(utc)
+dayjs.extend(dayOfYear)
 
 interface InputFields {
   milliseconds: InputFieldsType.Text
 }
 
 interface OutputFields {
-  localDateTime: OutputFieldsType.Text
-  utcDateTime: OutputFieldsType.Text
-  localIsoDateTime: OutputFieldsType.Text
-  utcIsoDateTime: OutputFieldsType.Text
+  result: OutputFieldsType.KeyValue
 }
 
 const millisecondsToDate = new AppletConstructor<InputFields, OutputFields>({
@@ -32,7 +32,6 @@ const millisecondsToDate = new AppletConstructor<InputFields, OutputFields>({
       label: "Milliseconds",
       component: "Text",
       defaultValue: "",
-      allowBatch: true,
       props: {
         autoFocus: true
       }
@@ -40,28 +39,20 @@ const millisecondsToDate = new AppletConstructor<InputFields, OutputFields>({
   ],
   outputFields: [
     {
-      key: "utcDateTime",
-      label: "UTC Date Time",
-      component: "Text",
-      allowBatch: true
-    },
-    {
-      key: "localDateTime",
-      label: "Local Date Time",
-      component: "Text",
-      allowBatch: true
-    },
-    {
-      key: "utcIsoDateTime",
-      label: "UTC ISO-8601",
-      component: "Text",
-      allowBatch: true
-    },
-    {
-      key: "localIsoDateTime",
-      label: "Local ISO-8601",
-      component: "Text",
-      allowBatch: true
+      key: "result",
+      label: "Result",
+      component: "KeyValue",
+      props: {
+        fields: {
+          milliseconds: { label: "Milliseconds" },
+          seconds: { label: "Seconds (Unix)" },
+          iso8601: { label: "ISO 8601" },
+          rfc2822: { label: "RFC 2822" },
+          localTime: { label: "Local time" },
+          relativeTime: { label: "Relative" },
+          dayOfYear: { label: "Day of year" }
+        }
+      }
     }
   ],
   samples: [
@@ -70,29 +61,26 @@ const millisecondsToDate = new AppletConstructor<InputFields, OutputFields>({
       inputValues: () => ({
         milliseconds: new Date().getTime().toString()
       })
-    },
-    {
-      name: "Batch Sample",
-      isBatchModeEnabled: true,
-      inputValues: {
-        milliseconds: "1694000944625\n1708001926834\n1704000944625"
-      }
     }
   ],
   action: ({ inputValues }) => {
     const { milliseconds } = inputValues
-    if (milliseconds.trim().length === 0) {
-      return { localDateTime: "", utcDateTime: "", localIsoDateTime: "", utcIsoDateTime: "" }
+    const time = Number(milliseconds)
+    const dayJsInstance = dayjs(time)
+    const isValid = milliseconds.trim().length > 0 && dayJsInstance.isValid()
+
+    // Every value stays empty while the input is empty or invalid, so the table keeps its shape
+    return {
+      result: {
+        milliseconds: isValid ? time : "",
+        seconds: isValid ? Math.floor(time / 1000) : "",
+        iso8601: isValid ? dayJsInstance.utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]") : "",
+        rfc2822: isValid ? dayJsInstance.utc().format("ddd, DD MMM YYYY HH:mm:ss [GMT]") : "",
+        localTime: isValid ? dayJsInstance.format("YYYY-MM-DD HH:mm:ss") : "",
+        relativeTime: isValid ? formatShortRelativeTime(time) : "",
+        dayOfYear: isValid ? dayJsInstance.dayOfYear() : ""
+      }
     }
-
-    const dayJsInstance = dayjs(Number(milliseconds))
-
-    const localDateTime = dayJsInstance.format("YYYY-MM-DD HH:mm:ss")
-    const utcDateTime = dayJsInstance.utc().format("YYYY-MM-DD HH:mm:ss")
-    const localIsoDateTime = dayJsInstance.format("YYYY-MM-DDTHH:mm:ss.SSSZ")
-    const utcIsoDateTime = dayJsInstance.utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
-
-    return { utcDateTime, localDateTime, utcIsoDateTime, localIsoDateTime }
   }
 })
 

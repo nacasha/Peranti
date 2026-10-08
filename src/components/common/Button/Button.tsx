@@ -7,6 +7,7 @@ import "./Button.scss"
 
 interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
   icon?: IconType
+  iconSize?: number
   children?: ReactNode
   active?: boolean
   /**
@@ -17,14 +18,14 @@ interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonE
 }
 
 export const Button: FC<ButtonProps> = (props) => {
-  const { children, icon: Icon, className, active, variant = "default", ...restProps } = props
+  const { children, icon: Icon, iconSize = 14, className, active, variant = "default", ...restProps } = props
 
   return (
     <button
       className={clsx("Button", `Button-${variant}`, className, { active })}
       {...restProps}
     >
-      {Icon && <Icon className="Button-icon" size={14} aria-hidden />}
+      {Icon && <Icon className="Button-icon" size={iconSize} aria-hidden />}
       {children ?? null}
     </button>
   )

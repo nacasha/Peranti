@@ -1,0 +1,70 @@
+.KeyValueOutput {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  &-rows {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    border: 1px solid var(--input-output-border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--input-output-background-color);
+    transition: all var(--animation-speed);
+
+    &:hover {
+      border-color: var(--input-output-border-color-hover);
+    }
+  }
+
+  &-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(96px, 166px) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 16.5px 10px 16px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--animation-speed);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background-color: var(--hover);
+    }
+  }
+
+  &-label {
+    font-size: var(--input-output-font-size);
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &-value {
+    min-width: 0;
+    font-family: var(--font-family-mono);
+    font-size: var(--input-output-font-size);
+    overflow-wrap: anywhere;
+  }
+
+  &-icon {
+    flex: none;
+    color: var(--icon-color);
+
+    &.is-copied {
+      color: var(--accent);
+    }
+  }
+}

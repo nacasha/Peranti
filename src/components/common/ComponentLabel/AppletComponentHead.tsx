@@ -172,6 +172,7 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
           <Button
             className="AppletComponentHead-regenerate"
             icon={Icons.Run}
+            iconSize={13}
             onClick={handleClickRegenerate}
             disabled={isActionRunning}
           >
@@ -183,6 +184,7 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
             className={isCopied ? "ButtonIcon is-copied" : "ButtonIcon"}
             tooltip={isCopied ? "Copied" : "Copy"}
             icon={isCopied ? Icons.Check : Icons.Copy}
+            iconSize={13}
             onClick={() => { void handleClickCopy() }}
           />
         )}
@@ -190,6 +192,7 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
           <ButtonIcon
             tooltip="Save to File"
             icon={Icons.SaveToFile}
+            iconSize={13}
             onClick={handleClickSave}
           />
         )}
@@ -197,6 +200,7 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
           <ButtonIcon
             tooltip={isMaximized ? "Restore" : "Maximize"}
             icon={isMaximized ? Icons.NormalScreen : Icons.FullScreen}
+            iconSize={13}
             onClick={handleClickMaximize}
           />
         )}

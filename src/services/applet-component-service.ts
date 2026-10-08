@@ -24,6 +24,7 @@ import { FileOutput } from "src/components/outputs/FileOutput"
 import { GridStatOutput } from "src/components/outputs/GridStatOutput"
 import { IFrameOutput } from "src/components/outputs/IFrameOutput"
 import { ImageOutput } from "src/components/outputs/ImageOutput"
+import { KeyValueOutput } from "src/components/outputs/KeyValueOutput"
 import { MarkdownOutput } from "src/components/outputs/MarkdownOutput"
 import { MermaidOutput } from "src/components/outputs/MermaidOutput"
 import { PintoraOutput } from "src/components/outputs/PintoraOutput"
@@ -212,6 +213,11 @@ class AppletComponentService {
     ColorPallete: new AppletComponent({
       component: ColorPalleteOutput,
       historyComponent: ColorPalleteHistory
+    }),
+
+    KeyValue: new AppletComponent({
+      component: KeyValueOutput,
+      hideInHistory: true
     })
   }
 

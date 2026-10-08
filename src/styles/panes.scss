@@ -19,6 +19,7 @@ $pane-components: (
   ".DataGridOutput",
   ".ReactOutput",
   ".FileOutput",
+  ".KeyValueOutput",
 );
 
 // Fields whose body is a single compact control.
@@ -94,6 +95,7 @@ body {
     .DiffOutput-body,
     .DataGridOutput-content,
     .ReactOutput-area,
+    .KeyValueOutput-rows,
     > textarea {
       border: 0;
       border-radius: 0;
