@@ -9,6 +9,8 @@ import {
   CaseSensitive,
   Check,
   ChevronDown,
+  ChevronsDownUp,
+  ChevronsUpDown,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
@@ -148,6 +150,8 @@ export const Icons = {
   Rename: Pencil,
   AddInput: ArrowRightToLine,
   AddOutput: ArrowRightFromLine,
+  ExpandAll: ChevronsUpDown,
+  CollapseAll: ChevronsDownUp,
 
   // Editor find & replace
   ArrowUp,

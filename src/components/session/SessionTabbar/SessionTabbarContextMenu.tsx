@@ -2,8 +2,8 @@ import { type FC } from "react"
 import { type ItemParams, Separator } from "react-contexify"
 
 import { ContextMenu, ContextMenuItem } from "src/components/common/ContextMenu"
-import { Icons } from "src/constants/icons"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
+import { Icons } from "src/constants/icons"
 import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
 

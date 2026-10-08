@@ -1,6 +1,8 @@
 import { clsx } from "clsx"
 import { type ReactNode, type FC } from "react"
+import { useContextMenu } from "react-contexify"
 
+import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { Icons } from "src/constants/icons"
 import { SidebarMode } from "src/enums/sidebar-mode"
 import { useSelector } from "src/hooks/useSelector"
@@ -10,16 +12,22 @@ import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
 import { toolSidebarService } from "src/services/tool-sidebar-service"
 
+import { ToolSidebarContextMenu } from "../ToolSidebarContextMenu"
 import { ToolSidebarItem } from "../ToolSidebarItem"
 
 import "./ToolSidebar.scss"
 
 export const ToolSidebar: FC = () => {
+  const { show } = useContextMenu({ id: ContextMenuKeys.ToolSidebar })
   const groupByCategory = useSelector(() => toolSidebarService.groupByCategory)
   const items = useSelector(() => toolSidebarService.items)
 
+  const handleContextMenu = (event: any) => {
+    show({ event })
+  }
+
   return (
-    <div className="ToolSidebar">
+    <div className="ToolSidebar" onContextMenu={handleContextMenu}>
       <div className="ToolSidebar-body">
         {Object.entries(items).map(([category, applets]) => (
           <ToolSidebarSection
@@ -30,6 +38,8 @@ export const ToolSidebar: FC = () => {
           />
         ))}
       </div>
+
+      <ToolSidebarContextMenu />
     </div>
   )
 }

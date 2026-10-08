@@ -160,6 +160,14 @@ class ToolSidebarService {
       ? this.collapsedCategories.filter((name) => name !== category)
       : [...this.collapsedCategories, category]
   }
+
+  expandAllCategories() {
+    this.collapsedCategories = []
+  }
+
+  collapseAllCategories() {
+    this.collapsedCategories = Object.keys(this.items)
+  }
 }
 
 export const toolSidebarService = new ToolSidebarService()
