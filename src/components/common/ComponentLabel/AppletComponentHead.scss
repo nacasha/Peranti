@@ -115,11 +115,18 @@
   gap: 4px;
 
   // Compact so it fits the header row beside the icon buttons
-  .AppletComponentHead-regenerate {
+  .AppletComponentHead-regenerate,
+  .AppletComponentHead-batch {
     height: 24px;
     padding: 0 8px;
     margin-right: 4px;
     font-size: var(--font-size-sm);
+  }
+
+  // Batch mode is a toggle, so show when it's on
+  .AppletComponentHead-batch.is-active {
+    color: var(--accent);
+    background: var(--accent-soft);
   }
 
   // Copy button turns into a checkmark briefly after a successful copy

@@ -87,6 +87,12 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
     void activeAppletStore.getActiveApplet().run()
   }
 
+  const isBatchModeEnabled = useSelector(() => activeAppletStore.getActiveApplet().isBatchModeEnabled)
+
+  const handleClickBatchMode = () => {
+    activeAppletStore.getActiveApplet().toggleBatchMode()
+  }
+
   const handleClickLabel = () => {
     activeAppletStore.getActiveApplet().maximizeNextField()
   }
@@ -168,6 +174,16 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
         )}
       </div>
       <div className="AppletComponentHead-buttons">
+        {componentContext.showBatchModeButton && (
+          <Button
+            className={isBatchModeEnabled ? "AppletComponentHead-batch is-active" : "AppletComponentHead-batch"}
+            icon={Icons.Layers}
+            iconSize={13}
+            onClick={handleClickBatchMode}
+          >
+            Batch
+          </Button>
+        )}
         {componentContext.showRegenerateButton && (
           <Button
             className="AppletComponentHead-regenerate"

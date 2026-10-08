@@ -7,6 +7,7 @@ interface AppletComponentContextValue {
   fieldKey: string
   component?: AppletComponent
   showRegenerateButton?: boolean
+  showBatchModeButton?: boolean
 }
 
 export const AppletComponentContext = createContext<AppletComponentContextValue>({} as any)

@@ -90,7 +90,8 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
       type: "input",
       fieldKey: appletInput.key,
       component: inputComponent,
-      showRegenerateButton: appletInput.showRegenerateButton
+      showRegenerateButton: appletInput.showRegenerateButton,
+      showBatchModeButton: appletInput.allowBatch
     }}
     >
       <Component
