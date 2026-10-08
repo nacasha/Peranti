@@ -184,6 +184,8 @@ class SessionHistoryStore {
     void NiceModal.show(ConfirmDialog, {
       title: "Clear History",
       description: "All closed tabs in history will be removed",
+      confirmLabel: "Clear",
+      variant: "danger",
       onConfirm: () => {
         void this.clearAllHistory()
       }
@@ -198,6 +200,8 @@ class SessionHistoryStore {
     void NiceModal.show(ConfirmDialog, {
       title: "Disable History",
       description: "Closed tabs will no longer be kept, and the current history will be cleared",
+      confirmLabel: "Disable",
+      variant: "danger",
       onConfirm: () => {
         void this.clearAllHistory()
         this.setFeatureEnabled(false)

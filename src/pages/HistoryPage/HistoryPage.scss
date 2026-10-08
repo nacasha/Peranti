@@ -1,5 +1,5 @@
 // One pane card filling the area, styled like the field cards in
-// styles/panes.scss: 46px header, scrolling body, quiet footer.
+// styles/panes.scss: 46px header, scrolling body.
 .HistoryPage {
   flex: 1;
   display: flex;
@@ -308,42 +308,5 @@ body .HistoryPage .HistoryPage-scroll .simplebar-content {
     max-width: 340px;
     margin-bottom: 8px;
     font-size: var(--font-size-sm);
-  }
-}
-
-.HistoryPage-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex: none;
-  min-height: 40px;
-  padding: 0 16px;
-  border-top: 1px solid var(--line);
-  font-size: var(--font-size-sm);
-  color: var(--muted);
-}
-
-.HistoryPage-limit {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  input {
-    width: 56px;
-    height: 24px;
-    padding: 0 6px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    outline: none;
-    background: transparent;
-    color: var(--text-color);
-    font-family: var(--font-family-mono);
-    font-size: var(--font-size-sm);
-    transition: border-color var(--animation-speed);
-
-    &:focus {
-      border-color: color-mix(in oklch, var(--accent) 45%, transparent);
-    }
   }
 }

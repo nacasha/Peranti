@@ -37,11 +37,11 @@ interface HistoryGroup {
 
 /**
  * Closed tabs history, rendered as one card filling the whole area like a
- * maximized field: header with search and actions, a scrolling list grouped
- * by day, and the history options along the bottom
+ * maximized field: header with search and actions, and a scrolling list grouped
+ * by day
  */
 export const HistoryPage: FC = observer(() => {
-  const { featureEnabled, numberOfMaximumHistory, revision, isSupported } = sessionHistoryStore
+  const { featureEnabled, revision, isSupported } = sessionHistoryStore
   const isAvailable = isSupported && featureEnabled
 
   const [keyword, setKeyword] = useState("")
@@ -149,13 +149,6 @@ export const HistoryPage: FC = observer(() => {
     return result
   }, [])
 
-  const handleChangeMaximum = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(event.target.value)
-    if (event.target.value !== "" && !Number.isNaN(value)) {
-      void sessionHistoryStore.setNumberOfMaximumHistory(value)
-    }
-  }
-
   const handleRestore = (history: SessionHistory) => () => {
     void sessionHistoryStore.restoreHistory(history)
   }
@@ -167,10 +160,6 @@ export const HistoryPage: FC = observer(() => {
 
   const handleClearHistory = () => {
     sessionHistoryStore.clearAllHistoryWithConfirm()
-  }
-
-  const handleDisableHistory = () => {
-    sessionHistoryStore.disableHistoryWithConfirm()
   }
 
   const handleEnableHistory = () => {
@@ -317,23 +306,6 @@ export const HistoryPage: FC = observer(() => {
             </div>
           ))}
         </SimpleBar>
-      </div>
-
-      <div className="HistoryPage-footer">
-        <Button onClick={handleDisableHistory}>Disable History</Button>
-
-        <label className="HistoryPage-limit">
-          <span>Keep up to</span>
-          <input
-            type="number"
-            min={0}
-            step={10}
-            defaultValue={numberOfMaximumHistory}
-            onChange={handleChangeMaximum}
-            autoComplete="off"
-          />
-          <span>entries</span>
-        </label>
       </div>
     </div>
   )

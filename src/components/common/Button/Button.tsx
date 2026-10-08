@@ -9,14 +9,19 @@ interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonE
   icon?: IconType
   children?: ReactNode
   active?: boolean
+  /**
+   * Ghost by default; "primary" and "danger" are filled, for a dialog's main
+   * action
+   */
+  variant?: "default" | "primary" | "danger"
 }
 
 export const Button: FC<ButtonProps> = (props) => {
-  const { children, icon: Icon, className, active, ...restProps } = props
+  const { children, icon: Icon, className, active, variant = "default", ...restProps } = props
 
   return (
     <button
-      className={clsx("Button", className, { active })}
+      className={clsx("Button", `Button-${variant}`, className, { active })}
       {...restProps}
     >
       {Icon && <Icon className="Button-icon" size={14} aria-hidden />}

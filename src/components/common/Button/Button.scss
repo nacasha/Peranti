@@ -59,4 +59,38 @@
   &.active svg {
     color: currentColor;
   }
+
+  // Filled variants: solid color, white text, a touch darker on hover.
+  &.Button-primary,
+  &.Button-danger {
+    --button-fill: var(--accent);
+
+    color: #ffffff;
+    border-color: transparent;
+    background: var(--button-fill);
+
+    &:hover {
+      border-color: transparent;
+      background: color-mix(in oklch, var(--button-fill) 88%, black);
+    }
+
+    &:active {
+      border-color: transparent;
+      background: color-mix(in oklch, var(--button-fill) 80%, black);
+    }
+
+    &:focus-visible {
+      border-color: transparent;
+      box-shadow: 0 0 0 3px color-mix(in oklch, var(--button-fill), transparent 75%);
+    }
+
+    svg,
+    &:hover svg {
+      color: currentColor;
+    }
+  }
+
+  &.Button-danger {
+    --button-fill: var(--danger-fill);
+  }
 }

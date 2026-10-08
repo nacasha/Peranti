@@ -6,9 +6,10 @@
   display: flex;
   align-items: center;
   font-size: var(--font-size);
-  padding: 30px;
+  // A little more room below, so the dialog sits just above center
+  padding: 30px 30px 8vh;
   opacity: 0;
-  transition: all var(--animation-speed);
+  transition: opacity var(--animation-speed) var(--ease-out);
 
   &.show {
     opacity: 1;
@@ -16,25 +17,29 @@
 
   .DialogOverlay {
     background-color: var(--dialog-overlay-background-color);
-    backdrop-filter: blur(3px);
     position: absolute;
     inset: 0;
     z-index: 0;
   }
 
+  // Floats like the command bar and menus: the panel color, a hairline edge
+  // and the popover shadow, never a heavy border
   .Dialog {
     z-index: 1;
     margin: auto;
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--border-default);
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--line);
     box-shadow: var(--shadow-lg);
     background-color: var(--dialog-content-background-color);
+    color: var(--text-color);
     width: 100%;
     max-width: 400px;
-    height: auto;
+    max-height: 100%;
     overflow: hidden;
-    transform: translateY(10px) scale(0.98);
-    transition: transform var(--animation-speed) var(--ease-out), opacity var(--animation-speed) var(--ease-out);
+    transform: translateY(6px) scale(0.98);
+    transition: transform var(--animation-speed) var(--ease-out);
 
     &.show {
       transform: translateY(0) scale(1);
@@ -45,27 +50,42 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 18px 10px;
-    font-weight: var(--font-weight-semibold);
+    gap: 12px;
+    padding: 14px 12px 6px 20px;
     background-color: var(--dialog-header-background-color);
+  }
+
+  .Dialog-header-title {
+    min-width: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: -0.01em;
   }
 
   .Dialog-content {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    padding: 4px 18px 18px;
-    max-height: 75vh;
+    gap: 14px;
+    padding: 8px 20px 20px;
+    min-height: 0;
     overflow: auto;
     background-color: var(--dialog-content-background-color);
+
+    // No header above it
+    &:first-child {
+      padding-top: 20px;
+    }
   }
 
+  // Actions sit in a row on the right, separated from the content by a
+  // hairline and a slightly sunken strip
   .Dialog-footer {
     display: flex;
-    flex-direction: column;
-    align-items: end;
-    gap: 15px;
-    padding: 0 18px 18px;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
     background-color: var(--dialog-footer-background-color);
   }
 }

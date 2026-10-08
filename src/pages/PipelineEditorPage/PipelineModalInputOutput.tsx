@@ -52,7 +52,7 @@ export const PipelineModalInputOutput = NiceModal.create((props: PipelineModalIn
       </Dialog.Content>
 
       <Dialog.Footer>
-        <Button onClick={handleClickSave}>
+        <Button variant="primary" onClick={handleClickSave}>
           Save
         </Button>
       </Dialog.Footer>

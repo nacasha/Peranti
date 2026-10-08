@@ -124,10 +124,13 @@ body.dark {
   // Tight and close, no wide glow: a 1px contact edge plus a short drop.
   --menu-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 4px 12px -2px rgba(0, 0, 0, 0.45);
   --danger-color: #f87171;
+  // Solid red behind white text; --danger-color is too light to carry it.
+  --danger-fill: #dc2626;
 
   --dialog-header-background-color: var(--dialog-content-background-color);
   --dialog-content-background-color: var(--panel);
-  --dialog-footer-background-color: var(--dialog-content-background-color);
+  // Footer strip sinks a little toward the window canvas
+  --dialog-footer-background-color: color-mix(in oklch, var(--panel), var(--bg) 45%);
   --dialog-overlay-color: rgba(0, 0, 0, 0.55);
   // Dialog.scss reads the `-background-color` spelling; keep both in sync.
   --dialog-overlay-background-color: var(--dialog-overlay-color);
