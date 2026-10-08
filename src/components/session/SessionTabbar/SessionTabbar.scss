@@ -4,6 +4,7 @@
   min-height: var(--session-tabbar-height);
   height: calc(var(--session-tabbar-height) + var(--session-tabbar-draggable-height));
   user-select: none;
+  display: flex;
 
   .simplebar-track.simplebar-horizontal {
     height: 5px;
@@ -46,6 +47,7 @@
   align-items: center;
   height: var(--session-tabbar-height);
   gap: 2px;
+  flex: 1;
 }
 
 // Collapsed out by default; the rule further down gives it width only in the
@@ -222,7 +224,7 @@
 
 .AppRoot.withTabbar.withMacOS {
   .SessionTabbar-inner-simplebar {
-    right: calc(var(--window-control-button-width) * 3);
+    right: 0;
   }
 }
 

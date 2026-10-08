@@ -2,14 +2,7 @@
   display: flex;
   align-items: center;
   height: var(--session-tabbar-height);
-}
-
-.SessionTabbar {
-  .WindowControls {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
+  z-index: 1;
 }
 
 .WindowControls-button {
