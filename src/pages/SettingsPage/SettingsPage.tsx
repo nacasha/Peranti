@@ -1,7 +1,8 @@
 import NiceModal from "@ebay/nice-modal-react"
 import { clsx } from "clsx"
 import localforage from "localforage"
-import { useState, type FC, type ReactNode } from "react"
+import { observer } from "mobx-react"
+import { useEffect, useState, type FC, type ReactNode } from "react"
 import SimpleBar from "simplebar-react"
 
 import { Button } from "src/components/common/Button"
@@ -23,11 +24,10 @@ import { Icons, type Icon } from "src/constants/icons"
 import { appDataService } from "src/services/app-data-service"
 import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
+import { settingsPageStore, type SettingsSectionId } from "src/services/settings-page-store"
 import { toolSidebarService } from "src/services/tool-sidebar-service"
 
 import "./SettingsPage.scss"
-
-type SettingsSectionId = "appearance" | "fonts" | "tabbar" | "toolSidebar" | "fileDrop" | "history" | "appData"
 
 interface SettingsSection {
   id: SettingsSectionId
@@ -40,8 +40,17 @@ interface SettingsSection {
  * Settings as one card filling the whole area, like the history page: the
  * categories on the left, the chosen category's settings on the right
  */
-export const SettingsPage: FC = () => {
-  const [activeSectionId, setActiveSectionId] = useState<SettingsSectionId>("appearance")
+export const SettingsPage: FC = observer(() => {
+  const { pendingSectionId } = settingsPageStore
+  const [activeSectionId, setActiveSectionId] = useState<SettingsSectionId>(
+    () => settingsPageStore.pendingSectionId ?? "appearance"
+  )
+
+  // Opened from another page while this page is already showing
+  useEffect(() => {
+    const sectionId = settingsPageStore.consumePendingSection()
+    if (sectionId) setActiveSectionId(sectionId)
+  }, [pendingSectionId])
 
   const handleClickResetAppData = () => {
     void NiceModal.show(ConfirmDialog, {
@@ -300,4 +309,4 @@ export const SettingsPage: FC = () => {
       </div>
     </div>
   )
-}
+})

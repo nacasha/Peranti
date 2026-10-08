@@ -2,6 +2,7 @@ import { observer } from "mobx-react"
 import { useEffect, useRef, useState, type FC } from "react"
 import SimpleBar from "simplebar-react"
 
+import settingsApplet from "src/applets/pages/settings-applet"
 import { Button } from "src/components/common/Button"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { HighlightedText } from "src/components/common/HighlightedText"
@@ -9,6 +10,8 @@ import { Icons } from "src/constants/icons"
 import { Links } from "src/constants/links"
 import { appletStore } from "src/services/applet-store"
 import { sessionHistoryStore } from "src/services/session-history-store"
+import { sessionStore } from "src/services/session-store"
+import { settingsPageStore } from "src/services/settings-page-store"
 import { type SessionHistory } from "src/types/SessionHistory"
 import { formatFileSize } from "src/utils/format-file-size"
 import { formatTimeAgo } from "src/utils/format-time-ago"
@@ -162,6 +165,11 @@ export const HistoryPage: FC = observer(() => {
     sessionHistoryStore.clearAllHistoryWithConfirm()
   }
 
+  const handleOpenHistorySettings = () => {
+    settingsPageStore.openSection("history")
+    sessionStore.findOrCreateSession(settingsApplet)
+  }
+
   const handleEnableHistory = () => {
     sessionHistoryStore.setFeatureEnabled(true)
   }
@@ -222,6 +230,12 @@ export const HistoryPage: FC = observer(() => {
             onClick={handleClearHistory}
           />
         )}
+
+        <ButtonIcon
+          tooltip="History Settings"
+          icon={Icons.Settings}
+          onClick={handleOpenHistorySettings}
+        />
       </div>
 
       <div className="HistoryPage-body">
