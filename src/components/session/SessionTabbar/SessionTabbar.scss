@@ -45,7 +45,6 @@
   display: flex;
   align-items: center;
   height: var(--session-tabbar-height);
-  padding: 0 6px;
   gap: 2px;
 }
 
@@ -81,6 +80,18 @@
 
 .SessionTabbar-inner-simplebar-border-right {
   display: none;
+}
+
+// Group tabs and add tab buttons, kept apart from the tab list
+.SessionTabbar-actions {
+  display: flex;
+  align-items: center;
+  flex: none;
+
+  // Last icon button gets a gap before the tab list
+  > .SessionTabbar-item-session.icon:last-child {
+    margin-right: 4px;
+  }
 }
 
 .SessionTabbar-item-session {
@@ -121,7 +132,6 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 0 4px;
 }
 
 .SessionTabbar-item-session-body {

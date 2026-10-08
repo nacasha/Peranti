@@ -84,6 +84,18 @@ class InterfaceStore {
   showStatusbar: boolean = userSettingsService.get(UserSettingsKeys.showStatusbar, true)
 
   /**
+   * Show the group tabs by tool button in the tabbar
+   */
+  @userSettingsService.watch(UserSettingsKeys.tabbarShowGroupTabsButton)
+  showTabbarGroupTabsButton: boolean = userSettingsService.get(UserSettingsKeys.tabbarShowGroupTabsButton, true)
+
+  /**
+   * Show the add tab button in the tabbar
+   */
+  @userSettingsService.watch(UserSettingsKeys.tabbarShowAddTabButton)
+  showTabbarAddTabButton: boolean = userSettingsService.get(UserSettingsKeys.tabbarShowAddTabButton, true)
+
+  /**
    * Accent colour used for highlights, focus rings and active states
    */
   @userSettingsService.watch(UserSettingsKeys.accentColor)
@@ -223,6 +235,14 @@ class InterfaceStore {
 
   setShowStatusbar(value: boolean) {
     this.showStatusbar = value
+  }
+
+  setShowTabbarGroupTabsButton(value: boolean) {
+    this.showTabbarGroupTabsButton = value
+  }
+
+  setShowTabbarAddTabButton(value: boolean) {
+    this.showTabbarAddTabButton = value
   }
 
   setCardShadow(cardShadow: CardShadow) {

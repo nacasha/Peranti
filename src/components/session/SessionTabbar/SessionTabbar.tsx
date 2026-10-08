@@ -180,6 +180,8 @@ const TabbarList = observer(() => {
 
 const TabbarActions = () => {
   const groupTabsByTool = useSelector(() => sessionStore.groupTabsByTool)
+  const showGroupTabsButton = useSelector(() => interfaceStore.showTabbarGroupTabsButton)
+  const showAddTabButton = useSelector(() => interfaceStore.showTabbarAddTabButton)
   const hideTabbarActions = useSelector(() => activeAppletStore.getActiveApplet().appletId === "")
 
   const onClickAddTab = () => {
@@ -195,18 +197,22 @@ const TabbarActions = () => {
   }
 
   return (
-    <>
-      <SessionTabbarItemIcon
-        onClick={handleClickGroupTabs}
-        label="Group Tabs By Tool"
-        icon={groupTabsByTool ? Icons.FilterSolid : Icons.Filter}
-      />
-      <SessionTabbarItemIcon
-        onClick={onClickAddTab}
-        label="Add Tab"
-        icon={Icons.Plus}
-      />
-    </>
+    <div className="SessionTabbar-actions">
+      {showGroupTabsButton && (
+        <SessionTabbarItemIcon
+          onClick={handleClickGroupTabs}
+          label="Group Tabs By Tool"
+          icon={groupTabsByTool ? Icons.FilterSolid : Icons.Filter}
+        />
+      )}
+      {showAddTabButton && (
+        <SessionTabbarItemIcon
+          onClick={onClickAddTab}
+          label="Add Tab"
+          icon={Icons.Plus}
+        />
+      )}
+    </div>
   )
 }
 

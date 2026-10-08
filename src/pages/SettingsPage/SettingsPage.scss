@@ -1,9 +1,116 @@
+// One card filling the area, same frame as HistoryPage: a header bar, then a
+// category list beside the scrolling settings of the chosen category
 .SettingsPage {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  min-height: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.SettingsPage-header {
+  display: flex;
   align-items: center;
-  overflow: auto;
-  padding: 24px 24px 40px;
+  height: var(--card-header-height);
+  flex: none;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--line);
+  user-select: none;
+
+  .SettingsPage-title {
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.SettingsPage-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.SettingsPage-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: none;
+  width: 200px;
+  padding: 10px 8px;
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+  user-select: none;
+
+  .SettingsPage-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 32px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color var(--animation-speed), color var(--animation-speed);
+
+    svg {
+      flex: none;
+    }
+
+    &:hover {
+      background: var(--hover);
+      color: var(--text-color);
+    }
+
+    &.active {
+      background: var(--raised);
+      color: var(--text-color);
+      font-weight: var(--font-weight-medium);
+
+      svg {
+        color: var(--accent);
+      }
+    }
+  }
+}
+
+// The body takes no height from its content, so the card keeps the window's
+// height and only the right area scrolls (same trick as HistoryPage)
+.SettingsPage-body {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.SettingsPage-scroll {
+  position: absolute;
+  inset: 0;
+}
+
+// The main panel turns every nested `.simplebar-content` into a flex row
+// (AppletViewer.scss). Scoped under `body` to outrank that selector.
+body .SettingsPage .SettingsPage-scroll .simplebar-content {
+  display: block;
+}
+
+// Centred column so a wide window doesn't stretch the rows
+.SettingsPage-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 28px 40px;
+
+  .SettingsPage-section-title {
+    font-size: 18px;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: -0.01em;
+  }
 }
