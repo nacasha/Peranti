@@ -124,6 +124,12 @@
 
     &:hover {
       background-color: var(--hover);
+
+      .SessionTabbar-item-session-icon {
+        svg {
+          color: var(--text-color);
+        }
+      }
     }
   }
 }

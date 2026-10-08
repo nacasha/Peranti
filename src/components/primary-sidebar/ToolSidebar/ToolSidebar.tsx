@@ -42,6 +42,11 @@ interface ToolSidebarSectionProps {
 
 const ToolSidebarSection: FC<ToolSidebarSectionProps> = ({ category, applets, collapsible }) => {
   const isCollapsed = useSelector(() => collapsible && toolSidebarService.isCategoryCollapsed(category))
+  const showGroupTabCount = useSelector(() => toolSidebarService.showGroupTabCount)
+  const groupTabCount = useSelector(() => applets.reduce(
+    (total, applet) => total + sessionStore.countSessionsOfApplet(applet.appletId),
+    0
+  ))
 
   /**
    * A collapsed group still signals that it holds the open tool, so the
@@ -71,7 +76,9 @@ const ToolSidebarSection: FC<ToolSidebarSectionProps> = ({ category, applets, co
           <Icons.ChevronRight className="ToolSidebar-section-chevron" size={12} aria-hidden />
           <span className="ToolSidebar-section-name">{category}</span>
           {isCollapsed && hasActiveApplet && <span className="ToolSidebar-section-active-dot" />}
-          <span className="ToolSidebar-section-count">{applets.length}</span>
+          {showGroupTabCount && groupTabCount > 0 && (
+            <span className="ToolSidebar-section-count">{groupTabCount}</span>
+          )}
         </button>
       )}
 
@@ -104,6 +111,9 @@ const ToolSidebarInnerItem: FC<ToolSidebarInnerItemProps> = ({ appletConstructor
     !activeAppletStore.getActiveApplet().isDeleted
   ))
 
+  const showToolTabCount = useSelector(() => toolSidebarService.showToolTabCount)
+  const toolTabCount = useSelector(() => sessionStore.countSessionsOfApplet(appletConstructor.appletId))
+
   const onClickSidebarItem = (appletConstructor: AppletConstructor) => () => {
     sessionStore.findOrCreateSession(appletConstructor)
     if (interfaceStore.sidebarMode === SidebarMode.FloatUnpinned) {
@@ -118,6 +128,9 @@ const ToolSidebarInnerItem: FC<ToolSidebarInnerItemProps> = ({ appletConstructor
       onClick={onClickSidebarItem(appletConstructor)}
     >
       <div>{appletConstructor.name}</div>
+      {showToolTabCount && toolTabCount > 0 && (
+        <span className="ToolSidebarItem-count">{toolTabCount}</span>
+      )}
     </ToolSidebarItem>
   )
 }

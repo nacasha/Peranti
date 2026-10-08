@@ -34,6 +34,24 @@ class ToolSidebarService {
   )
 
   /**
+   * Show number of opened tabs beside each category
+   */
+  @userSettingsService.watch(UserSettingsKeys.toolSidebarShowGroupTabCount)
+  showGroupTabCount: boolean = userSettingsService.get(
+    UserSettingsKeys.toolSidebarShowGroupTabCount,
+    true
+  )
+
+  /**
+   * Show number of opened tabs beside each tool
+   */
+  @userSettingsService.watch(UserSettingsKeys.toolSidebarShowToolTabCount)
+  showToolTabCount: boolean = userSettingsService.get(
+    UserSettingsKeys.toolSidebarShowToolTabCount,
+    true
+  )
+
+  /**
    * Row height of the tool items
    */
   @userSettingsService.watch(UserSettingsKeys.toolSidebarDensity)
@@ -118,6 +136,14 @@ class ToolSidebarService {
   setGroupByCategory(value: boolean) {
     this.groupByCategory = value
     this.setupItems()
+  }
+
+  setShowGroupTabCount(value: boolean) {
+    this.showGroupTabCount = value
+  }
+
+  setShowToolTabCount(value: boolean) {
+    this.showToolTabCount = value
   }
 
   setDensity(density: ToolSidebarDensity) {

@@ -190,6 +190,26 @@ export const SettingsPage: FC = () => {
           </SettingsCardItem>
 
           <SettingsCardItem
+            label="Show Group Tab Count"
+            description="Number of opened tabs beside each category"
+          >
+            <SettingsItemSwitch
+              defaultChecked={toolSidebarService.showGroupTabCount}
+              onChange={(value) => { toolSidebarService.setShowGroupTabCount(value) }}
+            />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Show Tool Tab Count"
+            description="Number of opened tabs beside each tool"
+          >
+            <SettingsItemSwitch
+              defaultChecked={toolSidebarService.showToolTabCount}
+              onChange={(value) => { toolSidebarService.setShowToolTabCount(value) }}
+            />
+          </SettingsCardItem>
+
+          <SettingsCardItem
             label="Item Density"
             description="Vertical spacing of the tool list items and category headers"
           >

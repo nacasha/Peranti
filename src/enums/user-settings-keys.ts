@@ -19,6 +19,8 @@ export enum UserSettingsKeys {
   toolSidebarGroupByCategory = "toolsidebar.groupByCategory",
   toolSidebarCollapsedCategories = "toolsidebar.collapsedCategories",
   toolSidebarDensity = "toolsidebar.density",
+  toolSidebarShowGroupTabCount = "toolsidebar.showGroupTabCount",
+  toolSidebarShowToolTabCount = "toolsidebar.showToolTabCount",
 
   // Tool tabbar
   tabbarEnableMultipleSession = "tabbar.enableMultipleSession",

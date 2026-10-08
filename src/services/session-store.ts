@@ -645,6 +645,13 @@ class SessionStore {
     }
   }
 
+  /**
+   * Count of opened tabs that belong to an applet
+   */
+  countSessionsOfApplet(appletId: string) {
+    return this.sessions.filter((session) => session.appletId === appletId).length
+  }
+
   pushIntoSessionList(session: Session, placeSessionAtTheEnd: boolean = false) {
     if (this.placeNewSessionToLast || placeSessionAtTheEnd) {
       this.sessions.push(session)

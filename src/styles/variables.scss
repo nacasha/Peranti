@@ -110,7 +110,7 @@ body {
   // because the tabbar's show-sidebar button already sits behind the content
   // gutter (8px), the tabbar padding (6px) and an item gap (2px); 62px leaves
   // it the same distance from the zoom button as the sidebar header's toggle.
-  --macos-traffic-lights-inset-collapsed: 62px;
+  --macos-traffic-lights-inset-collapsed: 68px;
 
   // Session tabbar
   --session-tabbar-height: 46px;

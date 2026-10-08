@@ -14,8 +14,18 @@
   transition: background-color var(--animation-speed), color var(--animation-speed);
 
   > div {
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  // Open tab count, pushed to the right edge by the name's flex grow.
+  .ToolSidebarItem-count {
+    flex: none;
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+    color: var(--faint);
   }
 
   // Accent bar on the left edge of the active row.
