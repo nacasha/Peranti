@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  ClipboardCheck,
   ClipboardPaste,
   Copy,
   CopyX,
@@ -142,6 +143,7 @@ export const Icons = {
 
   // Context menu actions
   Copy,
+  CopyDone: ClipboardCheck,
   Paste: ClipboardPaste,
   PickFile: FolderOpen,
   SaveToFile: Save,

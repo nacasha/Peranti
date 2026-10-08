@@ -6,9 +6,30 @@ $padding: var(--input-output-fields-spacing);
   flex: 1;
   gap: $padding;
   padding: 0 var(--card-gap) var(--card-gap) 0;
+  position: relative;
 
+  // Grid layout sits on the same dotted surface as the welcome screen. The
+  // dots fade out towards every edge; cards paint above it as they are later
+  // positioned siblings.
   &.grid {
     display: grid;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(var(--line) 1px, transparent 1px);
+      background-size: 18px 18px;
+      mask-image:
+        linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent),
+        linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+      mask-composite: intersect;
+      -webkit-mask-image:
+        linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent),
+        linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+      -webkit-mask-composite: source-in;
+    }
   }
 
   &.flex {

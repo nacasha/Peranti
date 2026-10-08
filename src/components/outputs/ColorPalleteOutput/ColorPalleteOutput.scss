@@ -20,14 +20,32 @@ $checkColor: rgba(100, 100, 100, .25);
 .ColorPalleteOutput-item {
   display: flex;
   flex-direction: column;
-  border-radius: var(--border-radius);
-  overflow: hidden;
   position: relative;
+  transition: all var(--animation-speed);
+  border-radius: var(--border-radius);
+
+  &:hover {
+    translate: 0 -4px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, .18);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  &:active {
+    translate: 0 -4px;
+  }
 }
 
 .ColorPalleteOutput-color {
+  position: relative;
+  display: block;
   width: 100%;
   height: 100px;
+  padding: 0;
+  border: 0;
 
   background-color: $checkBackgroundColor;
   background-image: linear-gradient(45deg, $checkColor 25%, transparent 25%),
@@ -41,12 +59,34 @@ $checkColor: rgba(100, 100, 100, .25);
 .ColorPalleteOutput-pallete {
   width: 100%;
   height: 100%;
+  border-radius: var(--border-radius);
   transition: all var(--animation-speed);
+}
+
+.ColorPalleteOutput-check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  padding: 4px;
+  border-radius: 50%;
+  color: #fff;
+  background-color: rgba(0, 0, 0, .5);
+  animation: ColorPalleteOutput-check-in var(--animation-speed) ease-out both;
+}
+
+@keyframes ColorPalleteOutput-check-in {
+  from {
+    opacity: 0;
+    scale: .6;
+  }
 }
 
 .ColorPalleteOutput-info {
   position: absolute;
   inset: 0;
+  // Let clicks reach the swatch button underneath
+  pointer-events: none;
   background-color: transparent;
   padding: 5px var(--input-output-padding);
   line-height: 20px;
