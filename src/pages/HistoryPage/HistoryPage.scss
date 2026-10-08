@@ -1,0 +1,349 @@
+// One pane card filling the area, styled like the field cards in
+// styles/panes.scss: 46px header, scrolling body, quiet footer.
+.HistoryPage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.HistoryPage-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--card-header-height);
+  flex: none;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--line);
+  user-select: none;
+}
+
+.HistoryPage-count {
+  margin-left: auto;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--raised);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.HistoryPage-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  max-width: 360px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  transition: border-color var(--animation-speed);
+
+  &:focus-within {
+    border-color: color-mix(in oklch, var(--accent) 45%, transparent);
+  }
+
+  svg {
+    flex: none;
+    color: var(--icon-color);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--text-color);
+    font: inherit;
+  }
+}
+
+// The scroll area is pinned to the body, so a long list scrolls inside the
+// card instead of growing the page
+.HistoryPage-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.HistoryPage-scroll {
+  position: absolute;
+  inset: 0;
+}
+
+// The main panel turns every nested `.simplebar-content` into a flex row
+// (AppletViewer.scss), which shrinks the rows to their text width. Scoped
+// under `body` to outrank that selector.
+body .HistoryPage .HistoryPage-scroll .simplebar-content {
+  display: block;
+}
+
+.HistoryPage-group {
+  padding: 6px 8px;
+
+  & + & {
+    border-top: 1px solid var(--line);
+  }
+}
+
+.HistoryPage-group-label {
+  padding: 8px 10px 4px;
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+// Compact rows, one line each:
+// icon · tool (tab name) · preview fills the rest · size · time / actions
+.HistoryPage-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 34px;
+  padding: 0 4px 0 10px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--animation-speed);
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    background: var(--hover);
+  }
+
+  .HistoryPage-item-icon {
+    flex: none;
+    color: var(--icon-color);
+  }
+
+  // Never wider than about a third of the row, so the preview stays visible
+  .HistoryPage-item-title {
+    display: flex;
+    gap: 6px;
+    flex: 0 1 auto;
+    max-width: 34%;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .HistoryPage-item-tool {
+    flex: none;
+    font-weight: var(--font-weight-medium);
+  }
+
+  .HistoryPage-item-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--muted);
+  }
+
+  .HistoryPage-item-body {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .HistoryPage-item-preview {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: var(--font-family-mono);
+    font-size: 11.5px;
+    color: var(--faint);
+  }
+
+  // Swatches, thumbnails and short values from the applet's preview fields
+  .HistoryPreview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+
+    // Not hidden while empty: a `display: none` element is never reported
+    // as visible, so its values would never load
+  }
+
+  // Context of a match deeper than the values show, after them. It's why
+  // the row is listed, so it keeps at least half of the space.
+  .HistoryPreview-searchResult {
+    flex: 0 1 auto;
+    min-width: 50%;
+    padding-left: 10px;
+    border-left: 1px solid var(--line);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: var(--font-family-mono);
+    font-size: 11.5px;
+    color: var(--faint);
+  }
+
+  .HistoryPreview-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    overflow: hidden;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  // Inputs → outputs, the arrow only when both groups show something
+  .HistoryPreview-group:not(:empty) + .HistoryPreview-group:not(:empty)::before {
+    content: "→";
+    flex: none;
+    color: var(--faint);
+  }
+
+
+  // Stays put on hover, beside the actions, so it can be compared while
+  // deciding what to delete
+  .HistoryPage-item-size {
+    flex: none;
+    min-width: 52px;
+    text-align: right;
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    color: var(--faint);
+  }
+
+  // Fixed width so swapping the time for the actions doesn't shift the row
+  .HistoryPage-item-end {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: none;
+    width: 56px;
+  }
+
+  .HistoryPage-item-time {
+    padding-right: 6px;
+    font-size: 11.5px;
+    color: var(--faint);
+  }
+
+  .HistoryPage-item-actions {
+    display: none;
+    gap: 2px;
+  }
+
+  &:hover,
+  &:focus-within {
+    .HistoryPage-item-time {
+      display: none;
+    }
+
+    .HistoryPage-item-actions {
+      display: flex;
+    }
+  }
+}
+
+.HistoryPage-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 64px 24px;
+  text-align: center;
+  color: var(--muted);
+
+  svg {
+    margin-bottom: 4px;
+    color: var(--faint);
+  }
+
+  .HistoryPage-empty-title {
+    font-weight: var(--font-weight-medium);
+    color: var(--text-color);
+  }
+
+  .HistoryPage-empty-description {
+    font-size: var(--font-size-sm);
+  }
+}
+
+// Shown instead of the whole card content while history is disabled
+.HistoryPage-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+
+  > svg {
+    margin-bottom: 4px;
+    color: var(--faint);
+  }
+
+  .HistoryPage-placeholder-title {
+    font-size: 15px;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-color);
+  }
+
+  .HistoryPage-placeholder-description {
+    max-width: 340px;
+    margin-bottom: 8px;
+    font-size: var(--font-size-sm);
+  }
+}
+
+.HistoryPage-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex: none;
+  min-height: 40px;
+  padding: 0 16px;
+  border-top: 1px solid var(--line);
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.HistoryPage-limit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  input {
+    width: 56px;
+    height: 24px;
+    padding: 0 6px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    outline: none;
+    background: transparent;
+    color: var(--text-color);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+    transition: border-color var(--animation-speed);
+
+    &:focus {
+      border-color: color-mix(in oklch, var(--accent) 45%, transparent);
+    }
+  }
+}

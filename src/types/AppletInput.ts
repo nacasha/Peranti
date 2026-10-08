@@ -14,6 +14,17 @@ export type AppletInput<K extends Record<string, string> | any = any> = {
   allowBatch?: boolean
   skipValidateHasValue?: boolean
   customComponent?: boolean
+
+  /**
+   * Show a "Regenerate" button in the field header that re-runs the applet
+   */
+  showRegenerateButton?: boolean
+
+  /**
+   * Leave this field out of the history list preview. `false` shows it even
+   * when its component is hidden by default (e.g. Select).
+   */
+  hideInHistory?: boolean
 } & ({
   customComponent: true
   component: "PipelineEditor"

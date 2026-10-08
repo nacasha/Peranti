@@ -1,5 +1,6 @@
 import { memo, type FC } from "react"
 
+import { ClosedTabsButton } from "src/components/buttons/ClosedTabsButton"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons"
 import { secondarySidebarService } from "src/services/secondary-sidebar-service"
@@ -29,6 +30,7 @@ export const WindowControls: FC = memo(() => {
   return (
     <div className="WindowControls" data-tauri-drag-region>
       <div className="WindowControls-layout-controls">
+        <ClosedTabsButton />
         <ButtonIcon
           tooltip="Toggle Secondary Sidebar"
           onClick={handleClickPanelRight}

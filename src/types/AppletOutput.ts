@@ -12,9 +12,20 @@ export type AppletOutput<K extends Record<string, string> | any = any> = {
   label: string
   allowBatch?: boolean
   customComponent?: boolean
+
+  /**
+   * Show a "Regenerate" button in the field header that re-runs the applet
+   */
+  showRegenerateButton?: boolean
+
+  /**
+   * Leave this field out of the history list preview. `false` shows it even
+   * when its component is hidden by default (e.g. DataGrid).
+   */
+  hideInHistory?: boolean
 } & ({
   customComponent: true
-  component: "Settings"
+  component: "Settings" | "History"
   props?: any
 } | {
   component: "Text"

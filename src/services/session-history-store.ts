@@ -1,123 +1,206 @@
 import NiceModal from "@ebay/nice-modal-react"
 import localforage from "localforage"
-import { makeAutoObservable } from "mobx"
+import { makeAutoObservable, runInAction } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { ConfirmDialog } from "src/components/dialog/ConfirmDialog/ConfirmDialog.tsx"
 import { StorageKeys } from "src/constants/storage-keys.ts"
 import { type Applet } from "src/models/Applet.ts"
 import { StorageManager } from "src/services/storage-manager.ts"
+import { type HistoryPreviewField } from "src/types/AppletHistory.ts"
 import { type SessionHistory } from "src/types/SessionHistory.ts"
+import { isRunningInTauri } from "src/utils/is-running-in-tauri.ts"
+import { restoreBinaryValues } from "src/utils/restore-binary-values.ts"
 
-import { activeAppletStore } from "./active-applet-store.ts"
+import { sessionHistoryBackend, type SessionHistoryListOptions } from "./session-history-backend.ts"
 import { sessionStore } from "./session-store.ts"
 
+/**
+ * Entries kept in memory for the titlebar popover
+ */
+const RECENT_LIMIT = 20
+
+/**
+ * Characters of a text field read for the list preview, a little over the
+ * line it's shown in, so whitespace collapsing still fills it
+ */
+const TEXT_FIELD_LENGTH = 400
+
 class SessionHistoryStore {
-  histories: SessionHistory[] = []
+  /**
+   * History lives on the Rust side, so the web build has none
+   */
+  readonly isSupported = isRunningInTauri
 
-  numberOfMaximumHistory = 100
+  /**
+   * Newest entries, for the popover. The full list is paged from the backend.
+   */
+  recent: SessionHistory[] = []
 
-  autoSaveDelayInSeconds = 1
+  /**
+   * Bumped on every change, so views holding a page of entries reload
+   */
+  revision = 0
 
-  featureEnabled = false
+  numberOfMaximumHistory = 500
+
+  featureEnabled = true
 
   constructor() {
     makeAutoObservable(this)
 
-    this.setupPersistence()
+    void this.setupPersistence()
+    void this.refreshRecent()
   }
 
-  setupPersistence() {
+  async setupPersistence() {
     void makePersistable(this, {
       name: StorageKeys.SessionHistoryStore,
       storage: localforage,
       stringify: false,
-      properties: ["histories", "numberOfMaximumHistory", "autoSaveDelayInSeconds"]
+      properties: ["numberOfMaximumHistory", "featureEnabled"]
     })
   }
 
-  addHistory(applet: Applet) {
-    if (!this.featureEnabled) {
+  setFeatureEnabled(value: boolean) {
+    this.featureEnabled = value
+  }
+
+  async refreshRecent() {
+    if (!this.isSupported) return
+
+    const { items } = await sessionHistoryBackend.list({ offset: 0, limit: RECENT_LIMIT })
+
+    runInAction(() => {
+      this.recent = items
+      this.revision++
+    })
+  }
+
+  async list(options: SessionHistoryListOptions) {
+    return await sessionHistoryBackend.list(options)
+  }
+
+  /**
+   * Values of the given fields of a closed tab, in order. Binary values come
+   * as their placeholders, which keep e.g. a file's name.
+   */
+  async getFieldValues(history: SessionHistory, fields: HistoryPreviewField[]): Promise<unknown[]> {
+    if (fields.length === 0) {
+      return []
+    }
+
+    // Fields without a history component are shown as one line of text, so
+    // only their start is sent over. Components get the whole value.
+    return await sessionHistoryBackend.fields(history.sessionId, fields.map((field) => ({
+      ...field,
+      maxLength: field.Component ? undefined : TEXT_FIELD_LENGTH
+    })))
+  }
+
+  /**
+   * Keeps a closed tab, files and buffers included, on the Rust side. Only
+   * tabs that were run and still hold values are worth keeping. Returns
+   * whether it was kept; either way its IndexedDB state is no longer needed.
+   */
+  async addHistory(applet: Applet): Promise<boolean> {
+    const isValuesModified = applet.isInputValuesModified || applet.isOutputValuesModified
+    const isWorthKeeping = applet.actionRunCount > 0 && isValuesModified && applet.getIsInputOrOutputHasValues()
+
+    if (!this.isSupported || !this.featureEnabled || !isWorthKeeping) {
       return false
     }
 
-    if (this.histories.findIndex((history) => history.sessionId === applet.sessionId) > -1) {
+    /**
+     * Marked as deleted first, as closed tabs always were: that drops the
+     * field states, which for code editors hold a second copy of the text
+     */
+    await applet.markAsDeleted()
+
+    try {
+      const { history, blobs } = await applet.toHistory()
+      await sessionHistoryBackend.add(history, blobs, this.numberOfMaximumHistory)
+
+      void this.refreshRecent()
       return true
-    }
-
-    const isValuesModified = (applet.isInputValuesModified || applet.isOutputValuesModified)
-    if (applet.actionRunCount > 0 && isValuesModified && applet.getIsInputOrOutputHasValues()) {
-      this.histories.unshift(applet.toHistory())
-
-      if (this.histories.length > this.numberOfMaximumHistory) {
-        this.histories = this.histories.slice(0, this.numberOfMaximumHistory)
-      }
-
-      return true
-    }
-
-    return false
-  }
-
-  async openHistory(sessionHistory: SessionHistory) {
-    const storedApplet = await StorageManager.getAppletFromStorage(sessionHistory.sessionId, {
-      initialState: {
-        isDeleted: true
-      }
-    })
-
-    if (storedApplet) {
-      activeAppletStore.setActiveApplet(storedApplet)
+    } catch (error) {
+      console.error("Failed to add closed tab to history", error)
+      return false
     }
   }
 
-  async restoreHistory(sessionId: string) {
-    const sessionHistoryIndex = this.histories.findIndex((history) => history.sessionId === sessionId)
-    const sessionHistory = this.histories[sessionHistoryIndex]
+  /**
+   * Lowering the limit drops the oldest entries right away
+   */
+  async setNumberOfMaximumHistory(value: number) {
+    this.numberOfMaximumHistory = Math.max(0, Math.floor(value))
 
-    if (sessionHistory) {
-      this.removeHistoryEntry(sessionId)
-      void sessionStore.openHistory(sessionHistory)
-    }
+    await sessionHistoryBackend.trim(this.numberOfMaximumHistory)
+    void this.refreshRecent()
   }
 
-  deleteHistory(sessionId: string) {
-    this.histories = this.histories.filter((history) => history.sessionId !== sessionId)
-    void StorageManager.removeAppletStateFromStorage(sessionId)
+  /**
+   * Reopens the entry as a regular tab: its state, files and buffers rebuilt,
+   * is written to IndexedDB, where the session store loads tabs from, and the
+   * entry leaves history
+   */
+  async restoreHistory(history: SessionHistory) {
+    const stored = await sessionHistoryBackend.get(history.sessionId)
 
-    if (activeAppletStore.getActiveApplet().sessionId === sessionId) {
-      void sessionStore.openCurrentlyActiveSession()
+    if (stored) {
+      const state = await restoreBinaryValues(stored, async(blobId) => (
+        await sessionHistoryBackend.getBlob(history.sessionId, blobId)
+      ))
+
+      await StorageManager.putAppletStateIntoStorage(history.sessionId, state)
+      await sessionHistoryBackend.remove(history.sessionId)
+      await sessionStore.openHistory(history)
     }
+
+    void this.refreshRecent()
+  }
+
+  async deleteHistory(history: SessionHistory) {
+    await sessionHistoryBackend.remove(history.sessionId)
+    void this.refreshRecent()
   }
 
   async restoreLastHistory() {
-    const sessionHistory = this.histories[0]
+    if (!this.isSupported) return
 
-    if (sessionHistory) {
-      void this.restoreHistory(sessionHistory.sessionId)
+    const { items } = await sessionHistoryBackend.list({ offset: 0, limit: 1 })
+
+    if (items[0]) {
+      await this.restoreHistory(items[0])
     }
   }
 
-  getHistoryOfAppletId(appletId: string) {
-    return this.histories.filter((history) => history.appletId === appletId)
-  }
-
-  private removeHistoryEntry(sessionId: string) {
-    this.histories = this.histories.filter(
-      (history) => history.sessionId !== sessionId
-    )
-  }
-
-  clearAllHistory() {
-    this.histories = []
+  async clearAllHistory() {
+    await sessionHistoryBackend.clear()
+    void this.refreshRecent()
   }
 
   clearAllHistoryWithConfirm() {
     void NiceModal.show(ConfirmDialog, {
-      title: "Clear Closed Editor",
-      description: "Your closed editors history will be cleared",
+      title: "Clear History",
+      description: "All closed tabs in history will be removed",
       onConfirm: () => {
-        this.clearAllHistory()
+        void this.clearAllHistory()
+      }
+    })
+  }
+
+  /**
+   * Turning history off also clears it, so no closed tab state is left
+   * behind in storage while nothing can show it
+   */
+  disableHistoryWithConfirm() {
+    void NiceModal.show(ConfirmDialog, {
+      title: "Disable History",
+      description: "Closed tabs will no longer be kept, and the current history will be cleared",
+      onConfirm: () => {
+        void this.clearAllHistory()
+        this.setFeatureEnabled(false)
       }
     })
   }

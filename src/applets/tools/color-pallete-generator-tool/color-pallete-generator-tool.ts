@@ -16,7 +16,6 @@ export const colorPalleteGeneratorTool = new AppletConstructor<InputFields>({
   name: "Color Pallete Generator",
   description: "Generate attractive color pallete",
   category: "Color",
-  autoRun: false,
   layoutSetting: {
     areaType: "grid",
     areaGridTemplate: "'input' min-content 'output' 1fr"
@@ -64,12 +63,6 @@ export const colorPalleteGeneratorTool = new AppletConstructor<InputFields>({
           { label: "Light", value: "light" }
         ]
       }
-    },
-    {
-      key: "run",
-      label: "Generate Color",
-      component: "Run",
-      defaultValue: ""
     }
   ]),
   outputFields: [
@@ -77,6 +70,7 @@ export const colorPalleteGeneratorTool = new AppletConstructor<InputFields>({
       key: "colors",
       label: "Generated Colors",
       component: "ColorPallete",
+      showRegenerateButton: true,
       props: {
         showInfo: true
       }

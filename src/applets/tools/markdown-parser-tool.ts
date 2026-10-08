@@ -30,7 +30,8 @@ const markdownParserTool = new AppletConstructor<InputFields, OutputFields>({
     {
       key: "output",
       label: "Output",
-      component: "Markdown"
+      component: "Markdown",
+      hideInHistory: true
     }
   ],
   action({ inputValues }) {

@@ -21,7 +21,8 @@ import { type AppletState } from "src/types/AppletState"
 import { type ExtensionMetadata } from "src/types/ExtensionMetadata"
 import { type LayoutSetting } from "src/types/LayoutSetting"
 import { type Session } from "src/types/Session"
-import { type SessionHistory } from "src/types/SessionHistory"
+import { type HistoryBlob, type SessionHistorySnapshot, type SessionHistoryValue } from "src/types/SessionHistory"
+import { extractBinaryValues } from "src/utils/extract-binary-values"
 import { generateRandomString } from "src/utils/generate-random-string"
 
 import { type AppletConstructor } from "./AppletConstructor.js"
@@ -500,11 +501,42 @@ export class Applet<
     return { sessionId, sessionName, sessionSequenceNumber, appletId }
   }
 
-  toHistory(): SessionHistory {
+  /**
+   * Entry for the closed tab history: the state without its input and output
+   * values, each value as text, and the bytes of its files and buffers, which
+   * the values hold placeholders for
+   */
+  async toHistory(): Promise<{ history: SessionHistorySnapshot, blobs: HistoryBlob[] }> {
     const { sessionId, sessionName, appletId } = this
     const deletedAt = new Date().getTime()
 
-    return { deletedAt, sessionId, sessionName, appletId }
+    const { value: storableState, blobs } = await extractBinaryValues({ ...this.toState(), isDeleted: false })
+    const { inputValues, outputValues, ...state } = storableState
+
+    // Each value is stored once, as text, and searched as is
+    const values: SessionHistoryValue[] = [
+      ...Object.entries(inputValues ?? {}).map(([key, value]) => ({ source: "input" as const, key, value })),
+      ...Object.entries(outputValues ?? {}).map(([key, value]) => ({ source: "output" as const, key, value }))
+    ]
+      .filter(({ value }) => value !== undefined && value !== null)
+      .map(({ source, key, value }) => (
+        typeof value === "string"
+          ? { source, key, kind: "text", text: value }
+          : { source, key, kind: "json", text: JSON.stringify(value) }
+      ))
+
+    return {
+      history: {
+        deletedAt,
+        sessionId,
+        sessionName,
+        appletId,
+        toolName: appletStore.mapOfLoadedAppletsName[appletId] ?? appletId,
+        state,
+        values
+      },
+      blobs
+    }
   }
 
   @action

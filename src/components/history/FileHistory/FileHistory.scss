@@ -1,0 +1,11 @@
+.FileHistory {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+
+  svg {
+    flex: none;
+    color: var(--icon-color);
+  }
+}

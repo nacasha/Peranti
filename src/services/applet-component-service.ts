@@ -1,6 +1,11 @@
 import { open } from "@tauri-apps/plugin-dialog"
 import toast from "react-hot-toast"
 
+import { ColorHistory } from "src/components/history/ColorHistory"
+import { ColorPalleteHistory } from "src/components/history/ColorPalleteHistory"
+import { FileHistory } from "src/components/history/FileHistory"
+import { GridStatHistory } from "src/components/history/GridStatHistory"
+import { ImageHistory } from "src/components/history/ImageHistory"
 import { RunInput } from "src/components/inputs/ButtonInput"
 import { CheckboxInput } from "src/components/inputs/CheckboxInput"
 import { CodeInput } from "src/components/inputs/CodeInput"
@@ -26,6 +31,7 @@ import { ReactOutput } from "src/components/outputs/ReactOutput"
 import { TextAreaOutput } from "src/components/outputs/TextAreaOutput-2"
 import { TextOutput } from "src/components/outputs/TextOutput"
 import { AppletComponent } from "src/models/AppletComponent.js"
+import { HistoryPage } from "src/pages/HistoryPage"
 import { PipelineEditor } from "src/pages/PipelineEditorPage"
 import { SettingsPage } from "src/pages/SettingsPage"
 import { convertCRLFtoLF } from "src/utils/convert-crlf-to-lf.js"
@@ -40,7 +46,8 @@ class AppletComponentService {
    */
   readonly inputs = {
     Checkbox: new AppletComponent({
-      component: CheckboxInput
+      component: CheckboxInput,
+      hideInHistory: true
     }),
 
     TextArea: new AppletComponent({
@@ -58,25 +65,30 @@ class AppletComponentService {
     }),
 
     Select: new AppletComponent({
-      component: SelectInput
+      component: SelectInput,
+      hideInHistory: true
     }),
 
     Switch: new AppletComponent({
-      component: SwitchInput
+      component: SwitchInput,
+      hideInHistory: true
     }),
 
     Run: new AppletComponent({
-      component: RunInput
+      component: RunInput,
+      hideInHistory: true
     }),
 
     File: new AppletComponent({
       component: FileInput,
-      readFileAs: "file"
+      readFileAs: "file",
+      historyComponent: FileHistory
     }),
 
     Files: new AppletComponent({
       component: FilesInput,
-      readFileAs: "files"
+      readFileAs: "files",
+      historyComponent: FileHistory
     }),
 
     Code: new AppletComponent({
@@ -88,12 +100,14 @@ class AppletComponentService {
     }),
 
     PipelineEditor: new AppletComponent({
-      component: PipelineEditor
+      component: PipelineEditor,
+      hideInHistory: true
     }),
 
     ColorPicker: new AppletComponent({
       component: ColorPickerInput,
-      maximizable: true
+      maximizable: true,
+      historyComponent: ColorHistory
     })
   }
 
@@ -108,27 +122,33 @@ class AppletComponentService {
       saveAs: "text"
     }),
 
+    // Both sides of the diff are already the tab's inputs
     Diff: new AppletComponent({
       component: DiffOutput,
-      maximizable: true
+      maximizable: true,
+      hideInHistory: true
     }),
 
     File: new AppletComponent({
-      component: FileOutput
+      component: FileOutput,
+      hideInHistory: true
     }),
 
     GridStat: new AppletComponent({
-      component: GridStatOutput
+      component: GridStatOutput,
+      historyComponent: GridStatHistory
     }),
 
     IFrame: new AppletComponent({
-      component: IFrameOutput
+      component: IFrameOutput,
+      hideInHistory: true
     }),
 
     Image: new AppletComponent({
       component: ImageOutput,
       maximizable: true,
-      saveAs: "image"
+      saveAs: "image",
+      historyComponent: ImageHistory
     }),
 
     Markdown: new AppletComponent({
@@ -164,24 +184,34 @@ class AppletComponentService {
 
     React: new AppletComponent({
       component: ReactOutput,
-      maximizable: true
+      maximizable: true,
+      hideInHistory: true
     }),
 
     Settings: new AppletComponent({
-      component: SettingsPage
+      component: SettingsPage,
+      hideInHistory: true
+    }),
+
+    History: new AppletComponent({
+      component: HistoryPage,
+      hideInHistory: true
     }),
 
     DataGrid: new AppletComponent({
       component: DataGridOutput,
-      maximizable: true
+      maximizable: true,
+      hideInHistory: true
     }),
 
     Color: new AppletComponent({
-      component: ColorOutput
+      component: ColorOutput,
+      historyComponent: ColorHistory
     }),
 
     ColorPallete: new AppletComponent({
-      component: ColorPalleteOutput
+      component: ColorPalleteOutput,
+      historyComponent: ColorPalleteHistory
     })
   }
 

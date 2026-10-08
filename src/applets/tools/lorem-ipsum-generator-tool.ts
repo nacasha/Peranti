@@ -57,7 +57,8 @@ const loremIpsumGeneratorTool = new AppletConstructor<InputFields, OutputFields>
     {
       key: "output",
       label: "Output",
-      component: "Code"
+      component: "Code",
+      showRegenerateButton: true
     }
   ],
   async action({ inputValues }) {

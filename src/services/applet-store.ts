@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx"
 
+import historyApplet from "src/applets/pages/history-applet.ts"
 import pipelineEditorApplet from "src/applets/pages/pipeline-editor-applet.ts"
 import settingsApplet from "src/applets/pages/settings-applet.ts"
 import base64EncodeDecodeTool from "src/applets/tools/base64-encode-decode-tool.ts"
@@ -112,7 +113,8 @@ class AppletStore {
      * Applet Pages
      */
     [pipelineEditorApplet.appletId]: pipelineEditorApplet,
-    [settingsApplet.appletId]: settingsApplet
+    [settingsApplet.appletId]: settingsApplet,
+    [historyApplet.appletId]: historyApplet
   }
 
   /**

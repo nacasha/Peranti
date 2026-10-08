@@ -28,7 +28,8 @@ const mermaidEditorTool = new AppletConstructor<InputFields, OutputFields>({
     {
       key: "output",
       label: "Mermaid Diagram",
-      component: "Mermaid"
+      component: "Mermaid",
+      hideInHistory: true
     }
   ],
   samples: [

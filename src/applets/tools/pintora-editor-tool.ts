@@ -28,7 +28,8 @@ const pintoraEditorTool = new AppletConstructor<InputFields, OutputFields>({
     {
       key: "output",
       label: "Pintora Diagram",
-      component: "Pintora"
+      component: "Pintora",
+      hideInHistory: true
     }
   ],
   samples: [

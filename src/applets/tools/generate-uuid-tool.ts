@@ -18,6 +18,10 @@ const generateUuidTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "generate-uuid",
   name: "Generate UUID",
   category: "Generator",
+  layoutSetting: {
+    areaType: "grid",
+    areaGridTemplate: "'input' min-content 'output' 1fr"
+  },
   inputFields: [
     {
       key: "type",
@@ -36,19 +40,14 @@ const generateUuidTool = new AppletConstructor<InputFields, OutputFields>({
       label: "Number of Generated UUID",
       component: "Text",
       defaultValue: 1
-    },
-    {
-      key: "runner",
-      label: "Regenerate",
-      component: "Run",
-      defaultValue: ""
     }
   ],
   outputFields: [
     {
       key: "output",
       label: "Output",
-      component: "Code"
+      component: "Code",
+      showRegenerateButton: true
     }
   ],
   action: ({ inputValues, toast }) => {

@@ -9,6 +9,7 @@ import { copyComponentValue } from "src/utils/copy-component-value"
 import { runViewTransition } from "src/utils/run-view-transition"
 import { saveComponentValue } from "src/utils/save-component-value"
 
+import { Button } from "../Button"
 import { ButtonIcon } from "../ButtonIcon"
 import { Tooltip } from "../Tooltip"
 
@@ -78,6 +79,12 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
     if (componentContext.component) {
       void saveComponentValue(componentContext.component, getFieldValue())
     }
+  }
+
+  const isActionRunning = useSelector(() => activeAppletStore.getActiveApplet().isActionRunning)
+
+  const handleClickRegenerate = () => {
+    void activeAppletStore.getActiveApplet().run()
   }
 
   const handleClickLabel = () => {
@@ -161,12 +168,21 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
         )}
       </div>
       <div className="AppletComponentHead-buttons">
+        {componentContext.showRegenerateButton && (
+          <Button
+            className="AppletComponentHead-regenerate"
+            icon={Icons.Run}
+            onClick={handleClickRegenerate}
+            disabled={isActionRunning}
+          >
+            Regenerate
+          </Button>
+        )}
         {componentContext.component?.copyAs && (
           <ButtonIcon
             className={isCopied ? "ButtonIcon is-copied" : "ButtonIcon"}
             tooltip={isCopied ? "Copied" : "Copy"}
             icon={isCopied ? Icons.Check : Icons.Copy}
-            iconSize={12}
             onClick={() => { void handleClickCopy() }}
           />
         )}
@@ -174,7 +190,6 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
           <ButtonIcon
             tooltip="Save to File"
             icon={Icons.SaveToFile}
-            iconSize={12}
             onClick={handleClickSave}
           />
         )}
@@ -182,7 +197,6 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
           <ButtonIcon
             tooltip={isMaximized ? "Restore" : "Maximize"}
             icon={isMaximized ? Icons.NormalScreen : Icons.FullScreen}
-            iconSize={12}
             onClick={handleClickMaximize}
           />
         )}

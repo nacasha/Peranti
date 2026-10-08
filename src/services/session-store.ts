@@ -624,15 +624,15 @@ class SessionStore {
 
       await this.detachSessionSequence(toBeDeleted.toSession())
 
-      const isAddedToHistory = sessionHistoryStore.addHistory(toBeDeleted)
+      /**
+       * History keeps its own copy, files included, so nothing of a closed
+       * tab stays in IndexedDB
+       */
+      await sessionHistoryStore.addHistory(toBeDeleted)
 
-      if (isAddedToHistory) {
-        void toBeDeleted.markAsDeleted()
-      } else {
-        setTimeout(() => {
-          void StorageManager.removeAppletStateFromStorage(toBeDeleted!.sessionId)
-        }, 500)
-      }
+      setTimeout(() => {
+        void StorageManager.removeAppletStateFromStorage(toBeDeleted!.sessionId)
+      }, 500)
 
       /**
        * Remove entry from last active session ids

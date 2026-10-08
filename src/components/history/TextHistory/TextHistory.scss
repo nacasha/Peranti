@@ -1,0 +1,9 @@
+.TextHistory {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-family-mono);
+  font-size: 11.5px;
+  color: var(--faint);
+}

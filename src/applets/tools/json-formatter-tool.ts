@@ -54,7 +54,8 @@ const jsonFormatter = new AppletConstructor<InputFields, OutputFields, Options>(
       component: "Code",
       props: {
         language: "json"
-      }
+      },
+      hideInHistory: true
     }
   ],
   options: [

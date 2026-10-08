@@ -81,7 +81,13 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
   }
 
   return (
-    <AppletComponentContext.Provider value={{ type: "output", fieldKey: appletOutput.key, component: outputComponent }}>
+    <AppletComponentContext.Provider value={{
+      type: "output",
+      fieldKey: appletOutput.key,
+      component: outputComponent,
+      showRegenerateButton: appletOutput.showRegenerateButton
+    }}
+    >
       <Component
         {...appletOutput.props}
         key={appletOutput.key}

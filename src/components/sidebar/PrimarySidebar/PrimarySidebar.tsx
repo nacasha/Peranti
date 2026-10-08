@@ -6,7 +6,6 @@ import SimpleBar from "simplebar-react"
 
 import settingsApplet from "src/applets/pages/settings-applet"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
-import { ClosedEditorSidebar } from "src/components/primary-sidebar/ClosedEditorSidebar"
 import { ExtensionsSidebar } from "src/components/primary-sidebar/ExtensionsSidebar"
 import { ToolSidebar } from "src/components/primary-sidebar/ToolSidebar"
 import { Icons } from "src/constants/icons"
@@ -80,7 +79,6 @@ const PrimarySidebarBody: FC = () => {
   const sidebarActiveMenuId = useSelector(() => interfaceStore.sidebarActiveMenuId)
   const Component: FC | undefined = {
     tools: ToolSidebar,
-    history: ClosedEditorSidebar,
     extensions: ExtensionsSidebar
   }[sidebarActiveMenuId]
 

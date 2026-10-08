@@ -1,6 +1,7 @@
 import Fuse from "fuse.js"
 import { makeAutoObservable, observable, reaction } from "mobx"
 
+import historyApplet from "src/applets/pages/history-applet.ts"
 import settingsApplet from "src/applets/pages/settings-applet.ts"
 import { type Session } from "src/types/Session.ts"
 import { extractSearchableText } from "src/utils/extract-searchable-text.ts"
@@ -265,6 +266,11 @@ class CommandbarService {
         key: "cmd:reopen-closed-tab",
         label: "Reopen Closed Tab",
         run: async() => { await sessionHistoryStore.restoreLastHistory() }
+      },
+      {
+        key: "cmd:open-history",
+        label: "Open Closed Tabs History",
+        run: () => { sessionStore.findOrCreateSession(historyApplet) }
       },
       {
         key: "cmd:rename-tab",
