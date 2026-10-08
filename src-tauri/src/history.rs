@@ -227,8 +227,13 @@ fn to_value(kind: &str, text: String) -> Value {
     }
 }
 
-/// Drops everything past the newest `max_entries`, values and blobs included
+/// Drops everything past the newest `max_entries`, values and blobs included.
+/// A negative `max_entries` means unlimited, so nothing is dropped.
 fn trim(conn: &Connection, max_entries: i64) -> Result<(), String> {
+    if max_entries < 0 {
+        return Ok(());
+    }
+
     conn.execute(
         "DELETE FROM history WHERE session_id IN (
             SELECT session_id FROM history ORDER BY deleted_at DESC LIMIT -1 OFFSET ?1
@@ -736,6 +741,19 @@ mod tests {
         trim(&conn, 0).unwrap();
         assert_eq!(count(&conn, "history_value"), 0);
         assert_eq!(count(&conn, "history_blob"), 0);
+    }
+
+    #[test]
+    fn negative_limit_keeps_every_entry() {
+        let mut conn = open();
+        let one_value = || json!([{ "source": "input", "key": "a", "kind": "text", "text": "x" }]);
+        add(&mut conn, "s1", 1, -1, one_value(), &[]);
+        add(&mut conn, "s2", 2, -1, one_value(), &[]);
+        add(&mut conn, "s3", 3, -1, one_value(), &[]);
+        assert_eq!(count(&conn, "history"), 3);
+
+        trim(&conn, -1).unwrap();
+        assert_eq!(count(&conn, "history"), 3);
     }
 
     #[test]

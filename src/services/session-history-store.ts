@@ -26,6 +26,11 @@ const RECENT_LIMIT = 20
  */
 const TEXT_FIELD_LENGTH = 400
 
+/**
+ * Entry limit the backend gets while history is unlimited: keeps everything
+ */
+const UNLIMITED_ENTRIES = -1
+
 class SessionHistoryStore {
   /**
    * History lives on the Rust side, so the web build has none
@@ -42,9 +47,21 @@ class SessionHistoryStore {
    */
   revision = 0
 
+  /**
+   * Kept while unlimited is on, so turning it off goes back to this number
+   */
   numberOfMaximumHistory = 500
 
+  isUnlimitedHistory = false
+
   featureEnabled = true
+
+  /**
+   * Entry limit the backend trims to, where a negative number keeps all
+   */
+  get maxEntriesForBackend() {
+    return this.isUnlimitedHistory ? UNLIMITED_ENTRIES : this.numberOfMaximumHistory
+  }
 
   constructor() {
     makeAutoObservable(this)
@@ -58,7 +75,7 @@ class SessionHistoryStore {
       name: StorageKeys.SessionHistoryStore,
       storage: localforage,
       stringify: false,
-      properties: ["numberOfMaximumHistory", "featureEnabled"]
+      properties: ["numberOfMaximumHistory", "isUnlimitedHistory", "featureEnabled"]
     })
   }
 
@@ -119,7 +136,7 @@ class SessionHistoryStore {
 
     try {
       const { history, blobs } = await applet.toHistory()
-      await sessionHistoryBackend.add(history, blobs, this.numberOfMaximumHistory)
+      await sessionHistoryBackend.add(history, blobs, this.maxEntriesForBackend)
 
       void this.refreshRecent()
       return true
@@ -135,7 +152,18 @@ class SessionHistoryStore {
   async setNumberOfMaximumHistory(value: number) {
     this.numberOfMaximumHistory = Math.max(0, Math.floor(value))
 
-    await sessionHistoryBackend.trim(this.numberOfMaximumHistory)
+    await sessionHistoryBackend.trim(this.maxEntriesForBackend)
+    void this.refreshRecent()
+  }
+
+  /**
+   * Unlimited ignores the maximum, which is kept for when it's turned off.
+   * Turning it off trims to the maximum right away, like lowering it does.
+   */
+  async setUnlimitedHistory(value: boolean) {
+    this.isUnlimitedHistory = value
+
+    await sessionHistoryBackend.trim(this.maxEntriesForBackend)
     void this.refreshRecent()
   }
 
