@@ -5,8 +5,7 @@ const settingsApplet = new AppletConstructor({
   appletId: "settings-page",
   name: "Settings",
   category: "App",
-  inputFields: [],
-  outputFields: [
+  inputFields: [
     {
       key: "content",
       label: "content",
@@ -14,6 +13,7 @@ const settingsApplet = new AppletConstructor({
       component: "Settings"
     }
   ],
+  outputFields: [],
   disableMultipleSession: true,
   hideOnSidebar: true,
   type: AppletType.Page

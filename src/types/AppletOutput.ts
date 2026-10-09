@@ -12,7 +12,6 @@ export type AppletOutput<K extends Record<string, string> | any = any> = {
   key: Extract<keyof K, string>
   label: string
   allowBatch?: boolean
-  customComponent?: boolean
 
   /**
    * Show a "Regenerate" button in the field header that re-runs the applet
@@ -25,10 +24,6 @@ export type AppletOutput<K extends Record<string, string> | any = any> = {
    */
   hideInHistory?: boolean
 } & ({
-  customComponent: true
-  component: "Settings" | "History"
-  props?: any
-} | {
   component: "Text"
   props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Text>
 } | {

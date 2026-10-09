@@ -5,8 +5,7 @@ const historyApplet = new AppletConstructor({
   appletId: "history-page",
   name: "History",
   category: "App",
-  inputFields: [],
-  outputFields: [
+  inputFields: [
     {
       key: "content",
       label: "content",
@@ -14,6 +13,7 @@ const historyApplet = new AppletConstructor({
       component: "History"
     }
   ],
+  outputFields: [],
   disableMultipleSession: true,
   hideOnSidebar: true,
   type: AppletType.Page

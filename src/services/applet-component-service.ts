@@ -105,6 +105,16 @@ class AppletComponentService {
       hideInHistory: true
     }),
 
+    Settings: new AppletComponent({
+      component: SettingsPage,
+      hideInHistory: true
+    }),
+
+    History: new AppletComponent({
+      component: HistoryPage,
+      hideInHistory: true
+    }),
+
     ColorPicker: new AppletComponent({
       component: ColorPickerInput,
       maximizable: true,
@@ -186,16 +196,6 @@ class AppletComponentService {
     React: new AppletComponent({
       component: ReactOutput,
       maximizable: true,
-      hideInHistory: true
-    }),
-
-    Settings: new AppletComponent({
-      component: SettingsPage,
-      hideInHistory: true
-    }),
-
-    History: new AppletComponent({
-      component: HistoryPage,
       hideInHistory: true
     }),
 
