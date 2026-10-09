@@ -2,7 +2,7 @@ import { format } from "sql-formatter"
 
 import { AppletConstructor } from "src/models/AppletConstructor"
 
-const sqlFormatterTool = new AppletConstructor({
+export const sqlFormatterTool = new AppletConstructor({
   appletId: "sql-formatter",
   fileExtensions: ["sql"],
   name: "SQL Formatter",
@@ -190,5 +190,3 @@ const sqlFormatterTool = new AppletConstructor({
     return { output }
   }
 })
-
-export default sqlFormatterTool

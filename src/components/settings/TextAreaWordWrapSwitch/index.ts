@@ -1,1 +1,1 @@
-export { TextAreaWordWrapSwitch } from "./TextAreaWordWrapSwitch"
+export { TextAreaWordWrapSwitch } from "./TextAreaWordWrapSwitch.tsx"

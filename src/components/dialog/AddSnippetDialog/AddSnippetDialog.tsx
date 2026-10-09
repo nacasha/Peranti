@@ -5,7 +5,7 @@ import { Button } from "src/components/common/Button"
 import { Checkbox } from "src/components/common/Checkbox"
 import { Input } from "src/components/common/Input"
 
-import { Dialog } from "../Dialog.tsx"
+import { Dialog } from "../Dialog"
 
 import "./AddSnippetDialog.scss"
 

@@ -2,7 +2,7 @@ import minify from "pg-minify"
 
 import { AppletConstructor } from "src/models/AppletConstructor"
 
-const sqlMinifyTool = new AppletConstructor({
+export const sqlMinifyTool = new AppletConstructor({
   appletId: "sql-minify",
   fileExtensions: ["sql"],
   name: "SQL Minify",
@@ -49,5 +49,3 @@ const sqlMinifyTool = new AppletConstructor({
     return { output }
   }
 })
-
-export default sqlMinifyTool

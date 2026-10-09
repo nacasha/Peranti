@@ -3,7 +3,7 @@ import { type FC } from "react"
 import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
-import { AppletComponentContext } from "src/contexts/AppletInputContext"
+import { AppletComponentContext } from "src/contexts/AppletComponentContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"

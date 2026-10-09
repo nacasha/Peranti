@@ -2,7 +2,7 @@ import { observer } from "mobx-react"
 import { useEffect, useRef, useState, type FC } from "react"
 import SimpleBar from "simplebar-react"
 
-import settingsApplet from "src/applets/pages/settings-applet"
+import { settingsApplet } from "src/applets/pages/settings-applet"
 import { Button } from "src/components/common/Button"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { HighlightedText } from "src/components/common/HighlightedText"

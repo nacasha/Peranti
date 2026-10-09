@@ -4,7 +4,7 @@ import { Item, type ItemParams, Separator, useContextMenu } from "react-contexif
 import { createPortal } from "react-dom"
 import SimpleBar from "simplebar-react"
 
-import historyApplet from "src/applets/pages/history-applet"
+import { historyApplet } from "src/applets/pages/history-applet"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { ContextMenu, ContextMenuItem } from "src/components/common/ContextMenu"
 import { Icons } from "src/constants/icons"

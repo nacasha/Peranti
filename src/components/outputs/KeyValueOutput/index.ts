@@ -1,1 +1,1 @@
-export { KeyValueOutput } from "./KeyValueOutput"
+export { KeyValueOutput } from "./KeyValueOutput.tsx"

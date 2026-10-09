@@ -2,7 +2,7 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react"
 
 import { Button } from "src/components/common/Button"
 
-import { Dialog } from "../Dialog.tsx"
+import { Dialog } from "../Dialog"
 
 import "./ConfirmDialog.scss"
 

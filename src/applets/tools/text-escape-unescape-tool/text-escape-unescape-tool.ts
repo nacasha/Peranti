@@ -13,7 +13,7 @@ interface OutputFields {
   output: OutputFieldsType.Code
 }
 
-const textEscapeUnescapeTool = new AppletConstructor<InputFields, OutputFields>({
+export const textEscapeUnescapeTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "text-escape-unescape-tool",
   fileExtensions: ["txt"],
   name: "Text Escape / Unescape",
@@ -57,5 +57,3 @@ const textEscapeUnescapeTool = new AppletConstructor<InputFields, OutputFields>(
     return { output: unescapejs(input) }
   }
 })
-
-export default textEscapeUnescapeTool

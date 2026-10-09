@@ -4,7 +4,7 @@ import { type FC } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
 import SimpleBar from "simplebar-react"
 
-import settingsApplet from "src/applets/pages/settings-applet"
+import { settingsApplet } from "src/applets/pages/settings-applet"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { ExtensionsSidebar } from "src/components/primary-sidebar/ExtensionsSidebar"
 import { ToolSidebar } from "src/components/primary-sidebar/ToolSidebar"

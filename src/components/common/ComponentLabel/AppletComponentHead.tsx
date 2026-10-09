@@ -2,7 +2,7 @@ import { useContext, useEffect, useId, useRef, useState, type FC, memo } from "r
 import { Item, type ItemParams, Menu, Separator, useContextMenu } from "react-contexify"
 
 import { Icons } from "src/constants/icons"
-import { AppletComponentContext } from "src/contexts/AppletInputContext"
+import { AppletComponentContext } from "src/contexts/AppletComponentContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { copyComponentValue } from "src/utils/copy-component-value"

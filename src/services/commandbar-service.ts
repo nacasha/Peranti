@@ -1,8 +1,8 @@
 import Fuse from "fuse.js"
 import { makeAutoObservable, observable, reaction } from "mobx"
 
-import historyApplet from "src/applets/pages/history-applet.ts"
-import settingsApplet from "src/applets/pages/settings-applet.ts"
+import { historyApplet } from "src/applets/pages/history-applet"
+import { settingsApplet } from "src/applets/pages/settings-applet"
 import { type Session } from "src/types/Session.ts"
 import { extractSearchableText } from "src/utils/extract-searchable-text.ts"
 import { getMatchExcerpt } from "src/utils/get-match-excerpt.ts"

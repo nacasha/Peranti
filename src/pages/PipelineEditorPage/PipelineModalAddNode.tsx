@@ -1,7 +1,7 @@
 import NiceModal, { useModal } from "@ebay/nice-modal-react"
 
 import { Button } from "src/components/common/Button"
-import { Dialog } from "src/components/dialog/Dialog.tsx"
+import { Dialog } from "src/components/dialog/Dialog"
 import { type AppletConstructor } from "src/models/AppletConstructor"
 import { toolSidebarService } from "src/services/tool-sidebar-service"
 

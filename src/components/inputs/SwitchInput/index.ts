@@ -1,1 +1,1 @@
-export { SwitchInput } from "./SwitchInput"
+export { SwitchInput } from "./SwitchInput.tsx"

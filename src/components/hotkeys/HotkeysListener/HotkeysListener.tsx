@@ -1,4 +1,4 @@
-import settingsApplet from "src/applets/pages/settings-applet"
+import { settingsApplet } from "src/applets/pages/settings-applet"
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { hotkeysStore } from "src/services/hotkeys-store"
 import { sessionStore } from "src/services/session-store"

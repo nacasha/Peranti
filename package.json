@@ -17,7 +17,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "lint-fix": "eslint --fix src/**"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --ext .ts,.tsx src",
+    "lint-fix": "eslint --fix --ext .ts,.tsx src"
   },
   "dependencies": {
     "@codemirror/commands": "^6.3.3",

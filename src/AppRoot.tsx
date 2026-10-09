@@ -21,7 +21,7 @@ export const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
     withRunningInTauri: isRunningInTauri,
     withRunningInBrowser: !isRunningInTauri,
     withMacOS: isMacOS,
-    withWindows: isWindows,
+    withWindows: isWindows
   })
 
   useEffect(() => {
