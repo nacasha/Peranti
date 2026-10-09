@@ -12,10 +12,14 @@ interface OutputFields {
   output: OutputFieldsType.DataGrid
 }
 
-export const csvTableViewerTool = new AppletConstructor<InputFields, OutputFields>({
+interface Options {
+  firstRowAsHeader: InputFieldsType.Checkbox
+}
+
+export const csvTableViewerTool = new AppletConstructor<InputFields, OutputFields, Options>({
   appletId: "csv-table-viewer",
   fileExtensions: ["csv", "tsv"],
-  name: "CSV Viewer",
+  name: "CSV Table Viewer",
   description: "View CSV data format in pretty spreadsheet view",
   category: "CSV",
   inputFields: [
@@ -33,6 +37,14 @@ export const csvTableViewerTool = new AppletConstructor<InputFields, OutputField
       component: "DataGrid"
     }
   ],
+  options: [
+    {
+      key: "firstRowAsHeader",
+      label: "First Row as Header",
+      component: "Checkbox",
+      defaultValue: false
+    }
+  ],
   samples: [
     {
       name: "Sample 1",
@@ -43,13 +55,16 @@ Jason Arthur,Structure and Interpretation of Computer Programs,2016-12-22`
       }
     }
   ],
-  action: async({ inputValues }) => {
+  action: async({ inputValues, options }) => {
     const { csvString } = inputValues
+    const { firstRowAsHeader } = options
     let data: any[] = []
 
     try {
-      data = Papa.parse(csvString).data
-      console.log({ data })
+      data = Papa.parse(csvString, {
+        header: firstRowAsHeader,
+        skipEmptyLines: firstRowAsHeader
+      }).data
     } catch (error) {
       console.log(error)
     }
