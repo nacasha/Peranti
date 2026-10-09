@@ -76,6 +76,16 @@
   }
 }
 
+.SecondarySidebarSection-actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  // Cancel the header's vertical padding so the button doesn't grow the row.
+  margin-block: -6px -4px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
 .SecondarySidebarSection-body {
   display: flex;
   flex-direction: column;
@@ -109,20 +119,54 @@
   margin: 2px 12px;
 }
 
-.Button.AppletSampleSelector-item {
+// One hover target per row; the remove button only shows on hover.
+.AppletSampleSelector-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   height: 28px;
   margin: 0 6px;
-  padding: 0 6px;
-  border-color: transparent;
-  background: transparent;
+  padding: 0 4px 0 8px;
+  border-radius: var(--radius-md);
   color: var(--muted);
-  font-weight: var(--font-weight);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--animation-speed), color var(--animation-speed);
 
-  &:hover {
-    border-color: transparent;
+  &:hover,
+  &:focus-visible {
     background: var(--hover);
     color: var(--text-color);
+    outline: none;
   }
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .ButtonIcon {
+    min-width: 22px;
+    height: 22px;
+  }
+}
+
+.AppletSampleSelector-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.AppletSampleSelector-actions {
+  display: flex;
+  opacity: 0;
+}
+
+.AppletSampleSelector-row:hover .AppletSampleSelector-actions,
+.AppletSampleSelector-row:focus-within .AppletSampleSelector-actions {
+  opacity: 1;
 }
 
 .AppletSampleSelector-empty {

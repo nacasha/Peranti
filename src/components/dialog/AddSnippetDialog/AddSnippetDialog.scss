@@ -1,0 +1,9 @@
+.AddSnippetDialog {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.AddSnippetDialog-label {
+  color: var(--muted);
+}

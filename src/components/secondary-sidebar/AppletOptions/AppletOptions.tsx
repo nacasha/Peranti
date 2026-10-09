@@ -1,5 +1,6 @@
 import { type FC } from "react"
 
+import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { SecondarySidebarSection } from "src/components/sidebar/SecondarySidebar"
 import { Icons } from "src/constants/icons"
 import { SecondarySidebarSections } from "src/constants/secondary-sidebar-sections"
@@ -21,6 +22,14 @@ export const AppletOptions = () => {
       title="Options"
       icon={Icons.Settings}
       hidden={options.length === 0}
+      actions={!readOnly && (
+        <ButtonIcon
+          icon={Icons.Reset}
+          iconSize={13}
+          tooltip="Reset"
+          onClick={() => { activeAppletStore.getActiveApplet().resetOptionValues() }}
+        />
+      )}
     >
       {options.map((option) => (
         <div key={option.key} className="AppletSidebarItem">

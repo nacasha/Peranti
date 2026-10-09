@@ -158,7 +158,7 @@ class SessionStore {
    */
   createSessionOfActiveApplet() {
     const activeApplet = activeAppletStore.getActiveApplet()
-    this.createSession(activeApplet)
+    return this.createSession(activeApplet)
   }
 
   /**

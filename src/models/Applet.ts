@@ -756,6 +756,18 @@ export class Applet<
     }
   }
 
+  /**
+   * Restore every option to its default value and re-run if autoRun is enabled
+   */
+  @action
+  resetOptionValues() {
+    this.optionValues = this.getOptionValuesWithDefault()
+
+    if (this.autoRun && this.isInputValuesModified) {
+      void this.run()
+    }
+  }
+
   @action
   resetInputAndOutputValues() {
     this.inputValues = this.getInputValuesWithDefault()
