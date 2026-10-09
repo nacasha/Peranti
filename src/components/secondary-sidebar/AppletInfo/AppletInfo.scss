@@ -1,31 +1,23 @@
 .AppletInfo {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 0 8px 6px;
-}
-
-.AppletInfo-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+  gap: 2px;
+  padding: 6px 12px;
 }
 
 .AppletInfo-item-title {
-  font-size: 11.5px;
-  color: var(--faint);
+  display: none;
 }
 
 .AppletInfo-item-content {
-  word-wrap: normal;
   color: var(--muted);
-  line-height: 1.55;
+  line-height: 1.5;
   text-wrap: pretty;
 }
 
-// The tool name reads as the inspector's heading.
+// The tool name is the heading; the description follows as plain text.
 .AppletInfo-item:first-child .AppletInfo-item-content {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.01em;
   color: var(--text-color);

@@ -1,67 +1,30 @@
 import clsx from "clsx"
-import { useRef, type FC, type ReactNode, useEffect, useState } from "react"
-
-import { Icons } from "src/constants/icons"
-import { useSelector } from "src/hooks/useSelector"
-import { secondarySidebarService } from "src/services/secondary-sidebar-service"
+import { type LucideIcon } from "lucide-react"
+import { type FC, type ReactNode } from "react"
 
 interface SecondarySidebarSectionProps {
   sectionKey: string
   children?: ReactNode
-  title: ReactNode
-  padding?: boolean
+  title?: ReactNode
+  icon?: LucideIcon
   hidden?: boolean
 }
 
+// A flat group in the inspector: an optional small title, then its rows.
 export const SecondarySidebarSection: FC<SecondarySidebarSectionProps> = (props) => {
-  const { children, title, padding, hidden, sectionKey } = props
-  const expanded = useSelector(() => secondarySidebarService.expandedSection[sectionKey] ?? true)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [maxHeight, setMaxHeight] = useState(0)
-
-  const handleClickTitle = () => {
-    secondarySidebarService.setExpandedSection(sectionKey, !expanded)
-  }
-
-  const calculateBodyHeight = () => {
-    if (expanded && containerRef.current !== null) {
-      const body = containerRef.current.querySelector(".SecondarySidebarSection-body")
-      if (body) {
-        setMaxHeight(body.getBoundingClientRect().height + 33)
-      }
-    } else {
-      setMaxHeight(33)
-    }
-  }
-
-  useEffect(() => {
-    calculateBodyHeight()
-  }, [expanded, containerRef.current, children])
-
-  useEffect(() => {
-    calculateBodyHeight()
-  }, [])
+  const { children, title, icon: Icon, hidden, sectionKey } = props
 
   return (
-    <div
-      ref={containerRef}
-      className={clsx("SecondarySidebarSection", { expanded, hidden })}
-      style={{ maxHeight }}
-    >
-      <div onClick={handleClickTitle} className="SecondarySidebarSection-header">
-        <div>
-          {expanded ? <Icons.ChevronDown size={12} /> : <Icons.ChevronRight size={12} />}
+    <section className={clsx("SecondarySidebarSection", { hidden })} data-section={sectionKey}>
+      {title !== undefined && (
+        <div className="SecondarySidebarSection-header">
+          {Icon && <Icon size={13} aria-hidden />}
+          <span>{title}</span>
         </div>
-        <div className="SecondarySidebarSection-title">
-          {title}
-        </div>
-      </div>
-      <div
-        className="SecondarySidebarSection-body"
-        style={{ padding: padding ? "3px 10px 10px" : 0 }}
-      >
+      )}
+      <div className="SecondarySidebarSection-body">
         {children}
       </div>
-    </div>
+    </section>
   )
 }

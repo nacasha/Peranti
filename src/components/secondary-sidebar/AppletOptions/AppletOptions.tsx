@@ -1,12 +1,15 @@
 import { type FC } from "react"
 
 import { SecondarySidebarSection } from "src/components/sidebar/SecondarySidebar"
+import { Icons } from "src/constants/icons"
 import { SecondarySidebarSections } from "src/constants/secondary-sidebar-sections"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
 import { type AppletOption } from "src/types/AppletOption"
 import { type InputComponentProps } from "src/types/InputComponentProps"
+
+import "./AppletOptions.scss"
 
 export const AppletOptions = () => {
   const options = useSelector(() => activeAppletStore.getActiveApplet().options)
@@ -16,8 +19,8 @@ export const AppletOptions = () => {
     <SecondarySidebarSection
       sectionKey={SecondarySidebarSections.Options}
       title="Options"
+      icon={Icons.Settings}
       hidden={options.length === 0}
-      padding
     >
       {options.map((option) => (
         <div key={option.key} className="AppletSidebarItem">

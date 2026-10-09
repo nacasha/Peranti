@@ -32,19 +32,17 @@
   margin-left: 0;
 }
 
+// Flat inspector: groups are separated by a hairline, rows carry their own
+// 12px gutter so every label and control lines up on the same two edges.
 .SecondarySidebarSection {
-  --input-output-label-spacing: 6px;
+  --input-output-label-spacing: 0;
 
-  overflow: hidden;
+  padding: 6px 0;
   border-top: 1px solid var(--line);
-  transition: all var(--animation-speed);
+  font-size: 12.5px;
 
   &:first-child {
     border-top: none;
-  }
-
-  &:not(.expanded) {
-    max-height: 41px
   }
 
   &.hidden {
@@ -56,52 +54,65 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  height: 40px;
+  padding: 6px 12px 4px;
+  margin-bottom: 6px;
+  line-height: 1;
   user-select: none;
-  padding: 0 14px 0 18px;
   font-size: 11px;
   font-weight: var(--font-weight-medium);
   color: var(--faint);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 
-  &:hover {
-    cursor: pointer;
-    color: var(--muted);
-  };
-
-  &:nth-child(1) {
-    border-top: none;
-  }
-
   svg {
+    display: block;
     flex: none;
     color: var(--icon-color);
   }
-}
 
-.SecondarySidebarSection-title {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  justify-content: space-between;
+  // Uppercase text has no descenders, so its box sits low against the icon.
+  span {
+    padding-top: 1px;
+  }
 }
 
 .SecondarySidebarSection-body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  font-size: 12.5px;
 }
 
-// Samples read as a plain list, not a stack of outlined buttons.
-.SecondarySidebarSection-body:has(> .AppletSampleSelector-item) {
-  gap: 2px;
+// A label on the left, its control on the right.
+.SidebarRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
+  padding: 2px 12px;
+}
+
+.SidebarRow-label {
+  flex: none;
+  max-width: 45%;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.SidebarRow > :last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.SecondarySidebarSection-body > .Button {
+  margin: 2px 12px;
 }
 
 .Button.AppletSampleSelector-item {
-  height: 34px;
-  padding: 0 10px;
+  height: 28px;
+  margin: 0 6px;
+  padding: 0 6px;
   border-color: transparent;
   background: transparent;
   color: var(--muted);
@@ -112,4 +123,9 @@
     background: var(--hover);
     color: var(--text-color);
   }
+}
+
+.AppletSampleSelector-empty {
+  padding: 4px 12px;
+  color: var(--faint);
 }

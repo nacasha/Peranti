@@ -13,7 +13,6 @@ export const AppletInfo: FC = () => {
   return (
     <SecondarySidebarSection
       sectionKey={SecondarySidebarSections.Info}
-      title="Information"
       hidden={activeApplet.appletId === ""}
     >
       <div className="AppletInfo">

@@ -1,0 +1,189 @@
+// Options as a flat property list: label on the left, control on the right.
+// The only height here is the row's (`--row-height` on .AppletSidebarItem).
+// Everything inside stretches to it, so every control ends up the same size
+// regardless of its own element type.
+//
+// The input components are shared with the panes, where styles/panes.scss
+// dresses each one as a bordered 44px card (scoped under `body`). The doubled
+// class below outranks that sheet; where it sets a height we only clear it.
+body .AppletSidebarItem.AppletSidebarItem {
+  --input-output-label-spacing: 0;
+  --row-height: 30px;
+  --field-background: var(--hover);
+  --field-background-hover: color-mix(in oklch, var(--hover), var(--text-color) 5%);
+
+  display: flex;
+  align-items: stretch;
+  height: var(--row-height);
+  padding: 0 12px;
+  min-width: 0;
+
+  // The colour picker panel is taller than a row.
+  &:has(.ColorPickerInput) {
+    height: auto;
+    min-height: var(--row-height);
+  }
+
+  // ── Row: [label | control] ────────────────────────────────────────────────
+
+  .TextInput,
+  .SelectInput,
+  .SwitchInput,
+  .ColorPickerInput,
+  .CheckboxInput {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+
+    &:focus-within {
+      border: 0;
+    }
+
+    > .AppletComponentHead {
+      flex: none;
+      align-self: center;
+      max-width: 100%;
+      height: auto;
+      margin: 0;
+      padding: 0;
+      border: 0;
+
+      .AppletComponentHead-label {
+        font-size: 12.5px;
+        font-weight: var(--font-weight);
+        line-height: 1;
+        color: var(--muted);
+      }
+    }
+
+    > :last-child {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  // ── One field style: borderless soft fill ─────────────────────────────────
+
+  .TextInput > input,
+  .SelectInput .Dropdown,
+  .SwitchInput .buttons,
+  .RunInput .Button {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    margin-block: 2px;
+    padding-block: 0;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: var(--field-background);
+    box-shadow: none;
+    font-size: 12px;
+    line-height: 1;
+    transition: background-color var(--animation-speed), box-shadow var(--animation-speed);
+  }
+
+  .TextInput > input,
+  .SelectInput .Dropdown {
+    padding-inline: 8px;
+  }
+
+  .TextInput > input:not([readonly]):hover,
+  .SelectInput .Dropdown:hover,
+  .RunInput .Button:hover {
+    border: 0;
+    background: var(--field-background-hover);
+  }
+
+  .TextInput > input:not([readonly]):focus,
+  .TextInput > input:focus {
+    border: 0;
+    background: var(--field-background);
+    box-shadow: var(--focus-ring);
+  }
+
+  // Dropdown renders a wrapper div around its button; the button fills it.
+  .SelectInput > div:last-child {
+    display: flex;
+  }
+
+  .SelectInput .Dropdown {
+    flex: 1;
+    gap: 6px;
+  }
+
+  // Segmented control: one row, segments share the width, the chosen one is a
+  // lifted chip.
+  .SwitchInput .buttons {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    align-items: stretch;
+    padding-inline: 2px;
+
+    .button {
+      min-width: 0;
+      margin-block: 2px;
+      padding-inline: 6px;
+      font-size: 12px;
+      border-radius: calc(var(--radius-md) - 2px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .RunInput {
+    display: flex;
+    flex: 1;
+  }
+
+  .RunInput .Button {
+    flex: 1;
+    justify-content: center;
+    color: var(--text-color);
+  }
+
+  // Checkbox: label on the left, box on the right, like every other row.
+  .CheckboxInput {
+    align-items: center;
+    color: var(--muted);
+
+    .Switch {
+      flex: 1;
+      flex-direction: row-reverse;
+      justify-content: space-between;
+    }
+
+    .Switch input[type=checkbox] {
+      --bc: transparent;
+      --background: var(--field-background);
+
+      flex: none;
+
+      &:checked {
+        --bc: var(--accent);
+      }
+    }
+
+    .Switch input[type=checkbox] + label {
+      margin-left: 0;
+    }
+  }
+
+  .ColorPickerInput .rc-color-picker-panel {
+    border: 0;
+  }
+}

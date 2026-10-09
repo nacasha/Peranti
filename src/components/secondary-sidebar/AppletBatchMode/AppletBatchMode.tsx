@@ -4,6 +4,7 @@ import { Checkbox } from "src/components/common/Checkbox"
 import { Dropdown } from "src/components/common/Dropdown"
 import { PopoverConfirm } from "src/components/common/PopoverConfirm"
 import { SecondarySidebarSection } from "src/components/sidebar/SecondarySidebar"
+import { Icons } from "src/constants/icons"
 import { SecondarySidebarSections } from "src/constants/secondary-sidebar-sections"
 import { activeAppletStore } from "src/services/active-applet-store"
 
@@ -34,23 +35,25 @@ export const AppletBatchMode = observer(() => {
       sectionKey={SecondarySidebarSections.BatchMode}
       hidden={!hasBatchMode}
       title="Batch Mode"
-      padding
+      icon={Icons.Layers}
     >
-      <PopoverConfirm
-        confirmation={() => activeAppletStore.getToggleBatchModeConfirmation()}
-        onConfirm={() => { handleToggleBatchMode(false) }}
-        placement="bottomLeft"
-      >
-        <Checkbox
-          value={isBatchModeEnabled}
-          onChange={handleToggleBatchMode}
-          label="Enable Batch Mode"
-        />
-      </PopoverConfirm>
+      <div className="SidebarRow">
+        <PopoverConfirm
+          confirmation={() => activeAppletStore.getToggleBatchModeConfirmation()}
+          onConfirm={() => { handleToggleBatchMode(false) }}
+          placement="bottomLeft"
+        >
+          <Checkbox
+            value={isBatchModeEnabled}
+            onChange={handleToggleBatchMode}
+            label="Enable Batch Mode"
+          />
+        </PopoverConfirm>
+      </div>
       {isBatchModeEnabled && (
         <>
-          <div>
-            <div>Input</div>
+          <div className="SidebarRow">
+            <div className="SidebarRow-label">Input</div>
             <Dropdown
               width="100%"
               value={batchModeInputKey}
@@ -62,8 +65,8 @@ export const AppletBatchMode = observer(() => {
               readOnly={isDeleted}
             />
           </div>
-          <div>
-            <div>Output</div>
+          <div className="SidebarRow">
+            <div className="SidebarRow-label">Output</div>
             <Dropdown
               width="100%"
               value={batchModeOutputKey}

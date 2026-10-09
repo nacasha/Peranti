@@ -3,7 +3,6 @@ import { type FC } from "react"
 import SimpleBar from "simplebar-react"
 
 import { AppletBatchMode } from "src/components/secondary-sidebar/AppletBatchMode"
-import { AppletInfo } from "src/components/secondary-sidebar/AppletInfo"
 import { AppletOptions } from "src/components/secondary-sidebar/AppletOptions"
 import { AppletSampleSelector } from "src/components/secondary-sidebar/AppletSampleSelector"
 import { PipelineOptions } from "src/components/secondary-sidebar/PipelineOptions"
@@ -39,7 +38,6 @@ const SecondarySidebar: FC = () => {
 
   return (
     <SimpleBar className={className}>
-      <AppletInfo />
       <PipelineOptions />
       <AppletSampleSelector />
       <AppletBatchMode />

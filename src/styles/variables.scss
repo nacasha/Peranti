@@ -66,7 +66,7 @@ body {
 
   // Gap between the floating cards and the window edge
   --card-gap: 8px;
-  --card-header-height: 46px;
+  --card-header-height: 43px;
 
   // Legacy alias — every existing `var(--border-radius)` call site moves
   // from 3px to 6px through this one line.
