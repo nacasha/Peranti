@@ -10,6 +10,17 @@ html, body {
 body {
   font-family: var(--font-family);
   color: var(--text-color);
+  // UI chrome reads as an app, not a page: text is not selectable by default.
+  // Editable fields and code editors opt back in below.
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input, textarea, [contenteditable="true"],
+.cm-editor, .cm-editor *,
+.GridStatOutput, .GridStatOutput * {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 input, text, select, option, textarea, button {
