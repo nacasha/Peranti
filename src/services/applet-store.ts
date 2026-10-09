@@ -12,6 +12,7 @@ import { colorPalleteGeneratorTool } from "src/applets/tools/color-pallete-gener
 import { colorTintsAndShadesTool } from "src/applets/tools/color-tints-and-shades-tool/color-tints-and-shades-tool.ts"
 import compareListTool from "src/applets/tools/compare-list-tool.ts"
 import cronReadableTool from "src/applets/tools/cron-readable-tool.ts"
+import { csvToJsonTool } from "src/applets/tools/csv-to-json-tool/csv-to-json-tool.ts"
 import { csvTableViewerTool } from "src/applets/tools/csv-viewer-tool/csv-table-viewer-tool.ts"
 import dateToMillisecondsTool from "src/applets/tools/date-to-milliseconds.ts"
 import faviconGrabberTool from "src/applets/tools/favicon-grabber-tool.ts"
@@ -94,6 +95,7 @@ class AppletStore {
     [mermaidEditorTool.appletId]: mermaidEditorTool,
     [pintoraEditorTool.appletId]: pintoraEditorTool,
     [jsonToCsvTool.appletId]: jsonToCsvTool,
+    [csvToJsonTool.appletId]: csvToJsonTool,
     [reactRunnerTool.appletId]: reactRunnerTool,
     [textEscapeUnescapeTool.appletId]: textEscapeUnescapeTool,
     [javascriptRunnerTool.appletId]: javascriptRunnerTool,
