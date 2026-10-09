@@ -32,13 +32,14 @@ class SnippetsStore {
     return this.snippets.filter((snippet) => snippet.appletId === appletId)
   }
 
-  add(appletId: string, name: string, inputValues: Record<string, unknown>) {
+  add(appletId: string, name: string, inputValues: Record<string, unknown>, optionValues?: Record<string, unknown>) {
     this.snippets.push({
       id: generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm"),
       appletId,
       name,
       // Drops values JSON can't hold (functions, undefined)
-      inputValues: JSON.parse(JSON.stringify(inputValues))
+      inputValues: JSON.parse(JSON.stringify(inputValues)),
+      optionValues: optionValues && JSON.parse(JSON.stringify(optionValues))
     })
     void this.save()
   }

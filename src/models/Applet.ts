@@ -1184,9 +1184,13 @@ export class Applet<
   fillInputValuesWithSample(sample: AppletSample) {
     if (sample) {
       const defaultInputValues = this.getInputValuesWithDefault()
-      const { inputValues, isBatchModeEnabled = false } = sample
+      const { inputValues, optionValues, isBatchModeEnabled = false } = sample
 
       this.resetInputAndOutputFieldsState()
+
+      if (optionValues) {
+        this.optionValues = { ...this.getOptionValuesWithDefault(), ...optionValues }
+      }
 
       this.setBatchMode(isBatchModeEnabled)
       let computedInputValues

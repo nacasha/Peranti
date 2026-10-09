@@ -1,5 +1,6 @@
 import NiceModal from "@ebay/nice-modal-react"
 import clsx from "clsx"
+import { toJS } from "mobx"
 import { type FC } from "react"
 
 import { ButtonIcon } from "src/components/common/ButtonIcon"
@@ -29,8 +30,9 @@ export const AppletSampleSelector: FC = () => {
     sessionStore.createSessionOfActiveApplet()?.fillInputValuesWithSample(sample)
   }
 
-  const handleSave = (name: string) => {
-    snippetsStore.add(appletId, name, activeAppletStore.getActiveApplet().inputValues)
+  const handleSave = (name: string, includeOptions: boolean) => {
+    const applet = activeAppletStore.getActiveApplet()
+    snippetsStore.add(appletId, name, applet.inputValues, includeOptions ? toJS(applet.optionValues) : undefined)
   }
 
   return (

@@ -2,6 +2,7 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react"
 import { type FormEvent, useState } from "react"
 
 import { Button } from "src/components/common/Button"
+import { Checkbox } from "src/components/common/Checkbox"
 import { Input } from "src/components/common/Input"
 
 import { Dialog } from "../Dialog.tsx"
@@ -9,18 +10,19 @@ import { Dialog } from "../Dialog.tsx"
 import "./AddSnippetDialog.scss"
 
 interface AddSnippetDialogProps {
-  onSave: (name: string) => void
+  onSave: (name: string, includeOptions: boolean) => void
 }
 
 export const AddSnippetDialog = NiceModal.create(({ onSave }: AddSnippetDialogProps) => {
   const modal = useModal()
   const [name, setName] = useState("")
+  const [includeOptions, setIncludeOptions] = useState(false)
   const trimmedName = name.trim()
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
     if (!trimmedName) return
-    onSave(trimmedName)
+    onSave(trimmedName, includeOptions)
     void modal.hide()
   }
 
@@ -37,6 +39,11 @@ export const AddSnippetDialog = NiceModal.create(({ onSave }: AddSnippetDialogPr
               value={name}
               autoFocus
               onChange={(event) => { setName(event.target.value) }}
+            />
+            <Checkbox
+              label="Include options"
+              value={includeOptions}
+              onChange={setIncludeOptions}
             />
           </div>
         </Dialog.Content>
