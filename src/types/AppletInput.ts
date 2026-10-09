@@ -57,6 +57,9 @@ export type AppletInput<K extends Record<string, string> | any = any> = {
   component: "Code"
   props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Code>
 } | {
+  component: "ListReorder"
+  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.ListReorder>
+} | {
   component: "ColorPicker"
   props?: ExtractInputComponentProps<typeof appletComponentService.inputs.ColorPicker>
 })

@@ -24,6 +24,8 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
    * Rendered field state
    */
   const inputValue = useSelector(() => activeApplet.inputValues[appletInput.key] ?? appletInput.defaultValue)
+  const sourceKey: string | undefined = appletInput.props?.sourceKey
+  const sourceValue = useSelector(() => sourceKey ? activeApplet.inputValues[sourceKey] : undefined)
   const initialState = activeApplet.inputFieldsState[appletInput.key]
   const isDeleted = useSelector(() => activeApplet.isDeleted)
 
@@ -75,6 +77,10 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   if (["Code", "PipelineEditor"].includes(appletInput.component)) {
     additionalProps.initialState = initialState
     additionalProps.onStateChange = handleStateChange
+  }
+
+  if (sourceKey) {
+    additionalProps.sourceValue = sourceValue
   }
 
   if (maximizedField.enabled && maximizedField.type === "input" && maximizedField.key !== appletInput.key) {

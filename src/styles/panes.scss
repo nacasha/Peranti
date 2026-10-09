@@ -20,6 +20,7 @@ $pane-components: (
   ".ReactOutput",
   ".FileOutput",
   ".KeyValueOutput",
+  ".ListReorderInput",
 );
 
 // Fields whose body is a single compact control.
@@ -96,6 +97,7 @@ body {
     .DataGridOutput-content,
     .ReactOutput-area,
     .KeyValueOutput-rows,
+    .ListReorderInput-list,
     > textarea {
       border: 0;
       border-radius: 0;

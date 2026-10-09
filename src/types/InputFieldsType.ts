@@ -17,5 +17,6 @@ export namespace InputFieldsType {
   export type File = ExtractType<typeof appletComponentService.inputs.File>
   export type Files = ExtractType<typeof appletComponentService.inputs.Files>
   export type Select = ExtractType<typeof appletComponentService.inputs.Select>
+  export type ListReorder = ExtractType<typeof appletComponentService.inputs.ListReorder>
   export type Code = ExtractType<typeof appletComponentService.inputs.Code>
 }

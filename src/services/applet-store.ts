@@ -12,9 +12,9 @@ import { colorPalleteGeneratorTool } from "src/applets/tools/color-pallete-gener
 import { colorTintsAndShadesTool } from "src/applets/tools/color-tints-and-shades-tool"
 import { compareListTool } from "src/applets/tools/compare-list-tool"
 import { cronReadableTool } from "src/applets/tools/cron-readable-tool"
-import { csvColumnExtractorTool } from "src/applets/tools/csv-column-extractor-tool"
-import { csvToJsonTool } from "src/applets/tools/csv-to-json-tool"
+import { csvColumnReorderTool } from "src/applets/tools/csv-column-reorder-tool"
 import { csvTableViewerTool } from "src/applets/tools/csv-table-viewer-tool"
+import { csvToJsonTool } from "src/applets/tools/csv-to-json-tool"
 import { dateToMillisecondsTool } from "src/applets/tools/date-to-milliseconds"
 import { faviconGrabberTool } from "src/applets/tools/favicon-grabber-tool"
 import { fileToBase64Tool } from "src/applets/tools/file-to-base-64-tool"
@@ -97,7 +97,7 @@ class AppletStore {
     [pintoraEditorTool.appletId]: pintoraEditorTool,
     [jsonToCsvTool.appletId]: jsonToCsvTool,
     [csvToJsonTool.appletId]: csvToJsonTool,
-    [csvColumnExtractorTool.appletId]: csvColumnExtractorTool,
+    [csvColumnReorderTool.appletId]: csvColumnReorderTool,
     [reactRunnerTool.appletId]: reactRunnerTool,
     [textEscapeUnescapeTool.appletId]: textEscapeUnescapeTool,
     [javascriptRunnerTool.appletId]: javascriptRunnerTool,

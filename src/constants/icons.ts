@@ -35,6 +35,7 @@ import {
   type LucideIcon,
   type LucideProps,
   Maximize,
+  GripVertical,
   Menu,
   MessageSquare,
   Minimize,
@@ -140,6 +141,7 @@ export const Icons = {
   RunFilled: filled(Play),
   Settings: SlidersHorizontal,
   ThreeLineHorizontal: Menu,
+  DragHandle: GripVertical,
   ThreeLineVertical: Workflow,
   Thunder: Zap,
 

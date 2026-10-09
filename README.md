@@ -37,7 +37,8 @@
 **Peranti** is cross-platform desktop application that contains a collection of small tools to helps developer with their common tasks, such as format or minify JSON, convert timestamps, encode or decode text, hash, and many more, without having to worry about their data privacy. It's completely offline, no data will be collected, free, and open source.
 
 Available tools:
-- CSV Viewer
+- CSV Column Reorder
+- CSV Table Viewer
 - Color Converter
 - Color Extract
 - Color Pallete Generator

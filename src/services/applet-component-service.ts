@@ -11,6 +11,7 @@ import { CheckboxInput } from "src/components/inputs/CheckboxInput"
 import { CodeInput } from "src/components/inputs/CodeInput"
 import { ColorPickerInput } from "src/components/inputs/ColorPickerInput"
 import { FileInput, FilesInput } from "src/components/inputs/FileInput"
+import { ListReorderInput } from "src/components/inputs/ListReorderInput"
 import { SelectInput } from "src/components/inputs/SelectInput"
 import { SwitchInput } from "src/components/inputs/SwitchInput"
 import { TextAreaInput } from "src/components/inputs/TextAreaInput-2"
@@ -63,6 +64,11 @@ class AppletComponentService {
       component: TextInput,
       batchComponent: "Code",
       copyAs: "text"
+    }),
+
+    ListReorder: new AppletComponent({
+      component: ListReorderInput,
+      hideInHistory: true
     }),
 
     Select: new AppletComponent({
