@@ -24,6 +24,7 @@ import { type Session } from "src/types/Session"
 import { type HistoryBlob, type SessionHistorySnapshot, type SessionHistoryValue } from "src/types/SessionHistory"
 import { extractBinaryValues } from "src/utils/extract-binary-values"
 import { generateRandomString } from "src/utils/generate-random-string"
+import { isLargeText } from "src/utils/is-large-text"
 
 import { type AppletConstructor } from "./AppletConstructor.js"
 
@@ -861,9 +862,16 @@ export class Applet<
       clearTimeout(this.autoRunSetTimeout)
     }
 
+    /**
+     * Running on every keystroke freezes the UI when the input is large,
+     * so wait until the user stops typing
+     */
+    const hasLargeInput = Object.values(this.inputValues).some((value) => isLargeText(value))
+    const delay = hasLargeInput ? Math.max(this.autoRunDelay, 400) : this.autoRunDelay
+
     this.autoRunSetTimeout = setTimeout(() => {
       void this.run()
-    }, this.autoRunDelay)
+    }, delay)
   }
 
   async run() {

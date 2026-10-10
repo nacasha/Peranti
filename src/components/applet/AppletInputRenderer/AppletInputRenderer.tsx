@@ -2,11 +2,13 @@ import { toJS } from "mobx"
 import { type FC } from "react"
 import { useContextMenu } from "react-contexify"
 
+import { FileDropTarget } from "src/components/filedrop/FileDropTarget"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { AppletComponentContext } from "src/contexts/AppletComponentContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
+import { fileDropService } from "src/services/file-drop-service"
 import { type AppletInput } from "src/types/AppletInput"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 
@@ -28,6 +30,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   const sourceValue = useSelector(() => sourceKey ? activeApplet.inputValues[sourceKey] : undefined)
   const initialState = activeApplet.inputFieldsState[appletInput.key]
   const isDeleted = useSelector(() => activeApplet.isDeleted)
+  const isHoveringFile = useSelector(() => fileDropService.isHoveringFile)
 
   /**
    * Batch mode state
@@ -111,6 +114,9 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
         onContextMenu={handleContextMenu}
         {...additionalProps}
       />
+      {isHoveringFile && !isDeleted && !!inputComponent.readFileAs && (
+        <FileDropTarget fieldKey={appletInput.key} label={appletInput.label} />
+      )}
     </AppletComponentContext.Provider>
   )
 }

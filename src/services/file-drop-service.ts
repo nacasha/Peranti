@@ -5,6 +5,7 @@ import { FileDropAction } from "src/enums/file-drop-action.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
 import { type AppletComponent } from "src/models/AppletComponent.js"
 import { appletComponentService } from "src/services/applet-component-service.js"
+import { type FileDropZone } from "src/types/FileDropZone.js"
 import { getDirectoryFromPath } from "src/utils/get-directory-from-path.js"
 import { getFileExtension } from "src/utils/get-file-extension.js"
 import { getFileNameFromPath } from "src/utils/get-file-name-from-path.js"
@@ -41,6 +42,9 @@ class FileDropService {
 
   droppedFilePaths: string[] = []
 
+  /** Bumped on every drop, so late stat results can tell they are stale. */
+  private dropToken = 0
+
   /**
    * Name / extension / size for each dropped path, in the same order as
    * `droppedFilePaths`. Sizes are filled in asynchronously, so the overlay can
@@ -52,6 +56,12 @@ class FileDropService {
 
   isDroppingFile: boolean = false
 
+  /**
+   * Drop zone under the cursor while dragging, and the one the files landed on
+   * once dropped. Undefined when the cursor is over nothing that takes files.
+   */
+  hoveredZone: FileDropZone | undefined = undefined
+
   constructor() {
     makeAutoObservable(this)
     userSettingsService.watchStore(this)
@@ -61,7 +71,20 @@ class FileDropService {
     this.isHoveringFile = value
   }
 
+  /**
+   * "over" events fire continuously, so an unchanged zone must not replace the
+   * stored object or every subscriber would re-render on each mouse move.
+   */
+  setHoveredZone(zone: FileDropZone | undefined) {
+    if (this.hoveredZone?.type === zone?.type && this.hoveredZone?.id === zone?.id) {
+      return
+    }
+
+    this.hoveredZone = zone
+  }
+
   setDroppedFilePaths(filePaths: string[]) {
+    this.dropToken++
     this.droppedFilePaths = filePaths
     this.droppedFileDetails = filePaths.map((path) => ({
       path,
@@ -70,28 +93,42 @@ class FileDropService {
       directory: getDirectoryFromPath(path)
     }))
 
-    void this.loadDroppedFileSizes(filePaths)
+    void this.loadDroppedFileSizes(filePaths, this.dropToken)
   }
 
   /**
-   * Fills in sizes for the currently dropped paths. Bails out if the selection
-   * changed while the stats were resolving, so a slow drag can't overwrite the
-   * details of a newer one.
+   * Fills in sizes for the paths of one drop. Bails out if a newer drop
+   * replaced it while the stats were resolving, so a slow drag can't overwrite
+   * the details of a newer one. Matched by path, because files may have been
+   * removed from the list in the meantime.
    */
-  private async loadDroppedFileSizes(filePaths: string[]) {
+  private async loadDroppedFileSizes(filePaths: string[], token: number) {
     const stats = await Promise.all(filePaths.map(async(path) => await fileService.statFile(path)))
 
     runInAction(() => {
-      if (this.droppedFilePaths !== filePaths) {
+      if (this.dropToken !== token) {
         return
       }
 
-      this.droppedFileDetails = this.droppedFileDetails.map((detail, index) => ({
-        ...detail,
-        size: stats[index]?.size,
-        isDirectory: stats[index]?.isDirectory
-      }))
+      this.droppedFileDetails = this.droppedFileDetails.map((detail) => {
+        const stat = stats[filePaths.indexOf(detail.path)]
+
+        return { ...detail, size: stat?.size, isDirectory: stat?.isDirectory }
+      })
     })
+  }
+
+  /**
+   * Takes files out of the dropped list, e.g. after they were opened or when
+   * the user dismisses one. The drop ends once nothing is left.
+   */
+  removeDroppedFiles(filePaths: string[]) {
+    this.droppedFilePaths = this.droppedFilePaths.filter((path) => !filePaths.includes(path))
+    this.droppedFileDetails = this.droppedFileDetails.filter((detail) => !filePaths.includes(detail.path))
+
+    if (this.droppedFilePaths.length === 0) {
+      this.resetState()
+    }
   }
 
   setIsDroppingFile(value: boolean) {
@@ -103,18 +140,62 @@ class FileDropService {
     this.isDroppingFile = false
     this.droppedFilePaths = []
     this.droppedFileDetails = []
+    this.hoveredZone = undefined
+  }
+
+  /**
+   * Writes the dropped file(s) into one specific input of the active tool,
+   * leaving every other input untouched. Inputs reading as "files" take every
+   * dropped file, the others only the first.
+   */
+  async dropOnField(fieldKey: string) {
+    const activeApplet = activeAppletStore.getActiveApplet()
+    const inputField = activeApplet.getInputFields().find((field) => field.key === fieldKey)
+
+    if (!inputField || this.droppedFilePaths.length === 0) {
+      this.resetState()
+      return
+    }
+
+    const inputComponent = appletComponentService.getInputComponent(
+      inputField.component,
+      activeApplet.isBatchModeEnabled
+    )
+    const filePaths = [...this.droppedFilePaths]
+    const fileName = getFileNameFromPath(filePaths[0])
+
+    try {
+      const fileContent = await appletComponentService.readFilesFromComponent(inputComponent, filePaths)
+
+      if (fileContent !== undefined) {
+        if (this.droppedFileReplaceSessionName) {
+          await sessionStore.renameSession(activeApplet.toSession(), fileName)
+        }
+
+        activeApplet.setInputValue(fieldKey, fileContent)
+        activeApplet.resetInputAndOutputFieldsState()
+
+        if (filePaths.length > 1 && inputComponent.readFileAs !== "files") {
+          toast(`${inputField.label} takes one file, used ${fileName}`)
+        }
+      }
+    } catch (exception) {
+      toast.error(`Unable to read ${fileName} file as text`)
+    }
+
+    this.resetState()
   }
 
   /**
    * Groups the dropped paths by how they will be read: an input reading as
    * "files" takes every path at once, other inputs take one path per session.
    */
-  private getDroppedPathGroups(component?: AppletComponent) {
+  private getDroppedPathGroups(component?: AppletComponent, filePaths: string[] = this.droppedFilePaths) {
     if (component?.readFileAs === "files") {
-      return [[...this.droppedFilePaths]]
+      return [[...filePaths]]
     }
 
-    return this.droppedFilePaths.map((filePath) => [filePath])
+    return filePaths.map((filePath) => [filePath])
   }
 
   private getActiveAppletFileComponent() {
@@ -189,11 +270,12 @@ class FileDropService {
   }
 
   /**
-   * Opens every dropped file in a new session of the chosen applet, which is not
-   * necessarily the active one — this is what the tool picker in the drop
-   * overlay calls.
+   * Opens dropped files (all of them unless `filePaths` narrows it down) in a new
+   * session of the chosen applet, which is not necessarily the active one —
+   * this is what the tool picker in the drop panel calls. The opened files
+   * leave the list, so the rest can still go to other tools.
    */
-  async openInNewSessionOfApplet(appletId: string) {
+  async openInNewSessionOfApplet(appletId: string, filePaths: string[] = [...this.droppedFilePaths]) {
     const appletConstructor = appletStore.mapOfLoadedApplets[appletId]
 
     if (!appletConstructor) {
@@ -210,13 +292,13 @@ class FileDropService {
     }
 
     const inputComponent = appletComponentService.getInputComponent(target.component, target.isBatch)
-    const pathGroups = this.getDroppedPathGroups(inputComponent)
+    const pathGroups = this.getDroppedPathGroups(inputComponent, filePaths)
 
-    for (const filePaths of pathGroups) {
-      const fileName = getFileNameFromPath(filePaths[0])
+    for (const groupPaths of pathGroups) {
+      const fileName = getFileNameFromPath(groupPaths[0])
 
       try {
-        const fileContent = await appletComponentService.readFilesFromComponent(inputComponent, filePaths)
+        const fileContent = await appletComponentService.readFilesFromComponent(inputComponent, groupPaths)
 
         if (fileContent === undefined) {
           continue
@@ -237,7 +319,7 @@ class FileDropService {
       }
     }
 
-    this.resetState()
+    this.removeDroppedFiles(filePaths)
   }
 
   async proceedFileDropBasedOnAction() {

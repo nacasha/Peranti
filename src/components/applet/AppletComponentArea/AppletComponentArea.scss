@@ -53,8 +53,10 @@ $padding: var(--input-output-fields-spacing);
     grid-area: output;
   }
 
+  // Not clipped: the cards inside carry their own overflow, and clipping here
+  // cut their shadows off at the edge of the area.
   .AppletComponentAreaInput, .AppletComponentAreaOutput {
-    overflow: hidden;
+    overflow: visible;
     position: relative;
     flex: 1 1 0;
     min-width: 0;

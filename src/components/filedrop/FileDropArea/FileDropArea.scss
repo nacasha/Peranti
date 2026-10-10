@@ -1,68 +1,25 @@
 .FileDropArea {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: fixed;
   z-index: 10;
-  inset: 0;
-  padding: var(--space-5);
-  border-radius: var(--border-radius);
-  backdrop-filter: blur(6px);
-  animation: FileDropArea-fade 160ms var(--ease-out);
-
-  // A soft primary wash from the centre reads as "the window is the target",
-  // without tinting the whole app the way a flat overlay colour would.
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(
-      circle at 50% 42%,
-      color-mix(in srgb, var(--color-primary), transparent 86%),
-      transparent 62%
-    );
-    pointer-events: none;
-  }
-}
-
-.FileDropArea-card {
-  position: relative;
+  right: var(--space-5);
+  bottom: var(--space-5);
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  width: 100%;
-  max-width: 460px;
-  max-height: 100%;
-  padding: var(--space-6);
+  width: 320px;
+  max-width: calc(100vw - var(--space-5) * 2);
+  max-height: calc(100vh - var(--space-5) * 2);
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
   background-color: var(--bg-raised);
   box-shadow: var(--shadow-lg);
   animation: FileDropArea-rise 200ms var(--ease-out);
-
-  // Dashed outline drawn as an inset ring so it hugs the rounded corners and
-  // does not fight the card's own border-radius the way `border` would.
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 6px;
-    border: 1.5px dashed color-mix(in srgb, var(--color-primary), transparent 55%);
-    border-radius: calc(var(--radius-xl) - 4px);
-    pointer-events: none;
-  }
 }
 
-.FileDropArea[data-mode="choose"] .FileDropArea-card {
-  // The tool picker needs the room, and the list inside it scrolls rather than
-  // pushing the card past the window.
-  max-width: 520px;
-}
-
-.FileDropArea[data-mode="choose"] .FileDropArea-card::before {
-  // Once the files have landed, the dashed "target" affordance is no longer
-  // meaningful — a plain hairline keeps the card calm while choosing.
-  border-style: solid;
-  border-color: var(--border-subtle);
+.FileDropArea[data-mode="choose"] {
+  width: 420px;
+  padding: var(--space-3) 0;
+  overflow: hidden;
 }
 
 .FileDropArea-header {
@@ -133,155 +90,38 @@
   }
 }
 
-.FileDropArea-files {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.FileDropArea[data-mode="choose"] .FileDropArea-header {
+  padding: var(--space-1) var(--space-3) var(--space-3) var(--space-4);
 }
 
-.FileDropArea-file {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-width: 0;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
-  background-color: var(--bg-sunken);
-}
-
-.FileDropArea-file-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.FileDropArea-file-icon {
   flex-shrink: 0;
-  width: 38px;
-  height: 30px;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-family-mono);
-  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.FileDropArea[data-mode="choose"] .FileDropArea-title {
+  flex: 1;
+  font-size: var(--font-size);
   font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-
-  // Hue comes from the extension so each file type is recognisable at a glance;
-  // saturation and lightness stay fixed so nothing blows out against the card.
-  color: hsl(var(--badge-hue, 220) 65% 72%);
-  background-color: hsl(var(--badge-hue, 220) 55% 50% / 0.16);
 }
 
-.FileDropArea-file-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-}
-
-.FileDropArea-file-name {
-  overflow: hidden;
-  font-size: var(--font-size);
-  line-height: var(--line-height-tight);
-  color: var(--text-color);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.FileDropArea-file-meta {
+.FileDropArea-header-buttons {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  min-width: 0;
-  font-size: var(--font-size-xs);
-  color: var(--text-subtle);
-
-  .FileDropArea-file-meta-part {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  // Dot separators live in CSS so the markup stays a plain list of facts.
-  .FileDropArea-file-meta-part + .FileDropArea-file-meta-part::before {
-    content: "·";
-    margin-right: var(--space-2);
-  }
-}
-
-.FileDropArea-file--more {
-  justify-content: center;
-  background-color: transparent;
-  font-size: var(--font-size-xs);
-  color: var(--text-subtle);
-}
-
-.FileDropArea-actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  min-height: 0;
-}
-
-.FileDropArea-action {
-  display: flex;
-  flex-direction: column;
   gap: 2px;
-  padding: var(--space-3);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  background-color: var(--button-background-color);
-  color: var(--text-color);
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 120ms var(--ease-out), border-color 120ms var(--ease-out);
-
-  &:hover {
-    border-color: var(--color-primary);
-    background-color: color-mix(in srgb, var(--color-primary), transparent 90%);
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: var(--focus-ring);
-  }
 }
 
-.FileDropArea-action-title {
-  font-size: var(--font-size);
-  font-weight: var(--font-weight-medium);
-
-  strong {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-primary);
-  }
-}
-
-.FileDropArea-action-description {
-  font-size: var(--font-size-xs);
-  line-height: var(--line-height-tight);
-  color: var(--text-subtle);
-
-  strong {
-    font-weight: var(--font-weight);
-    color: var(--text-muted);
-  }
-}
-
-.FileDropArea-cancel {
+.FileDropArea-iconButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  margin-top: var(--space-1);
-  padding: var(--space-2);
+  width: 24px;
+  height: 24px;
+  padding: 0;
   border: none;
   border-radius: var(--radius-md);
   background-color: transparent;
   color: var(--text-muted);
-  font-family: inherit;
-  font-size: var(--font-size-sm);
   cursor: pointer;
 
   &:hover {
@@ -293,19 +133,106 @@
     outline: none;
     box-shadow: var(--focus-ring);
   }
+}
 
-  kbd {
-    padding: 1px 5px;
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-sm);
-    font-family: var(--font-family-mono);
-    font-size: var(--font-size-xs);
+.FileDropArea-files {
+  max-height: 220px;
+  margin-bottom: var(--space-3);
+}
+
+.FileDropArea-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  // Same 8px inset as the tool rows below, so icons, names and the remove
+  // buttons line up with the heading and tool names (16px in).
+  padding: 0 var(--space-2);
+  list-style: none;
+}
+
+.FileDropArea-file {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  border-radius: var(--radius-md);
+
+  &:hover {
+    background-color: var(--button-background-color-hover);
+  }
+
+  &[data-selected] {
+    background-color: color-mix(in srgb, var(--color-primary), transparent 86%);
   }
 }
 
-@keyframes FileDropArea-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.FileDropArea-file-main {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-md);
+  }
+}
+
+.FileDropArea-file-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--font-size);
+  line-height: var(--line-height-tight);
+  color: var(--text-color);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Kept on the right of the same row, so each file takes one line
+.FileDropArea-file-meta {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-subtle);
+  white-space: nowrap;
+}
+
+.FileDropArea-file-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-right: var(--space-2);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-subtle);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--button-background-color-active);
+    color: var(--text-color);
+  }
+}
+
+// Divider between the dropped files and the tool picker
+.FileDropArea-picker {
+  min-height: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
 }
 
 @keyframes FileDropArea-rise {
@@ -326,23 +253,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .FileDropArea,
-  .FileDropArea-card,
   .FileDropArea[data-mode="hover"] .FileDropArea-icon svg {
     animation: none;
   }
 }
 
-.AppRoot.dark {
-  .FileDropArea {
-    background-color: rgba(0, 0, 0, 0.55);
-  }
-}
-
 .AppRoot.light {
-  .FileDropArea {
-    background-color: rgba(255, 255, 255, 0.6);
-  }
-
   // The badge tints are tuned for dark surfaces; on light ones they need to go
   // darker rather than lighter to keep contrast against the sunken row.
   .FileDropArea-file-badge {

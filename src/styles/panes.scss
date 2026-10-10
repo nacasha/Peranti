@@ -92,6 +92,7 @@ body {
 
   #{$pane-components} {
     .CodeMirrorContainer,
+    .LargeTextViewer,
     .MarkdownOutput-inner,
     .DiffOutput-body,
     .DataGridOutput-content,

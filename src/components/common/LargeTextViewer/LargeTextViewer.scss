@@ -1,0 +1,107 @@
+.LargeTextViewer {
+  position: relative;
+  flex: 1;
+  min-height: 150px;
+  overflow: hidden;
+  border: 1px solid var(--input-output-border-color);
+  border-radius: var(--border-radius);
+  background-color: var(--input-output-background-color);
+  transition: all var(--animation-speed);
+
+  &:hover {
+    border-color: var(--input-output-border-color-hover);
+  }
+
+  &:focus-within {
+    border-color: var(--input-output-border-color-active);
+  }
+
+  // The card does not bound the height of its content, filling it absolutely
+  // keeps the scroller at the card's size instead of the text's, otherwise
+  // every row counts as visible
+  .LargeTextViewer-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .LargeTextViewer-find {
+    flex: none;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .LargeTextViewer-scroller {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: none;
+    cursor: text;
+    // Selection is drawn by the viewer, native selection would fight the drag
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .LargeTextViewer-spacer {
+    position: relative;
+  }
+
+  .LargeTextViewer-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    will-change: transform;
+  }
+
+  .LargeTextViewer-row {
+    position: relative;
+    padding: 0 8px;
+    font-family: var(--font-family-mono);
+    font-size: calc(1px + var(--input-output-font-size));
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: pre;
+    overflow: hidden;
+    color: var(--text-color);
+  }
+
+  .LargeTextViewer-rowText {
+    position: relative;
+  }
+
+  .LargeTextViewer-probe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: max-content;
+    padding: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .LargeTextViewer-mark {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    &.is-selection {
+      background-color: color-mix(in srgb, var(--accent) 28%, transparent);
+    }
+
+    &.is-match {
+      background-color: color-mix(in oklch, var(--accent) 20%, transparent);
+      outline: 1px solid color-mix(in oklch, var(--accent) 45%, transparent);
+      border-radius: 2px;
+    }
+
+    &.is-currentMatch {
+      background-color: color-mix(in oklch, var(--accent) 50%, transparent);
+      outline: 1px solid var(--accent);
+      border-radius: 2px;
+    }
+  }
+}
