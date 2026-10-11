@@ -8,7 +8,7 @@ import { type OutputFieldsType } from "src/types/OutputFieldsType"
 dayjs.extend(utc)
 
 interface InputFields {
-  date: InputFieldsType.Text
+  date: InputFieldsType.DateTime
 }
 
 interface OutputFields {
@@ -27,7 +27,7 @@ export const dateToMillisecondsTool = new AppletConstructor<InputFields, OutputF
     {
       key: "date",
       label: "Date",
-      component: "Text",
+      component: "DateTime",
       defaultValue: "",
       allowBatch: true,
       props: {

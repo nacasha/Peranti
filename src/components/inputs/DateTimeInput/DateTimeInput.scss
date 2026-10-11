@@ -1,0 +1,277 @@
+// Card frame, header and the flush text row come from styles/panes.scss.
+.DateTimeInput {
+  display: flex;
+  flex-direction: column;
+
+  &-field {
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+
+    > input {
+      flex: 1;
+      min-width: 0;
+      outline: none;
+      color: var(--text-color);
+      font-family: var(--font-family-mono);
+    }
+  }
+
+  // The button already pads the row's start, so the text sits closer to it
+  // than panes.scss's flush padding would.
+  .DateTimeInput-field > input {
+    padding-left: 8px;
+  }
+
+  // Same look as ButtonIcon, a real button so it takes keyboard focus.
+  &-trigger {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    cursor: pointer;
+    transition: background-color var(--animation-speed);
+
+    svg {
+      color: var(--icon-color);
+      transition: color var(--animation-speed);
+    }
+
+    &:hover:not(:disabled) {
+      background: var(--hover);
+
+      svg {
+        color: var(--text-color);
+      }
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    &.active {
+      background: var(--accent-soft);
+
+      svg {
+        color: var(--accent-ink);
+      }
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
+  }
+}
+
+// rc-tooltip only positions popups through its own `rc-tooltip` stylesheet, so
+// with a custom prefix the popup needs these rules itself. The popup renders
+// in a portal, outside `.DateTimeInput`.
+.DateTimeInput-popover {
+  position: absolute;
+  z-index: 1000;
+  transform-origin: top left;
+  animation: DateTimeInput-popover-in 140ms cubic-bezier(0.2, 0, 0, 1) both;
+
+  &-hidden {
+    display: none;
+  }
+
+  &-panel {
+    margin-top: 6px;
+    border: 1px solid var(--tooltip-border-color);
+    border-radius: var(--radius-lg);
+    background: var(--tooltip-background-color);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+
+    .rdp-root {
+      padding: 10px 12px;
+    }
+  }
+
+  // Time field flush with the panel, the "Now" action at its end.
+  &-time {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 10px;
+    border-top: 1px solid var(--line);
+
+    input {
+      flex: 1;
+      min-width: 0;
+      height: 40px;
+      padding: 0 14px;
+      border: 0;
+      outline: none;
+      background-color: transparent;
+      color: var(--text-color);
+      font-family: var(--font-family-mono);
+      font-size: var(--input-output-font-size);
+      transition: background-color var(--animation-speed);
+
+      &:hover {
+        background-color: var(--hover);
+      }
+
+      &:focus {
+        background-color: transparent;
+      }
+
+      &::-webkit-calendar-picker-indicator {
+        display: none;
+      }
+    }
+
+    .Button {
+      height: 24px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+  }
+
+  // Stands in for the time field while the value is date-only; clicking it
+  // starts the time at midnight.
+  &-empty-time {
+    flex: 1;
+    height: 40px;
+    padding: 0 14px;
+    border: 0;
+    background-color: transparent;
+    color: var(--muted);
+    font-family: var(--font-family);
+    font-size: var(--input-output-font-size);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--animation-speed), color var(--animation-speed);
+
+    &:hover {
+      background-color: var(--hover);
+      color: var(--text-color);
+    }
+
+    &:focus-visible {
+      outline: none;
+      background-color: var(--hover);
+    }
+  }
+
+  // Icon-only, square, same outline as the "Now" button beside it.
+  .Button.DateTimeInput-popover-clear {
+    width: 24px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .rdp-root {
+    --rdp-accent-color: var(--accent);
+    --rdp-accent-background-color: var(--accent-soft);
+    --rdp-today-color: var(--accent-ink);
+    --rdp-selected-border: 0;
+    --rdp-day-height: 34px;
+    --rdp-day-width: 34px;
+    --rdp-day_button-height: 30px;
+    --rdp-day_button-width: 30px;
+    --rdp-day_button-border-radius: var(--radius-md);
+    --rdp-nav-height: 32px;
+    --rdp-nav_button-height: 28px;
+    --rdp-nav_button-width: 28px;
+    --rdp-weekday-opacity: 1;
+    --rdp-outside-opacity: 0.4;
+
+    color: var(--text-color);
+    font-size: var(--input-output-font-size);
+  }
+
+  .rdp-month_caption {
+    padding-left: 4px;
+    font-size: var(--font-size);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .rdp-caption_label {
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--animation-speed);
+  }
+
+  .rdp-dropdown_root:hover .rdp-caption_label {
+    background-color: var(--hover);
+  }
+
+  .rdp-chevron {
+    fill: var(--icon-color);
+  }
+
+  .rdp-button_next,
+  .rdp-button_previous {
+    border-radius: var(--radius-md);
+    transition: background-color var(--animation-speed);
+
+    &:hover:not(:disabled) {
+      background-color: var(--hover);
+
+      .rdp-chevron {
+        fill: var(--text-color);
+      }
+    }
+  }
+
+  .rdp-weekday {
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+
+  .rdp-day_button {
+    font-family: var(--font-family-mono);
+    font-variant-numeric: tabular-nums;
+    transition: background-color var(--animation-speed), color var(--animation-speed);
+
+    &:hover:not(:disabled) {
+      background-color: var(--hover);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+  }
+
+  .rdp-today:not(.rdp-outside) .rdp-day_button {
+    font-weight: var(--font-weight-medium);
+  }
+
+  // Selected day is filled like a primary button.
+  .rdp-selected {
+    font-size: inherit;
+    font-weight: inherit;
+
+    .rdp-day_button,
+    .rdp-day_button:hover {
+      color: #ffffff;
+      background-color: var(--accent);
+    }
+  }
+
+  // The native selects sit invisibly over the caption; their open list
+  // still renders, so give it the theme's colors.
+  .rdp-dropdown option {
+    background-color: var(--tooltip-background-color);
+    color: var(--text-color);
+  }
+}
+
+@keyframes DateTimeInput-popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+}

@@ -19,5 +19,6 @@ export namespace InputFieldsType {
   export type Select = ExtractType<typeof appletComponentService.inputs.Select>
   export type ListReorder = ExtractType<typeof appletComponentService.inputs.ListReorder>
   export type ListPick = ExtractType<typeof appletComponentService.inputs.ListPick>
+  export type DateTime = ExtractType<typeof appletComponentService.inputs.DateTime>
   export type Code = ExtractType<typeof appletComponentService.inputs.Code>
 }

@@ -27,6 +27,7 @@ $pane-components: (
 // Fields whose body is a single compact control.
 $field-components: (
   ".TextInput",
+  ".DateTimeInput",
   ".SelectInput",
   ".SwitchInput",
   ".FileInput",
@@ -158,6 +159,7 @@ body {
 
   // Single-line text: the input is the whole body, flush with the card.
   .TextInput > input,
+  .DateTimeInput-field > input,
   .TextOutput > input {
     height: 44px;
     padding: 0 16px;
@@ -175,7 +177,8 @@ body {
   }
 
   // With no border of its own, an empty field needs a hint that it's typeable.
-  .TextInput > input:not([readonly]) {
+  .TextInput > input:not([readonly]),
+  .DateTimeInput-field > input:not([readonly]) {
     cursor: text;
     transition: background-color var(--animation-speed);
 

@@ -10,6 +10,7 @@ import { RunInput } from "src/components/inputs/ButtonInput"
 import { CheckboxInput } from "src/components/inputs/CheckboxInput"
 import { CodeInput } from "src/components/inputs/CodeInput"
 import { ColorPickerInput } from "src/components/inputs/ColorPickerInput"
+import { DateTimeInput } from "src/components/inputs/DateTimeInput"
 import { FileInput, FilesInput } from "src/components/inputs/FileInput"
 import { ListPickInput } from "src/components/inputs/ListPickInput"
 import { ListReorderInput } from "src/components/inputs/ListReorderInput"
@@ -63,6 +64,12 @@ class AppletComponentService {
 
     Text: new AppletComponent({
       component: TextInput,
+      batchComponent: "Code",
+      copyAs: "text"
+    }),
+
+    DateTime: new AppletComponent({
+      component: DateTimeInput,
       batchComponent: "Code",
       copyAs: "text"
     }),
