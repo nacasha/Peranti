@@ -21,6 +21,7 @@ $pane-components: (
   ".FileOutput",
   ".KeyValueOutput",
   ".ListReorderInput",
+  ".ListPickInput",
 );
 
 // Fields whose body is a single compact control.
@@ -99,6 +100,7 @@ body {
     .ReactOutput-area,
     .KeyValueOutput-rows,
     .ListReorderInput-list,
+    .ListPickInput-list,
     > textarea {
       border: 0;
       border-radius: 0;

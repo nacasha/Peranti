@@ -4,8 +4,7 @@ import { parseOrder, reconcileOrder } from "src/components/inputs/ListReorderInp
 import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-
-import { getCsvColumnLabels } from "./get-csv-column-labels.ts"
+import { getCsvColumnLabels } from "src/utils/get-csv-column-labels.ts"
 
 interface InputFields {
   csv: InputFieldsType.Code
@@ -27,16 +26,20 @@ export const csvColumnReorderTool = new AppletConstructor<InputFields, OutputFie
       key: "csv",
       label: "CSV",
       component: "Code",
-      defaultValue: ""
+      defaultValue: "",
+      props: {}
     },
     {
       key: "order",
       label: "Column Order",
       component: "ListReorder",
       defaultValue: "",
-      props: {
-        sourceKey: "csv",
-        parseItems: getCsvColumnLabels
+      computedProps: {
+        items: {
+          type: "input",
+          key: "csv",
+          transform: getCsvColumnLabels
+        }
       }
     }
   ],

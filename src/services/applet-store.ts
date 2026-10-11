@@ -12,9 +12,14 @@ import { colorPalleteGeneratorTool } from "src/applets/tools/color-pallete-gener
 import { colorTintsAndShadesTool } from "src/applets/tools/color-tints-and-shades-tool"
 import { compareListTool } from "src/applets/tools/compare-list-tool"
 import { cronReadableTool } from "src/applets/tools/cron-readable-tool"
+import { csvColumnPickerTool } from "src/applets/tools/csv-column-picker-tool"
 import { csvColumnReorderTool } from "src/applets/tools/csv-column-reorder-tool"
+import { csvDedupeRowsTool } from "src/applets/tools/csv-dedupe-rows-tool"
+import { csvDelimiterConverterTool } from "src/applets/tools/csv-delimiter-converter-tool"
+import { csvSortTool } from "src/applets/tools/csv-sort-tool"
 import { csvTableViewerTool } from "src/applets/tools/csv-table-viewer-tool"
 import { csvToJsonTool } from "src/applets/tools/csv-to-json-tool"
+import { csvTransposeTool } from "src/applets/tools/csv-transpose-tool"
 import { dateToMillisecondsTool } from "src/applets/tools/date-to-milliseconds"
 import { faviconGrabberTool } from "src/applets/tools/favicon-grabber-tool"
 import { fileToBase64Tool } from "src/applets/tools/file-to-base-64-tool"
@@ -98,6 +103,11 @@ class AppletStore {
     [jsonToCsvTool.appletId]: jsonToCsvTool,
     [csvToJsonTool.appletId]: csvToJsonTool,
     [csvColumnReorderTool.appletId]: csvColumnReorderTool,
+    [csvColumnPickerTool.appletId]: csvColumnPickerTool,
+    [csvDelimiterConverterTool.appletId]: csvDelimiterConverterTool,
+    [csvTransposeTool.appletId]: csvTransposeTool,
+    [csvDedupeRowsTool.appletId]: csvDedupeRowsTool,
+    [csvSortTool.appletId]: csvSortTool,
     [reactRunnerTool.appletId]: reactRunnerTool,
     [textEscapeUnescapeTool.appletId]: textEscapeUnescapeTool,
     [javascriptRunnerTool.appletId]: javascriptRunnerTool,

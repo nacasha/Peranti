@@ -13,19 +13,9 @@ import "./ListReorderInput.scss"
 
 interface ListReorderInputProps extends InputComponentProps {
   /**
-   * Key of the input that provides the list items
+   * Item labels, set in `props` or `computedProps`
    */
-  sourceKey?: string
-
-  /**
-   * Value of the `sourceKey` input, passed by the renderer
-   */
-  sourceValue?: string
-
-  /**
-   * Turns the source value into item labels
-   */
-  parseItems?: (sourceValue: string) => string[]
+  items?: string[]
 }
 
 /**
@@ -51,7 +41,7 @@ interface Pointer {
  * The value is the order as a JSON array of item indexes.
  */
 export const ListReorderInput: FC<ListReorderInputProps> = (props) => {
-  const { label, fieldKey, value, readOnly, sourceValue = "", parseItems, onValueChange } = props
+  const { label, fieldKey, value, readOnly, items = [], onValueChange } = props
 
   const [draggedPosition, setDraggedPosition] = useState<number>()
   const [targetPosition, setTargetPosition] = useState<number>()
@@ -60,7 +50,6 @@ export const ListReorderInput: FC<ListReorderInputProps> = (props) => {
   const itemRefs = useRef<Array<HTMLLIElement | null>>([])
   const metricsRef = useRef<DragMetrics>()
 
-  const items = useMemo(() => parseItems?.(sourceValue) ?? [], [parseItems, sourceValue])
   const order = useMemo(() => reconcileOrder(parseOrder(value), items.length), [value, items.length])
 
   /**

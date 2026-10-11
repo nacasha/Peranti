@@ -1,4 +1,4 @@
-import { toJS } from "mobx"
+import { comparer, toJS } from "mobx"
 import { type FC, memo, useCallback, useMemo } from "react"
 import { useContextMenu } from "react-contexify"
 
@@ -9,12 +9,19 @@ import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
 import { fileDropService } from "src/services/file-drop-service"
-import { type AppletInput } from "src/types/AppletInput"
+import { type AppletInput, type ComputedProp } from "src/types/AppletInput"
 import { type InputComponentProps } from "src/types/InputComponentProps"
+import { readComputedPropSources } from "src/utils/read-computed-prop-sources"
+import { transformComputedProps } from "src/utils/transform-computed-props"
 
 interface AppletInputRendererProps {
   appletInput: AppletInput
 }
+
+/**
+ * Stable fallback, so fields without computed props keep the same memo inputs
+ */
+const noComputedProps: Record<string, ComputedProp | undefined> = {}
 
 export const AppletInputRenderer: FC<AppletInputRendererProps> = memo((props) => {
   const { appletInput } = props
@@ -26,8 +33,15 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = memo((props) =>
    * Rendered field state
    */
   const inputValue = useSelector(() => activeApplet.inputValues[appletInput.key] ?? appletInput.defaultValue)
-  const sourceKey: string | undefined = appletInput.props?.sourceKey
-  const sourceValue = useSelector(() => sourceKey ? activeApplet.inputValues[sourceKey] : undefined)
+  const computedProps: Record<string, ComputedProp | undefined> = appletInput.computedProps ?? noComputedProps
+  const computedPropSources = useSelector(
+    () => readComputedPropSources(computedProps, activeApplet.inputValues),
+    comparer.shallow
+  )
+  const computedPropValues = useMemo(
+    () => transformComputedProps(computedProps, computedPropSources),
+    [computedProps, computedPropSources]
+  )
   const initialState = activeApplet.inputFieldsState[appletInput.key]
   const isDeleted = useSelector(() => activeApplet.isDeleted)
   const isHoveringFile = useSelector(() => fileDropService.isHoveringFile)
@@ -94,9 +108,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = memo((props) =>
     additionalProps.onStateChange = handleStateChange
   }
 
-  if (sourceKey) {
-    additionalProps.sourceValue = sourceValue
-  }
+  Object.assign(additionalProps, computedPropValues)
 
   if (maximizedField.enabled && maximizedField.type === "input" && maximizedField.key !== appletInput.key) {
     return

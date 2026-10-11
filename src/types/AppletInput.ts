@@ -7,6 +7,32 @@ type ExtractInputComponentProps<T> = T extends AppletComponent<React.FC<infer P>
   ? Omit<P, keyof InputComponentProps>
   : never
 
+/**
+ * A prop value taken from elsewhere. `type` says where it comes from
+ * (only `"input"`: another input of the same applet), `transform` turns
+ * the raw value into what the prop needs.
+ */
+export interface ComputedProp<K = any> {
+  type: "input"
+  key: Extract<keyof K, string>
+  transform?: (value: any) => any
+}
+
+type InputComponents = typeof appletComponentService.inputs
+
+/**
+ * A field of one input component: its static `props`, plus `computedProps`
+ * that take the same prop names but resolve their values when rendered,
+ * overriding the static ones
+ */
+interface InputComponentField<N extends keyof InputComponents, K> {
+  component: N
+  props?: ExtractInputComponentProps<InputComponents[N]>
+  computedProps?: {
+    [P in keyof ExtractInputComponentProps<InputComponents[N]>]?: ComputedProp<K>
+  }
+}
+
 export type AppletInput<K extends Record<string, string> | any = any> = {
   key: Extract<keyof K, string>
   label: string
@@ -29,37 +55,18 @@ export type AppletInput<K extends Record<string, string> | any = any> = {
   customComponent: true
   component: "PipelineEditor" | "Settings" | "History"
   props?: any
-} | {
-  component: "Text"
-  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Text>
-} | {
-  component: "TextArea"
-  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.TextArea>
-} | {
-  component: "Switch"
-  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Switch>
-} | {
-  component: "Run"
-  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Run>
-} | {
-  component: "Checkbox"
-  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Checkbox>
-} | {
-  component: "Select"
-  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Select>
-} | {
-  component: "File"
-  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.File>
-} | {
-  component: "Files"
-  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Files>
-} | {
-  component: "Code"
-  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.Code>
-} | {
-  component: "ListReorder"
-  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.ListReorder>
-} | {
-  component: "ColorPicker"
-  props?: ExtractInputComponentProps<typeof appletComponentService.inputs.ColorPicker>
-})
+  computedProps?: undefined
+}
+| InputComponentField<"Text", K>
+| InputComponentField<"TextArea", K>
+| InputComponentField<"Switch", K>
+| InputComponentField<"Run", K>
+| InputComponentField<"Checkbox", K>
+| InputComponentField<"Select", K>
+| InputComponentField<"File", K>
+| InputComponentField<"Files", K>
+| InputComponentField<"Code", K>
+| InputComponentField<"ListReorder", K>
+| InputComponentField<"ListPick", K>
+| InputComponentField<"ColorPicker", K>
+)
