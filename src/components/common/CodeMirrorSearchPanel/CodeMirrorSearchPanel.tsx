@@ -12,8 +12,8 @@ import { type EditorState, type EditorView, runScopeHandlers } from "@uiw/react-
 import { type FC, type KeyboardEvent, type MouseEvent, useEffect, useMemo, useState } from "react"
 
 import { Icons, type Icon as IconType } from "src/constants/icons"
+import { isMacOS } from "src/constants/os"
 import { countSearchMatches } from "src/utils/count-search-matches"
-import { isMacOS } from "src/utils/get-os"
 
 import { Tooltip } from "../Tooltip"
 

@@ -2,10 +2,10 @@ import NiceModal from "@ebay/nice-modal-react"
 import clsx from "clsx"
 import { useEffect, type FC, type ReactNode } from "react"
 
+import { isMacOS, isWindows } from "./constants/os.ts"
 import { AppTitleBarStyle } from "./enums/app-titlebar-style.ts"
 import { useSelector } from "./hooks/useSelector.ts"
 import { interfaceStore } from "./services/interface-store.ts"
-import { isMacOS, isWindows } from "./utils/get-os.ts"
 import { isRunningInTauri } from "./utils/is-running-in-tauri.ts"
 
 export const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {

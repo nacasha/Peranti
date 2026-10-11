@@ -5,6 +5,7 @@ import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { getCsvColumnLabels } from "src/utils/get-csv-column-labels.ts"
+import { parseCsvRows } from "src/utils/parse-csv-rows.ts"
 
 interface InputFields {
   csv: InputFieldsType.Code
@@ -86,12 +87,11 @@ export const csvDedupeRowsTool = new AppletConstructor<InputFields, OutputFields
       return { output: "" }
     }
 
-    const { data: rows, meta } = Papa.parse<string[]>(csv, { skipEmptyLines: true })
+    const { rows, delimiter, columnCount } = parseCsvRows(csv)
     const header = hasHeader ? rows.slice(0, 1) : []
     const body = hasHeader ? rows.slice(1) : rows
 
     // With every column unticked there is nothing to compare by, so fall back to the whole row
-    const columnCount = Math.max(...rows.map((row) => row.length))
     const allColumns = Array.from({ length: columnCount }, (_, index) => index)
     const excludedColumns = new Set(parseOrder(excludedKeyColumns))
     const tickedColumns = allColumns.filter((index) => !excludedColumns.has(index))
@@ -108,6 +108,6 @@ export const csvDedupeRowsTool = new AppletConstructor<InputFields, OutputFields
       return true
     })
 
-    return { output: Papa.unparse([...header, ...unique], { delimiter: meta.delimiter }) }
+    return { output: Papa.unparse([...header, ...unique], { delimiter }) }
   }
 })

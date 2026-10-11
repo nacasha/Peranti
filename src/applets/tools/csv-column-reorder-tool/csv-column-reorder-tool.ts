@@ -5,6 +5,7 @@ import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { getCsvColumnLabels } from "src/utils/get-csv-column-labels.ts"
+import { parseCsvRows } from "src/utils/parse-csv-rows.ts"
 
 interface InputFields {
   csv: InputFieldsType.Code
@@ -65,12 +66,11 @@ export const csvColumnReorderTool = new AppletConstructor<InputFields, OutputFie
       return { output: "" }
     }
 
-    const { data: rows, meta } = Papa.parse<string[]>(csv, { skipEmptyLines: true })
-    const columnCount = Math.max(...rows.map((row) => row.length))
+    const { rows, delimiter, columnCount } = parseCsvRows(csv)
     const columnOrder = reconcileOrder(parseOrder(order), columnCount)
 
     const reordered = rows.map((row) => columnOrder.map((index) => row[index] ?? ""))
 
-    return { output: Papa.unparse(reordered, { delimiter: meta.delimiter }) }
+    return { output: Papa.unparse(reordered, { delimiter }) }
   }
 })

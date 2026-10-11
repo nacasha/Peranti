@@ -22,6 +22,7 @@ export const markdownParserTool = new AppletConstructor<InputFields, OutputField
       component: "Code",
       defaultValue: "",
       props: {
+        autoFocus: true,
         language: "markdown"
       }
     }

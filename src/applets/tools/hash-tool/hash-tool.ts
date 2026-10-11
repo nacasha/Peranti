@@ -1,10 +1,11 @@
 import hash from "hash.js"
 import hashMd5 from "md5"
 
+import { stringEntries } from "src/constants/string-entries"
 import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { generateRandomString, stringEntries } from "src/utils/generate-random-string"
+import { generateRandomString } from "src/utils/generate-random-string"
 
 interface InputFields {
   input: InputFieldsType.Text

@@ -11,8 +11,6 @@ import { AccentColorPicker } from "src/components/settings/AccentColorPicker"
 import { AppTitleBarStyleSelect } from "src/components/settings/AppTitlebarStyleSelect"
 import { CardShadowSelect } from "src/components/settings/CardShadowSelect"
 import { CornerRadiusSelect } from "src/components/settings/CornerRadiusSelect"
-import { FileDropActionSelect } from "src/components/settings/FileDropActionSelect"
-import { FileDropFillTabbarName } from "src/components/settings/FileDropFillTabbarName"
 import { SettingsCard, SettingsCardItem } from "src/components/settings/SettingsCard"
 import { SettingsHistory } from "src/components/settings/SettingsHistory"
 import { SettingsItemInput } from "src/components/settings/SettingsItemInput"
@@ -22,6 +20,7 @@ import { ThemeSelect } from "src/components/settings/ThemeSelect"
 import { ToolSidebarDensitySelect } from "src/components/settings/ToolSidebarDensitySelect"
 import { Icons, type Icon } from "src/constants/icons"
 import { appDataService } from "src/services/app-data-service"
+import { fileDropService } from "src/services/file-drop-service"
 import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
 import { settingsPageStore, type SettingsSectionId } from "src/services/settings-page-store"
@@ -233,12 +232,24 @@ export const SettingsPage: FC = observer(() => {
       icon: Icons.Upload,
       content: (
         <SettingsCard>
-          <SettingsCardItem label="Action">
-            <FileDropActionSelect />
+          <SettingsCardItem
+            label="Name New Tab After File"
+            description="When a dropped file opens a tool in a new tab"
+          >
+            <SettingsItemSwitch
+              defaultChecked={fileDropService.droppedFileReplaceSessionName}
+              onChange={(value) => { fileDropService.setDroppedFileReplaceSessionName(value) }}
+            />
           </SettingsCardItem>
 
-          <SettingsCardItem label="Dropped File Replace Tabbar Name">
-            <FileDropFillTabbarName />
+          <SettingsCardItem
+            label="Rename Current Tab After File"
+            description="When a file is dropped into a tool with a single input"
+          >
+            <SettingsItemSwitch
+              defaultChecked={fileDropService.droppedFileRenameSingleInputTab}
+              onChange={(value) => { fileDropService.setDroppedFileRenameSingleInputTab(value) }}
+            />
           </SettingsCardItem>
         </SettingsCard>
       )

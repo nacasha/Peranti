@@ -1,4 +1,4 @@
-import { isMacOS } from "src/utils/get-os"
+import { isMacOS } from "src/constants/os"
 
 class HotkeysStore {
   /**

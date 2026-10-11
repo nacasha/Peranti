@@ -3,7 +3,9 @@ import toast from "react-hot-toast"
 
 import { FileDropAction } from "src/enums/file-drop-action.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
+import { type Applet } from "src/models/Applet.js"
 import { type AppletComponent } from "src/models/AppletComponent.js"
+import { type AppletConstructor } from "src/models/AppletConstructor.js"
 import { appletComponentService } from "src/services/applet-component-service.js"
 import { type FileDropZone } from "src/types/FileDropZone.js"
 import { getDirectoryFromPath } from "src/utils/get-directory-from-path.js"
@@ -27,17 +29,40 @@ export interface DroppedFileInfo {
   isDirectory?: boolean
 }
 
-class FileDropService {
-  @userSettingsService.watch(UserSettingsKeys.fileDropAction)
-  fileDropAction: FileDropAction = userSettingsService.get(
-    UserSettingsKeys.fileDropAction,
-    FileDropAction.AlwaysAsk
-  )
+/**
+ * Content read from a dropped file and the input it goes into
+ */
+interface DroppedFileContent {
+  inputFieldKey: string
+  fileContent: unknown
+  fileName: string
+  isBatch?: boolean
+}
 
+class FileDropService {
+  /**
+   * Always ask for now, the setting is hidden and a saved value is ignored.
+   * The other actions are still handled in `proceedFileDropBasedOnAction`.
+   */
+  fileDropAction: FileDropAction = FileDropAction.AlwaysAsk
+
+  /**
+   * Name the new tab after the dropped file when a drop opens a tool
+   */
   @userSettingsService.watch(UserSettingsKeys.fileDropReplaceSessionName)
   droppedFileReplaceSessionName: boolean = userSettingsService.get(
     UserSettingsKeys.fileDropReplaceSessionName,
-    false
+    true
+  )
+
+  /**
+   * Rename the current tab after the dropped file, only for tools with a single
+   * input, where the file is all the tab holds
+   */
+  @userSettingsService.watch(UserSettingsKeys.fileDropRenameSingleInputTab)
+  droppedFileRenameSingleInputTab: boolean = userSettingsService.get(
+    UserSettingsKeys.fileDropRenameSingleInputTab,
+    true
   )
 
   droppedFilePaths: string[] = []
@@ -168,14 +193,13 @@ class FileDropService {
       const fileContent = await appletComponentService.readFilesFromComponent(inputComponent, filePaths)
 
       if (fileContent !== undefined) {
-        if (this.droppedFileReplaceSessionName) {
-          await sessionStore.renameSession(activeApplet.toSession(), fileName)
-        }
+        const isApplied = await this.putFileIntoApplet(activeApplet, {
+          inputFieldKey: fieldKey,
+          fileContent,
+          fileName
+        })
 
-        activeApplet.setInputValue(fieldKey, fileContent)
-        activeApplet.resetInputAndOutputFieldsState()
-
-        if (filePaths.length > 1 && inputComponent.readFileAs !== "files") {
+        if (isApplied && filePaths.length > 1 && inputComponent.readFileAs !== "files") {
           toast(`${inputField.label} takes one file, used ${fileName}`)
         }
       }
@@ -236,32 +260,13 @@ class FileDropService {
     try {
       const fileContent = await appletComponentService.readFilesFromComponent(inputComponent, filePaths)
 
-      if (fileContent) {
-        const sessionName = this.droppedFileReplaceSessionName ? fileName : undefined
+      if (fileContent !== undefined) {
+        const file = { inputFieldKey, fileContent, fileName, isBatch: isAvailableOnBatchMode }
 
         if (newSession) {
-          const appletConstructor = appletStore.mapOfLoadedApplets[activeApplet.appletId]
-          const createdSession = sessionStore.createSession(appletConstructor, {
-            initialState: {
-              sessionName,
-              inputValues: { [inputFieldKey]: fileContent }
-            }
-          })
-
-          if (isAvailableOnBatchMode && createdSession) {
-            createdSession.setBatchMode(true)
-          }
+          this.createSessionWithFile(appletStore.mapOfLoadedApplets[activeApplet.appletId], file)
         } else {
-          if (sessionName) {
-            await sessionStore.renameSession(activeApplet.toSession(), sessionName)
-          }
-
-          if (!activeApplet.isBatchModeEnabled && isAvailableOnBatchMode) {
-            activeApplet.setBatchMode(true)
-          }
-
-          activeApplet.setInputValue(inputFieldKey, fileContent)
-          activeApplet.resetInputAndOutputFieldsState()
+          await this.putFileIntoApplet(activeApplet, file)
         }
       }
     } catch (exception) {
@@ -304,22 +309,60 @@ class FileDropService {
           continue
         }
 
-        const createdSession = sessionStore.createSession(appletConstructor, {
-          initialState: {
-            sessionName: this.droppedFileReplaceSessionName ? fileName : undefined,
-            inputValues: { [target.inputFieldKey]: fileContent }
-          }
+        this.createSessionWithFile(appletConstructor, {
+          inputFieldKey: target.inputFieldKey,
+          fileContent,
+          fileName,
+          isBatch: target.isBatch
         })
-
-        if (target.isBatch && createdSession) {
-          createdSession.setBatchMode(true)
-        }
       } catch (exception) {
         toast.error(`Unable to read ${fileName} file as text`)
       }
     }
 
     this.removeDroppedFiles(filePaths)
+  }
+
+  /**
+   * Opens a new session of the applet with the file content in one input
+   */
+  private createSessionWithFile(appletConstructor: AppletConstructor, file: DroppedFileContent) {
+    const createdSession = sessionStore.createSession(appletConstructor, {
+      initialState: {
+        sessionName: this.droppedFileReplaceSessionName ? file.fileName : undefined,
+        inputValues: { [file.inputFieldKey]: file.fileContent }
+      }
+    })
+
+    if (file.isBatch && createdSession) {
+      createdSession.setBatchMode(true)
+    }
+  }
+
+  /**
+   * Writes the file content into one input of an open session. Reading a large
+   * file takes a while, so the content is dropped when the user has switched
+   * or closed the tab meanwhile, rather than going into a tab nobody sees.
+   *
+   * @returns whether the content was written
+   */
+  private async putFileIntoApplet(applet: Applet, file: DroppedFileContent) {
+    if (applet.isDeleted || !activeAppletStore.isAppletActiveBySessionId(applet.sessionId)) {
+      toast.error(`Tab changed while reading ${file.fileName}, drop the file again`)
+      return false
+    }
+
+    if (this.droppedFileRenameSingleInputTab && applet.getInputFields().length === 1) {
+      await sessionStore.renameSession(applet.toSession(), file.fileName)
+    }
+
+    if (file.isBatch && !applet.isBatchModeEnabled) {
+      applet.setBatchMode(true)
+    }
+
+    applet.setInputValue(file.inputFieldKey, file.fileContent)
+    applet.resetInputAndOutputFieldsState()
+    return true
   }
 
   async proceedFileDropBasedOnAction() {
@@ -370,6 +413,10 @@ class FileDropService {
 
   setDroppedFileReplaceSessionName(value: boolean) {
     this.droppedFileReplaceSessionName = value
+  }
+
+  setDroppedFileRenameSingleInputTab(value: boolean) {
+    this.droppedFileRenameSingleInputTab = value
   }
 }
 

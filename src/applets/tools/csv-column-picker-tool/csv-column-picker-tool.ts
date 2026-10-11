@@ -5,6 +5,7 @@ import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
 import { getCsvColumnLabels } from "src/utils/get-csv-column-labels.ts"
+import { parseCsvRows } from "src/utils/parse-csv-rows.ts"
 
 interface InputFields {
   csv: InputFieldsType.Code
@@ -64,14 +65,13 @@ export const csvColumnPickerTool = new AppletConstructor<InputFields, OutputFiel
       return { output: "" }
     }
 
-    const { data: rows, meta } = Papa.parse<string[]>(csv, { skipEmptyLines: true })
-    const columnCount = Math.max(...rows.map((row) => row.length))
+    const { rows, delimiter, columnCount } = parseCsvRows(csv)
     const excludedColumns = new Set(parseOrder(excluded))
     const keptColumns = Array.from({ length: columnCount }, (_, index) => index)
       .filter((index) => !excludedColumns.has(index))
 
     const picked = rows.map((row) => keptColumns.map((index) => row[index] ?? ""))
 
-    return { output: Papa.unparse(picked, { delimiter: meta.delimiter }) }
+    return { output: Papa.unparse(picked, { delimiter }) }
   }
 })

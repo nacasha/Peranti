@@ -944,7 +944,7 @@ export class Applet<
 
         this.setOutputValues(extensionResult)
       } catch (exception) {
-        console.log(exception)
+        console.error(exception)
         toast.error(`Failed to run ${this.name} extension`)
       }
 
@@ -958,8 +958,6 @@ export class Applet<
   }
 
   private async runPipeline() {
-    console.log(this.sessionId, "Run pipeline")
-
     const edges: Edge[] = this.inputValues.$PIPELINE.edges ?? []
     const nodes: Node[] = this.inputValues.$PIPELINE.nodes ?? []
     const nodesMap = Object.fromEntries(nodes.map((node) => [node.id, node]))
@@ -988,9 +986,6 @@ export class Applet<
     let unresolved = edges.filter((edge) => !targetInputDependencies[edge.source] && !resolvedValues[edge.source])
 
     const countExecutedEdges: Record<string, number> = {}
-
-    console.log(this.sessionId, "Nodes", toJS(edges))
-    console.log(this.sessionId, "Edges", toJS(nodes))
 
     while (unresolved.length > 0 && !breakWhile) {
       const edge = unresolved[0]
@@ -1035,8 +1030,6 @@ export class Applet<
         applet.setInputValuesMerge(resolvedValues[edge.source].inputValues)
         await applet.run()
 
-        console.log(this.sessionId, "Run node", applet.name, "with result", applet.outputValues)
-
         resolvedValues[edge.source].outputValues = merge(
           resolvedValues[edge.source].outputValues,
           applet.outputValues
@@ -1053,7 +1046,6 @@ export class Applet<
       const sourceEdges = edges.filter((e) => e.source === edge.source)
 
       sourceEdges.forEach((sourceEdge) => {
-        console.log(this.sessionId, "Resolving edge", edge.source, "for", sourceEdge.target)
         if (sourceEdge.targetHandle && sourceEdge.sourceHandle) {
           const targetInputValues = {
             [sourceEdge.targetHandle]: resolvedValues[edge.source].outputValues[sourceEdge.sourceHandle]
@@ -1084,12 +1076,7 @@ export class Applet<
           Object.values(resolvedValues[edge.source]?.outputValues ?? {}).length === 0
         ))
       }
-
-      console.log(this.sessionId, "Resolved values", resolvedValues)
     }
-
-    console.log(this.sessionId, "Final resolved values", resolvedValues)
-    console.log(this.sessionId, "Time(s) edge executed", countExecutedEdges)
 
     const outputNodes = nodes.filter((node) => node.type === "appletOutput" && resolvedValues[node.id]?.inputValues)
     outputNodes.forEach((outputNode) => {

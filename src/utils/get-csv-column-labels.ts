@@ -1,15 +1,13 @@
-import Papa from "papaparse"
+import { parseCsvRows } from "src/utils/parse-csv-rows.ts"
 
 /**
  * Labels of the CSV columns: the first row, padded to the widest row
  */
 export function getCsvColumnLabels(csv: string) {
-  const rows = Papa.parse<string[]>(csv, { skipEmptyLines: true }).data
+  const { rows, columnCount } = parseCsvRows(csv)
   if (rows.length === 0) {
     return []
   }
-
-  const columnCount = Math.max(...rows.map((row) => row.length))
 
   return Array.from({ length: columnCount }, (_, index) => rows[0][index] ?? "")
 }

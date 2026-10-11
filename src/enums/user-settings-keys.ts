@@ -14,6 +14,7 @@ export enum UserSettingsKeys {
   // File Drop
   fileDropAction = "filedrop.action",
   fileDropReplaceSessionName = "filedrop.replaceSessionName",
+  fileDropRenameSingleInputTab = "filedrop.renameSingleInputTab",
 
   // Tool sidebar
   toolSidebarGroupByCategory = "toolsidebar.groupByCategory",

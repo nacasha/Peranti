@@ -3,6 +3,7 @@ import Papa from "papaparse"
 import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
+import { parseCsvRows } from "src/utils/parse-csv-rows.ts"
 import { resolveCsvColumnIndex } from "src/utils/resolve-csv-column-index.ts"
 
 import { compareCsvValues } from "./compare-csv-values.ts"
@@ -97,7 +98,7 @@ export const csvSortTool = new AppletConstructor<InputFields, OutputFields, Opti
       return { output: "" }
     }
 
-    const { data: rows, meta } = Papa.parse<string[]>(csv, { skipEmptyLines: true })
+    const { rows, delimiter } = parseCsvRows(csv)
     const header = hasHeader ? rows.slice(0, 1) : []
     const body = hasHeader ? rows.slice(1) : rows
 
@@ -111,6 +112,6 @@ export const csvSortTool = new AppletConstructor<InputFields, OutputFields, Opti
       return compareCsvValues(a[columnIndex] ?? "", b[columnIndex] ?? "", compareAs, sign)
     })
 
-    return { output: Papa.unparse([...header, ...sorted], { delimiter: meta.delimiter }) }
+    return { output: Papa.unparse([...header, ...sorted], { delimiter }) }
   }
 })

@@ -11,7 +11,7 @@ import { UserSettingsDefault } from "src/enums/user-settings-default.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { appDataService } from "src/services/app-data-service"
 import { getCardShadowVariable } from "src/utils/get-card-shadow-variable"
-import { resolveTheme } from "src/utils/get-system-theme"
+import { resolveTheme } from "src/utils/resolve-theme"
 
 import { globalStyles } from "./global-styles.js"
 
