@@ -3,41 +3,274 @@
   flex-direction: column;
 }
 
-.FileInputPicker {
-  border: 1px solid var(--input-output-border-color);
-  border-radius: var(--border-radius);
-  background-color: var(--input-output-background-color);
-  padding: 20px;
-  margin-bottom: 10px;
-  text-overflow: ellipsis;
-  overflow: hidden;
+.FileInput-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  padding: 10px;
+}
+
+// Drop zone
+
+.FileInput-dropzone {
+  display: flex;
+  align-items: center;
+  // Same box as .FileInput-item, so the zone reads as one more row
+  gap: 12px;
+  min-width: 0;
+  padding: 8px 10px 8px 8px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-lg);
+  background-color: var(--raised);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color var(--animation-speed), background-color var(--animation-speed);
 
   &:hover {
-    cursor: pointer;
-    border-color: var(--input-output-border-color-hover);
+    border-color: color-mix(in oklch, var(--accent) 45%, transparent);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  &[data-dragging] {
+    border-color: var(--accent);
+    background-color: color-mix(in oklch, var(--accent) 6%, var(--raised));
+  }
+
+  // Holding the selected file: the row is the frame, the zone only takes drops
+  &[data-filled] {
+    display: block;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: default;
+
+    > .FileInput-list {
+      flex: 1;
+    }
+  }
+
+  &[data-filled][data-dragging] .FileInput-item {
+    border-style: dashed;
+    border-color: var(--accent);
+    background-color: color-mix(in oklch, var(--accent) 6%, var(--raised));
   }
 }
 
-.FileInputList {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 10px;
-}
-
-.FileInputListItem {
+.FileInput-dropzone-icon {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background-color: var(--panel);
+  box-shadow: var(--shadow-sm), 0 2px 6px rgba(0, 0, 0, 0.06);
+  color: var(--accent-ink);
+  transition: transform var(--animation-speed);
+
+  .FileInput-dropzone[data-dragging] & {
+    transform: translateY(-2px);
+  }
 }
 
-.FileInputListItemName {
-  text-overflow: ellipsis;
+.FileInput-dropzone-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.FileInput-dropzone-title {
   overflow: hidden;
+  font-size: var(--font-size);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+  color: var(--text-color);
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.FileInputListClear {
-  align-self: flex-start;
+.FileInput-dropzone-caption {
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.FileInput-dropzone-browse {
+  color: var(--accent-ink);
+  font-weight: var(--font-weight-medium);
+}
+
+.FileInput-dropzone-types {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+  max-width: 50%;
+}
+
+.FileInput-dropzone-type {
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background-color: var(--panel);
+  color: var(--muted);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+}
+
+// Selected files
+
+.FileInput-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.FileInput-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 8px 10px 8px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background-color: var(--raised);
+}
+
+.FileInput-item-thumb,
+.FileInput-item-badge {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+}
+
+.FileInput-item-thumb {
+  object-fit: cover;
+  background-color: var(--panel);
+}
+
+.FileInput-item-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(var(--badge-hue, 220) 50% 42%);
+  background-color: hsl(var(--badge-hue, 220) 50% 50% / 0.16);
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.02em;
+}
+
+body.dark .FileInput-item-badge {
+  color: hsl(var(--badge-hue, 220) 60% 70%);
+}
+
+.FileInput-item-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.FileInput-item-name {
+  overflow: hidden;
+  font-size: var(--font-size);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+  color: var(--text-color);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.FileInput-item-size {
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.FileInput-item-replace {
+  flex-shrink: 0;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background-color: var(--panel);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--hover);
+  }
+}
+
+.FileInput-item-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--hover);
+    color: var(--text-color);
+  }
+}
+
+.FileInput-item-replace,
+.FileInput-item-remove,
+.FileInput-clear {
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+}
+
+// Totals
+
+.FileInput-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 2px 0;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.FileInput-clear {
+  padding: 4px 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--hover);
+    color: var(--text-color);
+  }
 }

@@ -1,7 +1,11 @@
-import { type FC, type InputHTMLAttributes, useRef } from "react"
+import { useRef, type FC } from "react"
 
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
+import { formatFileSize } from "src/utils/format-file-size"
+
+import { FileInputDropZone } from "./FileInputDropZone.tsx"
+import { FileInputItem } from "./FileInputItem.tsx"
 
 import "./FileInput.scss"
 
@@ -10,10 +14,15 @@ interface InputFilesProps extends InputComponentProps<File[]> {
    * Comma separated list of accepted file types, e.g. ".json,.txt"
    */
   accept?: string
+
+  /**
+   * Largest accepted size per file in bytes, bigger files are ignored
+   */
+  maxSize?: number
 }
 
 export const FilesInput: FC<InputFilesProps> = (props) => {
-  const { label, onValueChange, value, fieldKey, accept } = props
+  const { label, onValueChange, value, fieldKey, accept, maxSize } = props
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Values restored from a saved session are no longer File instances
@@ -21,60 +30,47 @@ export const FilesInput: FC<InputFilesProps> = (props) => {
     ? value.filter((file): file is File => file instanceof File)
     : []
 
-  const onChangeFiles: InputHTMLAttributes<HTMLInputElement>["onChange"] = (event) => {
-    const files = Array.from(event.target.files ?? [])
-
-    if (files.length > 0) {
-      onValueChange([...selectedFiles, ...files])
-    }
-
-    // Allow picking the same file again after it was removed
-    event.target.value = ""
-  }
-
-  const onClickChooseFiles = () => {
-    fileInputRef?.current?.click()
-  }
+  const totalSize = selectedFiles.reduce((total, file) => total + file.size, 0)
 
   const onClickRemoveFile = (index: number) => {
     onValueChange(selectedFiles.filter((_, fileIndex) => fileIndex !== index))
   }
 
-  const onClickClear = () => {
-    onValueChange([])
-  }
-
   return (
     <div className="FileInput" style={{ gridArea: fieldKey }}>
       <AppletComponentHead label={label} />
-      <div>
-        <div onClick={onClickChooseFiles} className="FileInputPicker">
-          {selectedFiles.length > 0
-            ? `${selectedFiles.length} file(s) selected, click here to add more`
-            : "Click Here to Select Files"}
-        </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
+      <div className="FileInput-body">
+        <FileInputDropZone
+          fieldKey={fieldKey}
+          title="Drop files"
+          inputRef={fileInputRef}
           accept={accept}
-          onChange={onChangeFiles}
-          style={{ display: "none" }}
+          maxSize={maxSize}
+          multiple
+          onSelectFiles={(files) => { onValueChange([...selectedFiles, ...files]) }}
         />
+
         {selectedFiles.length > 0 && (
-          <div className="FileInputList">
-            {selectedFiles.map((file, index) => (
-              <div key={`${file.name}-${index}`} className="FileInputListItem">
-                <span className="FileInputListItemName">{file.name}</span>
-                <button type="button" onClick={() => { onClickRemoveFile(index) }}>
-                  Remove
-                </button>
-              </div>
-            ))}
-            <button type="button" className="FileInputListClear" onClick={onClickClear}>
-              Clear All
-            </button>
-          </div>
+          <>
+            <ul className="FileInput-list">
+              {selectedFiles.map((file, index) => (
+                <FileInputItem
+                  key={`${file.name}-${file.size}-${file.lastModified}-${index}`}
+                  file={file}
+                  onRemove={() => { onClickRemoveFile(index) }}
+                />
+              ))}
+            </ul>
+
+            <div className="FileInput-footer">
+              <span>
+                {selectedFiles.length} file{selectedFiles.length > 1 ? "s" : ""} · {formatFileSize(totalSize)}
+              </span>
+              <button type="button" className="FileInput-clear" onClick={() => { onValueChange([]) }}>
+                Clear all
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>

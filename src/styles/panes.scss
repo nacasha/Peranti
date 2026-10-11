@@ -203,30 +203,6 @@ body {
     margin: 10px 12px;
   }
 
-  .FileInput > div:last-child {
-    padding: 12px;
-  }
-
-  .FileInput .FileInputPicker {
-    margin-bottom: 0;
-    padding: 18px;
-    border: 1px dashed var(--line);
-    border-radius: var(--radius-lg);
-    background-color: var(--raised);
-    color: var(--muted);
-    text-align: center;
-    transition: border-color var(--animation-speed), color var(--animation-speed);
-
-    &:hover {
-      border-color: color-mix(in oklch, var(--accent) 45%, transparent);
-      color: var(--text-color);
-    }
-  }
-
-  .FileInput .FileInputList {
-    margin: 10px 0 0;
-  }
-
   .ColorPickerInput .rc-color-picker-panel {
     border: 0;
     border-radius: 0;
