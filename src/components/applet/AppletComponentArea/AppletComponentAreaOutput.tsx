@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx"
+import { comparer } from "mobx"
 import { type CSSProperties, type FC } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
@@ -18,7 +19,7 @@ export const AppletComponentAreaOutput: FC<AppletComponentAreaOutpuProps> = (pro
    * Active applet info
    */
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
-  const outputFields = useSelector(() => activeAppletStore.getActiveApplet().getOutputFields())
+  const outputFields = useSelector(() => activeAppletStore.getActiveApplet().getOutputFields(), comparer.structural)
 
   /**
    * Batch mode state

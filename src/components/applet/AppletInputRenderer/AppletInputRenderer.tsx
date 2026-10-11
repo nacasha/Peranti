@@ -1,5 +1,5 @@
 import { toJS } from "mobx"
-import { type FC } from "react"
+import { type FC, memo, useCallback, useMemo } from "react"
 import { useContextMenu } from "react-contexify"
 
 import { FileDropTarget } from "src/components/filedrop/FileDropTarget"
@@ -16,7 +16,7 @@ interface AppletInputRendererProps {
   appletInput: AppletInput
 }
 
-export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
+export const AppletInputRenderer: FC<AppletInputRendererProps> = memo((props) => {
   const { appletInput } = props
   const { show } = useContextMenu()
 
@@ -49,15 +49,19 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   const inputComponent = appletComponentService.getInputComponent(appletInput.component, isBatchModeEnabled)
   const Component: FC<InputComponentProps<any>> = inputComponent.component
 
-  const handleValueChange = (val: unknown) => {
+  /**
+   * Stable callbacks and context value, so typing in a field doesn't
+   * re-render its head (label + buttons) or the other fields
+   */
+  const handleValueChange = useCallback((val: unknown) => {
     activeApplet.setInputValue(appletInput.key, val)
-  }
+  }, [activeApplet, appletInput.key])
 
-  const handleStateChange = (state: unknown) => {
+  const handleStateChange = useCallback((state: unknown) => {
     activeApplet.setInputFieldState(appletInput.key, state)
-  }
+  }, [activeApplet, appletInput.key])
 
-  const handleContextMenu = (event: any) => {
+  const handleContextMenu = useCallback((event: any) => {
     if (isDeleted) {
       return
     }
@@ -70,7 +74,15 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
         component: inputComponent
       }
     })
-  }
+  }, [isDeleted, show, appletInput, inputComponent])
+
+  const contextValue = useMemo(() => ({
+    type: "input" as const,
+    fieldKey: appletInput.key,
+    component: inputComponent,
+    showRegenerateButton: appletInput.showRegenerateButton,
+    showBatchModeButton: appletInput.allowBatch
+  }), [appletInput.key, inputComponent, appletInput.showRegenerateButton, appletInput.allowBatch])
 
   /**
    * Pass `initialState` related props to selected components
@@ -95,14 +107,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   }
 
   return (
-    <AppletComponentContext.Provider value={{
-      type: "input",
-      fieldKey: appletInput.key,
-      component: inputComponent,
-      showRegenerateButton: appletInput.showRegenerateButton,
-      showBatchModeButton: appletInput.allowBatch
-    }}
-    >
+    <AppletComponentContext.Provider value={contextValue}>
       <Component
         {...appletInput.props}
         key={appletInput.key}
@@ -119,4 +124,4 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
       )}
     </AppletComponentContext.Provider>
   )
-}
+})

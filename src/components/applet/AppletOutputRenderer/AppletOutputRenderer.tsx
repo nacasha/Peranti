@@ -1,5 +1,5 @@
-import { toJS } from "mobx"
-import { type FC } from "react"
+import { comparer, toJS } from "mobx"
+import { type FC, memo, useCallback, useMemo } from "react"
 import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
@@ -9,6 +9,7 @@ import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
 import { type AppletOutput } from "src/types/AppletOutput"
 import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
+import { shallowEqualArrays } from "src/utils/shallow-equal-arrays"
 
 interface AppletOutputRendererProps {
   appletOutput: AppletOutput
@@ -19,7 +20,7 @@ interface AppletOutputRendererProps {
   groupedOutputs?: AppletOutput[]
 }
 
-export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
+export const AppletOutputRenderer: FC<AppletOutputRendererProps> = memo((props) => {
   const { appletOutput, groupedOutputs } = props
   const { show } = useContextMenu()
 
@@ -36,7 +37,7 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
     return Object.fromEntries(
       groupedOutputs.map((output) => [output.key, activeApplet.outputValues[output.key] ?? ""])
     )
-  })
+  }, groupedOutputs ? comparer.shallow : comparer.default)
   const initialState = activeApplet.outputFieldsState[appletOutput.key]
 
   /**
@@ -56,11 +57,15 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
   const outputComponent = appletComponentService.getOutputComponent(appletOutput.component, isBatchModeEnabled)
   const Component: FC<OutputComponentProps<any>> = outputComponent.component
 
-  const handleStateChange = (state: unknown) => {
+  /**
+   * Stable callbacks and context value, so a new output value doesn't
+   * re-render the field head (label + buttons)
+   */
+  const handleStateChange = useCallback((state: unknown) => {
     activeApplet.setOutputFieldState(appletOutput.key, state)
-  }
+  }, [activeApplet, appletOutput.key])
 
-  const handleContextMenu = (event: any) => {
+  const handleContextMenu = useCallback((event: any) => {
     if (activeApplet.isDeleted) {
       return
     }
@@ -73,7 +78,18 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
         component: outputComponent
       }
     })
-  }
+  }, [activeApplet, show, appletOutput, outputComponent])
+
+  const contextValue = useMemo(() => ({
+    type: "output" as const,
+    fieldKey: appletOutput.key,
+    component: outputComponent,
+    showRegenerateButton: appletOutput.showRegenerateButton
+  }), [appletOutput.key, outputComponent, appletOutput.showRegenerateButton])
+
+  const fields = useMemo(() => groupedOutputs && Object.fromEntries(
+    groupedOutputs.map((output) => [output.key, { label: output.label }])
+  ), [groupedOutputs])
 
   /**
    * Pass `initialState` related props to selected components
@@ -103,23 +119,15 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
   /**
    * Each grouped field becomes one row, labelled with the field label
    */
-  if (groupedOutputs) {
-    additionalProps.fields = Object.fromEntries(
-      groupedOutputs.map((output) => [output.key, { label: output.label }])
-    )
+  if (fields) {
+    additionalProps.fields = fields
   }
   const label = groupedOutputs && appletOutput.component === "KeyValue"
     ? appletOutput.props?.label
     : appletOutput.label
 
   return (
-    <AppletComponentContext.Provider value={{
-      type: "output",
-      fieldKey: appletOutput.key,
-      component: outputComponent,
-      showRegenerateButton: appletOutput.showRegenerateButton
-    }}
-    >
+    <AppletComponentContext.Provider value={contextValue}>
       <Component
         {...appletOutput.props}
         key={appletOutput.key}
@@ -131,4 +139,8 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = (props) => {
       />
     </AppletComponentContext.Provider>
   )
-}
+}, (prevProps, nextProps) => (
+  // `groupedOutputs` is rebuilt on every parent render, compare its items instead
+  prevProps.appletOutput === nextProps.appletOutput &&
+  shallowEqualArrays(prevProps.groupedOutputs, nextProps.groupedOutputs)
+))

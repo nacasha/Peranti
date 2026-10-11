@@ -82,12 +82,6 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
     }
   }
 
-  const isActionRunning = useSelector(() => activeAppletStore.getActiveApplet().isActionRunning)
-
-  const handleClickRegenerate = () => {
-    void activeAppletStore.getActiveApplet().run()
-  }
-
   const isBatchModeEnabled = useSelector(() => activeAppletStore.getActiveApplet().isBatchModeEnabled)
 
   const handleClickBatchMode = () => {
@@ -225,17 +219,7 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
             </Button>
           </PopoverConfirm>
         )}
-        {componentContext.showRegenerateButton && (
-          <Button
-            className="AppletComponentHead-regenerate"
-            icon={Icons.Run}
-            iconSize={13}
-            onClick={handleClickRegenerate}
-            disabled={isActionRunning}
-          >
-            Regenerate
-          </Button>
-        )}
+        {componentContext.showRegenerateButton && <RegenerateButton />}
         {componentContext.component?.copyAs && (
           <ButtonIcon
             className={isCopied ? "ButtonIcon is-copied" : "ButtonIcon"}
@@ -278,3 +262,27 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
 }, (prevProps, nextProps) => {
   return prevProps.label === nextProps.label
 })
+
+/**
+ * Own component so `isActionRunning` flipping on every run only re-renders
+ * this button, not the whole head
+ */
+const RegenerateButton: FC = () => {
+  const isActionRunning = useSelector(() => activeAppletStore.getActiveApplet().isActionRunning)
+
+  const handleClickRegenerate = () => {
+    void activeAppletStore.getActiveApplet().run()
+  }
+
+  return (
+    <Button
+      className="AppletComponentHead-regenerate"
+      icon={Icons.Run}
+      iconSize={13}
+      onClick={handleClickRegenerate}
+      disabled={isActionRunning}
+    >
+      Regenerate
+    </Button>
+  )
+}
