@@ -108,14 +108,15 @@ class SessionStore {
   }
 
   setSessionHasRunningAction(sessionId: string, value: boolean) {
-    const sessionIndex = this.sessions.findIndex((session) => session.sessionId === sessionId)
+    const session = this.sessions.find((session) => session.sessionId === sessionId)
 
-    if (sessionIndex > -1) {
-      this.sessions[sessionIndex] = {
-        ...this.sessions[sessionIndex],
-        isActionRunning: value,
-        isKeepAlive: value
-      }
+    /**
+     * Mutate in place (and skip no-op writes) so only observers of these two
+     * fields react, instead of the whole tabbar re-rendering on every run
+     */
+    if (session && session.isActionRunning !== value) {
+      session.isActionRunning = value
+      session.isKeepAlive = value
     }
   }
 
