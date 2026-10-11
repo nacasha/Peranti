@@ -180,6 +180,7 @@ class SessionHistoryStore {
         await sessionHistoryBackend.getBlob(history.sessionId, blobId)
       ))
 
+      sessionStore.cancelStateRemoval(history.sessionId)
       await StorageManager.putAppletStateIntoStorage(history.sessionId, state)
       await sessionHistoryBackend.remove(history.sessionId)
       await sessionStore.openHistory(history)

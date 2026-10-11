@@ -32,12 +32,19 @@ class UserSettingsService {
   isLoaded: boolean = false
 
   /**
+   * Last queued write of the user settings file
+   */
+  private pendingWrite: Promise<void> = Promise.resolve()
+
+  /**
    * Constructor
    */
   constructor() {
-    makeAutoObservable(this)
+    makeAutoObservable<this, "pendingWrite">(this, { pendingWrite: false })
 
-    void appDataService.readUserSettingsFile().then((rawUserSettings) => { this.initialized(rawUserSettings) })
+    void appDataService.readUserSettingsFile()
+      .catch(() => ({}))
+      .then((rawUserSettings) => { this.initialized(rawUserSettings ?? {}) })
   }
 
   /**
@@ -146,7 +153,7 @@ class UserSettingsService {
           (value) => {
             // Plain copy: observable arrays/objects are proxies, which the
             // browser's IndexedDB storage can't clone
-            void this.updateSetting(settingKey, toJS(value))
+            this.updateSetting(settingKey, toJS(value))
           }
         )
       })
@@ -159,13 +166,24 @@ class UserSettingsService {
    * @param key
    * @param value
    */
-  private async updateSetting(key: string, value: string) {
-    const settings = await appDataService.readUserSettingsFile()
-
-    if (key && (value !== undefined)) {
-      const newSettings = { ...settings, [key]: value }
-      void appDataService.writeUserSettingsFile(newSettings)
+  private updateSetting(key: string, value: string) {
+    if (!key || value === undefined) {
+      return
     }
+
+    /**
+     * Loaded values are the source of truth, so changes made close together
+     * don't read the same old file and overwrite each other
+     */
+    this.values = { ...this.values, [key]: value }
+    const settings = toJS(this.values)
+
+    /**
+     * One write at a time, so an unfinished write is never overlapped
+     */
+    this.pendingWrite = this.pendingWrite
+      .catch(() => {})
+      .then(async() => { await appDataService.writeUserSettingsFile(settings) })
   }
 }
 

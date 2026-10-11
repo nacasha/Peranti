@@ -78,8 +78,14 @@ class SessionStore {
    */
   indexOflastActiveSessionIds: number = 0
 
+  /**
+   * Timers that remove the stored state of closed sessions, kept so a
+   * session reopened before its timer fires keeps its state
+   */
+  private readonly pendingStateRemovals = new Map<string, ReturnType<typeof setTimeout>>()
+
   constructor() {
-    makeAutoObservable(this)
+    makeAutoObservable<this, "pendingStateRemovals">(this, { pendingStateRemovals: false })
     userSettingsService.watchStore(this)
   }
 
@@ -339,12 +345,16 @@ class SessionStore {
   }
 
   private async deactivateApplet(applet: Applet) {
-    if (applet.isActionRunning) {
+    const isSessionOpen = this.sessions.some((session) => session.sessionId === applet.sessionId)
+
+    /**
+     * Keep a running applet alive in the background, unless its session
+     * has been closed meanwhile
+     */
+    if (applet.isActionRunning && isSessionOpen) {
       this.runningApplets[applet.sessionId] = applet
     } else {
-      if (this.runningApplets[applet.sessionId]) {
-        this.runningApplets[applet.sessionId] = undefined
-      }
+      this.removeRunningApplet(applet.sessionId)
     }
   }
 
@@ -610,7 +620,6 @@ class SessionStore {
 
     if (applet) {
       toBeDeleted = applet
-      toBeDeleted.stopStore()
     } else if (session) {
       toBeDeleted = await StorageManager.getAppletFromStorage(session.sessionId, {
         disablePersistence: true
@@ -618,6 +627,15 @@ class SessionStore {
     }
 
     if (toBeDeleted) {
+      const { sessionId } = toBeDeleted
+
+      /**
+       * A background session with a running action comes back as its live
+       * instance, which still persists, so stop it and drop the reference
+       */
+      toBeDeleted.stopStore()
+      this.removeRunningApplet(sessionId)
+
       if (toBeDeleted.isDeleted) {
         void this.openCurrentlyActiveSession()
         return
@@ -631,9 +649,17 @@ class SessionStore {
        */
       await sessionHistoryStore.addHistory(toBeDeleted)
 
-      setTimeout(() => {
-        void StorageManager.removeAppletStateFromStorage(toBeDeleted!.sessionId)
-      }, 500)
+      this.cancelStateRemoval(sessionId)
+      this.pendingStateRemovals.set(sessionId, setTimeout(() => {
+        this.pendingStateRemovals.delete(sessionId)
+
+        /**
+         * Skip if the session was reopened from history meanwhile
+         */
+        if (!this.sessions.some((openSession) => openSession.sessionId === sessionId)) {
+          void StorageManager.removeAppletStateFromStorage(sessionId)
+        }
+      }, 500))
 
       /**
        * Remove entry from last active session ids
@@ -644,6 +670,29 @@ class SessionStore {
         ))
       }
     }
+  }
+
+  /**
+   * Drop the background instance of a session
+   *
+   * @param sessionId
+   */
+  private removeRunningApplet(sessionId: string) {
+    if (sessionId in this.runningApplets) {
+      this.runningApplets = Object.fromEntries(
+        Object.entries(this.runningApplets).filter(([key]) => key !== sessionId)
+      )
+    }
+  }
+
+  /**
+   * Keep the stored state of a closed session that is about to be reopened
+   *
+   * @param sessionId
+   */
+  cancelStateRemoval(sessionId: string) {
+    clearTimeout(this.pendingStateRemovals.get(sessionId))
+    this.pendingStateRemovals.delete(sessionId)
   }
 
   /**

@@ -896,28 +896,36 @@ export class Applet<
     }
   }
 
+  /**
+   * Run applet action, a failed action clears the outputs and shows its error
+   * instead of leaving the previous result on screen
+   */
   private async runAction(actionInput: any, actionOptions: any) {
-    const runResult = await new Promise<any>((resolve) => {
-      const actionParams = { inputValues: actionInput, toast, options: actionOptions }
-      const result = this.action(actionParams)
+    const actionParams = { inputValues: actionInput, toast, options: actionOptions }
 
-      if ("then" in result) {
+    // One error toast per session, replaced while the user keeps typing
+    const errorToastId = `applet-error-${this.sessionId}`
+
+    try {
+      let result = this.action(actionParams)
+
+      if (typeof result?.then === "function") {
         this.setIsActionRunning(true)
-        result
-          .then((data: any) => {
-            this.setIsActionRunning(false)
-            resolve(data)
-          })
-          .catch(() => {
-            this.setIsActionRunning(false)
-            resolve(undefined)
-          })
+        try {
+          result = await result
+        } finally {
+          this.setIsActionRunning(false)
+        }
       }
 
-      resolve(result)
-    })
+      toast.dismiss(errorToastId)
+      return result ?? {}
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
 
-    return runResult
+      toast.error(`${this.name}: ${message}`, { id: errorToastId })
+      return {}
+    }
   }
 
   private async runExtension() {
