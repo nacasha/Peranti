@@ -211,6 +211,8 @@ export const HistoryPage: FC = observer(() => {
   return (
     <div className="HistoryPage">
       <div className="HistoryPage-header">
+        <span className="HistoryPage-title">History</span>
+
         <div className="HistoryPage-search">
           <Icons.Search size={13} aria-hidden />
           <input

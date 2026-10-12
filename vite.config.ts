@@ -45,6 +45,11 @@ export default defineConfig(async ({ mode }) => {
       }),
     ],
 
+    // Extension workers are module workers that import extension code at runtime
+    worker: {
+      format: "es"
+    },
+
     css: {
       preprocessorOptions: {
         scss: {

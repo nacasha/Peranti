@@ -89,7 +89,11 @@ class SessionStore {
     userSettingsService.watchStore(this)
   }
 
-  setupPersistence() {
+  /**
+   * @param options.appletIdAliases Old applet IDs mapped to their new ones,
+   * the saved sessions are moved over once restored
+   */
+  setupPersistence(options: { appletIdAliases?: Record<string, string> } = {}) {
     void makePersistable(this, {
       name: StorageKeys.SessionStore,
       stringify: false,
@@ -100,13 +104,47 @@ class SessionStore {
         "sessions"
       ]
     }).then(() => {
-      void this.handleHydratedStore()
+      void this.handleHydratedStore(options.appletIdAliases)
     })
   }
 
-  async handleHydratedStore() {
+  async handleHydratedStore(appletIdAliases: Record<string, string> = {}) {
+    await this.renameAppletIds(appletIdAliases)
     await this.openCurrentlyActiveSession()
     this.setIsInitialized(true)
+  }
+
+  /**
+   * Move restored sessions of renamed applets over to their new applet ID,
+   * in the session list and in each session's stored state
+   */
+  private async renameAppletIds(appletIdAliases: Record<string, string>) {
+    const renamedSessions = this.sessions
+      .filter((session) => appletIdAliases[session.appletId])
+      .map((session) => ({ sessionId: session.sessionId, appletId: appletIdAliases[session.appletId] }))
+
+    if (renamedSessions.length === 0) {
+      return
+    }
+
+    this.applyAppletIdAliases(appletIdAliases)
+
+    await Promise.all(renamedSessions.map(async({ sessionId, appletId }) => {
+      await StorageManager.updateAppletStatePropertyInStorage(sessionId, { appletId })
+    }))
+  }
+
+  private applyAppletIdAliases(appletIdAliases: Record<string, string>) {
+    const rename = (appletId: string) => appletIdAliases[appletId] ?? appletId
+    const renameKeys = <T>(record: Record<string, T>) => Object.fromEntries(
+      Object.entries(record).map(([appletId, value]) => [rename(appletId), value])
+    )
+
+    this.sessions = this.sessions.map((session) => (
+      appletIdAliases[session.appletId] ? { ...session, appletId: rename(session.appletId) } : session
+    ))
+    this.sessionSequences = renameKeys(this.sessionSequences)
+    this.activeSessionIdOfApplets = renameKeys(this.activeSessionIdOfApplets)
   }
 
   private setIsInitialized(value: boolean) {

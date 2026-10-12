@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx"
 
+import { extensionsApplet } from "src/applets/pages/extensions-applet"
 import { historyApplet } from "src/applets/pages/history-applet"
 import { pipelineEditorApplet } from "src/applets/pages/pipeline-editor-applet"
 import { settingsApplet } from "src/applets/pages/settings-applet"
@@ -52,6 +53,7 @@ import { textEscapeUnescapeTool } from "src/applets/tools/text-escape-unescape-t
 import { textTransformTool } from "src/applets/tools/text-transform-tool"
 import { uriEncodeDecodeTool } from "src/applets/tools/uri-encode-decode-tool"
 import { yamlToJsonTool } from "src/applets/tools/yaml-to-json-tool"
+import { AppletType } from "src/enums/applet-type"
 import { type AppletConstructor } from "src/models/AppletConstructor.ts"
 import { type Preset } from "src/types/Preset.ts"
 import { mergeAppletConstructorWithPreset } from "src/utils/merge-applet-constructor-with-preset.ts"
@@ -128,7 +130,8 @@ class AppletStore {
      */
     [pipelineEditorApplet.appletId]: pipelineEditorApplet,
     [settingsApplet.appletId]: settingsApplet,
-    [historyApplet.appletId]: historyApplet
+    [historyApplet.appletId]: historyApplet,
+    [extensionsApplet.appletId]: extensionsApplet
   }
 
   /**
@@ -186,7 +189,7 @@ class AppletStore {
     /**
      * Setup service that depends on applets
      */
-    sessionStore.setupPersistence()
+    sessionStore.setupPersistence({ appletIdAliases: this.getLegacyExtensionAppletIds() })
     toolSidebarService.setupItems()
     commandbarService.setupItems()
   }
@@ -206,6 +209,30 @@ class AppletStore {
   }
 
   /**
+   * Extension tools used to be registered under their bare tool ID. Maps
+   * each such old ID to the source-scoped one, so tabs saved before the
+   * change still open their tool. An old ID is skipped when two extensions
+   * share it, since its tabs can't be told apart.
+   */
+  private getLegacyExtensionAppletIds(): Record<string, string> {
+    const candidates: Record<string, string[]> = {}
+
+    extensionsService.loadedExtensions.forEach((extension) => {
+      // Packages of several tools came after the change, nothing to map
+      if (extension.manifest?.tools) return
+
+      const legacyId = extension.manifest?.toolId
+      if (legacyId && legacyId !== extension.id && !this.builtInApplets[legacyId]) {
+        candidates[legacyId] = [...(candidates[legacyId] ?? []), extension.id]
+      }
+    })
+
+    return Object.fromEntries(Object.entries(candidates)
+      .filter(([, ids]) => ids.length === 1)
+      .map(([legacyId, [id]]) => [legacyId, id]))
+  }
+
+  /**
    * Load applets from extension folder
    */
   async loadExtensions() {
@@ -215,7 +242,36 @@ class AppletStore {
       return [extension.appletId, extension]
     }))
 
-    this.mapOfLoadedApplets = { ...this.mapOfLoadedApplets, ...mapOfExtensions }
+    /**
+     * Drop the previously loaded extensions, so a disabled or removed one
+     * doesn't linger after a reload
+     */
+    const mapOfNonExtensions = Object.fromEntries(Object.entries(this.mapOfLoadedApplets).filter(
+      ([, applet]) => applet.type !== AppletType.Extension
+    ))
+
+    const removedAppletIds = Object.values(this.mapOfLoadedApplets)
+      .filter((applet) => applet.type === AppletType.Extension && !mapOfExtensions[applet.appletId])
+      .map((applet) => applet.appletId)
+
+    this.mapOfLoadedApplets = { ...mapOfNonExtensions, ...mapOfExtensions }
+
+    /**
+     * Tabs of a tool that no longer exists can't run, close them
+     */
+    sessionStore.sessions
+      .filter((session) => removedAppletIds.includes(session.appletId))
+      .forEach((session) => { void sessionStore.closeSession(session) })
+  }
+
+  /**
+   * Read the extensions folder again and refresh everything listing tools
+   */
+  async reloadExtensions() {
+    await this.loadExtensions()
+    this.buildApplets()
+    toolSidebarService.setupItems()
+    commandbarService.setupItems()
   }
 
   /**

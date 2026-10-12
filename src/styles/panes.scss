@@ -35,6 +35,8 @@ $field-components: (
   ".TextOutput",
   ".ColorOutput",
   ".ColorPalleteOutput",
+  ".ExtensionComponentFrame",
+  ".ExtensionComponentMissing",
 );
 
 // Fields with no separate label row (the label lives inside the control).
@@ -222,6 +224,23 @@ body {
 
   .ColorPalleteOutput .ColorPalleteOutput-content {
     padding: 12px;
+  }
+
+  // Extension components draw their own body, the card is the frame
+  .ExtensionComponentFrame .ExtensionComponentFrame-body,
+  .ExtensionComponentMissing .ExtensionComponentMissing-body {
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+
+    &:hover,
+    &:focus-within {
+      border: 0;
+    }
+  }
+
+  .ExtensionComponentMissing .ExtensionComponentMissing-body {
+    padding: 14px 16px;
   }
 
   // ── Headless fields ────────────────────────────────────────────────────────

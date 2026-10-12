@@ -1,6 +1,7 @@
 import Fuse from "fuse.js"
 import { makeAutoObservable, observable, reaction } from "mobx"
 
+import { extensionsApplet } from "src/applets/pages/extensions-applet"
 import { historyApplet } from "src/applets/pages/history-applet"
 import { settingsApplet } from "src/applets/pages/settings-applet"
 import { type Session } from "src/types/Session.ts"
@@ -10,6 +11,7 @@ import { getSessionDisplayName } from "src/utils/get-session-display-name.ts"
 
 import { activeAppletStore } from "./active-applet-store.ts"
 import { appletStore } from "./applet-store.js"
+import { extensionsPageStore } from "./extensions-page-store.ts"
 import { interfaceStore } from "./interface-store.ts"
 import { sessionHistoryStore } from "./session-history-store.ts"
 import { sessionStore } from "./session-store.ts"
@@ -291,6 +293,24 @@ class CommandbarService {
         key: "cmd:open-settings",
         label: "Open Settings",
         run: () => { sessionStore.findOrCreateSession(settingsApplet) }
+      },
+      {
+        key: "cmd:open-extensions",
+        label: "Open Extensions",
+        run: () => { sessionStore.findOrCreateSession(extensionsApplet) }
+      },
+      {
+        key: "cmd:browse-extensions",
+        label: "Open Extensions: Browse",
+        run: () => {
+          extensionsPageStore.openTab("browse")
+          sessionStore.findOrCreateSession(extensionsApplet)
+        }
+      },
+      {
+        key: "cmd:reload-extensions",
+        label: "Reload Extensions",
+        run: () => { void appletStore.reloadExtensions() }
       }
     ]
   }

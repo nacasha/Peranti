@@ -27,5 +27,10 @@ export enum UserSettingsKeys {
   tabbarEnableMultipleSession = "tabbar.enableMultipleSession",
   tabbarGroupTabsByTool = "tabbar.groupTabsByTool",
   tabbarShowGroupTabsButton = "tabbar.showGroupTabsButton",
-  tabbarShowAddTabButton = "tabbar.showAddTabButton"
+  tabbarShowAddTabButton = "tabbar.showAddTabButton",
+
+  // Extensions
+  extensionsDisabled = "extensions.disabled",
+  extensionsCatalogSources = "extensions.catalogSources",
+  extensionsDisabledCatalogSources = "extensions.disabledCatalogSources"
 }

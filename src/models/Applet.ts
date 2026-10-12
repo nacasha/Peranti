@@ -9,7 +9,6 @@ import { StorageKeys } from "src/constants/storage-keys"
 import { AppletType } from "src/enums/applet-type"
 import { appletComponentService } from "src/services/applet-component-service"
 import { appletStore } from "src/services/applet-store"
-import { rustInvokerService } from "src/services/rust-invoker-service"
 import { sessionStore } from "src/services/session-store"
 import { StorageManager } from "src/services/storage-manager"
 import { type AppletActionParams } from "src/types/AppletAction"
@@ -25,6 +24,7 @@ import { type HistoryBlob, type SessionHistorySnapshot, type SessionHistoryValue
 import { extractBinaryValues } from "src/utils/extract-binary-values"
 import { generateRandomString } from "src/utils/generate-random-string"
 import { isLargeText } from "src/utils/is-large-text"
+import { runExtension } from "src/utils/run-extension"
 
 import { type AppletConstructor } from "./AppletConstructor.js"
 
@@ -932,23 +932,21 @@ export class Applet<
     if (this.metadata) {
       this.setIsActionRunning(true)
 
-      const { actionFile, dependencies } = this.metadata
+      // One error toast per session, replaced while the user keeps typing
+      const errorToastId = `applet-error-${this.sessionId}`
 
       try {
-        const extensionResult = await rustInvokerService.runExtension({
-          builtin: dependencies.builtin,
-          external: dependencies.external,
-          file: actionFile,
-          input: this.inputValues
-        })
+        const extensionResult = await runExtension(this.metadata, toJS(this.inputValues))
 
+        toast.dismiss(errorToastId)
         this.setOutputValues(extensionResult)
-      } catch (exception) {
-        console.error(exception)
-        toast.error(`Failed to run ${this.name} extension`)
-      }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
 
-      this.setIsActionRunning(false)
+        toast.error(`${this.name}: ${message}`, { id: errorToastId })
+      } finally {
+        this.setIsActionRunning(false)
+      }
     }
   }
 

@@ -35,6 +35,7 @@ import { ReactOutput } from "src/components/outputs/ReactOutput"
 import { TextAreaOutput } from "src/components/outputs/TextAreaOutput-2"
 import { TextOutput } from "src/components/outputs/TextOutput"
 import { AppletComponent } from "src/models/AppletComponent.js"
+import { ExtensionsPage } from "src/pages/ExtensionsPage"
 import { HistoryPage } from "src/pages/HistoryPage"
 import { PipelineEditor } from "src/pages/PipelineEditorPage"
 import { SettingsPage } from "src/pages/SettingsPage"
@@ -42,6 +43,7 @@ import { convertCRLFtoLF } from "src/utils/convert-crlf-to-lf.js"
 import { createFileFromUint32Array } from "src/utils/create-file-from-uint32-array.js"
 import { getFileNameFromPath } from "src/utils/get-file-name-from-path.js"
 
+import { extensionComponentRegistry } from "./extension-component-registry.tsx"
 import { fileService } from "./file-service.js"
 
 class AppletComponentService {
@@ -131,6 +133,11 @@ class AppletComponentService {
 
     History: new AppletComponent({
       component: HistoryPage,
+      hideInHistory: true
+    }),
+
+    Extensions: new AppletComponent({
+      component: ExtensionsPage,
       hideInHistory: true
     }),
 
@@ -262,7 +269,12 @@ class AppletComponentService {
    * @param isBatchComponent
    * @returns
    */
-  getInputComponent(componentName: keyof typeof this.inputs, isBatchComponent: boolean = false) {
+  getInputComponent(componentName: keyof typeof this.inputs, isBatchComponent: boolean = false): AppletComponent {
+    // Extension components have no batch variant
+    if (extensionComponentRegistry.isExtensionComponent(componentName)) {
+      return extensionComponentRegistry.getInput(componentName)
+    }
+
     const inputComponent = this.inputs[componentName]
     if (isBatchComponent) {
       const inputComponentBatch = this.inputs[inputComponent.batchComponent as keyof typeof this.inputs]
@@ -281,7 +293,11 @@ class AppletComponentService {
    * @param isBatchComponent
    * @returns
    */
-  getOutputComponent(componentName: keyof typeof this.outputs, isBatchComponent: boolean = false) {
+  getOutputComponent(componentName: keyof typeof this.outputs, isBatchComponent: boolean = false): AppletComponent {
+    if (extensionComponentRegistry.isExtensionComponent(componentName)) {
+      return extensionComponentRegistry.getOutput(componentName)
+    }
+
     const outputComponent = this.outputs[componentName]
     if (isBatchComponent) {
       const outputComponentBatch = this.outputs[outputComponent.batchComponent as keyof typeof this.outputs]

@@ -1,0 +1,1121 @@
+// One card filling the area, same frame as SettingsPage and HistoryPage: a
+// header bar with the tabs, then a list beside the picked extension's details
+.ExtensionsPage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.ExtensionsPage-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: var(--card-header-height);
+  flex: none;
+  padding: 0 10px 0 16px;
+  border-bottom: 1px solid var(--line);
+  user-select: none;
+
+  .ExtensionsPage-title {
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.ExtensionsPage-tabs {
+  display: flex;
+  gap: 2px;
+
+  .ExtensionsPage-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    cursor: pointer;
+    transition: background-color var(--animation-speed), color var(--animation-speed);
+
+    &:hover {
+      background: var(--hover);
+      color: var(--text-color);
+    }
+
+    &.active {
+      background: var(--raised);
+      color: var(--text-color);
+      font-weight: var(--font-weight-medium);
+    }
+  }
+
+  .ExtensionsPage-count {
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--hover);
+    font-size: var(--font-size-xs);
+    color: var(--muted);
+
+    &.is-update {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+  }
+}
+
+.ExtensionsPage-actions {
+  display: flex;
+  gap: 3px;
+  margin-left: auto;
+}
+
+.ExtensionsPage-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Split: list pane | details pane
+// ---------------------------------------------------------------------------
+
+.ExtensionsPage-split {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.ExtensionsPage-listPane {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: clamp(240px, 32%, 340px);
+  border-right: 1px solid var(--line);
+}
+
+.ExtensionsPage-detailsPane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.ExtensionsPage-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: none;
+  padding: 10px 10px 6px;
+}
+
+// The area takes no height from its content, so only it scrolls and the card
+// keeps the window's height (same trick as SettingsPage)
+.ExtensionsPage-scrollArea {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.ExtensionsPage-scroll {
+  position: absolute;
+  inset: 0;
+}
+
+// The main panel turns every nested `.simplebar-content` into a flex row
+// (AppletViewer.scss). Scoped under `body` to outrank that selector.
+body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
+  display: block;
+}
+
+.ExtensionsPage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 4px 6px 10px;
+}
+
+.ExtensionsPage-listEmpty {
+  padding: 24px 12px;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.ExtensionsPage-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--raised);
+  color: var(--muted);
+
+  &:focus-within {
+    border-color: var(--accent);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text-color);
+    font: inherit;
+  }
+}
+
+// A source that failed to load: soft danger card, message clamped to 2 lines
+.CatalogSourceErrorNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 9px 10px;
+  border: 1px solid color-mix(in srgb, var(--danger-color) 22%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--danger-color) 7%, transparent);
+
+  .CatalogSourceErrorNotice-icon {
+    flex: none;
+    margin-top: 2px;
+    color: var(--danger-color);
+  }
+
+  .CatalogSourceErrorNotice-main {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .CatalogSourceErrorNotice-title {
+    font-size: 12.5px;
+    color: var(--text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    strong {
+      font-weight: var(--font-weight-medium);
+    }
+  }
+
+  .CatalogSourceErrorNotice-message {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: var(--font-size-xs);
+    line-height: 1.45;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  .CatalogSourceErrorNotice-actions {
+    display: flex;
+    gap: 2px;
+    margin: 3px 0 0 -6px;
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      height: 22px;
+      padding: 0 6px;
+      border: 0;
+      border-radius: var(--radius-sm, 4px);
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      transition: background-color var(--animation-speed), color var(--animation-speed);
+
+      &:hover:not(:disabled) {
+        background: color-mix(in srgb, var(--danger-color) 10%, transparent);
+        color: var(--text-color);
+      }
+
+      &:disabled {
+        cursor: default;
+        opacity: 0.6;
+      }
+    }
+  }
+}
+
+.ExtensionsPage-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  min-height: 100%;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--muted);
+
+  svg {
+    margin-bottom: 4px;
+    color: var(--faint);
+  }
+
+  .ExtensionsPage-placeholder-title {
+    font-weight: var(--font-weight-medium);
+    color: var(--text-color);
+  }
+
+  .ExtensionsPage-placeholder-description {
+    max-width: 420px;
+    font-size: var(--font-size-sm);
+    margin-bottom: 10px;
+    overflow-wrap: anywhere;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// List row: flat, no card, highlighted when picked
+// ---------------------------------------------------------------------------
+
+.ExtensionListItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-color);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--animation-speed);
+
+  &:hover {
+    background: var(--hover);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  &.is-selected {
+    background: var(--accent-soft);
+  }
+
+  &.is-dimmed:not(.is-selected) {
+    .ExtensionListItem-main {
+      opacity: 0.55;
+    }
+  }
+
+  // Placeholder row while the catalog loads
+  &.is-skeleton {
+    height: 58px;
+    cursor: default;
+    background: linear-gradient(90deg, transparent, var(--hover), transparent);
+    background-size: 200% 100%;
+    animation: ExtensionListItem-skeleton 1.4s ease-in-out infinite;
+  }
+
+  .ExtensionListItem-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ExtensionListItem-title {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .ExtensionListItem-name {
+    font-weight: var(--font-weight-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ExtensionListItem-version {
+    flex: none;
+    font-size: var(--font-size-xs);
+    color: var(--faint);
+  }
+
+  .ExtensionListItem-tag {
+    flex: none;
+    margin-left: auto;
+    padding: 0 6px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    line-height: 16px;
+
+    &.is-accent {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    &.is-danger {
+      background: color-mix(in srgb, var(--danger-color) 14%, transparent);
+      color: var(--danger-color);
+    }
+
+    &.is-muted {
+      background: var(--hover);
+      color: var(--muted);
+    }
+  }
+
+  .ExtensionListItem-description,
+  .ExtensionListItem-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ExtensionListItem-description {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  .ExtensionListItem-footer {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    margin-top: 2px;
+  }
+
+  .ExtensionListItem-provides {
+    flex: none;
+    padding: 0 6px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 10.5px;
+    line-height: 15px;
+    color: var(--muted);
+  }
+
+  .ExtensionListItem-meta {
+    min-width: 0;
+    font-size: var(--font-size-xs);
+    color: var(--faint);
+
+    &:empty {
+      display: none;
+    }
+  }
+}
+
+@keyframes ExtensionListItem-skeleton {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+// ---------------------------------------------------------------------------
+// Details pane: fills the width, a hero header, then overview and a details
+// column side by side once the pane is wide enough
+// ---------------------------------------------------------------------------
+
+.ExtensionsPage-detailsPane {
+  container: extension-details / inline-size;
+}
+
+.ExtensionDetails {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  code {
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+  }
+}
+
+.ExtensionDetails-hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 28px 32px 24px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  isolation: isolate;
+
+  // Dot grid behind the header, strongest at the top right and fading out
+  // before it reaches the name and actions
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--accent) 45%, var(--text-color)) 1px,
+      transparent 1.4px
+    );
+    background-size: 14px 14px;
+    background-position: 7px 7px;
+    opacity: 0.22;
+    mask-image: radial-gradient(ellipse 70% 120% at 100% 0%, #000 0%, rgba(0, 0, 0, 0.35) 55%, transparent 85%);
+  }
+}
+
+// Overview | Files, underlined like the page's own tabs would be in a doc
+.ExtensionDetails-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--line);
+  margin-top: -1px;
+
+  .ExtensionDetails-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 38px;
+    padding: 0 8px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color var(--animation-speed), border-color var(--animation-speed);
+
+    &:hover {
+      color: var(--text-color);
+    }
+
+    &.active {
+      border-bottom-color: var(--accent);
+      color: var(--text-color);
+      font-weight: var(--font-weight-medium);
+    }
+  }
+
+  .ExtensionDetails-tab-count {
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--hover);
+    font-size: 10.5px;
+    font-weight: normal;
+    color: var(--muted);
+  }
+}
+
+// Files tab takes the pane's full height, header on top, explorer below
+.ExtensionDetails.is-fill {
+  flex: 1;
+  min-height: 0;
+
+  .ExtensionDetails-hero,
+  .ExtensionDetails-tabs {
+    flex: none;
+  }
+}
+
+.ExtensionDetails-filesPane {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  padding: 16px 24px 20px;
+}
+
+// Files tab: file list | code viewer, each scrolling on its own
+.ExtensionFiles {
+  --files-line: color-mix(in srgb, var(--line) 55%, transparent);
+
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid var(--files-line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.ExtensionFiles-list {
+  flex: none;
+  width: clamp(160px, 30%, 240px);
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border-right: 1px solid var(--files-line);
+  overflow-y: auto;
+
+  // Nested folder contents, indented by the item padding
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.ExtensionFiles-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--radius-sm, 4px);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  cursor: pointer;
+
+  svg {
+    flex: none;
+    color: var(--faint);
+  }
+
+  &:hover {
+    background: var(--hover);
+    color: var(--text-color);
+  }
+
+  // Folder names in the UI font, files stay monospaced
+  &.is-folder .ExtensionFiles-item-name {
+    font-family: inherit;
+    font-size: 12.5px;
+    color: var(--text-color);
+  }
+
+  &.is-selected {
+    background: var(--accent-soft);
+    color: var(--text-color);
+
+    svg {
+      color: var(--accent);
+    }
+  }
+
+  .ExtensionFiles-item-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+  }
+
+  .ExtensionFiles-item-size {
+    flex: none;
+    font-size: 10.5px;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.ExtensionFiles-viewer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.ExtensionFiles-viewer-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  height: 36px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--files-line);
+
+  code {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ExtensionFiles-viewer-size {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--faint);
+  }
+}
+
+.ExtensionFiles-viewer-body {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+
+  // The viewer already has the frame
+  .CodeMirrorContainer {
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+}
+
+.ExtensionFiles-message,
+.ExtensionFiles-empty {
+  margin: auto;
+  padding: 24px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--muted);
+
+  &.is-error {
+    color: var(--danger-color);
+    overflow-wrap: anywhere;
+  }
+}
+
+.ExtensionDetails-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ExtensionDetails-title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+
+  .ExtensionDetails-name {
+    margin: 0;
+    font-size: 22px;
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    overflow-wrap: anywhere;
+  }
+
+  .ExtensionDetails-version {
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+    color: var(--faint);
+  }
+}
+
+.ExtensionDetails-byline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  .ExtensionDetails-author {
+    margin-right: 4px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+}
+
+.ExtensionDetails-chip {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  height: 20px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+
+  // What the extension provides, set apart from runtime and category
+  &.is-provides {
+    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+}
+
+.ExtensionDetails-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.ExtensionDetails-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  margin-left: 4px;
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+// Overview and details stack on a narrow pane
+.ExtensionDetails-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
+  padding: 24px 32px 40px;
+}
+
+@container extension-details (min-width: 760px) {
+  .ExtensionDetails-body {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 40px;
+  }
+
+  .ExtensionDetails-aside {
+    position: sticky;
+    top: 24px;
+    align-self: start;
+  }
+}
+
+.ExtensionDetails-main {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
+
+.ExtensionDetails-aside {
+  min-width: 0;
+}
+
+.ExtensionDetails-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+
+  .ExtensionDetails-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--faint);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ExtensionDetails-section-aside {
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--hover);
+    font-size: 10.5px;
+    letter-spacing: 0;
+    color: var(--muted);
+  }
+}
+
+.ExtensionDetails-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+
+  svg {
+    flex: none;
+    margin-top: 2px;
+  }
+
+  .ExtensionDetails-notice-title {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .ExtensionDetails-notice-body {
+    color: var(--muted);
+  }
+
+  &.is-danger {
+    border-color: color-mix(in srgb, var(--danger-color) 25%, transparent);
+    background: color-mix(in srgb, var(--danger-color) 8%, transparent);
+
+    svg,
+    .ExtensionDetails-notice-title {
+      color: var(--danger-color);
+    }
+  }
+
+  &.is-warning {
+    border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+    background: color-mix(in srgb, var(--accent) 6%, transparent);
+
+    svg {
+      color: var(--accent);
+    }
+  }
+}
+
+.ExtensionDetails-description {
+  margin: 0;
+  max-width: 68ch;
+  font-size: 13.5px;
+  line-height: 1.65;
+
+  &.is-empty {
+    color: var(--faint);
+    font-style: italic;
+  }
+}
+
+// Label above value, reads well in a narrow column
+.ExtensionDetails-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+
+  .ExtensionDetails-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  dt {
+    font-size: 11.5px;
+    color: var(--faint);
+  }
+
+  dd {
+    margin: 0;
+    min-width: 0;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+
+  .ExtensionDetails-path {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font-family: var(--font-family-mono);
+    font-size: 11.5px;
+    text-align: left;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+  }
+}
+
+// Tools and Components tabs, same padding as Overview
+.ExtensionDetails-tabBody {
+  padding: 24px 32px 40px;
+}
+
+// Overview's list of what the extension provides: names only
+.ExtensionProvides {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  border-radius: var(--radius-md);
+}
+
+.ExtensionProvides-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 12px;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  }
+
+  .ExtensionProvides-icon {
+    flex: none;
+    color: var(--faint);
+  }
+
+  .ExtensionProvides-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ExtensionProvides-name {
+    font-size: 13px;
+    font-weight: var(--font-weight-medium);
+  }
+
+  .ExtensionProvides-description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    color: var(--muted);
+  }
+}
+
+// Tools of a package: one block each, its fields below a header
+.ExtensionTools {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ExtensionTools-item {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  border-radius: var(--radius-md);
+}
+
+.ExtensionTools-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ExtensionTools-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ExtensionTools-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .ExtensionTools-name {
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+.ExtensionTools-description {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.ExtensionTools-runs {
+  font-size: 11.5px;
+  color: var(--faint);
+  overflow-wrap: anywhere;
+}
+
+// Inputs, outputs and files: a bordered table, scrolls sideways on a narrow pane
+.ExtensionDetails-tableWrap {
+  // Softer than --line, the table sits inside a section that already has a rule
+  --table-line: color-mix(in srgb, var(--line) 55%, transparent);
+
+  overflow-x: auto;
+  border: 1px solid var(--table-line);
+  border-radius: var(--radius-md);
+}
+
+.ExtensionDetails-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+
+  th,
+  td {
+    padding: 7px 12px;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+
+    &.is-numeric {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  // First column takes the spare width
+  th:first-child,
+  td:first-child {
+    width: 100%;
+  }
+
+  th {
+    border-bottom: 1px solid var(--table-line);
+    font-size: 11px;
+    font-weight: var(--font-weight-medium);
+    color: var(--faint);
+  }
+
+  tbody tr {
+    transition: background-color var(--animation-speed);
+
+    &:not(:last-child) td {
+      border-bottom: 1px solid var(--table-line);
+    }
+
+    &:hover {
+      background: var(--hover);
+    }
+  }
+
+  .ExtensionDetails-table-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    svg {
+      flex: none;
+      color: var(--faint);
+    }
+  }
+
+  .ExtensionDetails-table-muted {
+    color: var(--faint);
+  }
+
+  // Longer text in a cell, such as a description
+  .ExtensionDetails-table-wrap {
+    max-width: 360px;
+    white-space: normal;
+  }
+}

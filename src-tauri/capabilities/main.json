@@ -47,27 +47,32 @@
       "allow": [{ "path": "$APPDATA" }, { "path": "$APPDATA/**" }]
     },
     "fs:default",
-    "fs:allow-exists",
-    "fs:allow-stat",
     "fs:allow-mkdir",
-    "fs:allow-read-dir",
-    "fs:allow-read-file",
-    "fs:allow-read-text-file",
+
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [{ "path": "$HOME" }, { "path": "$HOME/**" }]
+    },
+    {
+      "identifier": "fs:allow-stat",
+      "allow": [{ "path": "$HOME" }, { "path": "$HOME/**" }]
+    },
+    {
+      "identifier": "fs:allow-read-dir",
+      "allow": [{ "path": "$HOME" }, { "path": "$HOME/**" }]
+    },
+    {
+      "identifier": "fs:allow-read-file",
+      "allow": [{ "path": "$HOME" }, { "path": "$HOME/**" }]
+    },
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [{ "path": "$HOME" }, { "path": "$HOME/**" }]
+    },
     "fs:allow-write-file",
     "fs:allow-write-text-file",
     "fs:write-all",
-    "fs:write-files",
-
-    {
-      "identifier": "shell:allow-execute",
-      "allow": [
-        {
-          "name": "run-extension",
-          "cmd": "node",
-          "args": ["extensions-runner/runner.js", { "validator": "\\S+" }]
-        }
-      ]
-    }
+    "fs:write-files"
   ],
   "platforms": [
     "linux",

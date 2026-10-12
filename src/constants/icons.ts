@@ -18,6 +18,7 @@ import {
   ChevronUp,
   ClipboardCheck,
   ClipboardPaste,
+  Compass,
   Copy,
   CopyX,
   Database,
@@ -67,6 +68,7 @@ import {
   Sun,
   TextWrap,
   Trash,
+  TriangleAlert,
   Type,
   Upload,
   WholeWord,
@@ -102,6 +104,7 @@ export const Icons = {
   ThemeDark: Moon,
   ThemeLight: Sun,
   Folder,
+  FolderOpen,
   Extensions: Blocks,
   PanelBottom,
   Check,
@@ -162,6 +165,8 @@ export const Icons = {
   AddOutput: ArrowRightFromLine,
   ExpandAll: ChevronsUpDown,
   CollapseAll: ChevronsDownUp,
+  Browse: Compass,
+  Warning: TriangleAlert,
 
   // Editor find & replace
   ArrowUp,

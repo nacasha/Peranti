@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod extension_process;
 mod history;
 
 use opener::reveal;
@@ -69,6 +70,7 @@ fn main() {
             greet,
             my_custom_command,
             reveal_file_manager,
+            extension_process::run_extension_process,
             history::history_add,
             history::history_list,
             history::history_get,

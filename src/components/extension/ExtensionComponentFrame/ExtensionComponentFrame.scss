@@ -1,0 +1,30 @@
+// Same frame as the built-in fields: a label, then a bordered card
+.ExtensionComponentFrame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  .ExtensionComponentFrame-body {
+    overflow: hidden;
+    border: 1px solid var(--input-output-border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--input-output-background-color);
+    transition: border-color var(--animation-speed);
+
+    &:hover {
+      border-color: var(--input-output-border-color-hover);
+    }
+
+    &:focus-within {
+      border-color: var(--input-output-border-color-active);
+    }
+  }
+
+  iframe {
+    display: block;
+    width: 100%;
+    border: 0;
+    background: transparent;
+  }
+}
