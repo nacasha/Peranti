@@ -18,6 +18,7 @@ export const compareListTool = new AppletConstructor<InputFields, OutputFields>(
   fileExtensions: ["txt", "csv"],
   name: "Compare List",
   category: "List",
+  description: "Compare two lists and see what is only in one, or in both",
   layoutSetting: {
     areaType: "flex",
     areaFlexDirection: "vertical",

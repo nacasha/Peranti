@@ -17,6 +17,7 @@ export const mathEvaluatorTool = new AppletConstructor<InputFields, OutputFields
   fileExtensions: ["txt"],
   name: "Math Evaluator",
   category: "Math",
+  description: "Evaluate math expressions, one per line",
   inputFields: [
     {
       key: "input",

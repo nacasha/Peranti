@@ -18,6 +18,7 @@ export const textEscapeUnescapeTool = new AppletConstructor<InputFields, OutputF
   fileExtensions: ["txt"],
   name: "Text Escape / Unescape",
   category: "Text",
+  description: "Escape special characters in text, or unescape them back",
   inputFields: [
     {
       key: "type",

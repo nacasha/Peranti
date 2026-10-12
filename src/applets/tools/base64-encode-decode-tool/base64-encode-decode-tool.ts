@@ -16,6 +16,7 @@ export const base64EncodeDecodeTool = new AppletConstructor<InputFields, OutputF
   fileExtensions: ["txt"],
   name: "Base64 Encode Decode",
   category: "Encode / Decode",
+  description: "Encode text to Base64, or decode Base64 back to text",
   inputFields: [
     {
       key: "type",

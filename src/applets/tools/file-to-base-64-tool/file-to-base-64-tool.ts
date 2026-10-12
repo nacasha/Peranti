@@ -21,6 +21,7 @@ export const fileToBase64Tool = new AppletConstructor<InputFields, OutputFields>
   appletId: "file-to-base64-encode",
   name: "File to Base64",
   category: "File",
+  description: "Encode a file to a Base64 string",
   layoutSetting: {
     areaType: "grid",
     areaGridTemplate: "'input' min-content 'output' 1fr"

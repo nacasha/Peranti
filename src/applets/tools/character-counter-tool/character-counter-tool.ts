@@ -15,6 +15,7 @@ export const characterCounterTool = new AppletConstructor<InputFields, OutputFie
   fileExtensions: ["txt", "md"],
   name: "Text Counter",
   category: "Text",
+  description: "Count the characters, words and paragraphs in a text",
   layoutSetting: {
     areaType: "grid",
     areaGridTemplate: "'output' min-content 'input' 1fr"

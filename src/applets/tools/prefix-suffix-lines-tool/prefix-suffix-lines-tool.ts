@@ -17,6 +17,7 @@ export const prefixSuffixLines = new AppletConstructor<InputFields, OutputFields
   fileExtensions: ["txt", "csv"],
   name: "Prefix Suffix Lines",
   category: "List",
+  description: "Add a prefix and a suffix to every line",
   inputFields: [
     {
       key: "prefix",

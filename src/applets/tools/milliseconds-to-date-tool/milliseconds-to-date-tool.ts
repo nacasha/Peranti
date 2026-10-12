@@ -27,6 +27,7 @@ export const millisecondsToDate = new AppletConstructor<InputFields, OutputField
   appletId: "milliseconds-to-date",
   name: "Milliseconds To Date",
   category: "Date Time",
+  description: "Convert a timestamp in milliseconds to readable date formats",
   layoutSetting: {
     areaType: "grid",
     areaGridTemplate: "'input' min-content 'output' min-content"

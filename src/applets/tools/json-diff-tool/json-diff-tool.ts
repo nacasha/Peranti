@@ -18,6 +18,7 @@ export const jsonDiffTool = new AppletConstructor<InputFields, OutputFields>({
   fileExtensions: ["json"],
   name: "JSON Compare Diff",
   category: "JSON",
+  description: "Compare two JSON documents and highlight their differences",
   layoutSetting: {
     areaType: "grid",
     areaGridTemplate: "'input output' 1fr / 1.5fr 2fr"

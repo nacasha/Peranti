@@ -7,6 +7,7 @@ export const cronReadableTool = new AppletConstructor({
   appletId: "cron-parser",
   name: "CRON Parser",
   category: "Date Time",
+  description: "Explain a CRON expression in plain words and list its next schedules",
   layoutSetting: {
     areaType: "grid",
     areaGridTemplate: "'input' min-content 'output' auto"

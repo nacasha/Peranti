@@ -17,6 +17,7 @@ export const loremIpsumGeneratorTool = new AppletConstructor<InputFields, Output
   appletId: "lorem-ipsum-generator",
   name: "Lorem Ipsum Generator",
   category: "Generator",
+  description: "Generate Lorem Ipsum placeholder text",
   layoutSetting: {
     areaType: "grid",
     areaGridTemplate: "'input' min-content 'output' 1fr"

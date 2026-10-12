@@ -15,6 +15,7 @@ export const sortList = new AppletConstructor<InputFields, OutputFields>({
   fileExtensions: ["txt", "csv"],
   name: "Sort List",
   category: "List",
+  description: "Sort the lines of a list",
   inputFields: [
     {
       key: "input",

@@ -18,6 +18,7 @@ export const generateUuidTool = new AppletConstructor<InputFields, OutputFields>
   appletId: "generate-uuid",
   name: "Generate UUID",
   category: "Generator",
+  description: "Generate one or many v1 or v4 UUIDs",
   layoutSetting: {
     areaType: "grid",
     areaGridTemplate: "'input' min-content 'output' 1fr"

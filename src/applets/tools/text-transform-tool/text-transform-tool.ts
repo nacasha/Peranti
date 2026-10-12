@@ -16,6 +16,7 @@ export const textTransformTool = new AppletConstructor<InputFields, OutputFields
   fileExtensions: ["txt"],
   name: "Text Case Transform",
   category: "Text",
+  description: "Change text to lowercase, UPPERCASE, Title Case, camelCase, snake_case and more",
   inputFields: [
     {
       key: "type",

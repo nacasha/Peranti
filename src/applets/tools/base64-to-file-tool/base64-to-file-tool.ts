@@ -14,6 +14,7 @@ export const base64ToFileTool = new AppletConstructor<InputFields, OutputFields>
   appletId: "base64-to-file",
   name: "Base64 To File",
   category: "File",
+  description: "Turn a Base64 string back into a file you can save",
   inputFields: [
     {
       key: "input",

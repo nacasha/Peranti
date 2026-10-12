@@ -15,6 +15,7 @@ export const markdownParserTool = new AppletConstructor<InputFields, OutputField
   fileExtensions: ["md", "markdown"],
   name: "Markdown Editor",
   category: "Editor",
+  description: "Write Markdown and see it rendered as you type",
   inputFields: [
     {
       key: "markdown",

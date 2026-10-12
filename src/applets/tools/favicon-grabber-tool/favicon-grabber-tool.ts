@@ -22,6 +22,7 @@ export const faviconGrabberTool = new AppletConstructor<InputFields, OutputField
   appletId: "favicon-grabber-tool",
   name: "Favicon Grabber",
   category: "Image",
+  description: "Get the favicon of a website from its URL",
   autoRun: false,
   layoutSetting: {
     areaType: "grid",

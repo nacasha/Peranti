@@ -15,6 +15,7 @@ export const removeDuplicateList = new AppletConstructor<InputFields, OutputFiel
   fileExtensions: ["txt", "csv"],
   name: "Remove Duplicate List",
   category: "List",
+  description: "Remove duplicate lines from a list",
   inputFields: [
     {
       key: "input",

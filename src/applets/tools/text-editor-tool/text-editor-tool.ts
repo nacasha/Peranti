@@ -10,6 +10,7 @@ export const textEditorTool = new AppletConstructor<InputFields>({
   fileExtensions: ["txt", "log", "md"],
   name: "Text Editor",
   category: "Editor",
+  description: "A plain text editor for notes and scratch text",
   inputFields: [
     {
       key: "input",

@@ -16,6 +16,7 @@ export const uriEncodeDecodeTool = new AppletConstructor<InputFields, OutputFiel
   fileExtensions: ["txt"],
   name: "URI Encode Decode",
   category: "Encode / Decode",
+  description: "Encode text for use in a URL, or decode it back",
   inputFields: [
     {
       key: "type",

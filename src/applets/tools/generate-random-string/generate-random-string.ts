@@ -21,6 +21,7 @@ export const generateRandomStringTool = new AppletConstructor<InputFields, Outpu
   appletId: "generate-random-string",
   name: "Generate Random String",
   category: "Generator",
+  description: "Generate random strings from letters, numbers and special characters",
   inputFields: [
     {
       key: "count",
