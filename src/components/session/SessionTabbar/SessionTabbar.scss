@@ -104,7 +104,7 @@
   position: relative;
 
   &:hover .SessionTabbar-item-session-icon {
-    opacity: 1;
+    visibility: visible;
   }
 
   // Icon buttons (group tabs, add tab) — 28px ghost squares.
@@ -117,7 +117,7 @@
     transition: background-color var(--animation-speed);
 
     .SessionTabbar-item-session-icon {
-      opacity: 1;
+      visibility: visible;
       padding: 0;
 
       &:hover {
@@ -185,14 +185,44 @@
   }
 }
 
+// While running, the close button slot shows a spinner instead, and swaps back
+// to the close icon on hover. `isActionRunning` is not debounced, so the
+// spinner waits 300ms; quick runs finish before it and the tab doesn't flicker.
+.SessionTabbar-item-session-spinner,
+.SessionTabbar-item-session-close {
+  grid-area: 1 / 1;
+}
+
+.SessionTabbar-item-session-body.running {
+  .SessionTabbar-item-session-icon {
+    animation: SessionTabbar-show 0s 300ms forwards;
+  }
+
+  &:hover .SessionTabbar-item-session-spinner {
+    visibility: hidden;
+  }
+
+  &:not(:hover) .SessionTabbar-item-session-close {
+    visibility: hidden;
+  }
+}
+
+@keyframes SessionTabbar-show {
+  to {
+    visibility: visible;
+  }
+}
+
 .SessionTabbar-item-session-icon {
   display: grid;
   place-items: center;
   width: 18px;
   height: 18px;
   border-radius: calc(5px * var(--radius-scale));
-  opacity: 0;
-  transition: opacity var(--animation-speed), background-color var(--animation-speed);
+  // Shown and hidden with `visibility`, not an opacity fade: in WebKit an
+  // opacity transition here makes text elsewhere on the page flicker.
+  visibility: hidden;
+  transition: background-color var(--animation-speed);
 
   &:hover {
     background-color: var(--hover);
@@ -207,10 +237,6 @@
   &:hover svg {
     color: var(--text-color);
   }
-}
-
-.SessionTabbar-item-session-body.active .SessionTabbar-item-session-icon {
-  opacity: 1;
 }
 
 .SessionTabbar-window-extra-drag {

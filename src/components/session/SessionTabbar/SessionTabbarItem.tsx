@@ -134,7 +134,7 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
       <div
         ref={draggableElementRef}
         key={session.sessionId}
-        className={clsx("SessionTabbar-item-session-body", { active: isActive })}
+        className={clsx("SessionTabbar-item-session-body", { active: isActive, running: isActionRunning })}
         data-session-id={session.sessionId}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
@@ -148,10 +148,37 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
           suppressContentEditableWarning
         >
           {getSessionName()}
-          {isActionRunning ? " ..." : ""}
         </div>
         <div className="SessionTabbar-item-session-icon" onClickCapture={handleCloseTab}>
-          <Icons.Close size={12} aria-label="Close Tab" />
+          {isActionRunning && (
+            /**
+             * Spun with SMIL rather than a CSS transform animation: in WebKit
+             * the CSS one makes text elsewhere on the page flash when it starts
+             */
+            <svg
+              className="SessionTabbar-item-session-spinner"
+              width={12}
+              height={12}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              aria-label="Running"
+            >
+              <path d="M21 12a9 9 0 1 1-6.219-8.56">
+                <animateTransform
+                  attributeName="transform"
+                  type="rotate"
+                  from="0 12 12"
+                  to="360 12 12"
+                  dur="0.8s"
+                  repeatCount="indefinite"
+                />
+              </path>
+            </svg>
+          )}
+          <Icons.Close size={12} className="SessionTabbar-item-session-close" aria-label="Close Tab" />
         </div>
       </div>
     </div>
