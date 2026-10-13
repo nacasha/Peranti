@@ -1,19 +1,20 @@
-import { appDataDir, resolve } from "@tauri-apps/api/path"
+import { resolve } from "@tauri-apps/api/path"
 import { save } from "@tauri-apps/plugin-dialog"
-import { BaseDirectory, readDir, readFile, readTextFile, stat, writeFile } from "@tauri-apps/plugin-fs"
+import { readDir, readFile, readTextFile, stat, writeFile } from "@tauri-apps/plugin-fs"
 import * as base64 from "js-base64"
 
 import { removeBase64Header } from "src/utils/file/base-64"
+import { getPerantiDataDir } from "src/utils/file/get-peranti-data-dir"
 
 import { rustInvokerService } from "./rust-invoker-service.js"
 
 class FileService {
-  async readFileAsText(filePath: string, appData?: boolean) {
-    return await readTextFile(filePath, appData ? { baseDir: BaseDirectory.AppData } : undefined)
+  async readFileAsText(filePath: string) {
+    return await readTextFile(filePath)
   }
 
-  async readFileAsBinary(filePath: string, appData?: boolean) {
-    return await readFile(filePath, appData ? { baseDir: BaseDirectory.AppData } : undefined)
+  async readFileAsBinary(filePath: string) {
+    return await readFile(filePath)
   }
 
   /**
@@ -40,8 +41,7 @@ class FileService {
   }
 
   async resolveFilePathInAppData(...paths: string[]) {
-    const appDataDirPath = await appDataDir()
-    return await resolve(appDataDirPath, ...paths)
+    return await resolve(await getPerantiDataDir(), ...paths)
   }
 
   async saveToImageFile(base64String: string) {
@@ -82,11 +82,7 @@ class FileService {
   }
 
   async readDirectoryInAppData(path: string) {
-    const entries = await readDir(path, {
-      baseDir: BaseDirectory.AppData
-    })
-
-    return entries
+    return await readDir(await this.resolveFilePathInAppData(path))
   }
 }
 

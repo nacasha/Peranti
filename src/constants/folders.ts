@@ -1,4 +1,7 @@
 export const Folders = {
+  /** Where settings, snippets and extensions live, inside the home folder */
+  UserData: ".peranti",
+
   Extensions: "extensions",
 
   /**

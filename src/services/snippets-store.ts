@@ -1,4 +1,4 @@
-import { BaseDirectory, exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs"
+import { exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs"
 import localforage from "localforage"
 import { makeAutoObservable, runInAction } from "mobx"
 
@@ -8,6 +8,7 @@ import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { generateRandomString } from "src/utils/text/generate-random-string"
 
 import { appDataService } from "./app-data-service.js"
+import { fileService } from "./file-service.js"
 
 export interface Snippet extends AppletSample {
   id: string
@@ -18,7 +19,7 @@ export interface Snippet extends AppletSample {
 const BROWSER_STORAGE_KEY = "snippets"
 
 /**
- * User saved snippets (input values), stored in the app data folder
+ * User saved snippets (input values), stored in the ~/.peranti folder
  */
 class SnippetsStore {
   snippets: Snippet[] = []
@@ -54,8 +55,10 @@ class SnippetsStore {
       let loaded: Snippet[] = []
 
       if (isRunningInTauri) {
-        if (await exists(FileNames.Snippets, { baseDir: BaseDirectory.AppData })) {
-          loaded = JSON.parse(await readTextFile(FileNames.Snippets, { baseDir: BaseDirectory.AppData }))
+        const filePath = await fileService.resolveFilePathInAppData(FileNames.Snippets)
+
+        if (await exists(filePath)) {
+          loaded = JSON.parse(await readTextFile(filePath))
         }
       } else {
         loaded = await localforage.getItem<Snippet[]>(BROWSER_STORAGE_KEY) ?? []
@@ -73,7 +76,10 @@ class SnippetsStore {
     try {
       if (isRunningInTauri) {
         await appDataService.prepareAppDataFolder()
-        await writeTextFile(FileNames.Snippets, JSON.stringify(content, undefined, 2), { baseDir: BaseDirectory.AppData })
+        await writeTextFile(
+          await fileService.resolveFilePathInAppData(FileNames.Snippets),
+          JSON.stringify(content, undefined, 2)
+        )
       } else {
         await localforage.setItem(BROWSER_STORAGE_KEY, content)
       }

@@ -44,7 +44,7 @@
 
     {
       "identifier": "fs:scope",
-      "allow": [{ "path": "$APPDATA" }, { "path": "$APPDATA/**" }]
+      "allow": [{ "path": "$HOME/.peranti" }, { "path": "$HOME/.peranti/**" }]
     },
     "fs:default",
     "fs:allow-mkdir",

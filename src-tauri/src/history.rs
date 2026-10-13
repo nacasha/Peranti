@@ -1,4 +1,4 @@
-//! Closed tab history, kept in a SQLite file in the app data folder.
+//! Closed tab history, kept in a SQLite file in the `~/.peranti` folder.
 //!
 //! An entry is split over three tables, so nothing is stored twice:
 //! - `history`: list metadata, and the applet state minus its input and
@@ -79,7 +79,7 @@ pub struct HistoryDb(Mutex<Connection>);
 
 impl HistoryDb {
     pub fn open(app: &AppHandle) -> Result<Self, String> {
-        let dir = app.path().app_data_dir().map_err(to_message)?;
+        let dir = app.path().home_dir().map_err(to_message)?.join(".peranti");
         std::fs::create_dir_all(&dir).map_err(to_message)?;
 
         let conn = Connection::open(dir.join("history.sqlite")).map_err(to_message)?;
