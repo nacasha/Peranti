@@ -295,6 +295,13 @@ class ExtensionsService {
    * @returns
    */
   async getExtensionsAsAppletContructor() {
+    // The browser build has no extensions folder to read
+    if (!isRunningInTauri) {
+      this.setInstalledExtensions([])
+      extensionComponentRegistry.setComponents([])
+      return []
+    }
+
     const extensionEntries = await appDataService.readExtensionsFolder() ?? []
     const extensionsFolderPath = await fileService.resolveFilePathInAppData(Folders.Extensions)
 
