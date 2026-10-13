@@ -1,6 +1,7 @@
 import { memo, type FC } from "react"
 
 import { extensionsApplet } from "src/applets/pages/extensions-applet"
+import { workbenchApplet } from "src/applets/pages/workbench-applet"
 import { ClosedTabsButton } from "src/components/buttons/ClosedTabsButton"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons"
@@ -8,7 +9,7 @@ import { isMacOS } from "src/constants/os"
 import { secondarySidebarService } from "src/services/secondary-sidebar-service"
 import { sessionStore } from "src/services/session-store"
 import { windowManager } from "src/services/window-manager"
-import { isRunningInTauri } from "src/utils/is-running-in-tauri"
+import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 
 import "./WindowControls.scss"
 
@@ -29,6 +30,10 @@ export const WindowControls: FC = memo(() => {
     sessionStore.findOrCreateSession(extensionsApplet)
   }
 
+  const handleClickWorkbench = () => {
+    sessionStore.findOrCreateSession(workbenchApplet)
+  }
+
   const handleClickPanelRight = () => {
     secondarySidebarService.toggle()
   }
@@ -41,6 +46,11 @@ export const WindowControls: FC = memo(() => {
           tooltip="Extensions"
           onClick={handleClickExtensions}
           icon={Icons.Extensions}
+        />
+        <ButtonIcon
+          tooltip="Manage Tools & Components"
+          onClick={handleClickWorkbench}
+          icon={Icons.Manage}
         />
         <ButtonIcon
           tooltip="Toggle Secondary Sidebar"

@@ -12,6 +12,7 @@ import { AppTitleBarStyleSelect } from "src/components/settings/AppTitlebarStyle
 import { CardShadowSelect } from "src/components/settings/CardShadowSelect"
 import { CornerRadiusSelect } from "src/components/settings/CornerRadiusSelect"
 import { SettingsCard, SettingsCardItem } from "src/components/settings/SettingsCard"
+import { SettingsExtensions } from "src/components/settings/SettingsExtensions"
 import { SettingsHistory } from "src/components/settings/SettingsHistory"
 import { SettingsItemInput } from "src/components/settings/SettingsItemInput"
 import { SettingsItemSwitch } from "src/components/settings/SettingsItemSwitch"
@@ -253,6 +254,12 @@ export const SettingsPage: FC = observer(() => {
           </SettingsCardItem>
         </SettingsCard>
       )
+    },
+    {
+      id: "extensions",
+      label: "Extensions",
+      icon: Icons.Extensions,
+      content: <SettingsExtensions />
     },
     {
       id: "history",

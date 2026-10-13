@@ -1,7 +1,7 @@
 import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { generateRandomString } from "src/utils/generate-random-string"
+import { generateRandomString } from "src/utils/text/generate-random-string"
 
 interface InputFields {
   count: InputFieldsType.Text

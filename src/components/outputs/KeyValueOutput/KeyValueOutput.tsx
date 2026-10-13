@@ -4,7 +4,7 @@ import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { Icons } from "src/constants/icons"
 import { ClipboardService } from "src/services/clipboard-service"
 import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
-import { parseKeyValueRows, type KeyValueFields, type KeyValueValues } from "src/utils/parse-key-value-rows"
+import { parseKeyValueRows, type KeyValueFields, type KeyValueValues } from "src/utils/data/parse-key-value-rows"
 
 import "./KeyValueOutput.scss"
 

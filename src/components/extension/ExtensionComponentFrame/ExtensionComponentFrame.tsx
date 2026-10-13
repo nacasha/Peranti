@@ -3,9 +3,10 @@ import { useEffect, useMemo, useRef, useState, type FC } from "react"
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
-import { buildExtensionComponentDocument } from "src/utils/build-extension-component-document"
-import { getExtensionComponentTheme } from "src/utils/get-extension-component-theme"
-import { toPlainJson } from "src/utils/to-plain-json"
+import { type ExtensionComponentDebugEvent } from "src/types/ExtensionComponentDebugEvent"
+import { toPlainJson } from "src/utils/data/to-plain-json"
+import { buildExtensionComponentDocument } from "src/utils/extension/build-extension-component-document"
+import { getExtensionComponentTheme } from "src/utils/extension/get-extension-component-theme"
 
 import "./ExtensionComponentFrame.scss"
 
@@ -31,6 +32,16 @@ interface ExtensionComponentFrameProps {
   onContextMenu?: any
 
   /**
+   * Every message both ways, for the component playground
+   */
+  onDebugEvent?: (event: ExtensionComponentDebugEvent) => void
+
+  /**
+   * Height the frame reports, for the component playground
+   */
+  onHeightChange?: (height: number) => void
+
+  /**
    * The field's "props" from its tool, handed to the component as is
    */
   [prop: string]: unknown
@@ -52,6 +63,8 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
     defaultHeight,
     onValueChange,
     onContextMenu,
+    onDebugEvent,
+    onHeightChange,
     ...fieldProps
   } = props
 
@@ -63,8 +76,8 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   const valueFromFrameRef = useRef<string>()
 
   // Read through refs, the message listener is attached once
-  const latestRef = useRef({ value, readOnly, onValueChange, fieldProps })
-  latestRef.current = { value, readOnly, onValueChange, fieldProps }
+  const latestRef = useRef({ value, readOnly, onValueChange, onDebugEvent, onHeightChange, fieldProps })
+  latestRef.current = { value, readOnly, onValueChange, onDebugEvent, onHeightChange, fieldProps }
 
   const themeName = useSelector(() => interfaceStore.resolvedTheme)
 
@@ -74,7 +87,9 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   // Values come from mobx stores as proxies and props can hold functions,
   // neither can be cloned into the frame
   const post = (message: Record<string, unknown>) => {
-    frameRef.current?.contentWindow?.postMessage(toPlainJson({ source: "peranti-host", ...message }), "*")
+    const plain = toPlainJson({ source: "peranti-host", ...message })
+    frameRef.current?.contentWindow?.postMessage(plain, "*")
+    latestRef.current.onDebugEvent?.({ direction: "out", type: String(message.type), data: plain })
   }
 
   useEffect(() => {
@@ -83,6 +98,8 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
       if (event.source !== frameRef.current?.contentWindow || data?.source !== "peranti-component") {
         return
       }
+
+      latestRef.current.onDebugEvent?.({ direction: "in", type: String(data.type), data })
 
       if (data.type === "ready") {
         isReadyRef.current = true
@@ -99,7 +116,9 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
         valueFromFrameRef.current = JSON.stringify(data.value)
         latestRef.current.onValueChange?.(data.value)
       } else if (data.type === "resize" && typeof data.height === "number") {
-        setHeight(Math.min(Math.max(data.height, 24), MAX_HEIGHT))
+        const nextHeight = Math.min(Math.max(data.height, 24), MAX_HEIGHT)
+        setHeight(nextHeight)
+        latestRef.current.onHeightChange?.(nextHeight)
       }
     }
 

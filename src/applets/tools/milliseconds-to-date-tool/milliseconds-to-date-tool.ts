@@ -5,7 +5,7 @@ import utc from "dayjs/plugin/utc"
 import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { formatShortRelativeTime } from "src/utils/format-short-relative-time"
+import { formatShortRelativeTime } from "src/utils/time/format-short-relative-time"
 
 dayjs.extend(utc)
 dayjs.extend(dayOfYear)

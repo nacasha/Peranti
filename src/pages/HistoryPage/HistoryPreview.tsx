@@ -5,7 +5,7 @@ import { TextHistory } from "src/components/history/TextHistory"
 import { sessionHistoryStore } from "src/services/session-history-store"
 import { type HistoryPreviewField } from "src/types/AppletHistory"
 import { type SessionHistory } from "src/types/SessionHistory"
-import { toPreviewText } from "src/utils/to-preview-text"
+import { toPreviewText } from "src/utils/text/to-preview-text"
 
 interface HistoryPreviewProps {
   history: SessionHistory

@@ -1,22 +1,17 @@
 import { observer } from "mobx-react"
 import { type FC } from "react"
 
-import { Button } from "src/components/common/Button"
-import { PopoverConfirm } from "src/components/common/PopoverConfirm"
-import { Tooltip } from "src/components/common/Tooltip"
-import { Icons } from "src/constants/icons"
 import { ExtensionRuntime } from "src/enums/extension-runtime"
 import { extensionCatalogService } from "src/services/extension-catalog-service"
 import { sessionStore } from "src/services/session-store"
 import { type CatalogExtension } from "src/types/CatalogExtension"
-import { formatFileSize } from "src/utils/format-file-size"
-import { getCatalogEntryTools } from "src/utils/get-catalog-entry-tools"
-import { getExtensionProvidesLabels } from "src/utils/get-extension-provides-labels"
-import { getRuntimeSummary } from "src/utils/get-runtime-summary"
-import { installCatalogExtension } from "src/utils/install-catalog-extension"
-import { isRunningInTauri } from "src/utils/is-running-in-tauri"
+import { openComponentInWorkbench } from "src/utils/component/open-component-in-workbench"
+import { getExtensionProvidesLabels } from "src/utils/extension/get-extension-provides-labels"
+import { getRuntimeSummary } from "src/utils/extension/get-runtime-summary"
+import { formatFileSize } from "src/utils/file/format-file-size"
 
-import { ExtensionComponentsSection } from "./ExtensionComponentsSection.tsx"
+import { CatalogInstallButton } from "./CatalogInstallButton.tsx"
+import { ExtensionComponentsSection, type ExtensionComponentsSectionItem } from "./ExtensionComponentsSection.tsx"
 import { ExtensionDetails, ExtensionDetailsNotice } from "./ExtensionDetails.tsx"
 import { ExtensionFilesExplorer } from "./ExtensionFilesExplorer.tsx"
 import { ExtensionProvidesSection } from "./ExtensionProvidesSection.tsx"
@@ -32,12 +27,11 @@ interface CatalogExtensionDetailsProps {
 export const CatalogExtensionDetails: FC<CatalogExtensionDetailsProps> = observer(({ entry }) => {
   const status = extensionCatalogService.getStatus(entry)
   const installed = extensionCatalogService.getInstalled(entry)
-  const isInstalling = extensionCatalogService.isInstalling(extensionCatalogService.getEntryExtensionId(entry))
   const isUpdate = status === "update-available"
-  const totalBytes = entry.files?.reduce((total, file) => total + file.size, 0)
-  const tools = getCatalogEntryTools(entry)
-  // One tool reads like a tool, several get their own blocks
-  const isPackage = tools.length > 1
+  // GitLab doesn't give sizes, a partial total would be wrong
+  const hasSizes = entry.files.every((file) => file.size !== undefined)
+  const totalBytes = entry.files.reduce((total, file) => total + (file.size ?? 0), 0)
+  const { tools } = entry
 
   // Every program the extension starts, each named once
   const commands = [...new Set(tools
@@ -48,64 +42,6 @@ export const CatalogExtensionDetails: FC<CatalogExtensionDetailsProps> = observe
   // Opening needs the installed copy, which may list other tools after an update
   const canOpen = status === "installed" || isUpdate
   const getInstalledTool = (toolId: string) => installed?.tools.find((tool) => tool.definition.toolId === toolId)
-  const singleInstalledTool = !isPackage && canOpen ? installed?.tools[0] : undefined
-
-  const handleInstall = () => {
-    void installCatalogExtension(entry, isUpdate)
-  }
-
-  /**
-   * Only a new executable asks first, an update keeps the trust already given
-   */
-  const getInstallConfirmation = () => {
-    if (!isExecutable || isUpdate) {
-      return undefined
-    }
-
-    return {
-      title: `Install ${entry.name}?`,
-      description: `This extension runs ${commands.map((command) => `"${command}"`).join(", ")} on your computer. Only install extensions you trust.`,
-      confirmLabel: "Install"
-    }
-  }
-
-  const renderInstallButton = () => {
-    if (!isRunningInTauri) {
-      return (
-        <Tooltip overlay="Installing extensions needs the desktop app">
-          <span><Button icon={Icons.Download} disabled>Install</Button></span>
-        </Tooltip>
-      )
-    }
-
-    if (isInstalling) {
-      return <Button variant="primary" disabled>{isUpdate ? "Updating…" : "Installing…"}</Button>
-    }
-
-    if (status === "installed") {
-      return <Button icon={Icons.Check} disabled>Installed</Button>
-    }
-
-    if (status === "conflict") {
-      return (
-        <Tooltip overlay="A folder added by hand already uses the name this extension installs into">
-          <span><Button disabled>Name Conflict</Button></span>
-        </Tooltip>
-      )
-    }
-
-    return (
-      <PopoverConfirm
-        placement="bottomLeft"
-        confirmation={getInstallConfirmation}
-        onConfirm={handleInstall}
-      >
-        <Button icon={Icons.Download} variant="primary" onClick={handleInstall}>
-          {isUpdate ? `Update to v${entry.version}` : "Install"}
-        </Button>
-      </PopoverConfirm>
-    )
-  }
 
   const toolItems = tools.map((tool) => {
     const installedTool = canOpen ? getInstalledTool(tool.toolId) : undefined
@@ -122,7 +58,17 @@ export const CatalogExtensionDetails: FC<CatalogExtensionDetailsProps> = observe
       onOpen: installedTool && (() => { sessionStore.findOrCreateSession(installedTool.appletConstructor) })
     }
   })
-  const componentItems = entry.components ?? []
+  // The installed copy's component, when there is one to open
+  const componentItems: ExtensionComponentsSectionItem[] = entry.components.map((component) => {
+    const installedComponent = canOpen
+      ? installed?.components.find((item) => item.definition.componentId === component.componentId)
+      : undefined
+
+    return {
+      ...component,
+      onOpen: installedComponent && (() => { openComponentInWorkbench(installedComponent.key) })
+    }
+  })
 
   const runtimeLabel = getRuntimeSummary(tools.map((tool) => tool.runtime))
 
@@ -131,7 +77,7 @@ export const CatalogExtensionDetails: FC<CatalogExtensionDetailsProps> = observe
       name={entry.name}
       version={entry.version}
       author={entry.author}
-      provides={getExtensionProvidesLabels(tools.length, entry.components?.length ?? 0)}
+      provides={getExtensionProvidesLabels(tools.length, entry.components.length)}
       chips={[runtimeLabel, entry.category]}
       notice={isExecutable && (
         <ExtensionDetailsNotice tone="warning" title="Runs a program on your computer">
@@ -143,35 +89,24 @@ export const CatalogExtensionDetails: FC<CatalogExtensionDetailsProps> = observe
       description={entry.description}
       actions={(
         <>
-          {renderInstallButton()}
-          {singleInstalledTool && (
-            <Button
-              icon={Icons.OpenInNewTab}
-              onClick={() => { sessionStore.findOrCreateSession(singleInstalledTool.appletConstructor) }}
-            >
-              Open Tool
-            </Button>
-          )}
+          <CatalogInstallButton entry={entry} />
         </>
       )}
       fields={[
-        !isPackage && { label: "Tool ID", value: <code>{tools[0].toolId}</code> },
         { label: "Extension ID", value: <code>{extensionCatalogService.getEntryExtensionId(entry)}</code> },
-        isPackage && { label: "Tools", value: tools.length },
         { label: "Version", value: entry.version },
         !!installed?.manifest?.version && { label: "Installed", value: `v${installed.manifest.version}` },
         { label: "Runtime", value: runtimeLabel },
-        !isPackage && !!tools[0].command && { label: "Command", value: <code>{tools[0].command}</code> },
         { label: "Category", value: entry.category },
         { label: "Source", value: extensionCatalogService.getSourceLabel(entry.sourceId) },
-        !!entry.files && { label: "Size", value: formatFileSize(totalBytes ?? 0) }
+        hasSizes && { label: "Size", value: formatFileSize(totalBytes ?? 0) }
       ]}
       tabs={[
         {
           id: "tools",
           label: "Tools",
           count: toolItems.length,
-          content: <ExtensionToolsSection tools={toolItems} />
+          content: <ExtensionToolsSection tools={toolItems} components={componentItems} />
         },
         componentItems.length > 0 && {
           id: "components",
@@ -182,12 +117,11 @@ export const CatalogExtensionDetails: FC<CatalogExtensionDetailsProps> = observe
         {
           id: "files",
           label: "Files",
-          count: entry.files?.length,
+          count: entry.files.length,
           isFill: true,
           content: (
             <ExtensionFilesExplorer
               files={entry.files}
-              placeholder="This catalog's index doesn't list files, rebuild it with build-index.mjs"
               readFile={async(file) => await extensionCatalogService.readCatalogFile(entry, file)}
             />
           )

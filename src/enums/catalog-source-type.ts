@@ -8,12 +8,7 @@ export enum CatalogSourceType {
   Gitea = "gitea",
 
   /**
-   * An `index.json` on any static host, files are next to it
-   */
-  Url = "url",
-
-  /**
-   * A folder on this computer, read directly without an `index.json`
+   * A folder on this computer, read in place
    */
   Local = "local",
 }

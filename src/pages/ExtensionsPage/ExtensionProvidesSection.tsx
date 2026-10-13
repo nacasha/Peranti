@@ -26,7 +26,9 @@ export const ExtensionProvidesSection: FC<ExtensionProvidesSectionProps> = ({ to
       <ul className="ExtensionProvides">
         {tools.map((tool) => (
           <li key={`tool:${tool.toolId}`} className="ExtensionProvides-item">
-            <Icons.Extension size={14} aria-hidden className="ExtensionProvides-icon" />
+            <span className="ExtensionIconBadge is-tool" aria-hidden>
+              <Icons.Tool size={15} />
+            </span>
             <div className="ExtensionProvides-text">
               <span className="ExtensionProvides-name">{tool.name}</span>
               {tool.description && <span className="ExtensionProvides-description">{tool.description}</span>}
@@ -40,7 +42,9 @@ export const ExtensionProvidesSection: FC<ExtensionProvidesSectionProps> = ({ to
 
         {components.map((component) => (
           <li key={`component:${component.componentId}`} className="ExtensionProvides-item">
-            <Icons.Browse size={14} aria-hidden className="ExtensionProvides-icon" />
+            <span className="ExtensionIconBadge is-component" aria-hidden>
+              <Icons.Extension size={15} />
+            </span>
             <div className="ExtensionProvides-text">
               <span className="ExtensionProvides-name">{component.name}</span>
               <code className="ExtensionProvides-description">@{component.componentId}</code>

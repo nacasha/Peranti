@@ -1,28 +1,33 @@
 import { homeDir } from "@tauri-apps/api/path"
-import { exists, mkdir, readDir, readFile, readTextFile, remove, rename, stat, writeFile, writeTextFile } from "@tauri-apps/plugin-fs"
+import { exists, mkdir, readDir, readFile, remove, rename, stat, writeFile, writeTextFile } from "@tauri-apps/plugin-fs"
+import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 
 import { ExtensionCatalog } from "src/constants/extension-catalog"
 import { FileNames } from "src/constants/file-names"
 import { Folders } from "src/constants/folders"
+import { StorageKeys } from "src/constants/storage-keys"
 import { CatalogSourceType } from "src/enums/catalog-source-type"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
-import { type CatalogExtension, type CatalogExtensionFile, type CatalogIndex } from "src/types/CatalogExtension"
+import { type CatalogCache } from "src/types/CatalogCache"
+import { type CatalogExtension, type CatalogExtensionFile, type CatalogIndexEntry } from "src/types/CatalogExtension"
 import { type CatalogSource } from "src/types/CatalogSource"
-import { type ExtensionManifest } from "src/types/ExtensionManifest"
 import { type ExtensionSource } from "src/types/ExtensionSource"
 import { type InstalledExtension } from "src/types/InstalledExtension"
-import { compareVersions } from "src/utils/compare-versions"
-import { getCatalogBaseUrl } from "src/utils/get-catalog-base-url"
-import { getCatalogSourceKey } from "src/utils/get-catalog-source-key"
-import { getCatalogSourceLabel } from "src/utils/get-catalog-source-label"
-import { getExtensionFolderName } from "src/utils/get-extension-folder-name"
-import { getExtensionId } from "src/utils/get-extension-id"
-import { isRunningInTauri } from "src/utils/is-running-in-tauri"
-import { isSafeRelativePath } from "src/utils/is-safe-relative-path"
-import { readExtensionComponents } from "src/utils/read-extension-components"
-import { readExtensionTools } from "src/utils/read-extension-tools"
-import { summarizeExtensionTool } from "src/utils/summarize-extension-tool"
+import { compareVersions } from "src/utils/catalog/compare-versions"
+import { getCatalogBaseUrl } from "src/utils/catalog/get-catalog-base-url"
+import { getCatalogFilesSignature } from "src/utils/catalog/get-catalog-files-signature"
+import { getCatalogSourceKey } from "src/utils/catalog/get-catalog-source-key"
+import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-label"
+import { listCatalogRepoFiles } from "src/utils/catalog/list-catalog-repo-files"
+import { readCatalogExtension } from "src/utils/catalog/read-catalog-extension"
+import { resolveLocalSourceFolder } from "src/utils/catalog/resolve-local-source-folder"
+import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
+import { createLocalExtensionFolderReader } from "src/utils/extension/create-local-extension-folder-reader"
+import { createRemoteExtensionFolderReader } from "src/utils/extension/create-remote-extension-folder-reader"
+import { getExtensionFolderName } from "src/utils/extension/get-extension-folder-name"
+import { getExtensionId } from "src/utils/extension/get-extension-id"
+import { isSafeRelativePath } from "src/utils/extension/is-safe-relative-path"
 
 import { appDataService } from "./app-data-service.js"
 import { appletStore } from "./applet-store.js"
@@ -38,13 +43,12 @@ interface CatalogSourceState {
   isLoaded: boolean
   error?: string
   extensions: CatalogExtension[]
-}
 
-interface GitTreeEntry {
-  path: string
-  type: "blob" | "tree" | "commit"
-  mode: string
-  size?: number
+  /**
+   * When the extensions were last read from the source, from the cache until
+   * it's read again
+   */
+  updatedAt?: number
 }
 
 /**
@@ -90,32 +94,95 @@ class ExtensionCatalogService {
    */
   private readonly previewCache = new Map<string, Uint8Array>()
 
+  /**
+   * Listings of remote sources kept between sessions, see `CatalogCache`
+   */
+  private catalogCache: CatalogCache = {}
+
+  private readonly catalogCacheReady: Promise<void>
+
   constructor() {
-    makeAutoObservable<this, "previewCache">(this, { previewCache: false })
+    makeAutoObservable<this, "previewCache" | "catalogCache" | "catalogCacheReady">(this, {
+      previewCache: false,
+      catalogCache: false,
+      catalogCacheReady: false
+    })
     userSettingsService.watchStore(this)
+    this.catalogCacheReady = this.restoreCatalogCache()
+  }
+
+  private async restoreCatalogCache() {
+    try {
+      const cache = await localforage.getItem<CatalogCache>(StorageKeys.ExtensionCatalogCache)
+      if (cache) {
+        this.catalogCache = cache
+      }
+    } catch {
+      // Without a cache every source is read again, nothing else is lost
+    }
+  }
+
+  /**
+   * Keep what a source listed, dropping sources that were since removed
+   */
+  private saveCatalogCache(source: CatalogSource, updatedAt: number, extensions: CatalogExtension[]) {
+    const sourceKeys = new Set(this.sources.map(getCatalogSourceKey))
+    const kept = Object.entries(this.catalogCache).filter(([key]) => sourceKeys.has(key))
+
+    this.catalogCache = {
+      ...Object.fromEntries(kept),
+      [getCatalogSourceKey(source)]: {
+        updatedAt,
+        extensions: extensions.map(({ sourceId: _sourceId, ...entry }): CatalogIndexEntry => entry)
+      }
+    }
+
+    void localforage.setItem(StorageKeys.ExtensionCatalogCache, this.catalogCache).catch(() => {})
   }
 
   get sources(): CatalogSource[] {
-    return [ExtensionCatalog.defaultSource, ...this.customSources]
+    // Index URL sources added before they were dropped are left out
+    const knownTypes: string[] = Object.values(CatalogSourceType)
+    return [ExtensionCatalog.defaultSource, ...this.customSources.filter((source) => knownTypes.includes(source.type))]
   }
 
   get enabledSources() {
     return this.sources.filter((source) => this.isSourceEnabled(source.id))
   }
 
+  /**
+   * Enabled sources listed in Discover. Local ones aren't: their extensions
+   * are loaded in place and show as installed.
+   */
+  get remoteSources() {
+    return this.enabledSources.filter((source) => source.type !== CatalogSourceType.Local)
+  }
+
   get isLoading() {
-    return this.enabledSources.some((source) => this.sourceStates[source.id]?.isLoading)
+    return this.remoteSources.some((source) => this.sourceStates[source.id]?.isLoading)
   }
 
   get isLoaded() {
-    return this.enabledSources.every((source) => this.sourceStates[source.id]?.isLoaded)
+    return this.remoteSources.every((source) => this.sourceStates[source.id]?.isLoaded)
+  }
+
+  /**
+   * When the least recently read source was last read, undefined until one
+   * has been read. Sources that never loaded don't count, their error shows.
+   */
+  get updatedAt() {
+    const times = this.remoteSources
+      .map((source) => this.sourceStates[source.id]?.updatedAt)
+      .filter((time): time is number => time !== undefined)
+
+    return times.length > 0 ? Math.min(...times) : undefined
   }
 
   /**
    * Sources that failed to load, with the reason
    */
   get failedSources() {
-    return this.enabledSources
+    return this.remoteSources
       .map((source) => ({ source, error: this.sourceStates[source.id]?.error }))
       .filter((item): item is { source: CatalogSource, error: string } => !!item.error)
   }
@@ -125,7 +192,7 @@ class ExtensionCatalogService {
    * than one source
    */
   get catalogExtensions(): CatalogExtension[] {
-    return this.enabledSources
+    return this.remoteSources
       .flatMap((source) => this.sourceStates[source.id]?.extensions ?? [])
       .sort((a, b) => a.name.localeCompare(b.name))
   }
@@ -165,7 +232,10 @@ class ExtensionCatalogService {
     this.disabledSourceIds = enabled ? disabledSourceIds : [...disabledSourceIds, sourceId]
 
     const source = this.getSource(sourceId)
-    if (enabled && source) {
+    if (source?.type === CatalogSourceType.Local) {
+      // Its extensions come and go from Installed
+      void appletStore.reloadExtensions()
+    } else if (enabled && source) {
       void this.loadSource(source)
     }
   }
@@ -195,9 +265,18 @@ class ExtensionCatalogService {
     }
 
     const extensions = await this.fetchSourceExtensions(newSource, true)
+    const updatedAt = Date.now()
 
     this.addCustomSource(newSource)
-    this.setSourceState(newSource.id, { isLoading: false, isLoaded: true, extensions })
+    this.setSourceState(newSource.id, { isLoading: false, isLoaded: true, extensions, updatedAt })
+
+    if (newSource.type !== CatalogSourceType.Local) {
+      this.saveCatalogCache(newSource, updatedAt, extensions)
+    }
+
+    if (newSource.type === CatalogSourceType.Local) {
+      await appletStore.reloadExtensions()
+    }
 
     return extensions.length
   }
@@ -211,11 +290,17 @@ class ExtensionCatalogService {
       return
     }
 
+    const isLocal = this.getSource(sourceId)?.type === CatalogSourceType.Local
+
     this.customSources = this.customSources.filter((source) => source.id !== sourceId)
     this.disabledSourceIds = this.disabledSourceIds.filter((id) => id !== sourceId)
 
     const { [sourceId]: _removed, ...sourceStates } = this.sourceStates
     this.sourceStates = sourceStates
+
+    if (isLocal) {
+      void appletStore.reloadExtensions()
+    }
   }
 
   private setSourceState(sourceId: string, state: Partial<CatalogSourceState>) {
@@ -298,60 +383,140 @@ class ExtensionCatalogService {
   }
 
   /**
-   * Load every enabled source, each only once per session unless forced
+   * Load every enabled source. A cached listing is shown right away and read
+   * again only once it's older than `cacheMaxAgeMs`, or when forced.
    */
   async loadCatalog(force = false) {
-    await Promise.all(this.enabledSources.map(async(source) => { await this.loadSource(source, force) }))
+    await Promise.all(this.remoteSources.map(async(source) => { await this.loadSource(source, force) }))
+  }
+
+  /**
+   * Read a source again now: a remote one from its host, a local one by
+   * reloading every extension, since linked folders load with the rest
+   */
+  async refreshSource(source: CatalogSource) {
+    if (source.type === CatalogSourceType.Local) {
+      await appletStore.reloadExtensions()
+      return
+    }
+
+    await this.loadSource(source, true)
+  }
+
+  /**
+   * Read every enabled source again now
+   */
+  async refreshAllSources() {
+    const hasLocal = this.enabledSources.some((source) => source.type === CatalogSourceType.Local)
+
+    await Promise.all([
+      this.loadCatalog(true),
+      hasLocal ? appletStore.reloadExtensions() : undefined
+    ])
   }
 
   async loadSource(source: CatalogSource, force = false) {
+    await this.catalogCacheReady
+
     const state = this.sourceStates[source.id]
     if (state?.isLoading || (state?.isLoaded && !force)) {
       return
     }
 
+    const cached = this.catalogCache[getCatalogSourceKey(source)]
+    const cachedExtensions = (cached?.extensions ?? []).map((entry) => ({ ...entry, sourceId: source.id }))
+
+    if (cached && !state?.isLoaded) {
+      this.setSourceState(source.id, { isLoaded: true, extensions: cachedExtensions, updatedAt: cached.updatedAt })
+
+      if (!force && Date.now() - cached.updatedAt < ExtensionCatalog.cacheMaxAgeMs) {
+        return
+      }
+    }
+
     this.setSourceState(source.id, { isLoading: true })
 
     try {
-      const extensions = await this.fetchSourceExtensions(source, force)
-      this.setSourceState(source.id, { isLoading: false, isLoaded: true, error: undefined, extensions })
+      // Unchanged extensions are taken from what's shown, so they aren't downloaded again
+      const previous = this.sourceStates[source.id]?.extensions ?? cachedExtensions
+      const extensions = await this.fetchSourceExtensions(source, force, previous)
+      const updatedAt = Date.now()
+
+      this.setSourceState(source.id, { isLoading: false, isLoaded: true, error: undefined, extensions, updatedAt })
+      this.saveCatalogCache(source, updatedAt, extensions)
     } catch (exception) {
+      // What was shown stays, with the error next to it
       const message = exception instanceof Error ? exception.message : String(exception)
       this.setSourceState(source.id, { isLoading: false, isLoaded: true, error: message })
     }
   }
 
-  private async fetchSourceExtensions(source: CatalogSource, bustCache: boolean): Promise<CatalogExtension[]> {
-    if (source.type === CatalogSourceType.Local) {
+  private async fetchSourceExtensions(
+    source: CatalogSource,
+    bustCache: boolean,
+    previous: CatalogExtension[] = []
+  ): Promise<CatalogExtension[]> {
+    switch (source.type) {
+    case CatalogSourceType.Local:
       return await this.readLocalSource(source)
+    case CatalogSourceType.GitHub:
+    case CatalogSourceType.GitLab:
+    case CatalogSourceType.Gitea:
+      return await this.readRepoSource(source, bustCache, previous)
+    }
+  }
+
+  /**
+   * A repo lists its files through the host's API, then each extension's
+   * `peranti.json` and definition files are downloaded as they are. Nothing
+   * has to be generated in the repo. Extensions sit in its `extensions`
+   * folder when it has one, otherwise at its root. An extension whose files
+   * all have the same hashes as in `previous` is taken from there as is.
+   */
+  private async readRepoSource(
+    source: CatalogSource,
+    bustCache: boolean,
+    previous: CatalogExtension[]
+  ): Promise<CatalogExtension[]> {
+    const repoFiles = await listCatalogRepoFiles(source)
+    const extensionsFolder = `${ExtensionCatalog.extensionsFolderName}/`
+    const prefix = repoFiles.some((file) => file.path.startsWith(extensionsFolder)) ? extensionsFolder : ""
+
+    const filesById = new Map<string, CatalogExtensionFile[]>()
+    for (const file of repoFiles) {
+      if (!file.path.startsWith(prefix)) continue
+
+      const [id, ...rest] = file.path.slice(prefix.length).split("/")
+      if (rest.length === 0 || id.startsWith(".")) continue
+
+      filesById.set(id, [...(filesById.get(id) ?? []), { ...file, path: rest.join("/") }])
     }
 
-    const indexUrl = getCatalogBaseUrl(source) + ExtensionCatalog.indexFileName
-    // Raw file CDNs cache for a few minutes, a query busts it on refresh
-    const response = await httpRequest(bustCache ? `${indexUrl}?t=${Date.now()}` : indexUrl, { method: "GET" })
+    const baseUrl = getCatalogBaseUrl(source)
+    const extensions = await Promise.all(Array.from(filesById.entries())
+      .filter(([, files]) => files.some((file) => file.path === FileNames.ExtensionDefinition))
+      .map(async([id, files]) => {
+        const path = prefix + id
+        const signature = getCatalogFilesSignature(files)
+        const unchanged = signature && previous.find((entry) => (
+          entry.id === id && entry.path === path && getCatalogFilesSignature(entry.files) === signature
+        ))
+        if (unchanged) {
+          return { ...unchanged, files, sourceId: source.id }
+        }
 
-    if (response.status === 404) {
-      throw new Error(`No ${ExtensionCatalog.indexFileName} at ${indexUrl}`)
-    }
+        const folder = createRemoteExtensionFolderReader(baseUrl, path, files.map((file) => file.path), bustCache)
 
-    if (!response.ok) {
-      throw new Error(`${indexUrl} returned HTTP ${response.status}`)
-    }
+        try {
+          return await readCatalogExtension(id, path, folder, files, source.id)
+        } catch (exception) {
+          // A broken extension only hides itself from the list
+          console.warn(`Catalog extension ${path} skipped:`, exception)
+          return undefined
+        }
+      }))
 
-    let index: CatalogIndex
-    try {
-      index = JSON.parse(new TextDecoder().decode(response.body))
-    } catch {
-      throw new Error(`${ExtensionCatalog.indexFileName} is not valid JSON`)
-    }
-
-    if (!Array.isArray(index.extensions)) {
-      throw new Error(`${ExtensionCatalog.indexFileName} has no extensions list`)
-    }
-
-    return index.extensions
-      .filter((entry) => entry?.id && entry.name && entry.path)
-      .map((entry) => ({ ...entry, sourceId: source.id }))
+    return extensions.filter((entry): entry is CatalogExtension => !!entry)
   }
 
   /**
@@ -388,19 +553,15 @@ class ExtensionCatalogService {
 
   /**
    * A local folder lists every subfolder with a `peranti.json`, from its
-   * `extensions` folder when it has one, so no index has to be built
+   * `extensions` folder when it has one, so no index has to be built. Only
+   * checks a source being added, its extensions are loaded in place.
    */
   private async readLocalSource(source: CatalogSource): Promise<CatalogExtension[]> {
     if (!isRunningInTauri) {
       throw new Error("Local folders need the desktop app")
     }
 
-    if (!(await exists(source.location))) {
-      throw new Error(`${source.location} does not exist`)
-    }
-
-    const nestedFolder = await fileService.resolveFilePath(source.location, ExtensionCatalog.extensionsFolderName)
-    const extensionsFolder = await exists(nestedFolder) ? nestedFolder : source.location
+    const extensionsFolder = await resolveLocalSourceFolder(source.location)
     const extensions: CatalogExtension[] = []
 
     for (const entry of await readDir(extensionsFolder)) {
@@ -411,30 +572,11 @@ class ExtensionCatalogService {
       if (!(await exists(manifestPath))) continue
 
       try {
-        const manifest: ExtensionManifest = JSON.parse(await readTextFile(manifestPath))
-
-        extensions.push({
-          id: entry.name,
-          name: manifest.name || entry.name,
-          description: manifest.description,
-          version: manifest.version ?? "0.0.0",
-          author: manifest.author,
-          category: manifest.category,
-          tools: (await readExtensionTools(manifest, folderPath, async(path) => await readTextFile(path))).map(summarizeExtensionTool),
-          components: (await readExtensionComponents(manifest, folderPath, async(path) => await readTextFile(path)))
-            .map(({ definition, path }) => ({
-              componentId: definition.componentId,
-              name: definition.name,
-              description: definition.description,
-              kind: definition.kind,
-              path
-            })),
-          path: folderPath,
-          files: await this.listFolderFiles(folderPath),
-          sourceId: source.id
-        })
-      } catch {
+        const folder = await createLocalExtensionFolderReader(folderPath)
+        extensions.push(await readCatalogExtension(entry.name, folderPath, folder, await this.listFolderFiles(folderPath), source.id))
+      } catch (exception) {
         // A broken manifest only hides that one folder from the list
+        console.warn(`Extension folder ${folderPath} skipped:`, exception)
       }
     }
 
@@ -442,53 +584,12 @@ class ExtensionCatalogService {
   }
 
   /**
-   * Indexes built before file lists were added are still installable from
-   * GitHub, by listing the repo through its API
-   */
-  private async getFilesFromGitHubTree(source: CatalogSource, entry: CatalogExtension): Promise<CatalogExtensionFile[]> {
-    const [owner, repo] = new URL(source.location).pathname.replace(/^\/+/, "").replace(/\.git$/, "").split("/")
-    const treeUrl = `https://api.github.com/repos/${owner}/${repo}/git/trees/${source.branch ?? "main"}?recursive=1`
-    const response = await httpRequest(treeUrl, { method: "GET", headers: ExtensionCatalog.apiHeaders })
-
-    if (response.status === 403 || response.status === 429) {
-      throw new Error("GitHub rate limit reached, try again in a while")
-    }
-
-    if (!response.ok) {
-      throw new Error(`GitHub returned HTTP ${response.status}`)
-    }
-
-    const tree: { tree: GitTreeEntry[], truncated: boolean } = JSON.parse(new TextDecoder().decode(response.body))
-    if (tree.truncated) {
-      throw new Error("Catalog is too large to list in one request")
-    }
-
-    const prefix = `${entry.path.replace(/\/+$/, "")}/`
-    return tree.tree
-      .filter((item) => item.type === "blob" && item.path.startsWith(prefix))
-      .map((item) => ({
-        path: item.path.slice(prefix.length),
-        size: item.size ?? 0,
-        executable: item.mode === "100755"
-      }))
-  }
-
-  /**
    * Files to install, checked against the limits
    */
-  private async getInstallFiles(source: CatalogSource, entry: CatalogExtension) {
-    let files = entry.files
-
-    if (!files) {
-      if (source.type !== CatalogSourceType.GitHub) {
-        throw new Error(`${ExtensionCatalog.indexFileName} has no file list, rebuild it with the latest build-index.mjs`)
-      }
-      files = await this.getFilesFromGitHubTree(source, entry)
-    }
-
+  private getInstallFiles(entry: CatalogExtension) {
     // Hidden files can't be written: the fs scope's `**` doesn't match them on
     // Unix. They are repo leftovers (.gitignore, .DS_Store), never needed to run.
-    files = files.filter((file) => (
+    const files = entry.files.filter((file) => (
       file.path !== FileNames.ExtensionSource &&
       !file.path.split("/").some((segment) => segment.startsWith("."))
     ))
@@ -604,7 +705,7 @@ class ExtensionCatalogService {
       await appDataService.prepareExtensionsFolder()
       tempPath = await fileService.resolveFilePathInAppData(Folders.ExtensionInstalls, folderName)
       const targetPath = await fileService.resolveFilePathInAppData(Folders.Extensions, folderName)
-      const files = await this.getInstallFiles(source, entry)
+      const files = this.getInstallFiles(entry)
 
       if (await exists(tempPath)) {
         await remove(tempPath, { recursive: true })

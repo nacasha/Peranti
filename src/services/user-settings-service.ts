@@ -10,8 +10,8 @@ import { type ToolSidebarDensity } from "src/enums/tool-sidebar-density"
 import { UserSettingsDefault } from "src/enums/user-settings-default.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { appDataService } from "src/services/app-data-service"
-import { getCardShadowVariable } from "src/utils/get-card-shadow-variable"
-import { resolveTheme } from "src/utils/resolve-theme"
+import { getCardShadowVariable } from "src/utils/theme/get-card-shadow-variable"
+import { resolveTheme } from "src/utils/theme/resolve-theme"
 
 import { globalStyles } from "./global-styles.js"
 

@@ -1,0 +1,122 @@
+.SettingsExtensions {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.SettingsExtensions-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.SettingsExtensions-source {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px 12px 18px;
+  border-bottom: 1px solid var(--line);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .Switch {
+    margin-top: 1px;
+  }
+}
+
+.SettingsExtensions-source-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.SettingsExtensions-source-title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-weight: var(--font-weight-medium);
+}
+
+.SettingsExtensions-badge {
+  padding: 0 6px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  font-weight: normal;
+  color: var(--muted);
+}
+
+.SettingsExtensions-source-location {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.SettingsExtensions-source-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex: none;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.SettingsExtensions-source-updated {
+  font-size: var(--font-size-xs);
+  color: var(--faint);
+}
+
+.SettingsExtensions-listFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 14px;
+  border-top: 1px solid var(--line);
+}
+
+.SettingsExtensions-add {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 18px;
+}
+
+.SettingsExtensions-addFooter {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.SettingsExtensions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.SettingsExtensions-location {
+  flex: 1;
+  min-width: 0;
+}
+
+.SettingsExtensions-types {
+  display: flex;
+  gap: 2px;
+}
+
+.SettingsExtensions-branch {
+  width: 120px;
+  min-width: 0;
+  margin-left: auto;
+}
+
+.SettingsExtensions-error {
+  font-size: var(--font-size-sm);
+  color: var(--danger-color);
+  overflow-wrap: anywhere;
+}

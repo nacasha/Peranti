@@ -1,22 +1,33 @@
 import { type ExtensionRuntime } from "src/enums/extension-runtime"
 
+import { type ComponentPropInfo } from "./ComponentPropInfo.ts"
+import { type ComponentValueInfo } from "./ComponentValueInfo.ts"
 import { type ExtensionComponentKind } from "./ExtensionComponent.ts"
 
 /**
- * A file of a catalog extension, listed in `index.json` by build-index.mjs
+ * A file of a catalog extension, listed by the repo host or the local folder
  */
 export interface CatalogExtensionFile {
   /**
    * Relative to the extension folder, forward slashes
    */
   path: string
-  size: number
+
+  /**
+   * Missing when the host doesn't give it, as GitLab
+   */
+  size?: number
   executable?: boolean
+
+  /**
+   * Content hash the repo host gives, so an unchanged extension isn't
+   * downloaded again on refresh. Missing for local folders.
+   */
+  sha?: string
 }
 
 /**
- * An input or output of a catalog extension, copied from its `peranti.json`
- * by build-index.mjs
+ * An input or output of a catalog extension tool
  */
 export interface CatalogExtensionField {
   key: string
@@ -25,7 +36,7 @@ export interface CatalogExtensionField {
 }
 
 /**
- * One tool of a catalog extension, as build-index.mjs summarizes it
+ * One tool of a catalog extension, summarized from its `peranti.tool.json`
  */
 export interface CatalogExtensionTool {
   toolId: string
@@ -47,13 +58,22 @@ export interface CatalogExtensionTool {
 }
 
 /**
- * One component of a catalog extension, as build-index.mjs summarizes it
+ * One component of a catalog extension, summarized from its
+ * `peranti.component.json`
  */
 export interface CatalogExtensionComponent {
   componentId: string
   name: string
   description?: string
   kind?: ExtensionComponentKind
+  value?: ComponentValueInfo
+  props?: ComponentPropInfo[]
+
+  /**
+   * HTML file, relative to its `peranti.component.json`
+   */
+  entry?: string
+  height?: number
 
   /**
    * Its `peranti.component.json`, relative to the extension folder
@@ -62,12 +82,11 @@ export interface CatalogExtensionComponent {
 }
 
 /**
- * An extension listed in a catalog's `index.json`
+ * An extension listed by a catalog, read from its files
  */
 export interface CatalogIndexEntry {
   /**
-   * Folder name in the catalog and once installed: the package ID, or the
-   * `toolId` of a single-tool extension
+   * Folder name in the catalog and once installed, the extension ID
    */
   id: string
   name: string
@@ -76,36 +95,14 @@ export interface CatalogIndexEntry {
   author?: string
   category?: string
 
-  /**
-   * Tools of the extension. Missing in indexes built before packages could
-   * hold several tools, `runtime`, `command` and the fields then describe
-   * its only tool.
-   */
-  tools?: CatalogExtensionTool[]
-  components?: CatalogExtensionComponent[]
-  runtime?: ExtensionRuntime
-  command?: string
+  tools: CatalogExtensionTool[]
+  components: CatalogExtensionComponent[]
 
   /**
    * Folder of the extension inside the catalog
    */
   path: string
-
-  /**
-   * Missing in indexes built before file lists were added
-   */
-  files?: CatalogExtensionFile[]
-
-  /**
-   * Missing in indexes built before fields were added
-   */
-  inputFields?: CatalogExtensionField[]
-  outputFields?: CatalogExtensionField[]
-}
-
-export interface CatalogIndex {
-  schemaVersion: number
-  extensions: CatalogIndexEntry[]
+  files: CatalogExtensionFile[]
 }
 
 /**

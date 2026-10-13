@@ -3,7 +3,7 @@ import Papa from "papaparse"
 import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { parseCsvRows } from "src/utils/parse-csv-rows.ts"
+import { parseCsvRows } from "src/utils/data/parse-csv-rows.ts"
 
 interface InputFields {
   csv: InputFieldsType.Code

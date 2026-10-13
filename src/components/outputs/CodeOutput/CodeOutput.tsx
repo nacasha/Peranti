@@ -4,7 +4,7 @@ import { BaseCodeMirror, type BaseCodeMirrorProps } from "src/components/common/
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { LargeTextViewer } from "src/components/common/LargeTextViewer"
 import type { OutputComponentProps } from "src/types/OutputComponentProps.ts"
-import { isLargeText } from "src/utils/is-large-text"
+import { isLargeText } from "src/utils/text/is-large-text"
 
 import "./CodeOutput.scss"
 

@@ -1,0 +1,550 @@
+// Components tab: a component on the left of the pane, its value, props and
+// messages on the right, filling the pane with no outer scroll
+.ComponentPlayground {
+  --playground-line: color-mix(in srgb, var(--line) 55%, transparent);
+
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.ComponentPlayground-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  flex: none;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.ComponentPlayground-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ComponentPlayground-title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: -0.01em;
+  }
+
+  code {
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+}
+
+.ComponentPlayground-byline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--muted);
+
+  > span:first-child {
+    margin-right: 4px;
+  }
+}
+
+.ComponentPlayground-description {
+  margin: 0;
+  max-width: 68ch;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.ComponentPlayground-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ComponentPlayground-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  flex: none;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--playground-line);
+}
+
+.ComponentPlayground-segmented {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--raised);
+
+  button {
+    height: 24px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: calc(var(--radius-md) - 2px);
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      color: var(--text-color);
+    }
+
+    &.active {
+      background: var(--panel);
+      color: var(--text-color);
+      box-shadow: var(--shadow-sm);
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.4;
+    }
+  }
+}
+
+.ComponentPlayground-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+// The frame grows with its content, the area scrolls when it outgrows it
+.ComponentPlayground-preview {
+  flex: 1;
+  min-width: 0;
+  padding: 20px 24px;
+  overflow: auto;
+  // Dotted backdrop, so a transparent component reads as on a canvas
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--text-color) 14%, transparent) 1px, transparent 1.4px);
+  background-size: 16px 16px;
+}
+
+// Built-in fields fill their area like in a tool, so editors get a fixed
+// height to fill
+.ComponentPlayground-builtIn {
+  display: flex;
+  flex-direction: column;
+  height: 360px;
+  max-width: 720px;
+
+  > * {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+.ComponentPlayground-side {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: clamp(280px, 40%, 460px);
+  min-height: 0;
+  border-left: 1px solid var(--line);
+}
+
+// Same underlined tabs as the details, tighter to fit the side panel
+.ExtensionDetails-tabs.ComponentPlayground-panelTabs {
+  flex: none;
+  margin-top: 0;
+  padding: 0 12px;
+  border-bottom-color: var(--playground-line);
+
+  .ExtensionDetails-tab {
+    height: 36px;
+  }
+}
+
+.ComponentPlayground-editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+// What the panel holds on the left, its actions on the right
+.ComponentPlayground-editorBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  padding: 8px 10px 8px 14px;
+  border-bottom: 1px solid var(--playground-line);
+}
+
+.ComponentPlayground-editorBar-actions {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+
+  button {
+    height: 24px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color var(--animation-speed), color var(--animation-speed);
+
+    &:hover {
+      background: var(--hover);
+      color: var(--text-color);
+    }
+  }
+}
+
+// Two-tone half-tone badge, same look as the component list's
+.ComponentPlayground-typeBadge {
+  --badge-hue: var(--muted);
+
+  display: inline-flex;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--badge-hue) 10%, transparent);
+  color: color-mix(in srgb, var(--badge-hue) 75%, var(--text-color));
+  font-size: 11px;
+  line-height: 20px;
+
+  > span:first-child {
+    padding: 0 7px 0 8px;
+    background: color-mix(in srgb, var(--badge-hue) 18%, transparent);
+    font-weight: var(--font-weight-medium);
+  }
+
+  > span:last-child {
+    padding: 0 8px 0 7px;
+    font-family: var(--font-family-mono);
+  }
+
+  &.is-input {
+    --badge-hue: var(--accent);
+  }
+
+  &.is-output {
+    --badge-hue: #8b5cf6;
+  }
+
+  &.is-neutral {
+    color: var(--muted);
+  }
+}
+
+// Zero basis: with the props list it shares the height evenly, whatever
+// either holds
+.ComponentPlayground-editor-body {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  min-height: 0;
+
+  .CodeMirrorContainer {
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+}
+
+// Documented props under the Props editor: always the lower half, scrolling
+// on their own so a long list or long JSON never pushes the other
+.ComponentPlayground-propList {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  border-top: 1px solid var(--playground-line);
+}
+
+// Takes no height from its content, so only the list scrolls, with the
+// app's own scrollbar (same trick as ExtensionsPage-scrollArea)
+.ComponentPlayground-propList-scrollArea {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.ComponentPlayground-propList-scroll {
+  position: absolute;
+  inset: 0;
+}
+
+// The main panel turns every nested `.simplebar-content` into a flex row
+// (AppletViewer.scss, `.AppletViewer .AppletViewer-main-panel …`). Scoped
+// deep enough to outrank it, so the rows stack.
+body .ComponentPlayground .ComponentPlayground-propList .ComponentPlayground-propList-scroll .simplebar-content {
+  display: block;
+}
+
+.ComponentPlayground-propList-title {
+  flex: none;
+  padding: 8px 14px 6px;
+  background: var(--panel);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.ComponentPlayground-propList-note {
+  flex: none;
+  padding: 0 14px 6px;
+  font-size: 11.5px;
+  color: var(--faint);
+}
+
+.ComponentPlayground-propList-empty {
+  padding: 16px 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--faint);
+}
+
+.ComponentPlayground-prop {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 14px;
+
+  & + & {
+    border-top: 1px solid var(--playground-line);
+  }
+
+  .ComponentPlayground-prop-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    button {
+      margin-left: auto;
+      padding: 1px 8px;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 11.5px;
+      cursor: pointer;
+
+      &:hover {
+        background: var(--hover);
+        color: var(--text-color);
+      }
+    }
+  }
+
+  .ComponentPlayground-prop-name {
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-color);
+  }
+
+  .ComponentPlayground-prop-type {
+    padding: 0 6px;
+    border-radius: var(--radius-sm);
+    background: var(--hover);
+    font-family: var(--font-family-mono);
+    font-size: 10.5px;
+    line-height: 17px;
+    color: var(--muted);
+  }
+
+  .ComponentPlayground-prop-required {
+    font-size: 10.5px;
+    color: var(--danger-color);
+  }
+
+  .ComponentPlayground-prop-description {
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  .ComponentPlayground-prop-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--faint);
+
+    code {
+      margin-left: 4px;
+      font-family: var(--font-family-mono);
+      color: var(--muted);
+    }
+  }
+
+  // Allowed values, one per line
+  .ComponentPlayground-prop-options {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      margin: 0;
+      padding: 0 0 0 4px;
+      list-style: none;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-left: 8px;
+      border-left: 1px solid var(--playground-line);
+
+      code {
+        margin-left: 0;
+      }
+
+      span {
+        font-size: 10px;
+        color: var(--faint);
+      }
+    }
+  }
+}
+
+// One line under the editor: valid, a type warning, or a parse error
+.ComponentPlayground-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  min-height: 30px;
+  padding: 6px 14px;
+  border-top: 1px solid var(--playground-line);
+  font-size: 11.5px;
+  color: var(--faint);
+  overflow-wrap: anywhere;
+
+  svg {
+    flex: none;
+  }
+
+  &.is-warning {
+    background: color-mix(in srgb, #e0a100 9%, transparent);
+    color: color-mix(in srgb, #b07d00 70%, var(--text-color));
+  }
+
+  &.is-error {
+    background: color-mix(in srgb, var(--danger-color) 8%, transparent);
+    color: var(--danger-color);
+  }
+}
+
+.ComponentPlayground-log {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.ComponentPlayground-log-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: none;
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--playground-line);
+  font-size: 11.5px;
+  color: var(--faint);
+
+  button {
+    padding: 2px 6px;
+    border: 0;
+    border-radius: var(--radius-sm, 4px);
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--hover);
+      color: var(--text-color);
+    }
+  }
+}
+
+.ComponentPlayground-log-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  font-size: 11.5px;
+}
+
+// Newest first: time, direction, type, then the payload wrapping below
+.ComponentPlayground-log-entry {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 2px 8px;
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--playground-line);
+
+  .ComponentPlayground-log-time {
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ComponentPlayground-log-direction {
+    color: var(--faint);
+  }
+
+  .ComponentPlayground-log-type {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .ComponentPlayground-log-detail {
+    grid-column: 1 / -1;
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    color: var(--muted);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  &.is-in .ComponentPlayground-log-type {
+    color: var(--accent);
+  }
+
+  &.is-warn {
+    background: color-mix(in srgb, #e0a100 8%, transparent);
+  }
+
+  &.is-error {
+    background: color-mix(in srgb, var(--danger-color) 8%, transparent);
+
+    .ComponentPlayground-log-type,
+    .ComponentPlayground-log-detail {
+      color: var(--danger-color);
+    }
+  }
+}
+
+.ComponentPlayground-empty {
+  padding: 24px 14px;
+  text-align: center;
+  color: var(--faint);
+}

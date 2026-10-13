@@ -19,6 +19,22 @@ export const ExtensionComponentBridge = `(() => {
     window.parent.postMessage(Object.assign({ source: "peranti-component" }, message), "*")
   }
 
+  // Console output and errors go to the app too, shown in the component playground
+  const describe = (value) => {
+    if (typeof value === "string") return value
+    if (value instanceof Error) return value.stack || value.message
+    try { return JSON.stringify(value) } catch { return String(value) }
+  }
+  const log = (level, args) => {
+    try { post({ type: "log", level, message: args.map(describe).join(" ") }) } catch {}
+  }
+  ;["log", "info", "warn", "error", "debug"].forEach((level) => {
+    const original = console[level].bind(console)
+    console[level] = (...args) => { log(level, args); original(...args) }
+  })
+  window.addEventListener("error", (event) => { log("error", [event.error || event.message]) })
+  window.addEventListener("unhandledrejection", (event) => { log("error", ["Unhandled rejection:", event.reason]) })
+
   const applyTheme = (theme) => {
     if (!theme) return
     const root = document.documentElement

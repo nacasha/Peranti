@@ -1,5 +1,5 @@
 import { Icons } from "src/constants/icons"
-import { openLink } from "src/utils/open-link"
+import { openLink } from "src/utils/common/open-link"
 
 export const StatusbarItemSendFeedback = () => {
   const handleClick = () => {

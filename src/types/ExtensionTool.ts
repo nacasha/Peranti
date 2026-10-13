@@ -6,13 +6,15 @@ import { type AppletSample } from "./AppletSample.ts"
 import { type LayoutSetting } from "./LayoutSetting.ts"
 
 /**
- * One tool of an extension: the whole `peranti.json` of a single-tool
- * extension, or one item of its `tools` list
+ * One tool of an extension, a parsed `peranti.tool.json`
  */
 export interface ExtensionTool<
   InputFields extends Record<string, any> = any,
   OutputFields extends Record<string, any> = any,
 > {
+  /**
+   * Its folder name in kebab case, set when it is read: the file has no ID
+   */
   toolId: string
   name: string
 

@@ -9,7 +9,7 @@ import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
 import { type AppletOutput } from "src/types/AppletOutput"
 import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
-import { shallowEqualArrays } from "src/utils/shallow-equal-arrays"
+import { shallowEqualArrays } from "src/utils/common/shallow-equal-arrays"
 
 interface AppletOutputRendererProps {
   appletOutput: AppletOutput

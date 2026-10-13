@@ -13,8 +13,8 @@ import { appletStore } from "src/services/applet-store"
 import { sessionHistoryStore } from "src/services/session-history-store"
 import { sessionStore } from "src/services/session-store"
 import { type SessionHistory } from "src/types/SessionHistory"
-import { formatTimeAgo } from "src/utils/format-time-ago"
-import { openLink } from "src/utils/open-link"
+import { openLink } from "src/utils/common/open-link"
+import { formatTimeAgo } from "src/utils/time/format-time-ago"
 
 import "./ClosedTabsButton.scss"
 

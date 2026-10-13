@@ -1,4 +1,4 @@
-import { upperBound } from "src/utils/upper-bound"
+import { upperBound } from "src/utils/common/upper-bound"
 
 /**
  * Maps a text onto a grid of fixed-width rows. Lines longer than `columns`

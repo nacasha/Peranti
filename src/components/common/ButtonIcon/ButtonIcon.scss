@@ -27,4 +27,18 @@
   &:hover svg {
     color: var(--text-color);
   }
+
+  &.disabled {
+    opacity: 0.4;
+
+    &:hover,
+    &:active {
+      background: none;
+      cursor: default;
+    }
+
+    &:hover svg {
+      color: var(--icon-color);
+    }
+  }
 }

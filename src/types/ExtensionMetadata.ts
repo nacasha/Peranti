@@ -7,7 +7,7 @@ export interface ExtensionMetadata {
 
   /**
    * Absolute folder of the tool's `peranti.tool.json`, executables run
-   * inside it. The extension folder for an extension in the older format.
+   * inside it
    */
   folderPath: string
 

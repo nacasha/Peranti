@@ -14,8 +14,8 @@ import {
 } from "react"
 
 import { ClipboardService } from "src/services/clipboard-service"
-import { clamp } from "src/utils/clamp"
-import { lowerBound } from "src/utils/lower-bound"
+import { clamp } from "src/utils/common/clamp"
+import { lowerBound } from "src/utils/common/lower-bound"
 
 import { LargeTextFindBar } from "./LargeTextFindBar.tsx"
 import { findTextMatches, MAX_MATCHES } from "./find-text-matches.js"

@@ -6,7 +6,7 @@ import { isMacOS, isWindows } from "./constants/os.ts"
 import { AppTitleBarStyle } from "./enums/app-titlebar-style.ts"
 import { useSelector } from "./hooks/useSelector.ts"
 import { interfaceStore } from "./services/interface-store.ts"
-import { isRunningInTauri } from "./utils/is-running-in-tauri.ts"
+import { isRunningInTauri } from "./utils/common/is-running-in-tauri.ts"
 
 export const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   const titlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)

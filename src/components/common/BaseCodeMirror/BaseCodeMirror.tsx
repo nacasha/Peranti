@@ -13,8 +13,8 @@ import { useRef, type FC, useEffect, useState, memo, useMemo, useCallback } from
 import { Theme } from "src/enums/theme-2"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
-import { createSearchPanel } from "src/utils/create-search-panel"
-import { isLargeText } from "src/utils/is-large-text"
+import { createSearchPanel } from "src/utils/search/create-search-panel"
+import { isLargeText } from "src/utils/text/is-large-text"
 
 import "./BaseCodeMirror.scss"
 

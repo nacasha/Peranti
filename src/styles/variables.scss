@@ -27,6 +27,14 @@ body {
   // Display-size headings set their own where it actually helps.
 
   // ───────────────────────────────────────────────────────────────
+  // Page width
+  // Content of wide pages (Extensions, an extension's page) stays within
+  // --page-max-width, centered. Used as side padding, so headers and
+  // their borders still span the page. Resolves against the nearest
+  // `container-type: inline-size` ancestor (cqi).
+  --page-max-width: 1080px;
+  --page-gutter: max(20px, calc((100cqi - var(--page-max-width)) / 2));
+
   // Accent
   // ───────────────────────────────────────────────────────────────
   // --accent is the design token; --color-primary is the legacy name every

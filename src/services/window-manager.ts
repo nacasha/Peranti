@@ -2,7 +2,7 @@ import { type EventCallback } from "@tauri-apps/api/event"
 import { type DragDropEvent } from "@tauri-apps/api/webview"
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow"
 
-import { isRunningInTauri } from "src/utils/is-running-in-tauri"
+import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 
 export const windowManager = {
   /**

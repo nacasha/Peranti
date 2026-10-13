@@ -1,6 +1,6 @@
 import { type FC } from "react"
 
-import { splitByMatch } from "src/utils/split-by-match"
+import { splitByMatch } from "src/utils/search/split-by-match"
 
 import "./HighlightedText.scss"
 

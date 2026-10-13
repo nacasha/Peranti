@@ -1,52 +1,75 @@
-import NiceModal from "@ebay/nice-modal-react"
 import { clsx } from "clsx"
 import { observer } from "mobx-react"
 import { useEffect, useState, type FC, type ReactNode } from "react"
 import SimpleBar from "simplebar-react"
 
+import { settingsApplet } from "src/applets/pages/settings-applet"
 import { Button } from "src/components/common/Button"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
-import { CatalogSourcesDialog } from "src/components/dialog/CatalogSourcesDialog"
 import { FileNames } from "src/constants/file-names"
 import { Icons } from "src/constants/icons"
+import { PageStateProvider } from "src/contexts/PageStateContext"
+import { useNow } from "src/hooks/useNow"
+import { usePageScroll } from "src/hooks/usePageScroll"
+import { usePageState } from "src/hooks/usePageState"
 import { appletStore } from "src/services/applet-store"
 import { extensionCatalogService } from "src/services/extension-catalog-service"
 import { extensionsPageStore, type ExtensionsPageTab } from "src/services/extensions-page-store"
 import { extensionsService } from "src/services/extensions-service"
+import { sessionStore } from "src/services/session-store"
+import { settingsPageStore } from "src/services/settings-page-store"
 import { type CatalogExtension } from "src/types/CatalogExtension"
 import { type InstalledExtension } from "src/types/InstalledExtension"
-import { getCatalogEntryTools } from "src/utils/get-catalog-entry-tools"
-import { getCatalogSourceLabel } from "src/utils/get-catalog-source-label"
-import { getExtensionProvidesLabels } from "src/utils/get-extension-provides-labels"
-import { getInstalledSourceFilter } from "src/utils/get-installed-source-filter"
-import { getRuntimeSummary } from "src/utils/get-runtime-summary"
-import { isRunningInTauri } from "src/utils/is-running-in-tauri"
-import { matchesSearchKeyword } from "src/utils/matches-search-keyword"
+import { formatCatalogUpdatedLabel } from "src/utils/catalog/format-catalog-updated-label"
+import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-label"
+import { getInstalledSourceFilter } from "src/utils/catalog/get-installed-source-filter"
+import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
+import { getExtensionProvidesLabels } from "src/utils/extension/get-extension-provides-labels"
+import { openExtensionPage } from "src/utils/extension/open-extension-page"
+import { matchesSearchKeyword } from "src/utils/search/matches-search-keyword"
+import { prettyDateFormat } from "src/utils/time/pretty-date-format"
 
-import { CatalogExtensionDetails } from "./CatalogExtensionDetails.tsx"
+import { CatalogInstallButton } from "./CatalogInstallButton.tsx"
 import { CatalogSourceErrorNotice } from "./CatalogSourceErrorNotice.tsx"
-import { ExtensionListItem, type ExtensionListItemTag } from "./ExtensionListItem.tsx"
+import { type ExtensionListItemTag } from "./ExtensionListItem.tsx"
+import { ExtensionStoreCard } from "./ExtensionStoreCard.tsx"
+import { ExtensionsPagePlaceholder } from "./ExtensionsPagePlaceholder.tsx"
 import { ALL_SOURCES, ExtensionsToolbar } from "./ExtensionsToolbar.tsx"
-import { InstalledExtensionDetails } from "./InstalledExtensionDetails.tsx"
 
 import "./ExtensionsPage.scss"
 
-const openSourcesDialog = () => {
-  void NiceModal.show(CatalogSourcesDialog)
+// Sources are managed in Settings → Extensions
+const openExtensionSettings = () => {
+  settingsPageStore.openSection("extensions")
+  sessionStore.findOrCreateSession(settingsApplet)
+}
+
+interface ExtensionsPageProps {
+  /**
+   * State of the page kept in its tab, see `PageStateProvider`
+   */
+  initialState?: unknown
+  onStateChange?: (state: Record<string, unknown>) => void
 }
 
 /**
- * Manage the extensions in the extensions folder, and browse the catalog to
- * install new ones. A list on the left, the picked extension on the right.
+ * An extension store: discover extensions in the catalogs and install them,
+ * and manage the installed ones. A grid of cards, each opening its extension
+ * in a tab of its own.
  */
-export const ExtensionsPage: FC = observer(() => {
+export const ExtensionsPage: FC<ExtensionsPageProps> = ({ initialState, onStateChange }) => (
+  <PageStateProvider initialState={initialState} onStateChange={onStateChange}>
+    <ExtensionsPageContent />
+  </PageStateProvider>
+)
+
+const ExtensionsPageContent: FC = observer(() => {
   const { pendingTab } = extensionsPageStore
-  const [activeTab, setActiveTab] = useState<ExtensionsPageTab>(
-    () => extensionsPageStore.pendingTab ?? "installed"
-  )
+  const [activeTab, setActiveTab] = usePageState<ExtensionsPageTab>("tab", "installed")
   const [isReloading, setIsReloading] = useState(false)
 
-  // Opened from elsewhere while this page is already showing
+  // Opened from a command, the asked tab wins over the one left last time.
+  // Also runs when it's asked while this page is already showing.
   useEffect(() => {
     const tab = extensionsPageStore.consumePendingTab()
     if (tab) setActiveTab(tab)
@@ -96,15 +119,15 @@ export const ExtensionsPage: FC = observer(() => {
             className={clsx("ExtensionsPage-tab", activeTab === "browse" && "active")}
             onClick={() => { setActiveTab("browse") }}
           >
-            Browse
+            Discover
           </button>
         </div>
 
         <div className="ExtensionsPage-actions">
           <ButtonIcon
             icon={Icons.Settings}
-            tooltip="Catalog Sources"
-            onClick={openSourcesDialog}
+            tooltip="Extension Settings"
+            onClick={openExtensionSettings}
           />
           {isRunningInTauri && (
             <ButtonIcon
@@ -124,7 +147,8 @@ export const ExtensionsPage: FC = observer(() => {
       </div>
 
       <div className="ExtensionsPage-body">
-        {activeTab === "installed" ? <InstalledTab onOpenFolder={handleOpenFolder} /> : <BrowseTab />}
+        {activeTab === "installed" && <InstalledTab onOpenFolder={handleOpenFolder} />}
+        {activeTab === "browse" && <BrowseTab />}
       </div>
     </div>
   )
@@ -134,14 +158,22 @@ const getInstalledTag = (extension: InstalledExtension): ExtensionListItemTag | 
   if (extension.error) return { label: "Error", tone: "danger" }
   if (extensionCatalogService.getUpdate(extension)) return { label: "Update", tone: "accent" }
   if (!extensionsService.isEnabled(extension)) return { label: "Disabled", tone: "muted" }
+  if (extension.linkedSourceId) return { label: "Linked", tone: "muted" }
   return undefined
 }
 
+/**
+ * Categories present in a list, sorted, each once
+ */
+const getCategories = (categories: Array<string | undefined>) => (
+  [...new Set(categories.filter((category): category is string => !!category))].sort((a, b) => a.localeCompare(b))
+)
+
 const InstalledTab: FC<{ onOpenFolder: () => void }> = observer(({ onOpenFolder }) => {
   const { installedExtensions } = extensionsService
-  const [selectedFolderName, setSelectedFolderName] = useState<string>()
-  const [keyword, setKeyword] = useState("")
-  const [sourceFilter, setSourceFilter] = useState(ALL_SOURCES)
+  const [keyword, setKeyword] = usePageState("installed.keyword", "")
+  const [sourceFilter, setSourceFilter] = usePageState("installed.source", ALL_SOURCES)
+  const [category, setCategory] = usePageState("installed.category", ALL_CATEGORIES)
 
   if (!isRunningInTauri) {
     return (
@@ -158,7 +190,7 @@ const InstalledTab: FC<{ onOpenFolder: () => void }> = observer(({ onOpenFolder 
       <ExtensionsPagePlaceholder
         icon={<Icons.Extensions size={28} aria-hidden />}
         title="No extensions installed"
-        description={`Install one from Browse, or place a folder with a ${FileNames.ExtensionDefinition} file in the extensions folder.`}
+        description={`Install one from Discover, or place a folder with a ${FileNames.ExtensionDefinition} file in the extensions folder.`}
         action={<Button icon={Icons.Folder} onClick={onOpenFolder}>Open Extensions Folder</Button>}
       />
     )
@@ -172,9 +204,13 @@ const InstalledTab: FC<{ onOpenFolder: () => void }> = observer(({ onOpenFolder 
 
   // A filter on a source that has nothing installed anymore shows everything
   const activeSourceFilter = sourceOptions.some((option) => option.value === sourceFilter) ? sourceFilter : ALL_SOURCES
-
-  const filteredExtensions = installedExtensions
+  const fromSource = installedExtensions
     .filter((extension) => activeSourceFilter === ALL_SOURCES || getInstalledSourceFilter(extension) === activeSourceFilter)
+  const categories = getCategories(fromSource.map((extension) => extension.manifest?.category))
+  const activeCategory = categories.includes(category) ? category : ALL_CATEGORIES
+
+  const filteredExtensions = fromSource
+    .filter((extension) => activeCategory === ALL_CATEGORIES || extension.manifest?.category === activeCategory)
     .filter(({ manifest, folderName, tools }) => matchesSearchKeyword(keyword, [
       manifest?.name ?? folderName,
       manifest?.description,
@@ -183,12 +219,37 @@ const InstalledTab: FC<{ onOpenFolder: () => void }> = observer(({ onOpenFolder 
       ...tools.map((tool) => tool.definition.name)
     ]))
 
-  // Falls back to the first one, also after the picked one is uninstalled
-  const selected = filteredExtensions.find((extension) => extension.folderName === selectedFolderName) ??
-    filteredExtensions[0] as InstalledExtension | undefined
+  // Updates first, so they're seen without scrolling
+  const updates = filteredExtensions.filter((extension) => extensionCatalogService.getUpdate(extension))
+  const others = filteredExtensions.filter((extension) => !extensionCatalogService.getUpdate(extension))
+
+  const renderCard = (extension: InstalledExtension) => {
+    const { manifest } = extension
+    const update = extensionCatalogService.getUpdate(extension)
+    const isEnabled = extensionsService.isEnabled(extension)
+
+    return (
+      <ExtensionStoreCard
+        key={extension.folderName}
+        name={manifest?.name ?? extension.folderName}
+        version={manifest?.version}
+        author={manifest?.author}
+        category={manifest?.category}
+        description={extension.error ?? manifest?.description}
+        provides={getExtensionProvidesLabels(extension.tools.length, extension.components.length)}
+        tag={getInstalledTag(extension)}
+        isDimmed={!isEnabled}
+        action={update && <CatalogInstallButton entry={update} isCompact />}
+        onSelect={() => { openExtensionPage(extension.id, manifest?.name ?? extension.folderName) }}
+      />
+    )
+  }
 
   return (
-    <ExtensionsSplit
+    <ExtensionStore
+      scrollKey="installed.scroll"
+      title="Installed extensions"
+      subtitle={`${installedExtensions.length} installed or linked from a local folder`}
       toolbar={(
         <ExtensionsToolbar
           keyword={keyword}
@@ -198,39 +259,24 @@ const InstalledTab: FC<{ onOpenFolder: () => void }> = observer(({ onOpenFolder 
           sourceOptions={sourceOptions}
         />
       )}
-      list={filteredExtensions.length === 0
-        ? <div className="ExtensionsPage-listEmpty">{`Nothing matches "${keyword.trim()}"`}</div>
-        : filteredExtensions.map((extension) => {
-          const { manifest } = extension
-
-          return (
-            <ExtensionListItem
-              key={extension.folderName}
-              name={manifest?.name ?? extension.folderName}
-              version={manifest?.version}
-              description={extension.error ?? manifest?.description}
-              meta={[
-                manifest?.author,
-                getRuntimeSummary(extension.tools.map((tool) => tool.definition.runtime))
-              ].filter(Boolean).join(" · ")}
-              provides={getExtensionProvidesLabels(extension.tools.length, extension.components.length)}
-              tag={getInstalledTag(extension)}
-              isDimmed={!extensionsService.isEnabled(extension)}
-              isSelected={extension === selected}
-              onSelect={() => { setSelectedFolderName(extension.folderName) }}
-            />
-          )
-        })}
-      details={selected
-        ? <InstalledExtensionDetails key={selected.folderName} extension={selected} />
-        : (
-          <ExtensionsPagePlaceholder
-            icon={<Icons.Extensions size={28} aria-hidden />}
-            title="No extension selected"
-            description="Pick an extension from the list to see its details."
-          />
-        )}
-    />
+      categories={categories}
+      category={activeCategory}
+      onCategoryChange={setCategory}
+    >
+      {filteredExtensions.length === 0 && (
+        <div className="ExtensionStore-empty">{`Nothing matches "${keyword.trim()}"`}</div>
+      )}
+      {updates.length > 0 && (
+        <ExtensionStoreSection title="Updates available" count={updates.length}>
+          {updates.map(renderCard)}
+        </ExtensionStoreSection>
+      )}
+      {others.length > 0 && (
+        <ExtensionStoreSection title={updates.length > 0 ? "Up to date" : undefined} count={others.length}>
+          {others.map(renderCard)}
+        </ExtensionStoreSection>
+      )}
+    </ExtensionStore>
   )
 })
 
@@ -246,10 +292,11 @@ const getCatalogTag = (entry: CatalogExtension): ExtensionListItemTag | undefine
 const getCatalogKey = (entry: CatalogExtension) => `${entry.sourceId}:${entry.id}`
 
 const BrowseTab: FC = observer(() => {
-  const { catalogExtensions, isLoading, isLoaded, failedSources, enabledSources } = extensionCatalogService
-  const [keyword, setKeyword] = useState("")
-  const [sourceFilter, setSourceFilter] = useState(ALL_SOURCES)
-  const [selectedKey, setSelectedKey] = useState<string>()
+  const { catalogExtensions, isLoading, isLoaded, failedSources, enabledSources, updatedAt } = extensionCatalogService
+  const now = useNow()
+  const [keyword, setKeyword] = usePageState("browse.keyword", "")
+  const [sourceFilter, setSourceFilter] = usePageState("browse.source", ALL_SOURCES)
+  const [category, setCategory] = usePageState("browse.category", ALL_CATEGORIES)
 
   if (enabledSources.length === 0) {
     return (
@@ -257,7 +304,7 @@ const BrowseTab: FC = observer(() => {
         icon={<Icons.Browse size={28} aria-hidden />}
         title="Every source is turned off"
         description="Turn a catalog source back on, or add a new one."
-        action={<Button icon={Icons.Settings} onClick={openSourcesDialog}>Manage Sources</Button>}
+        action={<Button icon={Icons.Settings} onClick={openExtensionSettings}>Manage Sources</Button>}
       />
     )
   }
@@ -278,51 +325,74 @@ const BrowseTab: FC = observer(() => {
   const hasManySources = enabledSources.length > 1
   const isFirstLoad = !isLoaded || (isLoading && catalogExtensions.length === 0)
 
-  const filteredExtensions = catalogExtensions
+  const fromSource = catalogExtensions
     .filter((entry) => activeSourceFilter === ALL_SOURCES || entry.sourceId === activeSourceFilter)
+  const categories = getCategories(fromSource.map((entry) => entry.category))
+  const activeCategory = categories.includes(category) ? category : ALL_CATEGORIES
+
+  const filteredExtensions = fromSource
+    .filter((entry) => activeCategory === ALL_CATEGORIES || entry.category === activeCategory)
     .filter((entry) => matchesSearchKeyword(keyword, [
       entry.name,
       entry.description,
       entry.category,
       entry.author,
-      ...(entry.tools ?? []).map((tool) => tool.name)
+      ...entry.tools.map((tool) => tool.name)
     ]))
 
-  const selected = filteredExtensions.find((entry) => getCatalogKey(entry) === selectedKey) ?? filteredExtensions[0]
-
-  const renderList = () => {
+  const renderGrid = () => {
     if (isFirstLoad) {
-      return [0, 1, 2, 3].map((index) => <div key={index} className="ExtensionListItem is-skeleton" />)
+      return (
+        <ExtensionStoreSection>
+          {[0, 1, 2, 3, 4, 5].map((index) => <div key={index} className="ExtensionStoreCard is-skeleton" />)}
+        </ExtensionStoreSection>
+      )
     }
 
     if (filteredExtensions.length === 0) {
       return (
-        <div className="ExtensionsPage-listEmpty">
+        <div className="ExtensionStore-empty">
           {keyword.trim() ? `Nothing matches "${keyword.trim()}"` : "The enabled sources have no extensions yet"}
         </div>
       )
     }
 
-    return filteredExtensions.map((entry) => (
-      <ExtensionListItem
-        key={getCatalogKey(entry)}
-        name={entry.name}
-        version={entry.version}
-        description={entry.description}
-        meta={[
-          entry.author,
-          hasManySources && extensionCatalogService.getSourceLabel(entry.sourceId)
-        ].filter(Boolean).join(" · ")}
-        provides={getExtensionProvidesLabels(getCatalogEntryTools(entry).length, entry.components?.length ?? 0)}
-        tag={getCatalogTag(entry)}
-        isSelected={entry === selected}
-        onSelect={() => { setSelectedKey(getCatalogKey(entry)) }}
-      />
-    ))
+    return (
+      <ExtensionStoreSection count={filteredExtensions.length}>
+        {filteredExtensions.map((entry) => (
+          <ExtensionStoreCard
+            key={getCatalogKey(entry)}
+            name={entry.name}
+            version={entry.version}
+            author={[entry.author, hasManySources && extensionCatalogService.getSourceLabel(entry.sourceId)].filter(Boolean).join(" · ")}
+            category={entry.category}
+            description={entry.description}
+            provides={getExtensionProvidesLabels(entry.tools.length, entry.components.length)}
+            tag={getCatalogTag(entry)}
+            action={extensionCatalogService.getStatus(entry) !== "installed" && <CatalogInstallButton entry={entry} isCompact />}
+            onSelect={() => { openExtensionPage(extensionCatalogService.getEntryExtensionId(entry), entry.name) }}
+          />
+        ))}
+      </ExtensionStoreSection>
+    )
   }
 
   return (
-    <ExtensionsSplit
+    <ExtensionStore
+      scrollKey="browse.scroll"
+      title="Discover extensions"
+      subtitle={isFirstLoad
+        ? "Loading the catalog…"
+        : (
+          <>
+            {`${catalogExtensions.length} extension${catalogExtensions.length === 1 ? "" : "s"} from ${enabledSources.length} source${enabledSources.length === 1 ? "" : "s"}`}
+            {updatedAt !== undefined && (
+              <span title={`Catalog read ${prettyDateFormat(new Date(updatedAt))}`}>
+                {" · "}{formatCatalogUpdatedLabel(updatedAt, isLoading, now)}
+              </span>
+            )}
+          </>
+        )}
       toolbar={(
         <ExtensionsToolbar
           keyword={keyword}
@@ -330,71 +400,106 @@ const BrowseTab: FC = observer(() => {
           sourceFilter={activeSourceFilter}
           onSourceFilterChange={setSourceFilter}
           sourceOptions={enabledSources.map((source) => ({ label: getCatalogSourceLabel(source), value: source.id }))}
-        >
-          {failedSources.map(({ source, error }) => (
-            <CatalogSourceErrorNotice
-              key={source.id}
-              source={source}
-              error={error}
-              onManageSources={openSourcesDialog}
-            />
-          ))}
-        </ExtensionsToolbar>
+        />
       )}
-      list={renderList()}
-      details={selected
-        ? <CatalogExtensionDetails key={getCatalogKey(selected)} entry={selected} />
-        : !isFirstLoad && (
-          <ExtensionsPagePlaceholder
-            icon={<Icons.Browse size={28} aria-hidden />}
-            title="No extension selected"
-            description="Pick an extension from the list to see its details."
-          />
-        )}
-    />
+      notices={failedSources.map(({ source, error }) => (
+        <CatalogSourceErrorNotice
+          key={source.id}
+          source={source}
+          error={error}
+          onManageSources={openExtensionSettings}
+        />
+      ))}
+      categories={categories}
+      category={activeCategory}
+      onCategoryChange={setCategory}
+    >
+      {renderGrid()}
+    </ExtensionStore>
   )
 })
 
-interface ExtensionsSplitProps {
-  toolbar?: ReactNode
-  list: ReactNode
-  details: ReactNode
+const ALL_CATEGORIES = "all"
+
+interface ExtensionStoreProps {
+  /**
+   * Where its scroll position is kept in the page's state
+   */
+  scrollKey: string
+  title: string
+  subtitle: ReactNode
+  toolbar: ReactNode
+
+  /**
+   * Shown under the toolbar, such as sources that failed to load
+   */
+  notices?: ReactNode
+  categories: string[]
+  category: string
+  onCategoryChange: (category: string) => void
+  children: ReactNode
 }
 
 /**
- * Extension list on the left, details of the picked one on the right, each
- * scrolling on its own
+ * Store front: a banner with the search, category chips, then a grid of
+ * cards, all scrolling together
  */
-const ExtensionsSplit: FC<ExtensionsSplitProps> = ({ toolbar, list, details }) => (
-  <div className="ExtensionsPage-split">
-    <div className="ExtensionsPage-listPane">
-      {toolbar && <div className="ExtensionsPage-toolbar">{toolbar}</div>}
-      <div className="ExtensionsPage-scrollArea">
-        <SimpleBar className="ExtensionsPage-scroll">
-          <div className="ExtensionsPage-list" role="list">{list}</div>
-        </SimpleBar>
-      </div>
-    </div>
+const ExtensionStore: FC<ExtensionStoreProps> = (props) => {
+  const { scrollKey, title, subtitle, toolbar, notices, categories, category, onCategoryChange, children } = props
+  const scrollRef = usePageScroll(scrollKey)
 
-    {/* Details scroll on their own, so the Files tab can fill the pane instead */}
-    <div className="ExtensionsPage-detailsPane">
-      {details}
-    </div>
-  </div>
-)
+  return (
+    <div className="ExtensionsPage-scrollArea">
+      <SimpleBar key={scrollKey} className="ExtensionsPage-scroll" scrollableNodeProps={{ ref: scrollRef }}>
+        <div className="ExtensionStore">
+          <div className="ExtensionStore-banner">
+            <div className="ExtensionStore-heading">
+              <h2 className="ExtensionStore-title">{title}</h2>
+              <div className="ExtensionStore-subtitle">{subtitle}</div>
+            </div>
+            <div className="ExtensionStore-toolbar">{toolbar}</div>
+          </div>
 
-interface ExtensionsPagePlaceholderProps {
-  icon: ReactNode
-  title: string
-  description: string
-  action?: ReactNode
+          {notices}
+
+          {categories.length > 0 && (
+            <div className="ExtensionStore-categories" role="radiogroup" aria-label="Category">
+              {[ALL_CATEGORIES, ...categories].map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  role="radio"
+                  aria-checked={item === category}
+                  className={clsx("ExtensionStore-category", item === category && "active")}
+                  onClick={() => { onCategoryChange(item) }}
+                >
+                  {item === ALL_CATEGORIES ? "All" : item}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {children}
+        </div>
+      </SimpleBar>
+    </div>
+  )
 }
 
-const ExtensionsPagePlaceholder: FC<ExtensionsPagePlaceholderProps> = ({ icon, title, description, action }) => (
-  <div className="ExtensionsPage-placeholder">
-    {icon}
-    <div className="ExtensionsPage-placeholder-title">{title}</div>
-    <div className="ExtensionsPage-placeholder-description">{description}</div>
-    {action}
-  </div>
+interface ExtensionStoreSectionProps {
+  title?: string
+  count?: number
+  children: ReactNode
+}
+
+const ExtensionStoreSection: FC<ExtensionStoreSectionProps> = ({ title, count, children }) => (
+  <section className="ExtensionStore-section">
+    {title && (
+      <div className="ExtensionStore-sectionTitle">
+        {title}
+        {count !== undefined && <span>{count}</span>}
+      </div>
+    )}
+    <div className="ExtensionStore-grid">{children}</div>
+  </section>
 )

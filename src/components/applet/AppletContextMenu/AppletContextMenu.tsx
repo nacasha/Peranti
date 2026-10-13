@@ -9,8 +9,8 @@ import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOutput } from "src/types/AppletOutput"
-import { copyComponentValue } from "src/utils/copy-component-value"
-import { saveComponentValue } from "src/utils/save-component-value"
+import { copyComponentValue } from "src/utils/component/copy-component-value"
+import { saveComponentValue } from "src/utils/component/save-component-value"
 
 interface MenuParams {
   appletInput?: AppletInput

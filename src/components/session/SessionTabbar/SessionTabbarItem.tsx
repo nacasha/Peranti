@@ -9,7 +9,7 @@ import { useDragAndDropJS } from "src/hooks/useDragAndDropJS"
 import { useSelector } from "src/hooks/useSelector.ts"
 import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
-import { getSessionDisplayName } from "src/utils/get-session-display-name"
+import { getSessionDisplayName } from "src/utils/applet/get-session-display-name"
 
 interface TabItemProps {
   session: Session

@@ -2,7 +2,7 @@ import { type FC } from "react"
 
 import { HighlightedText } from "src/components/common/HighlightedText"
 import { type HistoryComponentProps } from "src/types/AppletHistory"
-import { toPreviewText } from "src/utils/to-preview-text"
+import { toPreviewText } from "src/utils/text/to-preview-text"
 
 import "./TextHistory.scss"
 

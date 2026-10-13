@@ -36,19 +36,21 @@ class ExtensionComponentRegistry {
     components.forEach((component) => {
       const kind = component.definition.kind ?? "both"
       const defaultHeight = component.definition.height ?? DEFAULT_HEIGHT
+      const value = component.definition.value ?? { type: "any" }
+      const propsInfo = component.definition.props
 
       if (kind !== "output") {
         const Input: FC<InputComponentProps<any>> = (props) => (
           <ExtensionComponentFrame {...props} mode="input" html={component.html} defaultHeight={defaultHeight} />
         )
-        this.inputs.set(component.key, new AppletComponent({ component: Input, hideInHistory: true }))
+        this.inputs.set(component.key, new AppletComponent({ component: Input, hideInHistory: true, value, props: propsInfo }))
       }
 
       if (kind !== "input") {
         const Output: FC<OutputComponentProps<any>> = (props) => (
           <ExtensionComponentFrame {...props} mode="output" html={component.html} defaultHeight={defaultHeight} />
         )
-        this.outputs.set(component.key, new AppletComponent({ component: Output, hideInHistory: true }))
+        this.outputs.set(component.key, new AppletComponent({ component: Output, hideInHistory: true, value, props: propsInfo }))
       }
     })
   }

@@ -1,3 +1,25 @@
+// Pattern behind the Extensions headers: a grid of small rounded blocks,
+// one filled in each group like the Extensions icon. Used as a mask, so
+// it's tinted by the theme.
+$extension-blocks-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' stroke='black' stroke-width='1'%3E%3Crect x='4.5' y='4.5' width='7' height='7' rx='1.5' fill='none'/%3E%3Crect x='20.5' y='4.5' width='7' height='7' rx='1.5' fill='black'/%3E%3Crect x='4.5' y='20.5' width='7' height='7' rx='1.5' fill='none'/%3E%3Crect x='20.5' y='20.5' width='7' height='7' rx='1.5' fill='none'/%3E%3C/svg%3E");
+
+// The tile pattern intersected with `$fade`, so it fades out like the dots
+@mixin extension-blocks-background($fade) {
+  background-image: none;
+  background-color: color-mix(in srgb, var(--accent) 55%, var(--text-color));
+  opacity: 0.2;
+  -webkit-mask-image: $extension-blocks-pattern, $fade;
+  mask-image: $extension-blocks-pattern, $fade;
+  -webkit-mask-size: 32px 32px, 100% 100%;
+  mask-size: 32px 32px, 100% 100%;
+  -webkit-mask-repeat: repeat, no-repeat;
+  mask-repeat: repeat, no-repeat;
+  -webkit-mask-position: right 0 top 0, 0 0;
+  mask-position: right 0 top 0, 0 0;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
 // One card filling the area, same frame as SettingsPage and HistoryPage: a
 // header bar with the tabs, then a list beside the picked extension's details
 .ExtensionsPage {
@@ -81,6 +103,8 @@
   display: flex;
   flex: 1;
   min-height: 0;
+  // What --page-gutter is measured against
+  container-type: inline-size;
 }
 
 // ---------------------------------------------------------------------------
@@ -140,6 +164,73 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
   flex-direction: column;
   gap: 1px;
   padding: 4px 6px 10px;
+}
+
+// Equal-width segmented filter under the search, such as All / Input / Output
+.ExtensionsPage-segmented {
+  display: flex;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--raised);
+
+  button {
+    flex: 1;
+    height: 24px;
+    border: 0;
+    border-radius: calc(var(--radius-md) - 2px);
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--text-color);
+    }
+
+    &.active {
+      background: var(--panel);
+      color: var(--text-color);
+      box-shadow: var(--shadow-sm);
+    }
+  }
+}
+
+// Titled groups in a list, such as extension and built-in components
+.ExtensionsPage-listGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+
+  & + & {
+    margin-top: 10px;
+  }
+}
+
+.ExtensionsPage-listGroup-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 4px;
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+  user-select: none;
+
+  span {
+    font-weight: normal;
+    letter-spacing: 0;
+  }
+}
+
+.ExtensionsPage-listHint {
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--faint);
 }
 
 .ExtensionsPage-listEmpty {
@@ -404,14 +495,59 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
     margin-top: 2px;
   }
 
+  // Half-tone badge: a soft fill and text of the same hue, no border
   .ExtensionListItem-provides {
+    --badge-hue: var(--text-color);
+
     flex: none;
-    padding: 0 6px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
+    padding: 0 7px;
+    // Follows the app's corner radius setting
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--badge-hue) 10%, transparent);
+    color: color-mix(in srgb, var(--badge-hue) 75%, var(--text-color));
     font-size: 10.5px;
-    line-height: 15px;
-    color: var(--muted);
+    font-weight: var(--font-weight-medium);
+    line-height: 17px;
+
+    &.is-neutral {
+      --badge-hue: var(--muted);
+      color: var(--muted);
+    }
+
+    &.is-input {
+      --badge-hue: var(--accent);
+    }
+
+    // Fixed violet, apart from any accent colour the user picks
+    &.is-output {
+      --badge-hue: #8b5cf6;
+    }
+
+    // Two tones: the label on a stronger fill, the detail on the badge's own
+    &.is-split {
+      display: inline-flex;
+      padding: 0;
+      overflow: hidden;
+
+      .ExtensionListItem-provides-label {
+        padding: 0 6px 0 7px;
+        background: color-mix(in srgb, var(--badge-hue) 18%, transparent);
+      }
+
+      .ExtensionListItem-provides-detail {
+        padding: 0 7px 0 6px;
+        font-weight: normal;
+      }
+    }
+  }
+
+  // The picked row is already tinted, a little more fill keeps badges apart
+  &.is-selected .ExtensionListItem-provides {
+    background: color-mix(in srgb, var(--badge-hue) 16%, transparent);
+
+    &.is-split .ExtensionListItem-provides-label {
+      background: color-mix(in srgb, var(--badge-hue) 26%, transparent);
+    }
   }
 
   .ExtensionListItem-meta {
@@ -436,6 +572,7 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
 // ---------------------------------------------------------------------------
 
 .ExtensionsPage-detailsPane {
+  // Also what --page-gutter is measured against
   container: extension-details / inline-size;
 }
 
@@ -453,8 +590,8 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
 .ExtensionDetails-hero {
   display: flex;
   align-items: flex-start;
-  gap: 20px;
-  padding: 28px 32px 24px;
+  gap: 16px;
+  padding: 18px var(--page-gutter) 16px;
   border-bottom: 1px solid var(--line);
   position: relative;
   isolation: isolate;
@@ -479,11 +616,18 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
   }
 }
 
+// An extension's own page shares the store's pattern, Manage keeps the dots
+.ExtensionPage .ExtensionDetails-hero::before {
+  @include extension-blocks-background(
+    radial-gradient(ellipse 70% 120% at 100% 0%, #000 0%, rgba(0, 0, 0, 0.35) 55%, transparent 85%)
+  );
+}
+
 // Overview | Files, underlined like the page's own tabs would be in a doc
 .ExtensionDetails-tabs {
   display: flex;
   gap: 4px;
-  padding: 0 24px;
+  padding: 0 calc(var(--page-gutter) - 8px);
   border-bottom: 1px solid var(--line);
   margin-top: -1px;
 
@@ -491,7 +635,7 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
     display: flex;
     align-items: center;
     gap: 6px;
-    height: 38px;
+    height: 34px;
     padding: 0 8px;
     border: 0;
     border-bottom: 2px solid transparent;
@@ -510,7 +654,6 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
     &.active {
       border-bottom-color: var(--accent);
       color: var(--text-color);
-      font-weight: var(--font-weight-medium);
     }
   }
 
@@ -521,6 +664,11 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
     font-size: 10.5px;
     font-weight: normal;
     color: var(--muted);
+
+    &.is-error {
+      background: color-mix(in srgb, var(--danger-color) 14%, transparent);
+      color: var(--danger-color);
+    }
   }
 }
 
@@ -539,7 +687,7 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
   display: flex;
   flex: 1;
   min-height: 0;
-  padding: 16px 24px 20px;
+  padding: 12px var(--page-gutter) 16px;
 }
 
 // Files tab: file list | code viewer, each scrolling on its own
@@ -780,19 +928,19 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
 .ExtensionDetails-body {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 28px;
-  padding: 24px 32px 40px;
+  gap: 20px;
+  padding: 16px var(--page-gutter) 24px;
 }
 
 @container extension-details (min-width: 760px) {
   .ExtensionDetails-body {
     grid-template-columns: minmax(0, 1fr) 280px;
-    gap: 40px;
+    gap: 28px;
   }
 
   .ExtensionDetails-aside {
     position: sticky;
-    top: 24px;
+    top: 16px;
     align-self: start;
   }
 }
@@ -800,7 +948,7 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
 .ExtensionDetails-main {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 20px;
   min-width: 0;
 }
 
@@ -939,7 +1087,27 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
 
 // Tools and Components tabs, same padding as Overview
 .ExtensionDetails-tabBody {
-  padding: 24px 32px 40px;
+  padding: 16px var(--page-gutter) 24px;
+}
+
+// Square icon badge, tinted by what it is: accent for a tool, violet for a
+// component (same violet as the output badges)
+.ExtensionIconBadge {
+  --icon-hue: var(--accent);
+
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border: 1px solid color-mix(in srgb, var(--icon-hue) 22%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--icon-hue) 10%, transparent);
+  color: color-mix(in srgb, var(--icon-hue) 85%, var(--text-color));
+
+  &.is-component {
+    --icon-hue: #8b5cf6;
+  }
 }
 
 // Overview's list of what the extension provides: names only
@@ -964,11 +1132,6 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
     border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
   }
 
-  .ExtensionProvides-icon {
-    flex: none;
-    color: var(--faint);
-  }
-
   .ExtensionProvides-text {
     display: flex;
     flex-direction: column;
@@ -991,58 +1154,499 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
   }
 }
 
-// Tools of a package: one block each, its fields below a header
-.ExtensionTools {
+// Tools and Components tabs: one compact row each, expanded for details
+.ExtensionAccordion {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 8px;
 }
 
-.ExtensionTools-item {
+.ExtensionAccordion-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 26px;
+
+  .ExtensionAccordion-count {
+    font-size: 12px;
+    color: var(--muted);
+  }
+}
+
+.ExtensionAccordion-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
   border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
-.ExtensionTools-header {
+.ExtensionAccordion-item {
+  &:not(:last-child) {
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  }
+
+  &.is-expanded {
+    background: color-mix(in srgb, var(--hover) 35%, transparent);
+
+    .ExtensionAccordion-chevron {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.ExtensionAccordion-row {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  gap: 8px;
+  padding-right: 12px;
+
+  &:hover {
+    background: var(--hover);
+  }
 }
 
-.ExtensionTools-heading {
+.ExtensionAccordion-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  min-height: 52px;
+  padding: 8px 4px 8px 10px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  .ExtensionAccordion-chevron {
+    flex: none;
+    color: var(--faint);
+    transition: transform 0.15s ease;
+  }
+}
+
+.ExtensionAccordion-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   flex: 1;
   min-width: 0;
 }
 
-.ExtensionTools-title {
+.ExtensionAccordion-title {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
 
-  .ExtensionTools-name {
-    font-size: 14px;
-    font-weight: var(--font-weight-semibold);
+  .ExtensionAccordion-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 13px;
+    font-weight: var(--font-weight-medium);
+  }
+
+  > :not(.ExtensionAccordion-name) {
+    flex: none;
   }
 }
 
-.ExtensionTools-description {
-  font-size: 12.5px;
-  line-height: 1.55;
+.ExtensionAccordion-description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
   color: var(--muted);
 }
 
-.ExtensionTools-runs {
+.ExtensionAccordion-summary {
+  flex: none;
   font-size: 11.5px;
   color: var(--faint);
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+}
+
+.ExtensionAccordion-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+// Expanded content: meta pills, then panels side by side
+.ExtensionAccordion-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 12px 14px;
+}
+
+// Basic info: labels in one column, values lined up beside them, in the
+// same card as the panels below
+.ExtensionAccordion-meta {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  margin: 0;
+  padding: 4px 0;
+  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+}
+
+// Rows pass their cells to the grid, so every label shares one column
+.ExtensionAccordion-metaRow {
+  display: contents;
+
+  dt,
+  dd {
+    display: flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 12px;
+  }
+
+  dt {
+    padding-right: 20px;
+    font-size: 12px;
+    color: var(--faint);
+  }
+
+  dd {
+    min-width: 0;
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--text-color);
+    overflow-wrap: anywhere;
+
+    code {
+      font-family: var(--font-family-mono);
+      font-size: 12px;
+    }
+  }
+
+  & + & {
+    dt,
+    dd {
+      border-top: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+    }
+  }
+}
+
+.ExtensionAccordion-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.ExtensionAccordion-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  overflow: hidden;
+
+  &.is-wide {
+    grid-column: 1 / -1;
+  }
+
+  // The props table fills the panel, so its own frame goes
+  .ExtensionAccordion-panelBody > .ComponentFields {
+    border: 0;
+    border-radius: 0;
+  }
+}
+
+.ExtensionAccordion-panelHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+
+  .ExtensionAccordion-panelCount {
+    padding: 0 5px;
+    border-radius: var(--radius-sm);
+    background: var(--hover);
+    font-size: 10.5px;
+    line-height: 16px;
+    letter-spacing: 0;
+    color: var(--faint);
+  }
+}
+
+.ExtensionAccordion-panelBody {
+  min-width: 0;
+
+  > .ExtensionComponents-value {
+    padding: 10px 12px 12px;
+  }
+}
+
+.ExtensionAccordion-empty {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--faint);
+}
+
+// A field per row: label over its key, what draws it on the right
+.ExtensionFieldRows {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ExtensionFieldRows-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 6px 12px;
+
+  & + & {
+    border-top: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+  }
+}
+
+.ExtensionFieldRows-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+
+  > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.ExtensionFieldRows-label {
+  font-size: 12.5px;
+}
+
+.ExtensionFieldRows-key {
+  font-size: 11px;
+  color: var(--faint);
+
+  &,
+  code {
+    font-family: var(--font-family-mono);
+  }
+}
+
+.ExtensionFieldRows-component {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex: none;
+  max-width: 50%;
+}
+
+.ExtensionFieldRows-type {
+  font-size: 10.5px;
+  color: var(--faint);
+}
+
+// Components tab: value and props inside each row
+// Which side a component draws: a soft tint, accent for input, violet for
+// output, and both blended for a component that does both
+.ExtensionComponents-kind {
+  --kind-hue: var(--accent);
+
+  flex: none;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--kind-hue) 12%, transparent);
+  color: color-mix(in srgb, var(--kind-hue) 80%, var(--text-color));
+  font-size: 10.5px;
+  font-weight: var(--font-weight-medium);
+  line-height: 18px;
+
+  &.is-output {
+    --kind-hue: #8b5cf6;
+  }
+
+  &.is-both {
+    --kind-hue: color-mix(in srgb, var(--accent) 50%, #8b5cf6);
+  }
+}
+
+
+.ExtensionComponents-value {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .ExtensionComponents-value-type {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    font-size: 12.5px;
+    color: var(--muted);
+
+    code {
+      font-family: var(--font-family-mono);
+      font-size: 12px;
+      color: var(--text-color);
+    }
+  }
+}
+
+.ExtensionComponents-example {
+  margin: 0;
+  padding: 10px 12px;
+  max-height: 220px;
+  overflow: auto;
+  border-radius: var(--radius-md);
+  background: var(--hover);
+  font-family: var(--font-family-mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+// Props and value keys: a table with a frame, scrolls sideways when narrow
+.ComponentFields {
+  --table-line: color-mix(in srgb, var(--line) 55%, transparent);
+
+  overflow-x: auto;
+  border: 1px solid var(--table-line);
+  border-radius: var(--radius-md);
+
+  code {
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+  }
+}
+
+.ComponentFields-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+
+  th,
+  td {
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+  }
+
+  th {
+    border-bottom: 1px solid var(--table-line);
+    font-size: 11px;
+    font-weight: var(--font-weight-medium);
+    color: var(--faint);
+  }
+
+  tbody tr:not(:last-child) td {
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+  }
+
+  tbody tr:hover {
+    background: var(--hover);
+  }
+
+  // Description takes the spare width and wraps
+  .ComponentFields-descriptionCell {
+    width: 100%;
+    min-width: 200px;
+    white-space: normal;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+}
+
+.ComponentFields-name {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-color);
+}
+
+.ComponentFields-required {
+  margin-left: 2px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--danger-color);
+}
+
+.ComponentFields-type {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  background: var(--hover);
+  font-family: var(--font-family-mono);
+  font-size: 10.5px;
+  line-height: 18px;
+  color: var(--muted);
+}
+
+.ComponentFields .ComponentFields-default {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.ComponentFields-muted {
+  color: var(--faint);
+}
+
+.ComponentFields-options {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--faint);
+
+  > span {
+    margin-right: 2px;
+  }
+
+  code {
+    padding: 0 5px;
+    border-radius: var(--radius-sm);
+    background: var(--hover);
+    font-size: 11px;
+    line-height: 17px;
+    color: var(--muted);
+  }
+}
+
+.ExtensionComponents-required {
+  margin-left: 6px;
+  font-size: 10.5px;
+  color: var(--danger-color);
+}
+
+.ExtensionComponents-options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 // Inputs, outputs and files: a bordered table, scrolls sideways on a narrow pane
@@ -1117,5 +1721,299 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
   .ExtensionDetails-table-wrap {
     max-width: 360px;
     white-space: normal;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Store: banner with the search, category chips, a grid of cards, and a page
+// per extension with a way back
+// ---------------------------------------------------------------------------
+
+.ExtensionsPage-body > .ExtensionsPage-scrollArea {
+  min-width: 0;
+}
+
+.ExtensionStore {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 var(--page-gutter) 40px;
+}
+
+.ExtensionStore-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin: 0 calc(-1 * var(--page-gutter));
+  padding: 32px var(--page-gutter) 22px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  isolation: isolate;
+
+  // Extensions icon pattern, fading out to the left
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    @include extension-blocks-background(
+      radial-gradient(ellipse 70% 140% at 100% 0%, #000 0%, rgba(0, 0, 0, 0.35) 55%, transparent 85%)
+    );
+  }
+}
+
+.ExtensionStore-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ExtensionStore-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+}
+
+.ExtensionStore-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.ExtensionStore-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 320px;
+  max-width: 520px;
+
+  .ExtensionsPage-search {
+    flex: 1;
+    min-width: 0;
+    height: 32px;
+  }
+
+  .ExtensionsToolbar-source {
+    flex: none;
+    width: 170px;
+  }
+}
+
+.ExtensionStore-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ExtensionStore-category {
+  height: 26px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background-color var(--animation-speed), color var(--animation-speed), border-color var(--animation-speed);
+
+  &:hover {
+    background: var(--hover);
+    color: var(--text-color);
+  }
+
+  &.active {
+    border-color: transparent;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.ExtensionStore-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ExtensionStore-sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+
+  span {
+    font-weight: normal;
+  }
+}
+
+.ExtensionStore-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.ExtensionStore-empty {
+  padding: 48px 0;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.ExtensionStoreCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  min-height: 150px;
+  padding: 14px 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--panel);
+  color: var(--text-color);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--animation-speed), box-shadow var(--animation-speed), transform var(--animation-speed);
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    box-shadow: var(--card-shadow);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  &.is-dimmed > :not(.ExtensionStoreCard-footer) {
+    opacity: 0.55;
+  }
+
+  // Placeholder card while the catalog loads
+  &.is-skeleton {
+    cursor: default;
+    background: linear-gradient(90deg, transparent, var(--hover), transparent);
+    background-size: 200% 100%;
+    animation: ExtensionListItem-skeleton 1.4s ease-in-out infinite;
+  }
+
+  .ExtensionStoreCard-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ExtensionStoreCard-title {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ExtensionStoreCard-name {
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ExtensionStoreCard-version {
+    flex: none;
+    font-size: var(--font-size-xs);
+    color: var(--faint);
+  }
+
+  .ExtensionStoreCard-tag {
+    flex: none;
+    padding: 0 7px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    line-height: 17px;
+
+    &.is-accent {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    &.is-danger {
+      background: color-mix(in srgb, var(--danger-color) 14%, transparent);
+      color: var(--danger-color);
+    }
+
+    &.is-muted {
+      background: var(--hover);
+      color: var(--muted);
+    }
+  }
+
+  .ExtensionStoreCard-byline {
+    font-size: var(--font-size-xs);
+    color: var(--faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ExtensionStoreCard-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    margin-top: 4px;
+    overflow: hidden;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  .ExtensionStoreCard-muted {
+    color: var(--faint);
+  }
+
+  // Badges sit on the bottom edge, level with the bottom of the button
+  .ExtensionStoreCard-footer {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 10px;
+  }
+
+  .ExtensionStoreCard-provides {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-end;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+
+    span {
+      padding: 0 7px;
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--muted) 12%, transparent);
+      color: var(--muted);
+      font-size: 10.5px;
+      font-weight: var(--font-weight-medium);
+      line-height: 17px;
+    }
+  }
+
+  .ExtensionStoreCard-action {
+    flex: none;
+  }
+}
+
+@container extension-details (max-width: 560px) {
+  .ExtensionAccordion-summary {
+    display: none;
   }
 }

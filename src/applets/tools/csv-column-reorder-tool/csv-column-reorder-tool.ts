@@ -4,8 +4,8 @@ import { parseOrder, reconcileOrder } from "src/components/inputs/ListReorderInp
 import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
-import { getCsvColumnLabels } from "src/utils/get-csv-column-labels.ts"
-import { parseCsvRows } from "src/utils/parse-csv-rows.ts"
+import { getCsvColumnLabels } from "src/utils/data/get-csv-column-labels.ts"
+import { parseCsvRows } from "src/utils/data/parse-csv-rows.ts"
 
 interface InputFields {
   csv: InputFieldsType.Code

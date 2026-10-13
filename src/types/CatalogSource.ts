@@ -8,7 +8,7 @@ export interface CatalogSource {
   type: CatalogSourceType
 
   /**
-   * Repo URL, `index.json` URL, or absolute folder path
+   * Repo URL or absolute folder path
    */
   location: string
 

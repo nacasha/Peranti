@@ -7,8 +7,7 @@ export interface ExtensionToolFile {
   definition: ExtensionTool
 
   /**
-   * Its `peranti.tool.json`, relative to the extension folder. The
-   * `peranti.json` itself for an extension in the older format.
+   * Its `peranti.tool.json`, relative to the extension folder
    */
   path: string
 

@@ -3,7 +3,7 @@ import { save } from "@tauri-apps/plugin-dialog"
 import { BaseDirectory, readDir, readFile, readTextFile, stat, writeFile } from "@tauri-apps/plugin-fs"
 import * as base64 from "js-base64"
 
-import { removeBase64Header } from "src/utils/base-64"
+import { removeBase64Header } from "src/utils/file/base-64"
 
 import { rustInvokerService } from "./rust-invoker-service.js"
 

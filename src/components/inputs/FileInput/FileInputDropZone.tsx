@@ -3,8 +3,8 @@ import { useState, type FC, type KeyboardEvent, type ReactNode, type RefObject }
 import { Icons } from "src/constants/icons"
 import { useSelector } from "src/hooks/useSelector"
 import { fileDropService } from "src/services/file-drop-service"
-import { formatFileSize } from "src/utils/format-file-size"
-import { getAcceptLabels } from "src/utils/get-accept-labels"
+import { getAcceptLabels } from "src/utils/component/get-accept-labels"
+import { formatFileSize } from "src/utils/file/format-file-size"
 
 interface FileInputDropZoneProps {
   fieldKey: string

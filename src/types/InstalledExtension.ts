@@ -16,7 +16,8 @@ export interface InstalledExtensionTool {
 }
 
 /**
- * A folder inside the extensions folder, listed whether or not it loaded
+ * A folder inside the extensions folder, or inside a local source it's
+ * linked from, listed whether or not it loaded
  */
 export interface InstalledExtension {
   /**
@@ -62,4 +63,10 @@ export interface InstalledExtension {
    * Where it was installed from, missing for folders added by hand
    */
   source?: ExtensionSource
+
+  /**
+   * ID of the local source it's loaded from in place, nothing is copied.
+   * Missing for extensions inside the extensions folder.
+   */
+  linkedSourceId?: string
 }

@@ -1,10 +1,15 @@
 import { clsx } from "clsx"
-import { useState, type FC, type ReactNode } from "react"
+import { type FC, type ReactNode } from "react"
 import SimpleBar from "simplebar-react"
 
+import { ComponentValueTypeLabels } from "src/constants/component-value-types"
 import { Icons } from "src/constants/icons"
+import { usePageScroll } from "src/hooks/usePageScroll"
+import { usePageState } from "src/hooks/usePageState"
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOutput } from "src/types/AppletOutput"
+import { type ComponentValueInfo } from "src/types/ComponentValueInfo"
+import { getFieldValueInfo } from "src/utils/component/get-field-value-info"
 
 export interface ExtensionDetailsField {
   label: string
@@ -74,7 +79,7 @@ const OVERVIEW = "overview"
  */
 export const ExtensionDetails: FC<ExtensionDetailsProps> = (props) => {
   const { name, version, author, chips = [], provides = [], actions, notice, description, fields, tabs = [], children } = props
-  const [activeTabId, setActiveTabId] = useState(OVERVIEW)
+  const [activeTabId, setActiveTabId] = usePageState("details.tab", OVERVIEW)
   const visibleChips = chips.filter((chip): chip is string => !!chip)
   const visibleTabs = tabs.filter((tab): tab is ExtensionDetailsTab => !!tab)
   const visibleFields = fields.filter((field): field is ExtensionDetailsField => (
@@ -83,6 +88,9 @@ export const ExtensionDetails: FC<ExtensionDetailsProps> = (props) => {
 
   // Falls back to Overview when the picked tab is gone, such as after an update
   const activeTab = visibleTabs.find((tab) => tab.id === activeTabId)
+
+  // Each tab scrolls back to where it was left
+  const scrollRef = usePageScroll(`details.scroll.${activeTab?.id ?? OVERVIEW}`)
 
   const renderTabButton = (id: string, label: string, count?: number) => (
     <button
@@ -143,7 +151,7 @@ export const ExtensionDetails: FC<ExtensionDetailsProps> = (props) => {
 
   return (
     <div className="ExtensionsPage-scrollArea">
-      <SimpleBar className="ExtensionsPage-scroll">
+      <SimpleBar key={activeTab?.id ?? OVERVIEW} className="ExtensionsPage-scroll" scrollableNodeProps={{ ref: scrollRef }}>
         <div className="ExtensionDetails">
           {header}
 
@@ -224,15 +232,20 @@ export const ExtensionDetailsNotice: FC<ExtensionDetailsNoticeProps> = ({ tone, 
 interface ExtensionFieldsListProps {
   inputFields?: unknown
   outputFields?: unknown
+
+  /**
+   * The extension's own components, so `@<id>` fields show their type
+   */
+  extensionComponents?: Array<{ componentId: string, value?: ComponentValueInfo }>
 }
 
 /**
  * Inputs and outputs the tool shows, when the manifest lists them as arrays
  */
-export const ExtensionFieldsList: FC<ExtensionFieldsListProps> = ({ inputFields, outputFields }) => {
+export const ExtensionFieldsList: FC<ExtensionFieldsListProps> = ({ inputFields, outputFields, extensionComponents }) => {
   const groups = [
-    { title: "Inputs", fields: Array.isArray(inputFields) ? inputFields as AppletInput[] : [] },
-    { title: "Outputs", fields: Array.isArray(outputFields) ? outputFields as AppletOutput[] : [] }
+    { title: "Inputs", mode: "input" as const, fields: Array.isArray(inputFields) ? inputFields as AppletInput[] : [] },
+    { title: "Outputs", mode: "output" as const, fields: Array.isArray(outputFields) ? outputFields as AppletOutput[] : [] }
   ].filter((group) => group.fields.length > 0)
 
   if (groups.length === 0) {
@@ -250,16 +263,24 @@ export const ExtensionFieldsList: FC<ExtensionFieldsListProps> = ({ inputFields,
                   <th>Label</th>
                   <th>Key</th>
                   <th>Component</th>
+                  <th>Type</th>
                 </tr>
               </thead>
               <tbody>
-                {group.fields.map((field) => (
-                  <tr key={String(field.key)}>
-                    <td>{field.label || <span className="ExtensionDetails-table-muted">—</span>}</td>
-                    <td><code>{String(field.key)}</code></td>
-                    <td><span className="ExtensionDetails-chip">{String(field.component)}</span></td>
-                  </tr>
-                ))}
+                {group.fields.map((field) => {
+                  const valueInfo = getFieldValueInfo(String(field.component), group.mode, extensionComponents)
+
+                  return (
+                    <tr key={String(field.key)}>
+                      <td>{field.label || <span className="ExtensionDetails-table-muted">—</span>}</td>
+                      <td><code>{String(field.key)}</code></td>
+                      <td><span className="ExtensionDetails-chip">{String(field.component)}</span></td>
+                      <td className="ExtensionDetails-table-muted" title={valueInfo?.description}>
+                        {valueInfo ? ComponentValueTypeLabels[valueInfo.type] : "—"}
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

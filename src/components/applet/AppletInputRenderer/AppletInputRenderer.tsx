@@ -11,8 +11,8 @@ import { appletComponentService } from "src/services/applet-component-service"
 import { fileDropService } from "src/services/file-drop-service"
 import { type AppletInput, type ComputedProp } from "src/types/AppletInput"
 import { type InputComponentProps } from "src/types/InputComponentProps"
-import { readComputedPropSources } from "src/utils/read-computed-prop-sources"
-import { transformComputedProps } from "src/utils/transform-computed-props"
+import { readComputedPropSources } from "src/utils/component/read-computed-prop-sources"
+import { transformComputedProps } from "src/utils/component/transform-computed-props"
 
 interface AppletInputRendererProps {
   appletInput: AppletInput
@@ -103,7 +103,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = memo((props) =>
    * Only few components handling those events
    */
   const additionalProps: Record<string, any> = {}
-  if (["Code", "PipelineEditor"].includes(appletInput.component)) {
+  if (["Code", "PipelineEditor", "Extensions", "ExtensionPage"].includes(appletInput.component)) {
     additionalProps.initialState = initialState
     additionalProps.onStateChange = handleStateChange
   }

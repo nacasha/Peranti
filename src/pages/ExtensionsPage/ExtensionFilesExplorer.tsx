@@ -4,12 +4,13 @@ import { useEffect, useMemo, useState, type FC, type ReactNode } from "react"
 import { BaseCodeMirror } from "src/components/common/BaseCodeMirror"
 import { FileNames } from "src/constants/file-names"
 import { Icons } from "src/constants/icons"
+import { usePageState } from "src/hooks/usePageState"
 import { type CatalogExtensionFile } from "src/types/CatalogExtension"
 import { type FileTreeNode } from "src/types/FileTreeNode"
-import { buildFileTree } from "src/utils/build-file-tree"
-import { decodePreviewText } from "src/utils/decode-preview-text"
-import { formatFileSize } from "src/utils/format-file-size"
-import { getCodeLanguage } from "src/utils/get-code-language"
+import { buildFileTree } from "src/utils/file/build-file-tree"
+import { decodePreviewText } from "src/utils/file/decode-preview-text"
+import { formatFileSize } from "src/utils/file/format-file-size"
+import { getCodeLanguage } from "src/utils/file/get-code-language"
 
 /**
  * Bigger files aren't previewed, the editor slows down and remote ones would
@@ -38,9 +39,11 @@ interface ExtensionFilesExplorerProps {
  * Files of an extension on the left, the picked one's code on the right
  */
 export const ExtensionFilesExplorer: FC<ExtensionFilesExplorerProps> = ({ files, placeholder, readFile }) => {
-  const [selectedPath, setSelectedPath] = useState<string>()
+  const [selectedPath, setSelectedPath] = usePageState<string | undefined>("files.selected", undefined)
   const [preview, setPreview] = useState<Preview>({ status: "loading" })
-  const [collapsedPaths, setCollapsedPaths] = useState<Set<string>>(() => new Set())
+  // Kept as a list, so the page can save it with its tab
+  const [collapsedList, setCollapsedList] = usePageState<string[]>("files.collapsed", [])
+  const collapsedPaths = useMemo(() => new Set(collapsedList), [collapsedList])
   const tree = useMemo(() => buildFileTree(files ?? []), [files])
 
   // Opens on the manifest, the file that says what the extension does
@@ -53,7 +56,7 @@ export const ExtensionFilesExplorer: FC<ExtensionFilesExplorerProps> = ({ files,
       return
     }
 
-    if (selected.size > MAX_PREVIEW_BYTES) {
+    if ((selected.size ?? 0) > MAX_PREVIEW_BYTES) {
       setPreview({ status: "too-large" })
       return
     }
@@ -101,15 +104,9 @@ export const ExtensionFilesExplorer: FC<ExtensionFilesExplorerProps> = ({ files,
   }
 
   const toggleFolder = (path: string) => {
-    setCollapsedPaths((current) => {
-      const next = new Set(current)
-      if (next.has(path)) {
-        next.delete(path)
-      } else {
-        next.add(path)
-      }
-      return next
-    })
+    setCollapsedList(collapsedPaths.has(path)
+      ? collapsedList.filter((item) => item !== path)
+      : [...collapsedList, path])
   }
 
   // Indented by depth, folders open until collapsed
@@ -151,7 +148,7 @@ export const ExtensionFilesExplorer: FC<ExtensionFilesExplorerProps> = ({ files,
         >
           <Icons.File size={13} aria-hidden />
           <span className="ExtensionFiles-item-name">{node.name}</span>
-          <span className="ExtensionFiles-item-size">{formatFileSize(file.size)}</span>
+          {file.size !== undefined && <span className="ExtensionFiles-item-size">{formatFileSize(file.size)}</span>}
         </button>
       </li>
     )
@@ -168,7 +165,7 @@ export const ExtensionFilesExplorer: FC<ExtensionFilesExplorerProps> = ({ files,
           <div className="ExtensionFiles-viewer-header">
             <code>{selected.path}</code>
             {selected.executable && <span className="ExtensionDetails-chip">executable</span>}
-            <span className="ExtensionFiles-viewer-size">{formatFileSize(selected.size)}</span>
+            {selected.size !== undefined && <span className="ExtensionFiles-viewer-size">{formatFileSize(selected.size)}</span>}
           </div>
         )}
         <div className="ExtensionFiles-viewer-body">

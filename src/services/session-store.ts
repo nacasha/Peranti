@@ -92,8 +92,13 @@ class SessionStore {
   /**
    * @param options.appletIdAliases Old applet IDs mapped to their new ones,
    * the saved sessions are moved over once restored
+   * @param options.registerRestoredApplets Called with the applet IDs of the
+   * restored sessions before any opens, to register applets made on demand
    */
-  setupPersistence(options: { appletIdAliases?: Record<string, string> } = {}) {
+  setupPersistence(options: {
+    appletIdAliases?: Record<string, string>
+    registerRestoredApplets?: (appletIds: string[]) => void
+  } = {}) {
     void makePersistable(this, {
       name: StorageKeys.SessionStore,
       stringify: false,
@@ -104,12 +109,16 @@ class SessionStore {
         "sessions"
       ]
     }).then(() => {
-      void this.handleHydratedStore(options.appletIdAliases)
+      void this.handleHydratedStore(options.appletIdAliases, options.registerRestoredApplets)
     })
   }
 
-  async handleHydratedStore(appletIdAliases: Record<string, string> = {}) {
+  async handleHydratedStore(
+    appletIdAliases: Record<string, string> = {},
+    registerRestoredApplets?: (appletIds: string[]) => void
+  ) {
     await this.renameAppletIds(appletIdAliases)
+    registerRestoredApplets?.(this.sessions.map((session) => session.appletId))
     await this.openCurrentlyActiveSession()
     this.setIsInitialized(true)
   }

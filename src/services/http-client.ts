@@ -1,6 +1,6 @@
 import { fetch as fetchTauri } from "@tauri-apps/plugin-http"
 
-import { isRunningInTauri } from "src/utils/is-running-in-tauri"
+import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 
 interface Options {
   method: "GET"

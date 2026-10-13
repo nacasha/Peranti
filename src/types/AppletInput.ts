@@ -53,7 +53,7 @@ export type AppletInput<K extends Record<string, string> | any = any> = {
   hideInHistory?: boolean
 } & ({
   customComponent: true
-  component: "PipelineEditor" | "Settings" | "History" | "Extensions"
+  component: "PipelineEditor" | "Settings" | "History" | "Extensions" | "Workbench" | "ExtensionPage"
   props?: any
   computedProps?: undefined
 }

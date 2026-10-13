@@ -1,4 +1,4 @@
-import { remove } from "@tauri-apps/plugin-fs"
+import { readDir, remove } from "@tauri-apps/plugin-fs"
 import { makeAutoObservable } from "mobx"
 import toast from "react-hot-toast"
 
@@ -6,6 +6,7 @@ import { ExtensionCatalog } from "src/constants/extension-catalog"
 import { FileNames } from "src/constants/file-names"
 import { Folders } from "src/constants/folders.js"
 import { AppletType } from "src/enums/applet-type"
+import { CatalogSourceType } from "src/enums/catalog-source-type"
 import { ExtensionRuntime } from "src/enums/extension-runtime"
 import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
 import { type AppletConstructor } from "src/models/AppletConstructor.js"
@@ -16,14 +17,17 @@ import { type ExtensionSource } from "src/types/ExtensionSource"
 import { type ExtensionTool } from "src/types/ExtensionTool"
 import { type InstalledExtension, type InstalledExtensionTool } from "src/types/InstalledExtension"
 import { type LoadedExtensionComponent } from "src/types/LoadedExtensionComponent"
-import { getCatalogSourceKey } from "src/utils/get-catalog-source-key"
-import { getExtensionComponentKey } from "src/utils/get-extension-component-key"
-import { getExtensionId } from "src/utils/get-extension-id"
-import { getExtensionToolAppletId } from "src/utils/get-extension-tool-applet-id"
-import { loadExtensionComponentHtml } from "src/utils/load-extension-component-html"
-import { readExtensionComponents } from "src/utils/read-extension-components"
-import { readExtensionTools } from "src/utils/read-extension-tools"
-import { resolveExtensionToolComponents } from "src/utils/resolve-extension-tool-components"
+import { getCatalogSourceKey } from "src/utils/catalog/get-catalog-source-key"
+import { resolveLocalSourceFolder } from "src/utils/catalog/resolve-local-source-folder"
+import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
+import { createLocalExtensionFolderReader } from "src/utils/extension/create-local-extension-folder-reader"
+import { getExtensionComponentKey } from "src/utils/extension/get-extension-component-key"
+import { getExtensionId } from "src/utils/extension/get-extension-id"
+import { getExtensionToolAppletId } from "src/utils/extension/get-extension-tool-applet-id"
+import { loadExtensionComponentHtml } from "src/utils/extension/load-extension-component-html"
+import { readExtensionComponents } from "src/utils/extension/read-extension-components"
+import { readExtensionTools } from "src/utils/extension/read-extension-tools"
+import { resolveExtensionToolComponents } from "src/utils/extension/resolve-extension-tool-components"
 
 import { appDataService } from "./app-data-service.js"
 import { extensionComponentRegistry } from "./extension-component-registry.tsx"
@@ -32,8 +36,8 @@ import { userSettingsService } from "./user-settings-service.js"
 
 class ExtensionsService {
   /**
-   * Every folder in the extensions folder, including ones that failed to load
-   * and ones that are disabled
+   * Every folder in the extensions folder and in enabled local sources,
+   * including ones that failed to load and ones that are disabled
    */
   installedExtensions: InstalledExtension[] = []
 
@@ -161,12 +165,16 @@ class ExtensionsService {
 
   /**
    * Read one extension folder, a failure is kept on the returned entry
-   * instead of thrown so the folder still shows up on the extensions page
+   * instead of thrown so the folder still shows up on the extensions page.
+   * A folder of a local source is linked: its ID is scoped by that source,
+   * the same one a copy installed from it would get.
    */
-  private async readExtension(folderName: string): Promise<InstalledExtension> {
-    const folderPath = await fileService.resolveFilePathInAppData(Folders.Extensions, folderName)
+  private async readExtension(folderPath: string, folderName: string, linkedSource?: CatalogSource): Promise<InstalledExtension> {
+    const linkedSourceKey = linkedSource && getCatalogSourceKey(linkedSource)
     const installedExtension: InstalledExtension = {
-      id: getExtensionId(undefined, folderName),
+      id: getExtensionId(linkedSourceKey, folderName),
+      sourceKey: linkedSourceKey,
+      linkedSourceId: linkedSource?.id,
       folderName,
       folderPath,
       tools: [],
@@ -174,13 +182,14 @@ class ExtensionsService {
     }
 
     try {
-      const entries = await fileService.readDirectoryInAppData(folderPath)
+      const entries = await readDir(folderPath)
 
       if (!entries.some((entry) => entry.name === FileNames.ExtensionDefinition)) {
         throw new Error(`${FileNames.ExtensionDefinition} is missing`)
       }
 
-      if (entries.some((entry) => entry.name === FileNames.ExtensionSource)) {
+      // A linked folder is the source itself, never an install record
+      if (!linkedSource && entries.some((entry) => entry.name === FileNames.ExtensionSource)) {
         try {
           const sourcePath = await fileService.resolveFilePath(folderPath, FileNames.ExtensionSource)
           const source: ExtensionSource = JSON.parse(await fileService.readFileAsText(sourcePath))
@@ -202,7 +211,8 @@ class ExtensionsService {
       const readText = async(path: string) => await fileService.readFileAsText(path)
 
       // Built into local lists first, so one broken tool or component fails them all
-      const componentFiles = await readExtensionComponents(manifest, folderPath, readText)
+      const folder = await createLocalExtensionFolderReader(folderPath)
+      const componentFiles = await readExtensionComponents(folder)
       const components: LoadedExtensionComponent[] = []
       for (const componentFile of componentFiles) {
         components.push({
@@ -213,9 +223,9 @@ class ExtensionsService {
       }
 
       const tools: InstalledExtensionTool[] = []
-      const toolFiles = await readExtensionTools(manifest, folderPath, readText)
+      const toolFiles = await readExtensionTools(manifest, folder)
       for (const { definition, path, folderPath: toolFolderPath } of toolFiles) {
-        const appletId = getExtensionToolAppletId(installedExtension.id, manifest, definition.toolId)
+        const appletId = getExtensionToolAppletId(installedExtension.id, definition.toolId)
         const resolvedDefinition = resolveExtensionToolComponents(definition, componentFiles, installedExtension.id)
 
         tools.push({
@@ -235,44 +245,91 @@ class ExtensionsService {
   }
 
   /**
-   * Read every folder in the extensions folder, and return the tools of the
-   * enabled ones that loaded
+   * Extensions of every enabled local source, read where they are. Read from
+   * the settings, so a source changed right before a reload is seen.
+   */
+  private async readLinkedExtensions() {
+    if (!isRunningInTauri) {
+      return []
+    }
+
+    const customSources: CatalogSource[] = userSettingsService.get(UserSettingsKeys.extensionsCatalogSources, [])
+    const disabledSourceIds: string[] = userSettingsService.get(UserSettingsKeys.extensionsDisabledCatalogSources, [])
+    const localSources = customSources.filter((source) => (
+      source.type === CatalogSourceType.Local && !disabledSourceIds.includes(source.id)
+    ))
+
+    const perSource = await Promise.all(localSources.map(async(source) => {
+      try {
+        const extensionsFolder = await resolveLocalSourceFolder(source.location)
+        const folders = []
+
+        for (const entry of await readDir(extensionsFolder)) {
+          if (!entry.isDirectory || entry.name.startsWith(".")) continue
+
+          const folderPath = await fileService.resolveFilePath(extensionsFolder, entry.name)
+          const entries = await readDir(folderPath)
+
+          // Only folders that are extensions, a source can hold other folders
+          if (entries.some((item) => item.name === FileNames.ExtensionDefinition)) {
+            folders.push({ folderPath, folderName: entry.name })
+          }
+        }
+
+        return await Promise.all(folders.map(async({ folderPath, folderName }) => (
+          await this.readExtension(folderPath, folderName, source)
+        )))
+      } catch {
+        // A missing source folder shows its error on the Sources dialog
+        return []
+      }
+    }))
+
+    return perSource.flat()
+  }
+
+  /**
+   * Read every folder in the extensions folder and in enabled local sources,
+   * and return the tools of the enabled ones that loaded
    *
    * @returns
    */
   async getExtensionsAsAppletContructor() {
-    const extensionEntries = await appDataService.readExtensionsFolder()
+    const extensionEntries = await appDataService.readExtensionsFolder() ?? []
+    const extensionsFolderPath = await fileService.resolveFilePathInAppData(Folders.Extensions)
 
-    /**
-     * Return if there are no extension entries
-     */
-    if (!extensionEntries) {
-      this.setInstalledExtensions([])
-      return []
-    }
-
-    const installedExtensions = await Promise.all(
+    const copiedExtensions = await Promise.all(
       extensionEntries
         // Hidden folders can't be read through the fs scope on Unix anyway
         .filter((entry) => entry.isDirectory && !entry.name.startsWith("."))
-        .map(async(entry) => await this.readExtension(entry.name))
+        .map(async(entry) => await this.readExtension(
+          await fileService.resolveFilePath(extensionsFolderPath, entry.name),
+          entry.name
+        ))
     )
 
+    // After the copies, so a copy installed from a local source wins
+    const installedExtensions = [...copiedExtensions, ...await this.readLinkedExtensions()]
+
     /**
-     * IDs are scoped by source, so only a copied folder can repeat one. The
-     * first one wins.
+     * IDs are scoped by source, so only a copied folder, or a copy of a
+     * linked one, can repeat one. The first one wins.
      */
-    const folderNameById: Record<string, string> = {}
+    const folderById: Record<string, InstalledExtension> = {}
     installedExtensions.forEach((extension) => {
       if (extension.tools.length === 0) return
 
-      if (folderNameById[extension.id]) {
-        extension.error = `Same extension as ${folderNameById[extension.id]}, installed twice`
-        extension.tools = []
-        extension.components = []
-      } else {
-        folderNameById[extension.id] = extension.folderName
+      const first = folderById[extension.id]
+      if (!first) {
+        folderById[extension.id] = extension
+        return
       }
+
+      extension.error = extension.linkedSourceId
+        ? `A copy is installed in ${first.folderName}, uninstall it to use this folder in place`
+        : `Same extension as ${first.folderName}, installed twice`
+      extension.tools = []
+      extension.components = []
     })
 
     installedExtensions.sort((a, b) => (
@@ -302,9 +359,14 @@ class ExtensionsService {
   }
 
   /**
-   * Delete the extension folder from disk
+   * Delete the extension folder from disk. A linked folder is never deleted,
+   * it belongs to its source.
    */
   async uninstall(extension: InstalledExtension) {
+    if (extension.linkedSourceId) {
+      throw new Error("Linked from a local source, turn the source off instead")
+    }
+
     await remove(extension.folderPath, { recursive: true })
     this.setEnabled(extension, true)
   }

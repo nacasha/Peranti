@@ -14,8 +14,6 @@ const defaultSource: CatalogSource = {
 export const ExtensionCatalog = {
   defaultSource,
 
-  indexFileName: "index.json",
-
   /**
    * Catalogs that list extensions in this folder, otherwise at their root
    */
@@ -28,6 +26,11 @@ export const ExtensionCatalog = {
     "User-Agent": "Peranti",
     Accept: "application/vnd.github+json"
   },
+
+  /**
+   * A cached catalog older than this is checked again when it's shown
+   */
+  cacheMaxAgeMs: 6 * 60 * 60 * 1000,
 
   maxFiles: 200,
   maxTotalBytes: 20 * 1024 * 1024

@@ -2,7 +2,7 @@ import { type FC, useEffect } from "react"
 
 import { fileDropService } from "src/services/file-drop-service"
 import { windowManager } from "src/services/window-manager"
-import { getFileDropZoneAtPoint } from "src/utils/get-file-drop-zone-at-point"
+import { getFileDropZoneAtPoint } from "src/utils/file/get-file-drop-zone-at-point"
 
 /**
  * Tauri reports positions in physical pixels, the DOM hit-test wants CSS ones.

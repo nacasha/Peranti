@@ -1,6 +1,7 @@
 import { observer } from "mobx-react"
 
 import { extensionsApplet } from "src/applets/pages/extensions-applet"
+import { workbenchApplet } from "src/applets/pages/workbench-applet"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons"
 import { appletStore } from "src/services/applet-store"
@@ -31,6 +32,11 @@ export const ExtensionsSidebar = observer(() => {
             icon={Icons.Refresh}
             tooltip="Reload Extensions"
             onClick={() => { void appletStore.reloadExtensions() }}
+          />
+          <ButtonIcon
+            icon={Icons.Manage}
+            tooltip="Manage Tools & Components"
+            onClick={() => { sessionStore.findOrCreateSession(workbenchApplet) }}
           />
           <ButtonIcon
             icon={Icons.Settings}

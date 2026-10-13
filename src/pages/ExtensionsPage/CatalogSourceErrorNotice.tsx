@@ -4,7 +4,7 @@ import { type FC } from "react"
 import { Icons } from "src/constants/icons"
 import { extensionCatalogService } from "src/services/extension-catalog-service"
 import { type CatalogSource } from "src/types/CatalogSource"
-import { getCatalogSourceLabel } from "src/utils/get-catalog-source-label"
+import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-label"
 
 interface CatalogSourceErrorNoticeProps {
   source: CatalogSource

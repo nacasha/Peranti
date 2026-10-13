@@ -1,10 +1,10 @@
 import { useEffect, useState, type CSSProperties, type FC } from "react"
 
 import { Icons } from "src/constants/icons"
-import { formatFileSize } from "src/utils/format-file-size"
-import { getExtensionHue } from "src/utils/get-extension-hue"
-import { getFileExtension } from "src/utils/get-file-extension"
-import { isImageFile } from "src/utils/is-image-file"
+import { getExtensionHue } from "src/utils/extension/get-extension-hue"
+import { formatFileSize } from "src/utils/file/format-file-size"
+import { getFileExtension } from "src/utils/file/get-file-extension"
+import { isImageFile } from "src/utils/file/is-image-file"
 
 interface FileInputItemProps {
   file: File

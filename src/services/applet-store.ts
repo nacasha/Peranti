@@ -4,6 +4,7 @@ import { extensionsApplet } from "src/applets/pages/extensions-applet"
 import { historyApplet } from "src/applets/pages/history-applet"
 import { pipelineEditorApplet } from "src/applets/pages/pipeline-editor-applet"
 import { settingsApplet } from "src/applets/pages/settings-applet"
+import { workbenchApplet } from "src/applets/pages/workbench-applet"
 import { base64EncodeDecodeTool } from "src/applets/tools/base64-encode-decode-tool"
 import { base64ToFileTool } from "src/applets/tools/base64-to-file-tool"
 import { characterCounterTool } from "src/applets/tools/character-counter-tool"
@@ -53,10 +54,12 @@ import { textEscapeUnescapeTool } from "src/applets/tools/text-escape-unescape-t
 import { textTransformTool } from "src/applets/tools/text-transform-tool"
 import { uriEncodeDecodeTool } from "src/applets/tools/uri-encode-decode-tool"
 import { yamlToJsonTool } from "src/applets/tools/yaml-to-json-tool"
+import { EXTENSION_PAGE_APPLET_PREFIX } from "src/constants/extension-page"
 import { AppletType } from "src/enums/applet-type"
 import { type AppletConstructor } from "src/models/AppletConstructor.ts"
 import { type Preset } from "src/types/Preset.ts"
-import { mergeAppletConstructorWithPreset } from "src/utils/merge-applet-constructor-with-preset.ts"
+import { mergeAppletConstructorWithPreset } from "src/utils/applet/merge-applet-constructor-with-preset.ts"
+import { createExtensionPageApplet } from "src/utils/extension/create-extension-page-applet"
 
 import { commandbarService } from "./commandbar-service.ts"
 import { extensionsService } from "./extensions-service.ts"
@@ -131,7 +134,8 @@ class AppletStore {
     [pipelineEditorApplet.appletId]: pipelineEditorApplet,
     [settingsApplet.appletId]: settingsApplet,
     [historyApplet.appletId]: historyApplet,
-    [extensionsApplet.appletId]: extensionsApplet
+    [extensionsApplet.appletId]: extensionsApplet,
+    [workbenchApplet.appletId]: workbenchApplet
   }
 
   /**
@@ -189,7 +193,9 @@ class AppletStore {
     /**
      * Setup service that depends on applets
      */
-    sessionStore.setupPersistence({ appletIdAliases: this.getLegacyExtensionAppletIds() })
+    sessionStore.setupPersistence({
+      registerRestoredApplets: (appletIds) => { this.registerRestoredExtensionPages(appletIds) }
+    })
     toolSidebarService.setupItems()
     commandbarService.setupItems()
   }
@@ -206,30 +212,6 @@ class AppletStore {
     }))
 
     this.mapOfLoadedApplets = { ...this.mapOfLoadedApplets, ...mapOfPresets }
-  }
-
-  /**
-   * Extension tools used to be registered under their bare tool ID. Maps
-   * each such old ID to the source-scoped one, so tabs saved before the
-   * change still open their tool. An old ID is skipped when two extensions
-   * share it, since its tabs can't be told apart.
-   */
-  private getLegacyExtensionAppletIds(): Record<string, string> {
-    const candidates: Record<string, string[]> = {}
-
-    extensionsService.loadedExtensions.forEach((extension) => {
-      // Packages of several tools came after the change, nothing to map
-      if (extension.manifest?.tools) return
-
-      const legacyId = extension.manifest?.toolId
-      if (legacyId && legacyId !== extension.id && !this.builtInApplets[legacyId]) {
-        candidates[legacyId] = [...(candidates[legacyId] ?? []), extension.id]
-      }
-    })
-
-    return Object.fromEntries(Object.entries(candidates)
-      .filter(([, ids]) => ids.length === 1)
-      .map(([legacyId, [id]]) => [legacyId, id]))
   }
 
   /**
@@ -256,12 +238,47 @@ class AppletStore {
 
     this.mapOfLoadedApplets = { ...mapOfNonExtensions, ...mapOfExtensions }
 
+    // Every installed extension can open its page, named after it
+    extensionsService.installedExtensions.forEach((extension) => {
+      this.registerExtensionPage(extension.id, extension.manifest?.name ?? extension.folderName)
+    })
+
     /**
      * Tabs of a tool that no longer exists can't run, close them
      */
     sessionStore.sessions
       .filter((session) => removedAppletIds.includes(session.appletId))
       .forEach((session) => { void sessionStore.closeSession(session) })
+  }
+
+  /**
+   * Make an extension's page openable, or rename it, and return it
+   */
+  registerExtensionPage(extensionId: string, name: string) {
+    const appletConstructor = createExtensionPageApplet(extensionId, name)
+    const existing = this.mapOfLoadedApplets[appletConstructor.appletId] as AppletConstructor | undefined
+
+    if (existing?.name === appletConstructor.name) {
+      return existing
+    }
+
+    this.mapOfLoadedApplets = { ...this.mapOfLoadedApplets, [appletConstructor.appletId]: appletConstructor }
+    this.mapOfLoadedAppletsName = { ...this.mapOfLoadedAppletsName, [appletConstructor.appletId]: appletConstructor.name }
+    return appletConstructor
+  }
+
+  /**
+   * Tabs of extension pages restored from the last run, whose extension
+   * isn't installed (a catalog one), still need their page to open
+   */
+  private registerRestoredExtensionPages(appletIds: string[]) {
+    appletIds
+      .filter((appletId) => appletId.startsWith(EXTENSION_PAGE_APPLET_PREFIX) && !this.mapOfLoadedApplets[appletId])
+      .forEach((appletId) => {
+        const extensionId = appletId.slice(EXTENSION_PAGE_APPLET_PREFIX.length)
+        // The name is filled in once the catalog loads and the page is opened
+        this.registerExtensionPage(extensionId, extensionId.split("/").pop() ?? extensionId)
+      })
   }
 
   /**
@@ -278,7 +295,9 @@ class AppletStore {
    * Build loaded applets into map and list
    */
   buildApplets() {
+    // Extension pages open from the extensions page, they aren't listed as tools
     this.listOfLoadedApplets = Object.values(this.mapOfLoadedApplets)
+      .filter((applet) => !applet.appletId.startsWith(EXTENSION_PAGE_APPLET_PREFIX))
     this.mapOfLoadedAppletsName = Object.fromEntries(
       Object.entries(this.mapOfLoadedApplets).map((
         [appletId, applet]) => [appletId, applet.name

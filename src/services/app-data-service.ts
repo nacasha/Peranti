@@ -5,7 +5,7 @@ import localforage from "localforage"
 import { FileNames } from "src/constants/file-names.js"
 import { Folders } from "src/constants/folders"
 import { type UserSettingsKeys } from "src/enums/user-settings-keys.js"
-import { isRunningInTauri } from "src/utils/is-running-in-tauri.js"
+import { isRunningInTauri } from "src/utils/common/is-running-in-tauri.js"
 
 import { fileService } from "./file-service.js"
 

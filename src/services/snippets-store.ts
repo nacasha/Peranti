@@ -4,8 +4,8 @@ import { makeAutoObservable, runInAction } from "mobx"
 
 import { FileNames } from "src/constants/file-names"
 import { type AppletSample } from "src/types/AppletSample"
-import { generateRandomString } from "src/utils/generate-random-string"
-import { isRunningInTauri } from "src/utils/is-running-in-tauri"
+import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
+import { generateRandomString } from "src/utils/text/generate-random-string"
 
 import { appDataService } from "./app-data-service.js"
 

@@ -12,23 +12,33 @@ interface ListPickInputProps extends InputComponentProps {
    * Item labels, set in `props` or `computedProps`
    */
   items?: string[]
+
+  /**
+   * Which items the value lists, as a JSON array of item indexes:
+   * - "exclude" (default): the unticked ones, so items added to the source
+   *   later start ticked
+   * - "include": the ticked ones, so items added later start unticked
+   */
+  selection?: "exclude" | "include"
 }
 
 /**
- * Tick items that come from another input.
- * The value is the unticked items as a JSON array of item indexes,
- * so items added to the source later start ticked.
+ * Tick items that come from another input
  */
 export const ListPickInput: FC<ListPickInputProps> = (props) => {
-  const { label, fieldKey, value, readOnly, items = [], onValueChange } = props
-  const excluded = useMemo(() => new Set(parseOrder(value)), [value])
+  const { label, fieldKey, value, readOnly, items = [], selection = "exclude", onValueChange } = props
+  const isInclude = selection === "include"
+  const listed = useMemo(() => new Set(parseOrder(value)), [value])
+
+  const isTicked = (index: number) => listed.has(index) === isInclude
 
   const handleChange = (index: number, checked: boolean) => {
-    const next = new Set(excluded)
-    if (checked) {
-      next.delete(index)
-    } else {
+    const next = new Set(listed)
+    // Listed means ticked when including, unticked when excluding
+    if (checked === isInclude) {
       next.add(index)
+    } else {
+      next.delete(index)
     }
     onValueChange(JSON.stringify([...next].sort((a, b) => a - b)))
   }
@@ -41,7 +51,7 @@ export const ListPickInput: FC<ListPickInputProps> = (props) => {
         {items.map((item, index) => (
           <li key={index} className="ListPickInput-item">
             <Checkbox
-              value={!excluded.has(index)}
+              value={isTicked(index)}
               onChange={(checked) => { handleChange(index, checked) }}
               readOnly={readOnly}
               disabled={readOnly}

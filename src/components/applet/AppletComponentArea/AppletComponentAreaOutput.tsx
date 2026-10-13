@@ -4,7 +4,7 @@ import { type CSSProperties, type FC } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
-import { groupKeyValueOutputs } from "src/utils/group-key-value-outputs"
+import { groupKeyValueOutputs } from "src/utils/applet/group-key-value-outputs"
 
 import { AppletOutputRenderer } from "../AppletOutputRenderer"
 

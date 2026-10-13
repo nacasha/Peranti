@@ -40,12 +40,14 @@ export const ExtensionsToolbar: FC<ExtensionsToolbarProps> = ({
       />
     </div>
 
-    <Dropdown
-      width="100%"
-      value={sourceFilter}
-      onChange={onSourceFilterChange}
-      options={[{ label: "All Sources", value: ALL_SOURCES }, ...sourceOptions]}
-    />
+    <div className="ExtensionsToolbar-source">
+      <Dropdown
+        width="100%"
+        value={sourceFilter}
+        onChange={onSourceFilterChange}
+        options={[{ label: "All Sources", value: ALL_SOURCES }, ...sourceOptions]}
+      />
+    </div>
 
     {children}
   </>

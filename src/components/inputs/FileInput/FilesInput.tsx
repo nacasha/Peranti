@@ -2,7 +2,7 @@ import { useRef, type FC } from "react"
 
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
-import { formatFileSize } from "src/utils/format-file-size"
+import { formatFileSize } from "src/utils/file/format-file-size"
 
 import { FileInputDropZone } from "./FileInputDropZone.tsx"
 import { FileInputItem } from "./FileInputItem.tsx"

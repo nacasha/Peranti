@@ -11,7 +11,7 @@ import { appletFileSupportService } from "src/services/applet-file-support-servi
 import { fileDropService, type DroppedFileInfo } from "src/services/file-drop-service"
 import { hotkeysStore } from "src/services/hotkeys-store"
 import { windowManager } from "src/services/window-manager"
-import { formatFileSize } from "src/utils/format-file-size"
+import { formatFileSize } from "src/utils/file/format-file-size"
 
 import "./FileDropArea.scss"
 

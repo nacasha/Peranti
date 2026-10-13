@@ -13,7 +13,7 @@ import { type FC, type KeyboardEvent, type MouseEvent, useEffect, useMemo, useSt
 
 import { Icons, type Icon as IconType } from "src/constants/icons"
 import { isMacOS } from "src/constants/os"
-import { countSearchMatches } from "src/utils/count-search-matches"
+import { countSearchMatches } from "src/utils/search/count-search-matches"
 
 import { Tooltip } from "../Tooltip"
 
