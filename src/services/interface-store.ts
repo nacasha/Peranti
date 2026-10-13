@@ -98,6 +98,12 @@ class InterfaceStore {
   showTabbarAddTabButton: boolean = userSettingsService.get(UserSettingsKeys.tabbarShowAddTabButton, true)
 
   /**
+   * Show the type icon (tool, settings, history, ...) before each tab label
+   */
+  @userSettingsService.watch(UserSettingsKeys.tabbarShowTabIcon)
+  showTabbarTabIcon: boolean = userSettingsService.get(UserSettingsKeys.tabbarShowTabIcon, true)
+
+  /**
    * Accent colour used for highlights, focus rings and active states
    */
   @userSettingsService.watch(UserSettingsKeys.accentColor)
@@ -245,6 +251,10 @@ class InterfaceStore {
 
   setShowTabbarAddTabButton(value: boolean) {
     this.showTabbarAddTabButton = value
+  }
+
+  setShowTabbarTabIcon(value: boolean) {
+    this.showTabbarTabIcon = value
   }
 
   setCardShadow(cardShadow: CardShadow) {

@@ -7,9 +7,11 @@ import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { Icons } from "src/constants/icons"
 import { useDragAndDropJS } from "src/hooks/useDragAndDropJS"
 import { useSelector } from "src/hooks/useSelector.ts"
+import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
 import { getSessionDisplayName } from "src/utils/applet/get-session-display-name"
+import { getSessionIcon } from "src/utils/applet/get-session-icon"
 
 interface TabItemProps {
   session: Session
@@ -20,11 +22,13 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
   const isRenamingSession = useSelector(() => sessionStore.renamingSessionId === session.sessionId)
   const isActive = useSelector(() => sessionStore.activeSessionId === session.sessionId)
   const isActionRunning = useSelector(() => sessionStore.sessions.find((s) => s.sessionId === session.sessionId)?.isActionRunning)
+  const showTabIcon = useSelector(() => interfaceStore.showTabbarTabIcon)
   const tabLabelRef = useRef<HTMLDivElement>(null)
 
   const { show } = useContextMenu()
 
   const getSessionName = () => getSessionDisplayName(session)
+  const SessionIcon = getSessionIcon(session)
 
   const handleMouseDown: MouseEventHandler = (event) => {
     if (event.button === 0) {
@@ -140,6 +144,7 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
         onMouseUp={handleMouseUp}
         onContextMenu={handleContextMenu}
       >
+        {showTabIcon && <SessionIcon size={14} className="SessionTabbar-item-session-type-icon" aria-hidden />}
         <div
           ref={tabLabelRef}
           className="SessionTabbar-item-session-label"

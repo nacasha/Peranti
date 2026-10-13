@@ -182,6 +182,16 @@ export const SettingsPage: FC = observer(() => {
               onChange={(value) => { interfaceStore.setShowTabbarAddTabButton(value) }}
             />
           </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Show Tab Icons"
+            description="Icon before each tab label showing its type (tool, settings, history, ...)"
+          >
+            <SettingsItemSwitch
+              defaultChecked={interfaceStore.showTabbarTabIcon}
+              onChange={(value) => { interfaceStore.setShowTabbarTabIcon(value) }}
+            />
+          </SettingsCardItem>
         </SettingsCard>
       )
     },

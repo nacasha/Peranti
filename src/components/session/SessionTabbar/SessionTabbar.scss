@@ -176,6 +176,17 @@
   }
 }
 
+.SessionTabbar-item-session-type-icon {
+  flex: none;
+  color: var(--icon-color);
+  transition: color var(--animation-speed);
+
+  .SessionTabbar-item-session-body:hover &,
+  .SessionTabbar-item-session-body.active & {
+    color: var(--session-tabbar-text-color-active);
+  }
+}
+
 .SessionTabbar-item-session-label {
   max-width: var(--session-tabbar-item-max-width);
   overflow: hidden;

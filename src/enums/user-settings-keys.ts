@@ -28,6 +28,7 @@ export enum UserSettingsKeys {
   tabbarGroupTabsByTool = "tabbar.groupTabsByTool",
   tabbarShowGroupTabsButton = "tabbar.showGroupTabsButton",
   tabbarShowAddTabButton = "tabbar.showAddTabButton",
+  tabbarShowTabIcon = "tabbar.showTabIcon",
 
   // Extensions
   extensionsDisabled = "extensions.disabled",
