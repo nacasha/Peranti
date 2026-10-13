@@ -9,6 +9,7 @@ import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { FileNames } from "src/constants/file-names"
 import { Icons } from "src/constants/icons"
 import { PageStateProvider } from "src/contexts/PageStateContext"
+import { ExtensionPlatform } from "src/enums/extension-platform"
 import { useNow } from "src/hooks/useNow"
 import { usePageScroll } from "src/hooks/usePageScroll"
 import { usePageState } from "src/hooks/usePageState"
@@ -24,6 +25,7 @@ import { formatCatalogUpdatedLabel } from "src/utils/catalog/format-catalog-upda
 import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-label"
 import { getInstalledSourceFilter } from "src/utils/catalog/get-installed-source-filter"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
+import { getExtensionPlatform } from "src/utils/extension/get-extension-platform"
 import { getExtensionProvidesLabels } from "src/utils/extension/get-extension-provides-labels"
 import { openExtensionPage } from "src/utils/extension/open-extension-page"
 import { matchesSearchKeyword } from "src/utils/search/matches-search-keyword"
@@ -136,18 +138,18 @@ const ExtensionsPageContent: FC = observer(() => {
               onClick={handleOpenFolder}
             />
           )}
-          {(isRunningInTauri || activeTab === "browse") && (
-            <ButtonIcon
-              icon={Icons.Refresh}
-              tooltip={isReloading ? "Reloading…" : activeTab === "browse" ? "Refresh Catalog" : "Reload Extensions"}
-              onClick={() => { void handleReload() }}
-            />
-          )}
+          <ButtonIcon
+            icon={Icons.Refresh}
+            tooltip={isReloading ? "Reloading…" : activeTab === "browse" ? "Refresh Catalog" : "Reload Extensions"}
+            onClick={() => { void handleReload() }}
+          />
         </div>
       </div>
 
       <div className="ExtensionsPage-body">
-        {activeTab === "installed" && <InstalledTab onOpenFolder={handleOpenFolder} />}
+        {activeTab === "installed" && (
+          <InstalledTab onOpenFolder={handleOpenFolder} onOpenDiscover={() => { setActiveTab("browse") }} />
+        )}
         {activeTab === "browse" && <BrowseTab />}
       </div>
     </div>
@@ -162,36 +164,31 @@ const getInstalledTag = (extension: InstalledExtension): ExtensionListItemTag | 
   return undefined
 }
 
-/**
- * Categories present in a list, sorted, each once
- */
-const getCategories = (categories: Array<string | undefined>) => (
-  [...new Set(categories.filter((category): category is string => !!category))].sort((a, b) => a.localeCompare(b))
-)
+interface InstalledTabProps {
+  onOpenFolder: () => void
+  onOpenDiscover: () => void
+}
 
-const InstalledTab: FC<{ onOpenFolder: () => void }> = observer(({ onOpenFolder }) => {
+const InstalledTab: FC<InstalledTabProps> = observer(({ onOpenFolder, onOpenDiscover }) => {
   const { installedExtensions } = extensionsService
   const [keyword, setKeyword] = usePageState("installed.keyword", "")
   const [sourceFilter, setSourceFilter] = usePageState("installed.source", ALL_SOURCES)
-  const [category, setCategory] = usePageState("installed.category", ALL_CATEGORIES)
-
-  if (!isRunningInTauri) {
-    return (
-      <ExtensionsPagePlaceholder
-        icon={<Icons.Extensions size={28} aria-hidden />}
-        title="Extensions need the desktop app"
-        description="The browser version can't read the extensions folder yet."
-      />
-    )
-  }
+  const [platform, setPlatform] = usePageState<PlatformFilter>("installed.platform", ALL_PLATFORMS)
 
   if (installedExtensions.length === 0) {
     return (
       <ExtensionsPagePlaceholder
         icon={<Icons.Extensions size={28} aria-hidden />}
         title="No extensions installed"
-        description={`Install one from Discover, or place a folder with a ${FileNames.ExtensionDefinition} file in the extensions folder.`}
-        action={<Button icon={Icons.Folder} onClick={onOpenFolder}>Open Extensions Folder</Button>}
+        description={isRunningInTauri
+          ? `Install one from Discover, or place a folder with a ${FileNames.ExtensionDefinition} file in the extensions folder.`
+          : "Install one from Discover. It's kept in this browser."}
+        action={(
+          <div className="ExtensionsPage-placeholder-actions">
+            <Button icon={Icons.Browse} variant="primary" onClick={onOpenDiscover}>Discover Extensions</Button>
+            {isRunningInTauri && <Button icon={Icons.Folder} onClick={onOpenFolder}>Open Extensions Folder</Button>}
+          </div>
+        )}
       />
     )
   }
@@ -206,11 +203,10 @@ const InstalledTab: FC<{ onOpenFolder: () => void }> = observer(({ onOpenFolder 
   const activeSourceFilter = sourceOptions.some((option) => option.value === sourceFilter) ? sourceFilter : ALL_SOURCES
   const fromSource = installedExtensions
     .filter((extension) => activeSourceFilter === ALL_SOURCES || getInstalledSourceFilter(extension) === activeSourceFilter)
-  const categories = getCategories(fromSource.map((extension) => extension.manifest?.category))
-  const activeCategory = categories.includes(category) ? category : ALL_CATEGORIES
-
   const filteredExtensions = fromSource
-    .filter((extension) => activeCategory === ALL_CATEGORIES || extension.manifest?.category === activeCategory)
+    .filter((extension) => platform === ALL_PLATFORMS || getExtensionPlatform(
+      extension.tools.map((tool) => tool.definition.runtime)
+    ) === platform)
     .filter(({ manifest, folderName, tools }) => matchesSearchKeyword(keyword, [
       manifest?.name ?? folderName,
       manifest?.description,
@@ -259,12 +255,13 @@ const InstalledTab: FC<{ onOpenFolder: () => void }> = observer(({ onOpenFolder 
           sourceOptions={sourceOptions}
         />
       )}
-      categories={categories}
-      category={activeCategory}
-      onCategoryChange={setCategory}
+      platform={platform}
+      onPlatformChange={setPlatform}
     >
       {filteredExtensions.length === 0 && (
-        <div className="ExtensionStore-empty">{`Nothing matches "${keyword.trim()}"`}</div>
+        <div className="ExtensionStore-empty">
+          {keyword.trim() ? `Nothing matches "${keyword.trim()}"` : "No installed extensions for this platform"}
+        </div>
       )}
       {updates.length > 0 && (
         <ExtensionStoreSection title="Updates available" count={updates.length}>
@@ -296,7 +293,7 @@ const BrowseTab: FC = observer(() => {
   const now = useNow()
   const [keyword, setKeyword] = usePageState("browse.keyword", "")
   const [sourceFilter, setSourceFilter] = usePageState("browse.source", ALL_SOURCES)
-  const [category, setCategory] = usePageState("browse.category", ALL_CATEGORIES)
+  const [platform, setPlatform] = usePageState<PlatformFilter>("browse.platform", ALL_PLATFORMS)
 
   if (enabledSources.length === 0) {
     return (
@@ -327,11 +324,8 @@ const BrowseTab: FC = observer(() => {
 
   const fromSource = catalogExtensions
     .filter((entry) => activeSourceFilter === ALL_SOURCES || entry.sourceId === activeSourceFilter)
-  const categories = getCategories(fromSource.map((entry) => entry.category))
-  const activeCategory = categories.includes(category) ? category : ALL_CATEGORIES
-
   const filteredExtensions = fromSource
-    .filter((entry) => activeCategory === ALL_CATEGORIES || entry.category === activeCategory)
+    .filter((entry) => platform === ALL_PLATFORMS || getExtensionPlatform(entry.tools.map((tool) => tool.runtime)) === platform)
     .filter((entry) => matchesSearchKeyword(keyword, [
       entry.name,
       entry.description,
@@ -352,7 +346,9 @@ const BrowseTab: FC = observer(() => {
     if (filteredExtensions.length === 0) {
       return (
         <div className="ExtensionStore-empty">
-          {keyword.trim() ? `Nothing matches "${keyword.trim()}"` : "The enabled sources have no extensions yet"}
+          {keyword.trim()
+            ? `Nothing matches "${keyword.trim()}"`
+            : platform === ALL_PLATFORMS ? "The enabled sources have no extensions yet" : "No extensions for this platform"}
         </div>
       )
     }
@@ -410,16 +406,23 @@ const BrowseTab: FC = observer(() => {
           onManageSources={openExtensionSettings}
         />
       ))}
-      categories={categories}
-      category={activeCategory}
-      onCategoryChange={setCategory}
+      platform={platform}
+      onPlatformChange={setPlatform}
     >
       {renderGrid()}
     </ExtensionStore>
   )
 })
 
-const ALL_CATEGORIES = "all"
+const ALL_PLATFORMS = "all"
+
+type PlatformFilter = typeof ALL_PLATFORMS | ExtensionPlatform
+
+const PLATFORM_FILTERS: Array<{ value: PlatformFilter, label: string, description: string }> = [
+  { value: ALL_PLATFORMS, label: "All", description: "Every extension" },
+  { value: ExtensionPlatform.Desktop, label: "Desktop", description: "Runs programs, needs the desktop app" },
+  { value: ExtensionPlatform.Web, label: "Web", description: "JavaScript only, runs in the browser too" }
+]
 
 interface ExtensionStoreProps {
   /**
@@ -434,18 +437,17 @@ interface ExtensionStoreProps {
    * Shown under the toolbar, such as sources that failed to load
    */
   notices?: ReactNode
-  categories: string[]
-  category: string
-  onCategoryChange: (category: string) => void
+  platform: PlatformFilter
+  onPlatformChange: (platform: PlatformFilter) => void
   children: ReactNode
 }
 
 /**
- * Store front: a banner with the search, category chips, then a grid of
+ * Store front: a banner with the search, platform chips, then a grid of
  * cards, all scrolling together
  */
 const ExtensionStore: FC<ExtensionStoreProps> = (props) => {
-  const { scrollKey, title, subtitle, toolbar, notices, categories, category, onCategoryChange, children } = props
+  const { scrollKey, title, subtitle, toolbar, notices, platform, onPlatformChange, children } = props
   const scrollRef = usePageScroll(scrollKey)
 
   return (
@@ -462,22 +464,21 @@ const ExtensionStore: FC<ExtensionStoreProps> = (props) => {
 
           {notices}
 
-          {categories.length > 0 && (
-            <div className="ExtensionStore-categories" role="radiogroup" aria-label="Category">
-              {[ALL_CATEGORIES, ...categories].map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  role="radio"
-                  aria-checked={item === category}
-                  className={clsx("ExtensionStore-category", item === category && "active")}
-                  onClick={() => { onCategoryChange(item) }}
-                >
-                  {item === ALL_CATEGORIES ? "All" : item}
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="ExtensionStore-categories" role="radiogroup" aria-label="Platform">
+            {PLATFORM_FILTERS.map((item) => (
+              <button
+                key={item.value}
+                type="button"
+                role="radio"
+                title={item.description}
+                aria-checked={item.value === platform}
+                className={clsx("ExtensionStore-category", item.value === platform && "active")}
+                onClick={() => { onPlatformChange(item.value) }}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
 
           {children}
         </div>

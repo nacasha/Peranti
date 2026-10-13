@@ -14,6 +14,7 @@ import { sessionStore } from "src/services/session-store"
 import { type CatalogExtensionFile } from "src/types/CatalogExtension"
 import { type InstalledExtension } from "src/types/InstalledExtension"
 import { installCatalogExtension } from "src/utils/catalog/install-catalog-extension"
+import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { openComponentInWorkbench } from "src/utils/component/open-component-in-workbench"
 import { getExtensionProvidesLabels } from "src/utils/extension/get-extension-provides-labels"
 import { getExtensionToolRuns } from "src/utils/extension/get-extension-tool-runs"
@@ -122,7 +123,7 @@ export const InstalledExtensionDetails: FC<InstalledExtensionDetailsProps> = obs
             </Button>
           )}
 
-          <Button icon={Icons.Folder} onClick={handleReveal}>Show in Folder</Button>
+          {isRunningInTauri && <Button icon={Icons.Folder} onClick={handleReveal}>Show in Folder</Button>}
 
           {/* A linked folder belongs to its source, it's never deleted from here */}
           {!extension.linkedSourceId && (
@@ -130,7 +131,9 @@ export const InstalledExtensionDetails: FC<InstalledExtensionDetailsProps> = obs
               placement="bottomLeft"
               confirmation={() => ({
                 title: `Uninstall ${name}?`,
-                description: "Its folder is deleted from disk, and its open tabs are closed",
+                description: isRunningInTauri
+                  ? "Its folder is deleted from disk, and its open tabs are closed"
+                  : "It's removed from this browser, and its open tabs are closed",
                 confirmLabel: "Uninstall",
                 variant: "danger"
               })}
@@ -158,7 +161,7 @@ export const InstalledExtensionDetails: FC<InstalledExtensionDetailsProps> = obs
             : source ? source.catalog : "Added by hand"
         },
         source && { label: "Installed", value: prettyDateFormat(new Date(source.installedAt)) },
-        {
+        isRunningInTauri && {
           label: "Folder",
           value: (
             <button type="button" className="ExtensionDetails-path" title="Show in Folder" onClick={handleReveal}>

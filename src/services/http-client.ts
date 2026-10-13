@@ -19,9 +19,18 @@ interface HttpResponse {
  */
 export const httpRequest = async(path: string, options: Options): Promise<HttpResponse> => {
   const fetchFn = isRunningInTauri ? fetchTauri : fetch
+
+  // A browser sends its own user agent, and a custom one makes hosts that
+  // don't allow it in CORS refuse the request
+  let headers = options.headers
+  if (!isRunningInTauri && headers) {
+    const { "User-Agent": _userAgent, ...rest } = headers
+    headers = rest
+  }
+
   const response = await fetchFn(path, {
     method: options.method,
-    headers: options.headers
+    headers
   })
 
   return {

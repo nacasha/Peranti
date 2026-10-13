@@ -1,5 +1,5 @@
-import { fileService } from "src/services/file-service"
 import { type ExtensionComponentFile } from "src/types/ExtensionComponentFile"
+import { type ExtensionFolderReader } from "src/types/ExtensionFolderReader"
 
 import { resolveComponentAssetPath } from "./resolve-component-asset-path.js"
 
@@ -11,12 +11,15 @@ import { resolveComponentAssetPath } from "./resolve-component-asset-path.js"
  * as they are and fail to load.
  */
 export async function loadExtensionComponentHtml(
-  { definition, folderPath, path }: ExtensionComponentFile,
-  readText: (absolutePath: string) => Promise<string>
+  { definition, path }: ExtensionComponentFile,
+  folder: ExtensionFolderReader
 ): Promise<string> {
-  const readRelative = async(relativePath: string) => (
-    await readText(await fileService.resolveFilePath(folderPath, ...relativePath.split("/")))
-  )
+  // Paths are relative to the folder of the component's definition file
+  const componentFolder = path.split("/").slice(0, -1).join("/")
+  const readRelative = async(relativePath: string) => {
+    const segments = `${componentFolder}/${relativePath}`.split("/").filter((segment) => segment && segment !== ".")
+    return await folder.readText(segments.join("/"))
+  }
 
   let html: string
   try {

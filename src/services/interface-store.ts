@@ -27,7 +27,7 @@ class InterfaceStore {
    * Dark, Light, or System (follows the operating system color scheme)
    */
   @userSettingsService.watch(UserSettingsKeys.theme)
-  theme: Theme = userSettingsService.get(UserSettingsKeys.theme, Theme.Dark)
+  theme: Theme = userSettingsService.get(UserSettingsKeys.theme, Theme.System)
 
   /**
    * Current operating system color scheme, kept in sync with `prefers-color-scheme`.

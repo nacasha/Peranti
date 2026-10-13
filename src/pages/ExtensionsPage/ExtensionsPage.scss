@@ -374,6 +374,13 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
     margin-bottom: 10px;
     overflow-wrap: anywhere;
   }
+
+  .ExtensionsPage-placeholder-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
 }
 
 // ---------------------------------------------------------------------------

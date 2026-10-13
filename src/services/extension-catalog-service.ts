@@ -8,6 +8,7 @@ import { FileNames } from "src/constants/file-names"
 import { Folders } from "src/constants/folders"
 import { StorageKeys } from "src/constants/storage-keys"
 import { CatalogSourceType } from "src/enums/catalog-source-type"
+import { ExtensionRuntime } from "src/enums/extension-runtime"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { type CatalogCache } from "src/types/CatalogCache"
 import { type CatalogExtension, type CatalogExtensionFile, type CatalogIndexEntry } from "src/types/CatalogExtension"
@@ -28,9 +29,13 @@ import { createRemoteExtensionFolderReader } from "src/utils/extension/create-re
 import { getExtensionFolderName } from "src/utils/extension/get-extension-folder-name"
 import { getExtensionId } from "src/utils/extension/get-extension-id"
 import { isSafeRelativePath } from "src/utils/extension/is-safe-relative-path"
+import { parseBrowserExtensionPath } from "src/utils/extension/parse-browser-extension-path"
+import { readExtensionFileBytes } from "src/utils/extension/read-extension-file-bytes"
+import { resolveExtensionPath } from "src/utils/extension/resolve-extension-path"
 
 import { appDataService } from "./app-data-service.js"
 import { appletStore } from "./applet-store.js"
+import { type BrowserExtensionFileData, browserExtensionStore } from "./browser-extension-store.js"
 import { extensionsService } from "./extensions-service.js"
 import { fileService } from "./file-service.js"
 import { httpRequest } from "./http-client.js"
@@ -524,6 +529,12 @@ class ExtensionCatalogService {
    * the install record
    */
   async listFolderFiles(folderPath: string): Promise<CatalogExtensionFile[]> {
+    const browserPath = parseBrowserExtensionPath(folderPath)
+    if (browserPath) {
+      const browserFiles = await browserExtensionStore.listFiles(browserPath.folderName)
+      return browserFiles.filter((file) => !IGNORED_FILE_NAMES.has(file.path))
+    }
+
     const files: CatalogExtensionFile[] = []
 
     const walk = async(relativeFolder: string) => {
@@ -642,7 +653,7 @@ class ExtensionCatalogService {
    * Bytes of one file inside an installed extension's folder
    */
   async readInstalledFile(folderPath: string, filePath: string) {
-    return await readFile(await fileService.resolveFilePath(folderPath, ...filePath.split("/")))
+    return await readExtensionFileBytes(await resolveExtensionPath(folderPath, filePath))
   }
 
   /**
@@ -670,8 +681,8 @@ class ExtensionCatalogService {
    * never leaves a half-installed extension behind.
    */
   async install(entry: CatalogExtension) {
-    if (!isRunningInTauri) {
-      throw new Error("Installing extensions needs the desktop app")
+    if (!isRunningInTauri && this.needsDesktopApp(entry)) {
+      throw new Error("Executable tools need the desktop app")
     }
 
     const source = this.getSource(entry.sourceId)
@@ -697,6 +708,31 @@ class ExtensionCatalogService {
 
     // Installed before folders were named by source, removed once replaced
     const previousInstall = this.getInstalled(entry)
+
+    const extensionSource: ExtensionSource = {
+      catalog: getCatalogSourceLabel(source),
+      sourceId: source.id,
+      sourceKey,
+      id: entry.id,
+      version: entry.version,
+      installedAt: Date.now()
+    }
+
+    if (!isRunningInTauri) {
+      this.setInstalling(extensionId, true)
+      try {
+        await this.installInBrowser(source, entry, folderName, extensionSource)
+
+        if (previousInstall && previousInstall.folderName !== folderName) {
+          await browserExtensionStore.removeFolder(previousInstall.folderName).catch(() => {})
+        }
+      } finally {
+        this.setInstalling(extensionId, false)
+      }
+
+      await appletStore.reloadExtensions()
+      return
+    }
 
     this.setInstalling(extensionId, true)
     let tempPath: string | undefined
@@ -729,14 +765,6 @@ class ExtensionCatalogService {
         }))
       }
 
-      const extensionSource: ExtensionSource = {
-        catalog: getCatalogSourceLabel(source),
-        sourceId: source.id,
-        sourceKey,
-        id: entry.id,
-        version: entry.version,
-        installedAt: Date.now()
-      }
       await writeTextFile(
         await fileService.resolveFilePath(tempPath, FileNames.ExtensionSource),
         JSON.stringify(extensionSource, undefined, 2)
@@ -760,6 +788,41 @@ class ExtensionCatalogService {
     }
 
     await appletStore.reloadExtensions()
+  }
+
+  /**
+   * Whether `entry` has a tool only the desktop app can run
+   */
+  needsDesktopApp(entry: CatalogExtension) {
+    return entry.tools.some((tool) => tool.runtime === ExtensionRuntime.Executable)
+  }
+
+  /**
+   * Install into the browser's storage: every file is downloaded first, so a
+   * failed download leaves the installed version as it was
+   */
+  private async installInBrowser(
+    source: CatalogSource,
+    entry: CatalogExtension,
+    folderName: string,
+    extensionSource: ExtensionSource
+  ) {
+    const files = this.getInstallFiles(entry)
+    const downloaded: BrowserExtensionFileData[] = []
+
+    for (let index = 0; index < files.length; index += DOWNLOAD_CONCURRENCY) {
+      downloaded.push(...await Promise.all(files.slice(index, index + DOWNLOAD_CONCURRENCY).map(async(file) => ({
+        path: file.path,
+        bytes: await this.readSourceFile(source, entry, file)
+      }))))
+    }
+
+    downloaded.push({
+      path: FileNames.ExtensionSource,
+      bytes: new TextEncoder().encode(JSON.stringify(extensionSource, undefined, 2))
+    })
+
+    await browserExtensionStore.writeFolder(folderName, downloaded)
   }
 }
 

@@ -16,6 +16,7 @@ import { type ComponentPlaygroundTarget } from "src/types/ComponentPlaygroundTar
 import { type ComponentPropInfo } from "src/types/ComponentPropInfo"
 import { type ComponentValueInfo } from "src/types/ComponentValueInfo"
 import { type ExtensionComponentDebugEvent } from "src/types/ExtensionComponentDebugEvent"
+import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { checkComponentProps } from "src/utils/component/check-component-props"
 import { checkComponentValueStructure } from "src/utils/component/check-component-value-structure"
 import { getBuiltInComponentUsages } from "src/utils/component/get-built-in-component-usages"
@@ -475,7 +476,7 @@ export const ComponentPlayground: FC<ComponentPlaygroundProps> = observer(({ tar
           {isExtension && (
             <>
               <Button icon={Icons.Refresh} onClick={handleReloadExtensions}>Reload Files</Button>
-              <Button icon={Icons.Folder} onClick={handleReveal}>Show in Folder</Button>
+              {isRunningInTauri && <Button icon={Icons.Folder} onClick={handleReveal}>Show in Folder</Button>}
             </>
           )}
         </div>

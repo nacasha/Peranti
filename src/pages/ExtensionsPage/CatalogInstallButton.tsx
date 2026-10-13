@@ -53,10 +53,10 @@ export const CatalogInstallButton: FC<CatalogInstallButtonProps> = observer(({ e
     }
   }
 
-  if (!isRunningInTauri) {
+  if (!isRunningInTauri && extensionCatalogService.needsDesktopApp(entry)) {
     return (
-      <Tooltip overlay="Installing extensions needs the desktop app">
-        <span><Button icon={Icons.Download} disabled>Install</Button></span>
+      <Tooltip overlay="Its tools run programs on your computer, install it in the desktop app">
+        <span><Button icon={Icons.Download} disabled>{isCompact ? "Desktop Only" : "Desktop App Only"}</Button></span>
       </Tooltip>
     )
   }
