@@ -39,6 +39,9 @@ export const csvDedupeRowsTool = new AppletConstructor<InputFields, OutputFields
       label: "Key Columns",
       component: "ListPick",
       defaultValue: "",
+      props: {
+        selection: "exclude"
+      },
       skipValidateHasValue: true,
       computedProps: {
         items: {

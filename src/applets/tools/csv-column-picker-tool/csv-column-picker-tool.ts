@@ -34,6 +34,9 @@ export const csvColumnPickerTool = new AppletConstructor<InputFields, OutputFiel
       label: "Columns",
       component: "ListPick",
       defaultValue: "",
+      props: {
+        selection: "exclude"
+      },
       computedProps: {
         items: {
           type: "input",

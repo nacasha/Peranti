@@ -63,4 +63,11 @@
     background-size: calc(2 * var(--checkered-size)) calc(2 * var(--checkered-size));
     background-position: 0 0, var(--checkered-size) 0, var(--checkered-size) calc(-1 * var(--checkered-size)), 0 calc(-1 * var(--checkered-size));
   }
+
+  // Dark: the neutral grey grid vanishes on the dark panel, so use a lighter
+  // tile on a raised base.
+  body.dark & {
+    --checkered-background-color: var(--raised);
+    --checkered-color: rgba(255, 255, 255, .07);
+  }
 }

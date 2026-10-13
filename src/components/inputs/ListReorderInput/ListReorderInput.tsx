@@ -139,7 +139,6 @@ export const ListReorderInput: FC<ListReorderInputProps> = (props) => {
     <>
       <Icons.DragHandle className="ListReorderInput-handle" size={14} aria-hidden />
       <span className="ListReorderInput-label">{items[itemIndex]}</span>
-      <span className="ListReorderInput-position">{itemIndex + 1}</span>
     </>
   )
 

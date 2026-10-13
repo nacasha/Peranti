@@ -15,9 +15,9 @@ interface ListPickInputProps extends InputComponentProps {
 
   /**
    * Which items the value lists, as a JSON array of item indexes:
-   * - "exclude" (default): the unticked ones, so items added to the source
-   *   later start ticked
-   * - "include": the ticked ones, so items added later start unticked
+   * - "include" (default): the ticked ones, so items added later start unticked
+   * - "exclude": the unticked ones, so items added to the source later start
+   *   ticked
    */
   selection?: "exclude" | "include"
 }
@@ -26,7 +26,7 @@ interface ListPickInputProps extends InputComponentProps {
  * Tick items that come from another input
  */
 export const ListPickInput: FC<ListPickInputProps> = (props) => {
-  const { label, fieldKey, value, readOnly, items = [], selection = "exclude", onValueChange } = props
+  const { label, fieldKey, value, readOnly, items = [], selection = "include", onValueChange } = props
   const isInclude = selection === "include"
   const listed = useMemo(() => new Set(parseOrder(value)), [value])
 
@@ -57,7 +57,6 @@ export const ListPickInput: FC<ListPickInputProps> = (props) => {
               disabled={readOnly}
               label={item}
             />
-            <span className="ListPickInput-position">{index + 1}</span>
           </li>
         ))}
       </ul>

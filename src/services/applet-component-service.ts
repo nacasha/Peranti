@@ -191,17 +191,17 @@ class AppletComponentService {
         {
           name: "selection",
           type: "string",
-          default: "exclude",
+          default: "include",
           options: [
-            "exclude",
-            "include"
+            "include",
+            "exclude"
           ],
-          description: "Whether the value lists the unticked items or the ticked ones"
+          description: "Whether the value lists the ticked items or the unticked ones"
         }
       ],
       value: {
         type: "json-string",
-        description: "Indexes of the unticked items, or the ticked ones with props.selection \"include\". Items come from props.items",
+        description: "Indexes of the ticked items, or the unticked ones with props.selection \"exclude\". Items come from props.items",
         example: "[1, 3]"
       },
       exampleProps: {

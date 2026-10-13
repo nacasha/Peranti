@@ -65,14 +65,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-
-  &-position {
-    flex: none;
-    min-width: 2ch;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    color: var(--muted);
-  }
 }
 
 // Follows the cursor, rendered in <body> so no card clips it
@@ -106,12 +98,5 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .ListReorderInput-position {
-    flex: none;
-    min-width: 2ch;
-    text-align: right;
-    color: var(--muted);
   }
 }
