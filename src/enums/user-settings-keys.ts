@@ -1,6 +1,7 @@
 export enum UserSettingsKeys {
   // Appearance
   theme = "appearance.theme",
+  colorScheme = "appearance.colorScheme",
   floatingSidebar = "appearance.floatingSidebar",
   titlebarStyle = "appearance.titlebarStyle",
   textAreaWordWrap = "appearance.textAreaWordWrap",

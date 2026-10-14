@@ -10,6 +10,7 @@ import { ConfirmDialog } from "src/components/dialog/ConfirmDialog"
 import { AccentColorPicker } from "src/components/settings/AccentColorPicker"
 import { AppTitleBarStyleSelect } from "src/components/settings/AppTitlebarStyleSelect"
 import { CardShadowSelect } from "src/components/settings/CardShadowSelect"
+import { ColorSchemeSelect } from "src/components/settings/ColorSchemeSelect"
 import { CornerRadiusSelect } from "src/components/settings/CornerRadiusSelect"
 import { SettingsCard, SettingsCardItem } from "src/components/settings/SettingsCard"
 import { SettingsExtensions } from "src/components/settings/SettingsExtensions"
@@ -82,6 +83,13 @@ export const SettingsPage: FC = observer(() => {
         <SettingsCard>
           <SettingsCardItem label="Theme">
             <ThemeSelect />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Color Scheme"
+            description="Palette of surfaces, text and borders, for both light and dark themes"
+          >
+            <ColorSchemeSelect />
           </SettingsCardItem>
 
           <SettingsCardItem

@@ -11,6 +11,11 @@
 @use "themes/dark-theme";
 @use "themes/light-theme";
 
+// Color schemes, after the themes so they win on equal specificity
+@use "themes/schemes/nord";
+@use "themes/schemes/solarized";
+@use "themes/schemes/dracula";
+
 // Libraries
 @use "libraries/notifications";
 @use "libraries/simplebar";

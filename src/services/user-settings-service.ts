@@ -4,12 +4,14 @@ import { CornerRadiusScale } from "src/constants/corner-radius-scale"
 import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
 import { ToolSidebarItemHeight } from "src/constants/tool-sidebar-item-height"
 import { type CardShadow } from "src/enums/card-shadow"
+import { type ColorScheme } from "src/enums/color-scheme"
 import { type CornerRadius } from "src/enums/corner-radius"
 import { type Theme } from "src/enums/theme-2.js"
 import { type ToolSidebarDensity } from "src/enums/tool-sidebar-density"
 import { UserSettingsDefault } from "src/enums/user-settings-default.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { appDataService } from "src/services/app-data-service"
+import { applyThemeToBody } from "src/utils/theme/apply-theme-to-body"
 import { getCardShadowVariable } from "src/utils/theme/get-card-shadow-variable"
 import { resolveTheme } from "src/utils/theme/resolve-theme"
 
@@ -61,8 +63,9 @@ class UserSettingsService {
      * Set application theme, resolving `Theme.System` against the operating system
      * color scheme so the first paint already matches the final theme
      */
-    window.document.body.className = resolveTheme(
-      (rawUserSettings[UserSettingsKeys.theme] ?? UserSettingsDefault[UserSettingsKeys.theme]) as Theme
+    applyThemeToBody(
+      resolveTheme((rawUserSettings[UserSettingsKeys.theme] ?? UserSettingsDefault[UserSettingsKeys.theme]) as Theme),
+      (rawUserSettings[UserSettingsKeys.colorScheme] ?? UserSettingsDefault[UserSettingsKeys.colorScheme]) as ColorScheme
     )
 
     /**

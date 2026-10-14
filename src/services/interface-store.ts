@@ -8,6 +8,7 @@ import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
 import { StorageKeys } from "src/constants/storage-keys"
 import { AppTitleBarStyle as AppTitlebarStyle } from "src/enums/app-titlebar-style"
 import { CardShadow } from "src/enums/card-shadow"
+import { ColorScheme } from "src/enums/color-scheme"
 import { CornerRadius } from "src/enums/corner-radius"
 import { SidebarMode } from "src/enums/sidebar-mode"
 import { type ResolvedTheme, Theme } from "src/enums/theme-2.js"
@@ -28,6 +29,12 @@ class InterfaceStore {
    */
   @userSettingsService.watch(UserSettingsKeys.theme)
   theme: Theme = userSettingsService.get(UserSettingsKeys.theme, Theme.System)
+
+  /**
+   * Color scheme restyling the palette of the dark and light themes
+   */
+  @userSettingsService.watch(UserSettingsKeys.colorScheme)
+  colorScheme: ColorScheme = userSettingsService.get(UserSettingsKeys.colorScheme, ColorScheme.Default)
 
   /**
    * Current operating system color scheme, kept in sync with `prefers-color-scheme`.
@@ -203,6 +210,10 @@ class InterfaceStore {
 
   setTheme(theme: Theme) {
     this.theme = theme
+  }
+
+  setColorScheme(colorScheme: ColorScheme) {
+    this.colorScheme = colorScheme
   }
 
   setSystemTheme(theme: ResolvedTheme) {

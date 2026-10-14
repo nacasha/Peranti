@@ -1,0 +1,20 @@
+// Base palette of a color scheme, applied on top of body.dark / body.light.
+// Most variables in the theme files derive from these through var(), the
+// handful that were written as literals are re-pointed here too.
+@mixin palette($bg, $panel, $raised, $text, $muted, $faint, $hover, $line, $line-strong) {
+  --bg: #{$bg};
+  --panel: #{$panel};
+  --raised: #{$raised};
+  --hover: #{$hover};
+  --line: #{$line};
+  --muted: #{$muted};
+  --faint: #{$faint};
+  --text-color: #{$text};
+
+  --border-default: #{$line};
+  --border-strong: #{$line-strong};
+
+  --button-background-color-active: color-mix(in srgb, var(--text-color) 8%, transparent);
+  --scrollbar-thumb-background-color: var(--line);
+  --scrollbar-thumb-background-color-hover: color-mix(in srgb, var(--text-color) 22%, transparent);
+}

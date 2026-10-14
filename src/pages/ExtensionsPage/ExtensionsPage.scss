@@ -358,7 +358,8 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
   text-align: center;
   color: var(--muted);
 
-  svg {
+  // The hero icon only; a descendant selector also hit the action buttons' icons
+  > svg {
     margin-bottom: 4px;
     color: var(--faint);
   }

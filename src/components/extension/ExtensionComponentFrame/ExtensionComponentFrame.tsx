@@ -152,7 +152,7 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
     sendTheme()
     const observer = new MutationObserver(sendTheme)
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style"] })
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class", "style"] })
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class", "style", "data-color-scheme"] })
     return () => { observer.disconnect() }
   }, [themeName])
 
