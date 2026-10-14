@@ -184,21 +184,24 @@ export const ComponentPlayground: FC<ComponentPlaygroundProps> = observer(({ tar
   const renderPreview = () => {
     const label = firstUsage?.fieldLabel ?? name
 
+    // Fills its place like in a tool, so it gets the same fixed area as the
+    // built-in editors
     if (isExtension) {
       return (
-        <ExtensionComponentFrame
-          {...fieldProps}
-          key={frameKey}
-          fieldKey="preview"
-          label={label}
-          mode={mode}
-          html={target.component.html}
-          defaultHeight={target.component.definition.height ?? 160}
-          value={value}
-          onValueChange={handleFrameValue}
-          onDebugEvent={handleDebugEvent}
-          onHeightChange={setHeight}
-        />
+        <div className="ComponentPlayground-builtIn">
+          <ExtensionComponentFrame
+            {...fieldProps}
+            key={frameKey}
+            fieldKey="preview"
+            label={label}
+            mode={mode}
+            html={target.component.html}
+            value={value}
+            onValueChange={handleFrameValue}
+            onDebugEvent={handleDebugEvent}
+            onHeightChange={setHeight}
+          />
+        </div>
       )
     }
 
@@ -466,7 +469,7 @@ export const ComponentPlayground: FC<ComponentPlaygroundProps> = observer(({ tar
             <span className="ExtensionDetails-chip" title={valueInfo.description}>
               {mode === "input" ? "Sends" : "Accepts"} {ComponentValueTypeLabels[valueInfo.type]}
             </span>
-            {height !== undefined && <span className="ExtensionDetails-chip">{height}px tall</span>}
+            {height !== undefined && <span className="ExtensionDetails-chip" title="Height of the component's content, the frame itself fills its place">Content {height}px</span>}
           </div>
           {description && <p className="ComponentPlayground-description">{description}</p>}
         </div>

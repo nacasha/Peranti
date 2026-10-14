@@ -52,7 +52,6 @@ export const ExtensionComponentsSection: FC<ExtensionComponentsSectionProps> = (
               items={[
                 { label: "ID", value: <code>@{component.componentId}</code> },
                 { label: "Entry", value: component.entry && <code>{component.entry}</code> },
-                { label: "Height", value: `${component.height ?? 160}px, then fits content` },
                 { label: "File", value: component.path && <code>{component.path}</code> }
               ]}
             />

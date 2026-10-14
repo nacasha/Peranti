@@ -124,7 +124,7 @@
   min-height: 0;
 }
 
-// The frame grows with its content, the area scrolls when it outgrows it
+// Holds the preview on a canvas, scrolling if the window is too small for it
 .ComponentPlayground-preview {
   flex: 1;
   min-width: 0;

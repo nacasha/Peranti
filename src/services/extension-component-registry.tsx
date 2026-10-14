@@ -7,8 +7,6 @@ import { type InputComponentProps } from "src/types/InputComponentProps"
 import { type LoadedExtensionComponent } from "src/types/LoadedExtensionComponent"
 import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
 
-const DEFAULT_HEIGHT = 160
-
 /**
  * Field components that loaded extensions provide, looked up by the
  * applet component service when a field names one. Kept apart from that
@@ -35,20 +33,19 @@ class ExtensionComponentRegistry {
 
     components.forEach((component) => {
       const kind = component.definition.kind ?? "both"
-      const defaultHeight = component.definition.height ?? DEFAULT_HEIGHT
       const value = component.definition.value ?? { type: "any" }
       const propsInfo = component.definition.props
 
       if (kind !== "output") {
         const Input: FC<InputComponentProps<any>> = (props) => (
-          <ExtensionComponentFrame {...props} mode="input" html={component.html} defaultHeight={defaultHeight} />
+          <ExtensionComponentFrame {...props} mode="input" html={component.html} componentKey={component.key} />
         )
         this.inputs.set(component.key, new AppletComponent({ component: Input, hideInHistory: true, value, props: propsInfo }))
       }
 
       if (kind !== "input") {
         const Output: FC<OutputComponentProps<any>> = (props) => (
-          <ExtensionComponentFrame {...props} mode="output" html={component.html} defaultHeight={defaultHeight} />
+          <ExtensionComponentFrame {...props} mode="output" html={component.html} componentKey={component.key} />
         )
         this.outputs.set(component.key, new AppletComponent({ component: Output, hideInHistory: true, value, props: propsInfo }))
       }

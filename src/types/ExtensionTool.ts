@@ -34,7 +34,7 @@ export interface ExtensionTool<
   runtime: ExtensionRuntime
   javascript?: {
     /**
-     * File relative to the extension folder, its default export receives
+     * File relative to the tool's folder, its default export receives
      * the input values and returns the output values
      */
     entry: string

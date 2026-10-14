@@ -22,6 +22,7 @@ $pane-components: (
   ".KeyValueOutput",
   ".ListReorderInput",
   ".ListPickInput",
+  ".ExtensionComponentFrame",
 );
 
 // Fields whose body is a single compact control.
@@ -35,7 +36,6 @@ $field-components: (
   ".TextOutput",
   ".ColorOutput",
   ".ColorPalleteOutput",
-  ".ExtensionComponentFrame",
   ".ExtensionComponentMissing",
 );
 

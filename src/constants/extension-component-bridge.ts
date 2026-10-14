@@ -1,6 +1,7 @@
 /**
  * Runs first inside every extension component frame. Gives the component
- * `window.peranti`, applies the app's theme, and reports the content height.
+ * `window.peranti`, applies the app's theme, and reports the content height,
+ * which is the frame's size in a layout row sized to "min-content".
  * Messages are tagged by side, and only messages from the parent window are
  * read.
  *
@@ -88,12 +89,37 @@ export const ExtensionComponentBridge = `(() => {
     }
   })
 
+  // The body is as tall as the frame, so its own size says nothing about the
+  // content: measured from where the content ends instead, so a layout row
+  // sized to "min-content" can fit it. Content that fills the body measures
+  // as tall as the frame.
+  let lastHeight
+  let isMeasureQueued = false
   const reportHeight = () => {
-    post({ type: "resize", height: Math.ceil(document.body.scrollHeight) })
+    isMeasureQueued = false
+    const body = document.body
+    const range = document.createRange()
+    range.selectNodeContents(body)
+    const contentBottom = range.getBoundingClientRect().bottom + window.scrollY
+    const paddingBottom = parseFloat(getComputedStyle(body).paddingBottom) || 0
+    const height = Math.ceil(contentBottom + paddingBottom)
+    if (height === lastHeight) return
+    lastHeight = height
+    post({ type: "resize", height })
+  }
+  const queueMeasure = () => {
+    if (isMeasureQueued) return
+    isMeasureQueued = true
+    requestAnimationFrame(reportHeight)
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    new ResizeObserver(reportHeight).observe(document.body)
+    new ResizeObserver(queueMeasure).observe(document.body)
+    new MutationObserver(queueMeasure).observe(document.body, { childList: true, subtree: true, attributes: true, characterData: true })
+    // Images and fonts change the size without touching the DOM
+    document.addEventListener("load", queueMeasure, true)
+    // Measured right away, the frame opens at its size without waiting a frame
+    reportHeight()
     post({ type: "ready" })
   })
 })()`

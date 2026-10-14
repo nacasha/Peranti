@@ -31,11 +31,6 @@ export interface ExtensionComponent {
   kind?: ExtensionComponentKind
 
   /**
-   * Height in pixels before the frame reports its own, defaults to 160
-   */
-  height?: number
-
-  /**
    * What its value is, "any" JSON when left out
    */
   value?: ComponentValueInfo

@@ -73,7 +73,6 @@ export interface CatalogExtensionComponent {
    * HTML file, relative to its `peranti.component.json`
    */
   entry?: string
-  height?: number
 
   /**
    * Its `peranti.component.json`, relative to the extension folder

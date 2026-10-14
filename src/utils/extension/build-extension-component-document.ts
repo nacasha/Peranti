@@ -17,7 +17,9 @@ const CONTENT_SECURITY_POLICY = [
 
 /**
  * Document shown in a component frame: the policy, the theme and the bridge
- * go first in its head, before anything of the component
+ * go first in its head, before anything of the component. The frame
+ * is as tall as the field's place in the layout, and so are `html` and
+ * `body`, so the content can fill it with `height: 100%`.
  */
 export function buildExtensionComponentDocument(html: string, theme: ExtensionComponentTheme): string {
   const document = new DOMParser().parseFromString(html, "text/html")
@@ -31,7 +33,10 @@ export function buildExtensionComponentDocument(html: string, theme: ExtensionCo
   const style = document.createElement("style")
   style.textContent = [
     `:root { color-scheme: ${theme.name}; ${Object.entries(theme.variables).map(([key, value]) => `${key}: ${value};`).join(" ")} }`,
-    "html, body { margin: 0; background: transparent; }",
+    "html, body { height: 100%; margin: 0; background: transparent; }",
+    // A component's own body padding stays inside the frame instead of
+    // adding to its height and scrolling
+    "body { box-sizing: border-box; }",
     "body { color: var(--text-color); font-family: var(--font-family); font-size: 13px; }"
   ].join("\n")
 

@@ -6,5 +6,6 @@ export const StorageKeys = {
   SessionStore: "session-store",
   SecondarySidebar: "secondary-sidebar",
   BottomPanel: "bottom-panel",
-  ExtensionCatalogCache: "extension-catalog-cache"
+  ExtensionCatalogCache: "extension-catalog-cache",
+  ExtensionComponentHeights: "extension-component-heights"
 }

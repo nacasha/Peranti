@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type FC } from "react"
 
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { useSelector } from "src/hooks/useSelector"
+import { extensionComponentHeightStore } from "src/services/extension-component-height-store"
 import { interfaceStore } from "src/services/interface-store"
 import { type ExtensionComponentDebugEvent } from "src/types/ExtensionComponentDebugEvent"
 import { toPlainJson } from "src/utils/data/to-plain-json"
@@ -11,10 +12,10 @@ import { getExtensionComponentTheme } from "src/utils/extension/get-extension-co
 import "./ExtensionComponentFrame.scss"
 
 /**
- * Tallest a frame grows to by itself, so a runaway layout can't push the
- * rest of the tool away
+ * Tallest the content can make the frame by itself, so a runaway layout
+ * can't push the rest of the tool away
  */
-const MAX_HEIGHT = 1600
+const MAX_CONTENT_HEIGHT = 1600
 
 interface ExtensionComponentFrameProps {
   fieldKey: string
@@ -27,7 +28,12 @@ interface ExtensionComponentFrameProps {
    * Component HTML with its assets inlined
    */
   html: string
-  defaultHeight: number
+
+  /**
+   * Names the component, its last height is kept under it with the field key
+   * so the frame opens at that size
+   */
+  componentKey?: string
   onValueChange?: (value: unknown) => void
   onContextMenu?: any
 
@@ -37,7 +43,7 @@ interface ExtensionComponentFrameProps {
   onDebugEvent?: (event: ExtensionComponentDebugEvent) => void
 
   /**
-   * Height the frame reports, for the component playground
+   * Height of the content, for the component playground
    */
   onHeightChange?: (height: number) => void
 
@@ -60,7 +66,7 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
     readOnly = false,
     mode,
     html,
-    defaultHeight,
+    componentKey,
     onValueChange,
     onContextMenu,
     onDebugEvent,
@@ -69,15 +75,18 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   } = props
 
   const frameRef = useRef<HTMLIFrameElement>(null)
-  const [height, setHeight] = useState(defaultHeight)
   const isReadyRef = useRef(false)
+
+  // Its natural size, used where the layout sizes the field by its content
+  const heightKey = componentKey && `${componentKey}#${fieldKey}`
+  const [contentHeight, setContentHeight] = useState(() => heightKey ? extensionComponentHeightStore.get(heightKey) : undefined)
 
   // The last value the frame sent, as JSON, so it isn't echoed straight back
   const valueFromFrameRef = useRef<string>()
 
   // Read through refs, the message listener is attached once
-  const latestRef = useRef({ value, readOnly, onValueChange, onDebugEvent, onHeightChange, fieldProps })
-  latestRef.current = { value, readOnly, onValueChange, onDebugEvent, onHeightChange, fieldProps }
+  const latestRef = useRef({ value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, fieldProps })
+  latestRef.current = { value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, fieldProps }
 
   const themeName = useSelector(() => interfaceStore.resolvedTheme)
 
@@ -116,8 +125,11 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
         valueFromFrameRef.current = JSON.stringify(data.value)
         latestRef.current.onValueChange?.(data.value)
       } else if (data.type === "resize" && typeof data.height === "number") {
-        const nextHeight = Math.min(Math.max(data.height, 24), MAX_HEIGHT)
-        setHeight(nextHeight)
+        const nextHeight = Math.min(Math.max(Math.ceil(data.height), 0), MAX_CONTENT_HEIGHT)
+        setContentHeight(nextHeight)
+        if (latestRef.current.heightKey) {
+          extensionComponentHeightStore.set(latestRef.current.heightKey, nextHeight)
+        }
         latestRef.current.onHeightChange?.(nextHeight)
       }
     }
@@ -165,14 +177,13 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   return (
     <div className="ExtensionComponentFrame" style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
       <AppletComponentHead label={label} />
-      <div className="ExtensionComponentFrame-body">
+      <div className="ExtensionComponentFrame-body" style={{ height: contentHeight }}>
         <iframe
           ref={frameRef}
           title={label ?? fieldKey}
           // Scripts only: no same origin, forms, popups or top navigation
           sandbox="allow-scripts"
           srcDoc={frameDocument}
-          style={{ height }}
         />
       </div>
     </div>

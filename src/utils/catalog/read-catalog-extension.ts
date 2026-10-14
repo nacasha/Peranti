@@ -42,7 +42,6 @@ export async function readCatalogExtension(
       value: definition.value,
       props: definition.props,
       entry: definition.entry,
-      height: definition.height,
       path: componentPath
     })),
     path,
