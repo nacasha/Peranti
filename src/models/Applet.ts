@@ -11,7 +11,7 @@ import { appletComponentService } from "src/services/applet-component-service"
 import { appletStore } from "src/services/applet-store"
 import { sessionStore } from "src/services/session-store"
 import { StorageManager } from "src/services/storage-manager"
-import { type AppletActionParams } from "src/types/AppletAction"
+import { type AppletActionParams, type AppletFieldErrors } from "src/types/AppletAction"
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOption } from "src/types/AppletOption"
 import { type AppletOutput } from "src/types/AppletOutput"
@@ -120,6 +120,12 @@ export class Applet<
    * Key value pair of output keys and its values
    */
   @observable outputValues: any = {}
+
+  /**
+   * Errors the last run reported for its fields, shown as a badge on their
+   * cards. Saved with the outputs they describe, so they come back with them.
+   */
+  @observable fieldErrors: AppletFieldErrors = {}
 
   /**
    * Indicates output values has been changed
@@ -390,6 +396,7 @@ export class Applet<
       this.isDeleted = initialState.isDeleted ?? this.isDeleted
       this.inputFieldsState = initialState.inputFieldsState ?? this.inputFieldsState
       this.outputFieldsState = initialState.outputFieldsState ?? this.outputFieldsState
+      this.fieldErrors = initialState.fieldErrors ?? this.fieldErrors
       this.isAutoRunAndFirstTime = initialState.isAutoRunAndFirstTime ?? this.isAutoRunAndFirstTime
       this.optionValues = initialState.optionValues ?? this.optionValues
       this.viewMode = initialState.viewMode ?? this.viewMode
@@ -459,6 +466,7 @@ export class Applet<
       isOutputValuesModified,
       outputFieldsState,
       outputValues,
+      fieldErrors,
       actionRunCount,
       sessionId,
       sessionName,
@@ -484,6 +492,7 @@ export class Applet<
       isOutputValuesModified,
       outputFieldsState: toJS(outputFieldsState),
       outputValues: toJS(outputValues),
+      fieldErrors: toJS(fieldErrors),
       actionRunCount,
       sessionId,
       sessionName,
@@ -773,6 +782,16 @@ export class Applet<
   resetInputAndOutputValues() {
     this.inputValues = this.getInputValuesWithDefault()
     this.outputValues = {}
+    this.fieldErrors = {}
+  }
+
+  @action
+  setFieldErrors(fieldErrors: AppletFieldErrors) {
+    this.fieldErrors = fieldErrors
+  }
+
+  getFieldError(type: "input" | "output", key: string): string | undefined {
+    return this.fieldErrors[type]?.[key]
   }
 
   getInputValuesWithDefault() {
@@ -900,8 +919,8 @@ export class Applet<
    * Run applet action, a failed action clears the outputs and shows its error
    * instead of leaving the previous result on screen
    */
-  private async runAction(actionInput: any, actionOptions: any) {
-    const actionParams = { inputValues: actionInput, toast, options: actionOptions }
+  private async runAction(actionInput: any, actionOptions: any, previousOutputValues: any = {}) {
+    const actionParams = { inputValues: actionInput, toast, options: actionOptions, previousOutputValues }
 
     // One error toast per session, replaced while the user keeps typing
     const errorToastId = `applet-error-${this.sessionId}`
@@ -951,7 +970,8 @@ export class Applet<
   }
 
   private async runNormal() {
-    const runResult = await this.runAction(this.inputValues, this.optionValues)
+    const { $errors, ...runResult } = await this.runAction(this.inputValues, this.optionValues, toJS(this.outputValues))
+    this.setFieldErrors($errors ?? {})
     this.setOutputValues(runResult)
   }
 
@@ -1089,7 +1109,8 @@ export class Applet<
 
     const outputs = []
     for (const inputLine of inputLines) {
-      const runResult = await this.runAction({ ...inputValues, [batchInputKey]: inputLine }, optionValues)
+      // Field errors can't point at one line of a batch, so they're dropped
+      const { $errors: _errors, ...runResult } = await this.runAction({ ...inputValues, [batchInputKey]: inputLine }, optionValues)
       outputs.push(runResult)
     }
 

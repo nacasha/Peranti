@@ -84,6 +84,12 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
 
   const isBatchModeEnabled = useSelector(() => activeAppletStore.getActiveApplet().isBatchModeEnabled)
 
+  const fieldError = useSelector(() => (
+    componentContext.fieldKey
+      ? activeAppletStore.getActiveApplet().getFieldError(componentContext.type, componentContext.fieldKey)
+      : undefined
+  ))
+
   const handleClickBatchMode = () => {
     activeAppletStore.toggleBatchMode()
   }
@@ -201,6 +207,14 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
           )}
         {componentContext.type === "output" && (
           <span className="AppletComponentHead-badge">Read-only</span>
+        )}
+        {fieldError && (
+          <Tooltip overlay={fieldError}>
+            <span className="AppletComponentHead-badge is-error" role="status" aria-label={fieldError}>
+              <Icons.Warning size={11} aria-hidden />
+              Error
+            </span>
+          </Tooltip>
         )}
       </div>
       <div className="AppletComponentHead-buttons">

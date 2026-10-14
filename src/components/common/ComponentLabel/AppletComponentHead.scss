@@ -107,6 +107,16 @@
   color: var(--muted);
   background: var(--hover);
   border: 1px solid var(--line);
+
+  // A problem with the field, its message is in the tooltip. The card can
+  // still show the last good value under it.
+  &.is-error {
+    gap: 4px;
+    cursor: default;
+    color: var(--danger-color);
+    background: color-mix(in oklch, var(--danger-color) 10%, transparent);
+    border-color: color-mix(in oklch, var(--danger-color) 35%, transparent);
+  }
 }
 
 .AppletComponentHead-buttons {

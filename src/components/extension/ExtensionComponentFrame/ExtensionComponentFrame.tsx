@@ -36,8 +36,8 @@ interface ExtensionComponentFrameProps {
   html: string
 
   /**
-   * Names the component, its last height is kept under it with the field key
-   * so the frame opens at that size
+   * Names the component, its last height is kept under it with the mode and
+   * field key so the frame opens at that size
    */
   componentKey?: string
   onValueChange?: (value: unknown) => void
@@ -84,8 +84,9 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   const frameRef = useRef<HTMLIFrameElement>(null)
   const isReadyRef = useRef(false)
 
-  // Its natural size, only used where the layout sizes the field by its content
-  const heightKey = componentKey && `${componentKey}#${fieldKey}`
+  // Its natural size, only used where the layout sizes the field by its content.
+  // Keyed by mode too, an input and an output may share a field key.
+  const heightKey = componentKey && `${componentKey}#${mode}#${fieldKey}`
   const [contentHeight, setContentHeight] = useState(() => heightKey ? extensionComponentHeightStore.get(heightKey) : undefined)
 
   // The last value the frame sent, as JSON, so it isn't echoed straight back

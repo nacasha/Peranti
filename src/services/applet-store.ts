@@ -50,6 +50,7 @@ import { removeDuplicateList } from "src/applets/tools/remove-duplicate-lines-to
 import { sortList } from "src/applets/tools/sort-list-tool"
 import { sqlFormatterTool } from "src/applets/tools/sql-formatter"
 import { sqlMinifyTool } from "src/applets/tools/sql-minify"
+import { textCompareTool } from "src/applets/tools/text-compare-tool"
 import { textEditorTool } from "src/applets/tools/text-editor-tool"
 import { textEscapeUnescapeTool } from "src/applets/tools/text-escape-unescape-tool"
 import { textTransformTool } from "src/applets/tools/text-transform-tool"
@@ -116,6 +117,7 @@ class AppletStore {
     [csvSortTool.appletId]: csvSortTool,
     [reactRunnerTool.appletId]: reactRunnerTool,
     [textEscapeUnescapeTool.appletId]: textEscapeUnescapeTool,
+    [textCompareTool.appletId]: textCompareTool,
     [javascriptRunnerTool.appletId]: javascriptRunnerTool,
     [csvTableViewerTool.appletId]: csvTableViewerTool,
     [jsonTableViewerTool.appletId]: jsonTableViewerTool,

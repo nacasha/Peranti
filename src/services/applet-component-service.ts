@@ -498,6 +498,16 @@ class AppletComponentService {
             type: "string",
             required: true,
             description: "Text after, shown on the right"
+          },
+          {
+            name: "compareMethod",
+            type: "string",
+            description: "Overrides the compareMethod prop, for tools that pick it from an option"
+          },
+          {
+            name: "splitView",
+            type: "boolean",
+            description: "Overrides the splitView prop, for tools that pick it from an option"
           }
         ]
       },

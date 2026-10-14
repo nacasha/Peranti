@@ -1,10 +1,12 @@
 import { AppletType } from "src/enums/applet-type"
-import { type AppletActionParams } from "src/types/AppletAction"
+import { type AppletActionParams, type AppletFieldErrors } from "src/types/AppletAction"
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOption } from "src/types/AppletOption"
 import { type AppletOutput } from "src/types/AppletOutput"
 import { type AppletSample } from "src/types/AppletSample"
 import { type LayoutSetting } from "src/types/LayoutSetting"
+
+type AppletActionResult<OutputFields> = OutputFields & { $errors?: AppletFieldErrors }
 
 export class AppletConstructor<
   InputFields extends Record<string, any> = any,
@@ -17,7 +19,12 @@ export class AppletConstructor<
   description?: string
   inputFields: Array<AppletInput<InputFields>> | ((inputValues: InputFields) => Array<AppletInput<InputFields>>)
   outputFields: Array<AppletOutput<OutputFields>> | ((outputValues: OutputFields) => Array<AppletOutput<OutputFields>>)
-  action?: (actionParams: AppletActionParams<InputFields, OptionKeys>) => OutputFields | Promise<OutputFields> | undefined
+  /**
+   * Returns the output values, plus `$errors` to badge fields that have a
+   * problem while the outputs still show something useful. The `$errors` form
+   * is `NoInfer` so output types are still inferred from the plain values.
+   */
+  action?: (actionParams: AppletActionParams<InputFields, OptionKeys>) => NoInfer<AppletActionResult<OutputFields>> | Promise<NoInfer<AppletActionResult<OutputFields>>> | OutputFields | Promise<OutputFields> | undefined
   layoutSetting?: LayoutSetting
   autoRun?: boolean
   type?: AppletType
