@@ -11,6 +11,8 @@ import { type AppletOutput } from "src/types/AppletOutput"
 import { type ComponentValueInfo } from "src/types/ComponentValueInfo"
 import { getFieldValueInfo } from "src/utils/component/get-field-value-info"
 
+import { ExtensionDetailsHeader } from "./ExtensionDetailsHeader.tsx"
+
 export interface ExtensionDetailsField {
   label: string
   value: ReactNode
@@ -80,7 +82,6 @@ const OVERVIEW = "overview"
 export const ExtensionDetails: FC<ExtensionDetailsProps> = (props) => {
   const { name, version, author, chips = [], provides = [], actions, notice, description, fields, tabs = [], children } = props
   const [activeTabId, setActiveTabId] = usePageState("details.tab", OVERVIEW)
-  const visibleChips = chips.filter((chip): chip is string => !!chip)
   const visibleTabs = tabs.filter((tab): tab is ExtensionDetailsTab => !!tab)
   const visibleFields = fields.filter((field): field is ExtensionDetailsField => (
     !!field && field.value !== undefined && field.value !== null && field.value !== ""
@@ -108,28 +109,16 @@ export const ExtensionDetails: FC<ExtensionDetailsProps> = (props) => {
 
   const header = (
     <>
-      <header className="ExtensionDetails-hero">
-        <div className="ExtensionDetails-heading">
-          <div className="ExtensionDetails-title">
-            <h2 className="ExtensionDetails-name">{name}</h2>
-            {version && <span className="ExtensionDetails-version">v{version}</span>}
-          </div>
-
-          {(!!author || visibleChips.length > 0 || provides.length > 0) && (
-            <div className="ExtensionDetails-byline">
-              {author && <span className="ExtensionDetails-author">{author}</span>}
-              {provides.map((label) => (
-                <span key={label} className="ExtensionDetails-chip is-provides">{label}</span>
-              ))}
-              {visibleChips.map((chip) => (
-                <span key={chip} className="ExtensionDetails-chip">{chip}</span>
-              ))}
-            </div>
-          )}
-
-          <div className="ExtensionDetails-actions">{actions}</div>
-        </div>
-      </header>
+      <ExtensionDetailsHeader
+        name={name}
+        suffix={version && `v${version}`}
+        subtitle={author}
+        chips={[
+          ...provides.map((label) => ({ label, tone: "provides" as const })),
+          ...chips
+        ]}
+        actions={actions}
+      />
 
       {visibleTabs.length > 0 && (
         <div className="ExtensionDetails-tabs" role="tablist">

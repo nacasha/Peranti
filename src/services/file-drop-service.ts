@@ -19,6 +19,12 @@ import { fileService } from "./file-service.js"
 import { sessionStore } from "./session-store.js"
 import { userSettingsService } from "./user-settings-service.js"
 
+/** Most files one component request can list */
+const MAX_COMPONENT_FILES = 200
+
+/** "/Users/…" on macOS and Linux, a drive or UNC path on Windows */
+const isAbsolutePath = (path: string) => path.startsWith("/") || /^[a-zA-Z]:[\\/]/.test(path) || path.startsWith("\\\\")
+
 export interface DroppedFileInfo {
   path: string
   name: string
@@ -154,6 +160,35 @@ class FileDropService {
     if (this.droppedFilePaths.length === 0) {
       this.resetState()
     }
+  }
+
+  /**
+   * Files an extension component asks to open, as if they were dropped on
+   * empty space: the picker lists them to choose a tool for each. Only files
+   * that exist are kept, and nothing happens while a drop is in progress.
+   */
+  async openFilesFromComponent(paths: string[]) {
+    if (this.isHoveringFile || this.isDroppingFile) {
+      return
+    }
+
+    const candidates = [...new Set(paths)]
+      .filter((path) => typeof path === "string" && isAbsolutePath(path))
+      .slice(0, MAX_COMPONENT_FILES)
+    const stats = await Promise.all(candidates.map(async(path) => await fileService.statFile(path)))
+    const existing = candidates.filter((_, index) => stats[index] !== undefined)
+
+    if (existing.length === 0) {
+      toast.error("Nothing to open: the files were not found")
+      return
+    }
+
+    runInAction(() => {
+      this.hoveredZone = undefined
+      this.isHoveringFile = false
+      this.isDroppingFile = true
+      this.setDroppedFilePaths(existing)
+    })
   }
 
   setIsDroppingFile(value: boolean) {

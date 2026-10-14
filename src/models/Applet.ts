@@ -758,10 +758,7 @@ export class Applet<
   setOptionValue(key: string, value: unknown) {
     this.optionValues = { ...this.optionValues, [key]: value }
 
-    /**
-     * Re-run action if input has been modified and autoRun is enabled
-     */
-    if (this.autoRun && this.isInputValuesModified) {
+    if (this.shouldRunOnOptionChange()) {
       void this.run()
     }
   }
@@ -773,7 +770,7 @@ export class Applet<
   resetOptionValues() {
     this.optionValues = this.getOptionValuesWithDefault()
 
-    if (this.autoRun && this.isInputValuesModified) {
+    if (this.shouldRunOnOptionChange()) {
       void this.run()
     }
   }
@@ -802,11 +799,25 @@ export class Applet<
     return Object.fromEntries(this.options.map((i) => [i.key, i.defaultValue]))
   }
 
-  getIsInputOrOutputHasValues(): boolean {
+  /**
+   * An option change re-runs an autoRun tool that has something to run on:
+   * input you edited, or input it was opened with, such as a dropped file or
+   * files an extension asked to open, which never mark the input as modified
+   */
+  private shouldRunOnOptionChange(): boolean {
+    return this.autoRun && (this.isInputValuesModified || this.getIsInputHasValues())
+  }
+
+  getIsInputHasValues(): boolean {
     const inputFields = this.getInputFields()
-    const hasInputValues = Object.entries(this.inputValues).filter(
+
+    return Object.entries(this.inputValues).filter(
       ([key, value]) => Boolean(value) && !inputFields.find((field) => field.key === key)?.skipValidateHasValue
     ).length > 0
+  }
+
+  getIsInputOrOutputHasValues(): boolean {
+    const hasInputValues = this.getIsInputHasValues()
 
     const hasOutputValues = Object.values(this.outputValues).filter(
       (value) => Boolean(value)

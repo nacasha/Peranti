@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState, type FC } from "react"
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { useSelector } from "src/hooks/useSelector"
 import { extensionComponentHeightStore } from "src/services/extension-component-height-store"
+import { fileDropService } from "src/services/file-drop-service"
 import { interfaceStore } from "src/services/interface-store"
 import { type ExtensionComponentDebugEvent } from "src/types/ExtensionComponentDebugEvent"
 import { toPlainJson } from "src/utils/data/to-plain-json"
@@ -62,7 +63,8 @@ interface ExtensionComponentFrameProps {
 /**
  * A field drawn by an extension's HTML, in a frame with no origin: it can't
  * reach the app, its storage, Tauri or the network. It only exchanges JSON
- * values with the app through messages, see `ExtensionComponentBridge`.
+ * values with the app through messages, see `ExtensionComponentBridge`, and
+ * can ask to open files, which you then pick a tool for.
  */
 export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props) => {
   const {
@@ -139,6 +141,9 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
           extensionComponentHeightStore.set(latestRef.current.heightKey, nextHeight)
         }
         latestRef.current.onHeightChange?.(nextHeight)
+      } else if (data.type === "open-files" && Array.isArray(data.paths)) {
+        // Shown as a drop: nothing is read until a tool is picked for a file
+        void fileDropService.openFilesFromComponent(data.paths.filter((path: unknown): path is string => typeof path === "string"))
       }
     }
 

@@ -10,6 +10,7 @@ import { ComponentValueTypeLabels } from "src/constants/component-value-types"
 import { ExtensionComponentKindLabels } from "src/constants/extension-component-kind-labels"
 import { Icons } from "src/constants/icons"
 import { AppletComponentContext } from "src/contexts/AppletComponentContext"
+import { ExtensionDetailsHeader } from "src/pages/ExtensionsPage/ExtensionDetailsHeader.tsx"
 import { appletStore } from "src/services/applet-store"
 import { fileService } from "src/services/file-service"
 import { type ComponentPlaygroundTarget } from "src/types/ComponentPlaygroundTarget"
@@ -453,37 +454,36 @@ export const ComponentPlayground: FC<ComponentPlaygroundProps> = observer(({ tar
 
   return (
     <div className="ComponentPlayground">
-      <header className="ComponentPlayground-header">
-        <div className="ComponentPlayground-heading">
-          <div className="ComponentPlayground-title">
-            <h2>{name}</h2>
-            <code>
-              {isExtension
-                ? `@${target.component.definition.componentId}`
-                : `"component": "${target.entry.name}"`}
-            </code>
-          </div>
-          <div className="ComponentPlayground-byline">
-            <span>{isExtension ? (target.extension.manifest?.name ?? target.extension.folderName) : "Built-in"}</span>
-            <span className="ExtensionDetails-chip is-provides">{ExtensionComponentKindLabels[kind]} Component</span>
-            <span className="ExtensionDetails-chip" title={valueInfo.description}>
-              {mode === "input" ? "Sends" : "Accepts"} {ComponentValueTypeLabels[valueInfo.type]}
-            </span>
-            {height !== undefined && <span className="ExtensionDetails-chip" title="Height of the component's content, the frame itself fills its place">Content {height}px</span>}
-          </div>
-          {description && <p className="ComponentPlayground-description">{description}</p>}
-        </div>
-
-        <div className="ComponentPlayground-actions">
-          <Button icon={Icons.Refresh} onClick={handleRestart}>{isExtension ? "Restart Frame" : "Remount"}</Button>
-          {isExtension && (
-            <>
-              <Button icon={Icons.Refresh} onClick={handleReloadExtensions}>Reload Files</Button>
-              {isRunningInTauri && <Button icon={Icons.Folder} onClick={handleReveal}>Show in Folder</Button>}
-            </>
-          )}
-        </div>
-      </header>
+      <ExtensionDetailsHeader
+        name={name}
+        suffix={isExtension
+          ? `@${target.component.definition.componentId}`
+          : `"component": "${target.entry.name}"`}
+        subtitle={isExtension ? (target.extension.manifest?.name ?? target.extension.folderName) : "Built-in"}
+        chips={[
+          { label: `${ExtensionComponentKindLabels[kind]} Component`, tone: "provides" },
+          {
+            label: `${mode === "input" ? "Sends" : "Accepts"} ${ComponentValueTypeLabels[valueInfo.type]}`,
+            title: valueInfo.description
+          },
+          height !== undefined && {
+            label: `Content ${height}px`,
+            title: "Height of the component's content, the frame itself fills its place"
+          }
+        ]}
+        description={description}
+        actions={(
+          <>
+            <Button icon={Icons.Refresh} onClick={handleRestart}>{isExtension ? "Restart Frame" : "Remount"}</Button>
+            {isExtension && (
+              <>
+                <Button icon={Icons.Refresh} onClick={handleReloadExtensions}>Reload Files</Button>
+                {isRunningInTauri && <Button icon={Icons.Folder} onClick={handleReveal}>Show in Folder</Button>}
+              </>
+            )}
+          </>
+        )}
+      />
 
       <div className="ComponentPlayground-toolbar">
         <div className="ComponentPlayground-segmented" role="radiogroup" aria-label="Mode">

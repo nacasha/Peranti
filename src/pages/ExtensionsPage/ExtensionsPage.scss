@@ -598,6 +598,7 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
 .ExtensionDetails-hero {
   display: flex;
   align-items: flex-start;
+  flex: none;
   gap: 16px;
   padding: 18px var(--page-gutter) 16px;
   border-bottom: 1px solid var(--line);
@@ -685,7 +686,6 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
   flex: 1;
   min-height: 0;
 
-  .ExtensionDetails-hero,
   .ExtensionDetails-tabs {
     flex: none;
   }
@@ -908,6 +908,14 @@ body .ExtensionsPage .ExtensionsPage-scroll .simplebar-content {
     background: var(--accent-soft);
     color: var(--accent);
   }
+}
+
+// Only for a pane without an overview, such as the Components playground
+.ExtensionDetails-heroDescription {
+  margin: 2px 0 0;
+  max-width: 68ch;
+  font-size: 13px;
+  color: var(--muted);
 }
 
 .ExtensionDetails-actions {

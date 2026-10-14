@@ -11,6 +11,8 @@
  *   peranti.props         the field's "props" from peranti.tool.json
  *   peranti.onValue(fn)   called with the value now and on every change, returns an unsubscribe
  *   peranti.setValue(v)   inputs only, sets the field's value
+ *   peranti.openFiles(p)  asks to open files (absolute paths) with a tool:
+ *                         Peranti shows the same picker as a file drop
  */
 export const ExtensionComponentBridge = `(() => {
   const state = { ready: false, mode: "output", value: undefined, readOnly: true, props: {} }
@@ -86,6 +88,10 @@ export const ExtensionComponentBridge = `(() => {
       if (state.mode !== "input" || state.readOnly) return
       state.value = value
       post({ type: "change", value })
+    },
+    openFiles(paths) {
+      const list = [].concat(paths).filter((path) => typeof path === "string" && path)
+      if (list.length) post({ type: "open-files", paths: list })
     }
   })
 
