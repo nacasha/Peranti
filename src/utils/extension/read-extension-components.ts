@@ -35,6 +35,9 @@ export async function readExtensionComponents(folder: ExtensionFolderReader): Pr
     if (definition.kind !== undefined && !KINDS.includes(definition.kind)) {
       throw new Error(`${file.path}: "kind" must be one of ${KINDS.join(", ")}`)
     }
+    if (definition.maximizable !== undefined && typeof definition.maximizable !== "boolean") {
+      throw new Error(`${file.path}: "maximizable" must be true or false`)
+    }
     if (definition.value !== undefined) {
       const valueError = getComponentValueDefinitionError(definition.value)
       if (valueError) {

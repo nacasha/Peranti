@@ -1,10 +1,11 @@
 import { useContext, useEffect, useId, useRef, useState, type FC, memo } from "react"
 import { Item, type ItemParams, Menu, Separator, useContextMenu } from "react-contexify"
 
-import { Icons } from "src/constants/icons"
+import { type Icon, Icons } from "src/constants/icons"
 import { AppletComponentContext } from "src/contexts/AppletComponentContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
+import { type FieldAction, RUN_FIELD_ACTION, sanitizeFieldActions } from "src/types/FieldAction"
 import { copyComponentValue } from "src/utils/component/copy-component-value"
 import { saveComponentValue } from "src/utils/component/save-component-value"
 import { runViewTransition } from "src/utils/theme/run-view-transition"
@@ -19,13 +20,27 @@ import "./AppletComponentHead.scss"
 interface AppletComponentHeadProps {
   label?: string
   showMaximize?: boolean
+
+  /**
+   * Buttons an extension component asked for, drawn after the field's own
+   * `actions`
+   */
+  actions?: FieldAction[]
+
+  /**
+   * Called for a button whose id isn't `run`, from either list
+   */
+  onAction?: (id: string) => void
 }
 
 type MaximizableField = ReturnType<ReturnType<typeof activeAppletStore.getActiveApplet>["getMaximizableFields"]>[number]
 
 export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) => {
-  const { label, showMaximize } = props
+  const { label, showMaximize, actions: componentActions, onAction } = props
   const componentContext = useContext(AppletComponentContext)
+
+  // The field's actions win over a component's with the same id
+  const actions = sanitizeFieldActions([...(componentContext.actions ?? []), ...(componentActions ?? [])])
 
   const menuId = useId()
   const { show } = useContextMenu({ id: menuId })
@@ -234,6 +249,9 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
           </PopoverConfirm>
         )}
         {componentContext.showRegenerateButton && <RegenerateButton />}
+        {actions.map((action) => (
+          <FieldActionButton key={action.id} action={action} onAction={onAction} />
+        ))}
         {componentContext.component?.copyAs && (
           <ButtonIcon
             className={isCopied ? "ButtonIcon is-copied" : "ButtonIcon"}
@@ -274,7 +292,10 @@ export const AppletComponentHead: FC<AppletComponentHeadProps> = memo((props) =>
     </div>
   )
 }, (prevProps, nextProps) => {
-  return prevProps.label === nextProps.label
+  return prevProps.label === nextProps.label &&
+    prevProps.showMaximize === nextProps.showMaximize &&
+    prevProps.onAction === nextProps.onAction &&
+    JSON.stringify(prevProps.actions) === JSON.stringify(nextProps.actions)
 })
 
 /**
@@ -297,6 +318,56 @@ const RegenerateButton: FC = () => {
       disabled={isActionRunning}
     >
       Regenerate
+    </Button>
+  )
+}
+
+/**
+ * One of a field's `actions`. `run` runs the tool and waits for it, like
+ * Regenerate, any other id is passed to `onAction`
+ */
+const FieldActionButton: FC<{ action: FieldAction, onAction?: (id: string) => void }> = ({ action, onAction }) => {
+  const isRun = action.id === RUN_FIELD_ACTION
+  const isActionRunning = useSelector(() => isRun && activeAppletStore.getActiveApplet().isActionRunning)
+  const namedIcon = action.icon ? (Icons as Record<string, Icon | undefined>)[action.icon] : undefined
+  const ActionIcon = namedIcon ?? (isRun ? Icons.Run : undefined)
+  const isDisabled = action.disabled === true || isActionRunning || (!isRun && !onAction)
+  const tooltip = action.tooltip ?? action.label ?? action.id
+
+  const handleClick = () => {
+    if (isDisabled) {
+      return
+    }
+    if (isRun) {
+      void activeAppletStore.getActiveApplet().run()
+    } else {
+      onAction?.(action.id)
+    }
+  }
+
+  if (!action.label && ActionIcon) {
+    return (
+      <ButtonIcon
+        className={action.active ? "ButtonIcon is-active" : "ButtonIcon"}
+        tooltip={tooltip}
+        icon={ActionIcon}
+        iconSize={13}
+        disabled={isDisabled}
+        onClick={handleClick}
+      />
+    )
+  }
+
+  return (
+    <Button
+      className={action.active ? "AppletComponentHead-action is-active" : "AppletComponentHead-action"}
+      icon={ActionIcon}
+      iconSize={13}
+      title={action.tooltip}
+      disabled={isDisabled}
+      onClick={handleClick}
+    >
+      {action.label ?? action.id}
     </Button>
   )
 }

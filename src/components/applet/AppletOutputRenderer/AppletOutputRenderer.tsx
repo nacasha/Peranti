@@ -86,8 +86,9 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = memo((props) 
     type: "output" as const,
     fieldKey: appletOutput.key,
     component: outputComponent,
-    showRegenerateButton: appletOutput.showRegenerateButton
-  }), [appletOutput.key, outputComponent, appletOutput.showRegenerateButton])
+    showRegenerateButton: appletOutput.showRegenerateButton,
+    actions: appletOutput.actions
+  }), [appletOutput.key, outputComponent, appletOutput.showRegenerateButton, appletOutput.actions])
 
   const fields = useMemo(() => groupedOutputs && Object.fromEntries(
     groupedOutputs.map((output) => [output.key, { label: output.label }])

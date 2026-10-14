@@ -35,19 +35,20 @@ class ExtensionComponentRegistry {
       const kind = component.definition.kind ?? "both"
       const value = component.definition.value ?? { type: "any" }
       const propsInfo = component.definition.props
+      const maximizable = component.definition.maximizable === true
 
       if (kind !== "output") {
         const Input: FC<InputComponentProps<any>> = (props) => (
-          <ExtensionComponentFrame {...props} mode="input" html={component.html} componentKey={component.key} />
+          <ExtensionComponentFrame {...props} mode="input" html={component.html} componentKey={component.key} maximizable={maximizable} />
         )
-        this.inputs.set(component.key, new AppletComponent({ component: Input, hideInHistory: true, value, props: propsInfo }))
+        this.inputs.set(component.key, new AppletComponent({ component: Input, hideInHistory: true, maximizable, value, props: propsInfo }))
       }
 
       if (kind !== "input") {
         const Output: FC<OutputComponentProps<any>> = (props) => (
-          <ExtensionComponentFrame {...props} mode="output" html={component.html} componentKey={component.key} />
+          <ExtensionComponentFrame {...props} mode="output" html={component.html} componentKey={component.key} maximizable={maximizable} />
         )
-        this.outputs.set(component.key, new AppletComponent({ component: Output, hideInHistory: true, value, props: propsInfo }))
+        this.outputs.set(component.key, new AppletComponent({ component: Output, hideInHistory: true, maximizable, value, props: propsInfo }))
       }
     })
   }

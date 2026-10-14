@@ -97,8 +97,9 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = memo((props) =>
     fieldKey: appletInput.key,
     component: inputComponent,
     showRegenerateButton: appletInput.showRegenerateButton,
-    showBatchModeButton: appletInput.allowBatch
-  }), [appletInput.key, inputComponent, appletInput.showRegenerateButton, appletInput.allowBatch])
+    showBatchModeButton: appletInput.allowBatch,
+    actions: appletInput.actions
+  }), [appletInput.key, inputComponent, appletInput.showRegenerateButton, appletInput.allowBatch, appletInput.actions])
 
   /**
    * Pass `initialState` related props to selected components

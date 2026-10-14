@@ -1,6 +1,7 @@
 import { type AppletComponent } from "src/models/AppletComponent.ts"
 import { type appletComponentService } from "src/services/applet-component-service.ts"
 
+import { type FieldAction } from "./FieldAction.ts"
 import { type InputComponentProps } from "./InputComponentProps.ts"
 
 type ExtractInputComponentProps<T> = T extends AppletComponent<React.FC<infer P>>
@@ -45,6 +46,12 @@ export type AppletInput<K extends Record<string, string> | any = any> = {
    * Show a "Regenerate" button in the field header that re-runs the applet
    */
   showRegenerateButton?: boolean
+
+  /**
+   * Buttons in the field header, see `FieldAction`. `{ "id": "run" }` runs
+   * the tool, any other id goes to the field's extension component
+   */
+  actions?: FieldAction[]
 
   /**
    * Leave this field out of the history list preview. `false` shows it even

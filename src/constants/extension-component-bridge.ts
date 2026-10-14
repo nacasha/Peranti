@@ -13,10 +13,16 @@
  *   peranti.setValue(v)   inputs only, sets the field's value
  *   peranti.openFiles(p)  asks to open files (absolute paths) with a tool:
  *                         Peranti shows the same picker as a file drop
+ *   peranti.setActions(a) buttons in the field header: [{ id, label?, icon?,
+ *                         tooltip?, active?, disabled? }], replacing the last
+ *                         list. The id "run" runs the tool
+ *   peranti.onAction(fn)  called with the id of a clicked header button,
+ *                         returns an unsubscribe
  */
 export const ExtensionComponentBridge = `(() => {
   const state = { ready: false, mode: "output", value: undefined, readOnly: true, props: {} }
   const listeners = new Set()
+  const actionListeners = new Set()
 
   const post = (message) => {
     window.parent.postMessage(Object.assign({ source: "peranti-component" }, message), "*")
@@ -71,6 +77,10 @@ export const ExtensionComponentBridge = `(() => {
       state.readOnly = data.readOnly
     } else if (data.type === "theme") {
       applyTheme(data.theme)
+    } else if (data.type === "action" && typeof data.id === "string") {
+      actionListeners.forEach((listener) => {
+        try { listener(data.id) } catch (error) { console.error(error) }
+      })
     }
   })
 
@@ -92,6 +102,16 @@ export const ExtensionComponentBridge = `(() => {
     openFiles(paths) {
       const list = [].concat(paths).filter((path) => typeof path === "string" && path)
       if (list.length) post({ type: "open-files", paths: list })
+    },
+    setActions(actions) {
+      // Plain JSON only: functions or DOM nodes can't be posted
+      let list = []
+      try { list = JSON.parse(JSON.stringify([].concat(actions || []))) } catch {}
+      post({ type: "set-actions", actions: list })
+    },
+    onAction(listener) {
+      actionListeners.add(listener)
+      return () => { actionListeners.delete(listener) }
     }
   })
 

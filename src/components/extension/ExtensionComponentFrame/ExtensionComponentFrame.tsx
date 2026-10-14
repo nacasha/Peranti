@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type FC } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "react"
 
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { useSelector } from "src/hooks/useSelector"
@@ -6,6 +6,7 @@ import { extensionComponentHeightStore } from "src/services/extension-component-
 import { fileDropService } from "src/services/file-drop-service"
 import { interfaceStore } from "src/services/interface-store"
 import { type ExtensionComponentDebugEvent } from "src/types/ExtensionComponentDebugEvent"
+import { type FieldAction, sanitizeFieldActions } from "src/types/FieldAction"
 import { toPlainJson } from "src/utils/data/to-plain-json"
 import { buildExtensionComponentDocument } from "src/utils/extension/build-extension-component-document"
 import { getExtensionComponentTheme } from "src/utils/extension/get-extension-component-theme"
@@ -30,6 +31,11 @@ interface ExtensionComponentFrameProps {
    * is as tall as the content it reports. Anywhere else it fills its place.
    */
   fitContent?: boolean
+
+  /**
+   * Shows the maximize button, from `maximizable` in `peranti.component.json`
+   */
+  maximizable?: boolean
 
   /**
    * Component HTML with its assets inlined
@@ -74,6 +80,7 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
     readOnly = false,
     mode,
     fitContent = false,
+    maximizable = false,
     html,
     componentKey,
     onValueChange,
@@ -90,6 +97,9 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   // Keyed by mode too, an input and an output may share a field key.
   const heightKey = componentKey && `${componentKey}#${mode}#${fieldKey}`
   const [contentHeight, setContentHeight] = useState(() => heightKey ? extensionComponentHeightStore.get(heightKey) : undefined)
+
+  // Header buttons the component asked for with `peranti.setActions`
+  const [actions, setActions] = useState<FieldAction[]>([])
 
   // The last value the frame sent, as JSON, so it isn't echoed straight back
   const valueFromFrameRef = useRef<string>()
@@ -141,6 +151,8 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
           extensionComponentHeightStore.set(latestRef.current.heightKey, nextHeight)
         }
         latestRef.current.onHeightChange?.(nextHeight)
+      } else if (data.type === "set-actions") {
+        setActions(sanitizeFieldActions(data.actions))
       } else if (data.type === "open-files" && Array.isArray(data.paths)) {
         // Shown as a drop: nothing is read until a tool is picked for a file
         void fileDropService.openFilesFromComponent(data.paths.filter((path: unknown): path is string => typeof path === "string"))
@@ -185,11 +197,19 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   useEffect(() => {
     isReadyRef.current = false
     valueFromFrameRef.current = undefined
+    setActions([])
   }, [frameDocument])
+
+  // A header button: the frame's `peranti.onAction` handlers get its id
+  const handleAction = useCallback((id: string) => {
+    if (isReadyRef.current) {
+      post({ type: "action", id })
+    }
+  }, [])
 
   return (
     <div className="ExtensionComponentFrame" style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
-      <AppletComponentHead label={label} />
+      <AppletComponentHead showMaximize={maximizable} label={label} actions={actions} onAction={handleAction} />
       <div className="ExtensionComponentFrame-body" style={fitContent ? { height: contentHeight } : undefined}>
         <iframe
           ref={frameRef}

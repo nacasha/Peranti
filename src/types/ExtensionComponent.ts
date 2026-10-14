@@ -31,6 +31,11 @@ export interface ExtensionComponent {
   kind?: ExtensionComponentKind
 
   /**
+   * Shows a maximize button in its header, off when left out
+   */
+  maximizable?: boolean
+
+  /**
    * What its value is, "any" JSON when left out
    */
   value?: ComponentValueInfo
