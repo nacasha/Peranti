@@ -84,6 +84,7 @@ export const DataGridOutput: FC<DataGridOutputProps> = (props) => {
           smoothScrollY
           onPaste
           getCellsForSelection
+          keybindings={{ search: true }}
         />
       </div>
     </div>

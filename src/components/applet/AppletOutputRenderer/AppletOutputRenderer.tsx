@@ -7,8 +7,10 @@ import { AppletComponentContext } from "src/contexts/AppletComponentContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
+import { extensionComponentRegistry } from "src/services/extension-component-registry"
 import { type AppletOutput } from "src/types/AppletOutput"
 import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
+import { isFieldContentSized } from "src/utils/applet/is-field-content-sized"
 import { shallowEqualArrays } from "src/utils/common/shallow-equal-arrays"
 
 interface AppletOutputRendererProps {
@@ -99,6 +101,17 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = memo((props) 
   if (["Code", "Mermaid", "Image", "Pintora", "DataGrid"].includes(appletOutput.component)) {
     additionalProps.initialState = initialState
     additionalProps.onStateChange = handleStateChange
+  }
+
+  // Extension components follow their content only where the layout sizes
+  // the field by it, anywhere else they fill their place
+  if (extensionComponentRegistry.isExtensionComponent(appletOutput.component)) {
+    additionalProps.fitContent = isFieldContentSized(
+      activeApplet.layoutSetting,
+      "output",
+      appletOutput.key,
+      isBatchModeEnabled || maximizedField.enabled
+    )
   }
 
   if (maximizedField.enabled && maximizedField.type === "output" && maximizedField.key !== appletOutput.key) {

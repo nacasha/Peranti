@@ -93,14 +93,61 @@ export const ExtensionComponentBridge = `(() => {
   // content: measured from where the content ends instead, so a layout row
   // sized to "min-content" can fit it. Content that fills the body measures
   // as tall as the frame.
+  //
+  // Only what can be seen counts: content clipped by a scrolling or hidden
+  // overflow box doesn't make the component taller, so a long list scrolling
+  // in a 300px box measures 300px. Content inside a box that clips vertically
+  // ends at that box, so the box is measured and its content skipped. A box
+  // that only clips sideways cuts off what lies beside it.
+  const range = document.createRange()
+  const isVisible = (rect, clip) => (rect.width > 0 || rect.height > 0) && rect.right > clip.left && rect.left < clip.right
+  const skippedTags = new Set(["SCRIPT", "STYLE", "TEMPLATE", "NOSCRIPT"])
+
+  const measureBottom = (parent, clip) => {
+    let bottom = -Infinity
+    for (let node = parent.firstChild; node; node = node.nextSibling) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        if (!node.data) continue
+        range.selectNodeContents(node)
+        const rect = range.getBoundingClientRect()
+        if (isVisible(rect, clip)) bottom = Math.max(bottom, rect.bottom)
+        continue
+      }
+      if (node.nodeType !== Node.ELEMENT_NODE || skippedTags.has(node.tagName)) continue
+
+      const style = getComputedStyle(node)
+      if (style.display === "none") continue
+      const rect = node.getBoundingClientRect()
+      if (isVisible(rect, clip)) bottom = Math.max(bottom, rect.bottom)
+
+      // Its content can't show below its own box
+      if (style.overflowY !== "visible") continue
+
+      let childClip = clip
+      if (style.overflowX !== "visible") {
+        // Clipped to the padding box, inside the borders
+        const left = rect.left + (parseFloat(style.borderLeftWidth) || 0)
+        const right = rect.right - (parseFloat(style.borderRightWidth) || 0)
+        childClip = { left: Math.max(clip.left, left), right: Math.min(clip.right, right) }
+        // Nothing inside can be seen
+        if (childClip.right <= childClip.left) continue
+      }
+      bottom = Math.max(bottom, measureBottom(node, childClip))
+    }
+    return bottom
+  }
+
   let lastHeight
   let isMeasureQueued = false
   const reportHeight = () => {
     isMeasureQueued = false
     const body = document.body
-    const range = document.createRange()
-    range.selectNodeContents(body)
-    const contentBottom = range.getBoundingClientRect().bottom + window.scrollY
+    const measured = measureBottom(body, { left: -Infinity, right: Infinity })
+    // No content: ends where the body's content box starts
+    const contentEnd = measured === -Infinity
+      ? body.getBoundingClientRect().top + (parseFloat(getComputedStyle(body).paddingTop) || 0)
+      : measured
+    const contentBottom = contentEnd + window.scrollY
     const paddingBottom = parseFloat(getComputedStyle(body).paddingBottom) || 0
     const height = Math.ceil(contentBottom + paddingBottom)
     if (height === lastHeight) return

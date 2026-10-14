@@ -8,9 +8,11 @@ import { AppletComponentContext } from "src/contexts/AppletComponentContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
+import { extensionComponentRegistry } from "src/services/extension-component-registry"
 import { fileDropService } from "src/services/file-drop-service"
 import { type AppletInput, type ComputedProp } from "src/types/AppletInput"
 import { type InputComponentProps } from "src/types/InputComponentProps"
+import { isFieldContentSized } from "src/utils/applet/is-field-content-sized"
 import { readComputedPropSources } from "src/utils/component/read-computed-prop-sources"
 import { transformComputedProps } from "src/utils/component/transform-computed-props"
 
@@ -106,6 +108,17 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = memo((props) =>
   if (["Code", "PipelineEditor", "Extensions", "ExtensionPage"].includes(appletInput.component)) {
     additionalProps.initialState = initialState
     additionalProps.onStateChange = handleStateChange
+  }
+
+  // Extension components follow their content only where the layout sizes
+  // the field by it, anywhere else they fill their place
+  if (extensionComponentRegistry.isExtensionComponent(appletInput.component)) {
+    additionalProps.fitContent = isFieldContentSized(
+      activeApplet.layoutSetting,
+      "input",
+      appletInput.key,
+      isBatchModeEnabled || maximizedField.enabled
+    )
   }
 
   Object.assign(additionalProps, computedPropValues)

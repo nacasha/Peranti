@@ -2,7 +2,8 @@
 // built-in editors it takes the whole place the tool's layout gives it, an
 // equal share when stacked and the full height when side by side. In a grid
 // row sized to "min-content" it fits its content: the body's height is the
-// content height the frame reports, grown or shrunk to fill anywhere else.
+// content height the frame reports (see `fitContent`). Anywhere else the body
+// has no height of its own and fills the place, whatever the content says.
 .ExtensionComponentFrame {
   position: relative;
   display: flex;

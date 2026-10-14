@@ -3,7 +3,10 @@ $sidebar-width: 180px;
 .AppletViewer {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  // `clip`, not `hidden`: a hidden box can still be scrolled by focus or by
+  // overflowing children (e.g. the data grid's search bar sliding in), which
+  // would pull the tucked-away inspector's 280px slot into view.
+  overflow: clip;
   background: var(--applet-viewer-background-color);
 }
 

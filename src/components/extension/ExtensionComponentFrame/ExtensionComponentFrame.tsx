@@ -25,6 +25,12 @@ interface ExtensionComponentFrameProps {
   mode: "input" | "output"
 
   /**
+   * The layout sizes the field by its content, a `min-content` row: the frame
+   * is as tall as the content it reports. Anywhere else it fills its place.
+   */
+  fitContent?: boolean
+
+  /**
    * Component HTML with its assets inlined
    */
   html: string
@@ -65,6 +71,7 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
     value,
     readOnly = false,
     mode,
+    fitContent = false,
     html,
     componentKey,
     onValueChange,
@@ -77,7 +84,7 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   const frameRef = useRef<HTMLIFrameElement>(null)
   const isReadyRef = useRef(false)
 
-  // Its natural size, used where the layout sizes the field by its content
+  // Its natural size, only used where the layout sizes the field by its content
   const heightKey = componentKey && `${componentKey}#${fieldKey}`
   const [contentHeight, setContentHeight] = useState(() => heightKey ? extensionComponentHeightStore.get(heightKey) : undefined)
 
@@ -177,7 +184,7 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   return (
     <div className="ExtensionComponentFrame" style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
       <AppletComponentHead label={label} />
-      <div className="ExtensionComponentFrame-body" style={{ height: contentHeight }}>
+      <div className="ExtensionComponentFrame-body" style={fitContent ? { height: contentHeight } : undefined}>
         <iframe
           ref={frameRef}
           title={label ?? fieldKey}
