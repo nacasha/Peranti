@@ -7,33 +7,34 @@ import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { Icons } from "src/constants/icons"
 import { useDragAndDropJS } from "src/hooks/useDragAndDropJS"
 import { useSelector } from "src/hooks/useSelector.ts"
-import { appletStore } from "src/services/applet-store"
+import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
+import { getSessionDisplayName } from "src/utils/applet/get-session-display-name"
+import { getSessionIcon } from "src/utils/applet/get-session-icon"
 
 interface TabItemProps {
   session: Session
 }
 
 export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
-  const { sessionId, sessionName, sessionSequenceNumber, appletId } = session
+  const { sessionId } = session
   const isRenamingSession = useSelector(() => sessionStore.renamingSessionId === session.sessionId)
   const isActive = useSelector(() => sessionStore.activeSessionId === session.sessionId)
   const isActionRunning = useSelector(() => sessionStore.sessions.find((s) => s.sessionId === session.sessionId)?.isActionRunning)
+  const showTabIcon = useSelector(() => interfaceStore.showTabbarTabIcon)
   const tabLabelRef = useRef<HTMLDivElement>(null)
 
   const { show } = useContextMenu()
 
-  const getSessionName = () => {
-    if (sessionName) return sessionName
-    return appletStore.mapOfLoadedAppletsName[appletId]?.concat(`-${sessionSequenceNumber}`)
-  }
+  const getSessionName = () => getSessionDisplayName(session)
+  const SessionIcon = getSessionIcon(session)
 
   const handleMouseDown: MouseEventHandler = (event) => {
     if (event.button === 0) {
-      const clickedElement = event.target as HTMLDivElement
-      if (clickedElement.tagName.toLowerCase() === "img" ||
-        clickedElement.classList.contains("SessionTabbar-item-session-icon")) {
+      // The close button (or the SVG/path inside it) handles its own click
+      const clickedElement = event.target as Element
+      if (clickedElement.closest(".SessionTabbar-item-session-icon")) {
         event.stopPropagation()
         event.preventDefault()
         return
@@ -137,12 +138,13 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
       <div
         ref={draggableElementRef}
         key={session.sessionId}
-        className={clsx("SessionTabbar-item-session-body", { active: isActive })}
+        className={clsx("SessionTabbar-item-session-body", { active: isActive, running: isActionRunning })}
         data-session-id={session.sessionId}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onContextMenu={handleContextMenu}
       >
+        {showTabIcon && <SessionIcon size={14} className="SessionTabbar-item-session-type-icon" aria-hidden />}
         <div
           ref={tabLabelRef}
           className="SessionTabbar-item-session-label"
@@ -151,10 +153,37 @@ export const SessionTabbarItem: FC<TabItemProps> = memo(({ session }) => {
           suppressContentEditableWarning
         >
           {getSessionName()}
-          {isActionRunning ? " ..." : ""}
         </div>
         <div className="SessionTabbar-item-session-icon" onClickCapture={handleCloseTab}>
-          <img src={Icons.Close} alt="Close Tab" />
+          {isActionRunning && (
+            /**
+             * Spun with SMIL rather than a CSS transform animation: in WebKit
+             * the CSS one makes text elsewhere on the page flash when it starts
+             */
+            <svg
+              className="SessionTabbar-item-session-spinner"
+              width={12}
+              height={12}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              aria-label="Running"
+            >
+              <path d="M21 12a9 9 0 1 1-6.219-8.56">
+                <animateTransform
+                  attributeName="transform"
+                  type="rotate"
+                  from="0 12 12"
+                  to="360 12 12"
+                  dur="0.8s"
+                  repeatCount="indefinite"
+                />
+              </path>
+            </svg>
+          )}
+          <Icons.Close size={12} className="SessionTabbar-item-session-close" aria-label="Close Tab" />
         </div>
       </div>
     </div>

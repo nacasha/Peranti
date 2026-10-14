@@ -1,10 +1,21 @@
-import { makeAutoObservable, reaction } from "mobx"
+import { makeAutoObservable, reaction, toJS } from "mobx"
 
+import { CornerRadiusScale } from "src/constants/corner-radius-scale"
+import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
+import { ToolSidebarItemHeight } from "src/constants/tool-sidebar-item-height"
+import { type CardShadow } from "src/enums/card-shadow"
+import { type ColorScheme } from "src/enums/color-scheme"
+import { type CornerRadius } from "src/enums/corner-radius"
+import { type Theme } from "src/enums/theme-2.js"
+import { type ToolSidebarDensity } from "src/enums/tool-sidebar-density"
 import { UserSettingsDefault } from "src/enums/user-settings-default.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { appDataService } from "src/services/app-data-service"
+import { applyThemeToBody } from "src/utils/theme/apply-theme-to-body"
+import { getCardShadowVariable } from "src/utils/theme/get-card-shadow-variable"
+import { resolveTheme } from "src/utils/theme/resolve-theme"
 
-import { globalStyleVariables } from "./global-style-variables.js"
+import { globalStyles } from "./global-styles.js"
 
 class UserSettingsService {
   /**
@@ -23,12 +34,19 @@ class UserSettingsService {
   isLoaded: boolean = false
 
   /**
+   * Last queued write of the user settings file
+   */
+  private pendingWrite: Promise<void> = Promise.resolve()
+
+  /**
    * Constructor
    */
   constructor() {
-    makeAutoObservable(this)
+    makeAutoObservable<this, "pendingWrite">(this, { pendingWrite: false })
 
-    void appDataService.readUserSettingsFile().then((rawUserSettings) => { this.initialized(rawUserSettings) })
+    void appDataService.readUserSettingsFile()
+      .catch(() => ({}))
+      .then((rawUserSettings) => { this.initialized(rawUserSettings ?? {}) })
   }
 
   /**
@@ -42,14 +60,44 @@ class UserSettingsService {
     this.values = Object.assign(this.values, rawUserSettings)
 
     /**
-     * Set application theme
+     * Set application theme, resolving `Theme.System` against the operating system
+     * color scheme so the first paint already matches the final theme
      */
-    window.document.body.className = (rawUserSettings[UserSettingsKeys.theme] ?? UserSettingsDefault[UserSettingsKeys.theme]).toString()
+    applyThemeToBody(
+      resolveTheme((rawUserSettings[UserSettingsKeys.theme] ?? UserSettingsDefault[UserSettingsKeys.theme]) as Theme),
+      (rawUserSettings[UserSettingsKeys.colorScheme] ?? UserSettingsDefault[UserSettingsKeys.colorScheme]) as ColorScheme
+    )
 
     /**
      * Set editor font family on load user settings
      */
-    globalStyleVariables.set("--font-family-mono", rawUserSettings[UserSettingsKeys.editorFontFamily] ?? UserSettingsDefault[UserSettingsKeys.editorFontFamily])
+    globalStyles.setVariable(
+      GlobalStyleVariables.editorFontFamily,
+      rawUserSettings[UserSettingsKeys.editorFontFamily] ?? UserSettingsDefault[UserSettingsKeys.editorFontFamily]
+    )
+
+    /**
+     * Set interface corner radius and card shadow on load user settings
+     */
+    const cornerRadius: CornerRadius = rawUserSettings[UserSettingsKeys.cornerRadius] ?? UserSettingsDefault[UserSettingsKeys.cornerRadius]
+    globalStyles.setVariable(GlobalStyleVariables.radiusScale, CornerRadiusScale[cornerRadius] ?? "1")
+
+    const cardShadow: CardShadow = rawUserSettings[UserSettingsKeys.cardShadow] ?? UserSettingsDefault[UserSettingsKeys.cardShadow]
+    globalStyles.setVariable(GlobalStyleVariables.cardShadow, getCardShadowVariable(cardShadow))
+
+    /**
+     * Set tool sidebar item density on load user settings
+     */
+    const toolSidebarDensity: ToolSidebarDensity = rawUserSettings[UserSettingsKeys.toolSidebarDensity] ?? UserSettingsDefault[UserSettingsKeys.toolSidebarDensity]
+    globalStyles.setVariable(GlobalStyleVariables.toolSidebarItemHeight, ToolSidebarItemHeight[toolSidebarDensity] ?? "32px")
+
+    /**
+     * Set accent colour on load user settings
+     */
+    globalStyles.setVariable(
+      GlobalStyleVariables.accentColor,
+      rawUserSettings[UserSettingsKeys.accentColor] ?? UserSettingsDefault[UserSettingsKeys.accentColor]
+    )
 
     this.setIsLoaded(true)
   }
@@ -106,7 +154,9 @@ class UserSettingsService {
         reaction(
           () => store[storeKey],
           (value) => {
-            void this.updateSetting(settingKey, value)
+            // Plain copy: observable arrays/objects are proxies, which the
+            // browser's IndexedDB storage can't clone
+            this.updateSetting(settingKey, toJS(value))
           }
         )
       })
@@ -119,13 +169,24 @@ class UserSettingsService {
    * @param key
    * @param value
    */
-  private async updateSetting(key: string, value: string) {
-    const settings = await appDataService.readUserSettingsFile()
-
-    if (key && (value !== undefined)) {
-      const newSettings = { ...settings, [key]: value }
-      void appDataService.writeUserSettingsFile(newSettings)
+  private updateSetting(key: string, value: string) {
+    if (!key || value === undefined) {
+      return
     }
+
+    /**
+     * Loaded values are the source of truth, so changes made close together
+     * don't read the same old file and overwrite each other
+     */
+    this.values = { ...this.values, [key]: value }
+    const settings = toJS(this.values)
+
+    /**
+     * One write at a time, so an unfinished write is never overlapped
+     */
+    this.pendingWrite = this.pendingWrite
+      .catch(() => {})
+      .then(async() => { await appDataService.writeUserSettingsFile(settings) })
   }
 }
 

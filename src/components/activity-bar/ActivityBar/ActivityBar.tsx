@@ -1,4 +1,4 @@
-import settingsApplet from "src/applets/pages/settings-applet.ts"
+import { settingsApplet } from "src/applets/pages/settings-applet"
 import { Icons } from "src/constants/icons.ts"
 import { commandbarService } from "src/services/commandbar-service"
 

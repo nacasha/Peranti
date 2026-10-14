@@ -2,7 +2,7 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react"
 import { useState } from "react"
 
 import { Button } from "src/components/common/Button"
-import { Dialog } from "src/components/dialog/Dialog.tsx"
+import { Dialog } from "src/components/dialog/Dialog"
 import { SelectInput } from "src/components/inputs/SelectInput"
 import { TextInput } from "src/components/inputs/TextInput"
 import { appletComponentService } from "src/services/applet-component-service.js"
@@ -52,7 +52,7 @@ export const PipelineModalInputOutput = NiceModal.create((props: PipelineModalIn
       </Dialog.Content>
 
       <Dialog.Footer>
-        <Button onClick={handleClickSave}>
+        <Button variant="primary" onClick={handleClickSave}>
           Save
         </Button>
       </Dialog.Footer>

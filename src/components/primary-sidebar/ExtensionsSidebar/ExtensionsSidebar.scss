@@ -1,0 +1,40 @@
+// Rows match ToolSidebarItem so both sidebars feel the same
+.ExtensionsSidebar-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0 6px;
+}
+
+.ExtensionsSidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--tool-sidebar-item-height);
+  padding: 0 10px;
+  border-radius: var(--radius-md);
+  color: var(--tool-sidebar-text-color);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--animation-speed), color var(--animation-speed);
+
+  svg {
+    flex: none;
+    color: var(--icon-color);
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    background: var(--tool-sidebar-background-color-hover);
+  }
+
+  &.is-warning,
+  &.is-warning svg {
+    color: var(--danger-color);
+  }
+}

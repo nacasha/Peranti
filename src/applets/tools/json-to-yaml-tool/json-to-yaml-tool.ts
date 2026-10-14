@@ -4,6 +4,7 @@ import { AppletConstructor } from "src/models/AppletConstructor"
 
 export const jsonToYamlTool = new AppletConstructor({
   appletId: "json-to-yaml",
+  fileExtensions: ["json"],
   name: "JSON to YAML",
   description: "JSON to YAML Converter",
   category: "JSON",

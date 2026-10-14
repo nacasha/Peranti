@@ -1,0 +1,30 @@
+---
+title: Overview
+description: Add your own tools to Peranti.
+icon: Puzzle
+---
+
+Extensions add tools, and the components those tools use, to Peranti. Each tool picks its own runtime,
+so one extension can mix JavaScript and any program installed on your machine.
+
+## Installing extensions
+
+- **From the catalog** — open **Extensions → Discover** and install one. Peranti downloads only that extension's folder.
+- **From a local folder** — open **Settings → Extensions**, switch to **Local**, then **Choose Folder**.
+
+Each tool then shows up on its own, with the ID `<extension id>/<tool folder>`.
+
+<Callout type="warn">
+  Peranti asks for confirmation before installing an extension with an `executable` tool, and shows which commands it runs.
+</Callout>
+
+## Runtimes
+
+Every tool takes its input values as one JSON object and returns its output values as one JSON object.
+
+| Runtime | Where it runs | Notes |
+| --- | --- | --- |
+| `javascript` | A Web Worker, on desktop and in the browser | Browser APIs only: no `fs`, `require` or `process`. Stopped after 30 seconds. |
+| `executable` | Any program, desktop app only | Inputs are written to stdin, outputs read from stdout. A non-zero exit shows stderr as the error. `timeoutMs` defaults to 30000. |
+
+Ready to build one? Continue to [Creating an extension](/docs/extensions/creating-an-extension).

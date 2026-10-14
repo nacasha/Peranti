@@ -1,10 +1,11 @@
 import NiceModal from "@ebay/nice-modal-react"
 import { useContext, type FC, useEffect } from "react"
-import { Item, type ItemParams, useContextMenu } from "react-contexify"
+import { type ItemParams, useContextMenu } from "react-contexify"
 import ReactFlow, { Controls, Background, BackgroundVariant, useReactFlow } from "reactflow"
 
-import { ContextMenu } from "src/components/common/ContextMenu/ContextMenu.tsx"
+import { ContextMenu, ContextMenuItem } from "src/components/common/ContextMenu"
 import { ContextMenuKeys } from "src/constants/context-menu-keys.ts"
+import { Icons } from "src/constants/icons"
 import { useSelector } from "src/hooks/useSelector.ts"
 import { type InputComponentProps } from "src/types/InputComponentProps.ts"
 
@@ -87,15 +88,15 @@ export const PipelineEditorCanvas: FC<InputComponentProps> = (props) => {
       </ReactFlow>
 
       <ContextMenu id={ContextMenuKeys.PipelineEditor}>
-        <Item id="addInput" onClick={handleAddInput}>
+        <ContextMenuItem id="addInput" icon={Icons.AddInput} onClick={handleAddInput}>
           Add Input
-        </Item>
-        <Item id="addOutput" onClick={handleAddOutput}>
+        </ContextMenuItem>
+        <ContextMenuItem id="addOutput" icon={Icons.AddOutput} onClick={handleAddOutput}>
           Add Output
-        </Item>
-        <Item id="addTool" onClick={handleClickAddTool}>
+        </ContextMenuItem>
+        <ContextMenuItem id="addTool" icon={Icons.Tool} onClick={handleClickAddTool}>
           Add Tool
-        </Item>
+        </ContextMenuItem>
       </ContextMenu>
     </div>
   )

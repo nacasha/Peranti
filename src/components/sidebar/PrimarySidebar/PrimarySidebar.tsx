@@ -4,9 +4,8 @@ import { type FC } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
 import SimpleBar from "simplebar-react"
 
-import settingsApplet from "src/applets/pages/settings-applet"
+import { settingsApplet } from "src/applets/pages/settings-applet"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
-import { ClosedEditorSidebar } from "src/components/primary-sidebar/ClosedEditorSidebar"
 import { ExtensionsSidebar } from "src/components/primary-sidebar/ExtensionsSidebar"
 import { ToolSidebar } from "src/components/primary-sidebar/ToolSidebar"
 import { Icons } from "src/constants/icons"
@@ -33,6 +32,10 @@ export const PrimarySidebar = observer(() => {
     ? SidebarMode.FloatUnpinned
     : sidebarModeStore
 
+  const handleClickToggleSidebar = () => {
+    interfaceStore.toggleSidebar()
+  }
+
   const handleClickSearch = () => {
     commandbarService.open()
   }
@@ -44,8 +47,12 @@ export const PrimarySidebar = observer(() => {
   return (
     <div className={clsx("PrimarySidebar", sidebarMode, !isSidebarShow && "hidden")}>
       <div className="PrimarySidebar-title" data-tauri-drag-region>
-        <div>Peranti</div>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 3 }}>
+        <ButtonIcon
+          icon={Icons.PanelLeft}
+          tooltip="Hide Sidebar"
+          onClick={handleClickToggleSidebar}
+        />
+        <div className="PrimarySidebar-actions">
           <ButtonIcon
             icon={Icons.Settings}
             tooltip="Settings"
@@ -72,7 +79,6 @@ const PrimarySidebarBody: FC = () => {
   const sidebarActiveMenuId = useSelector(() => interfaceStore.sidebarActiveMenuId)
   const Component: FC | undefined = {
     tools: ToolSidebar,
-    history: ClosedEditorSidebar,
     extensions: ExtensionsSidebar
   }[sidebarActiveMenuId]
 

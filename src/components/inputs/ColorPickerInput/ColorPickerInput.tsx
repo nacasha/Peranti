@@ -27,7 +27,7 @@ export const ColorPickerInput: FC<ColorPickerInputProps> = (props) => {
 
   return (
     <div className="ColorPickerInput" style={{ gridArea: fieldKey }}>
-      <AppletComponentHead showMaximize label={label} />
+      <AppletComponentHead label={label} />
       <ColorPicker
         disabledAlpha
         defaultValue={value}

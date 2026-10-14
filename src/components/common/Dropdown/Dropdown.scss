@@ -10,20 +10,35 @@
   padding: var(--input-output-padding);
   padding-inline: 10px;
   min-width: 120px;
+  transition: border-color var(--animation-speed), background-color var(--animation-speed);
 
   &:hover {
     cursor: pointer;
+    border-color: var(--input-output-border-color-hover);
   }
 
-  img {
-    width: 13px;
-    filter: var(--icon-color-filter);
+  svg {
+    flex: none;
+    color: var(--icon-color);
   }
 }
 
+// Option list: the selected row carries a trailing check rather than a fill,
+// so hover and selection never look the same.
 .DropdownMenu {
+  .DropdownMenu-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .DropdownMenu-check {
+    flex: none;
+    color: var(--accent);
+  }
+
   .contexify_item.selected > .contexify_itemContent {
-    background-color: var(--button-background-color-active);
-    border-radius: var(--border-radius);
+    font-weight: var(--font-weight-medium);
   }
 }

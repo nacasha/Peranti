@@ -1,0 +1,66 @@
+.ListPickInput {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  &-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: auto;
+  }
+
+  &-empty {
+    padding: 10px 16px;
+    font-size: var(--input-output-font-size);
+    color: var(--muted);
+  }
+
+  &-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: var(--input-output-font-size);
+    user-select: none;
+    transition: background-color var(--animation-speed);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background-color: var(--hover);
+    }
+
+    .Switch {
+      flex: 1;
+      min-width: 0;
+      gap: 10px;
+
+      label {
+        flex: 1;
+        min-width: 0;
+        font-family: var(--font-family-mono);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        cursor: pointer;
+
+        // Stretch the label's hit area over the whole row, so a click anywhere
+        // on it toggles the checkbox
+        &::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+        }
+      }
+    }
+  }
+}

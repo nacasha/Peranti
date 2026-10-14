@@ -1,0 +1,151 @@
+// Find & replace bar docked to the top of the editor, full width
+.CodeMirrorSearchPanel {
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 5px 6px;
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+}
+
+// One grid for both rows so the find and replace fields share a width
+.CodeMirrorSearchPanel-rows {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 4px 6px;
+  min-width: 0;
+}
+
+.CodeMirrorSearchPanel-row {
+  display: contents;
+}
+
+.CodeMirrorSearchPanel-replace-actions {
+  grid-column: 2 / 4;
+  justify-self: end;
+}
+
+.CodeMirrorSearchPanel-field {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 2px;
+  min-width: 80px;
+  height: 28px;
+  padding: 0 2px 0 8px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  transition: border-color var(--animation-speed), box-shadow var(--animation-speed);
+
+  &:hover {
+    border-color: var(--border-strong);
+  }
+
+  &:focus-within {
+    border-color: var(--accent);
+    box-shadow: var(--focus-ring);
+  }
+
+  &.is-invalid,
+  &.is-invalid:focus-within {
+    border-color: var(--danger-color, #ef4444);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--danger-color, #ef4444), transparent 80%);
+  }
+}
+
+.CodeMirrorSearchPanel-field-icon {
+  flex: none;
+  margin-right: 4px;
+  color: var(--faint);
+}
+
+.CodeMirrorSearchPanel-input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+  background: transparent;
+  border: none;
+  outline: none;
+
+  &::placeholder {
+    font-family: var(--font-family);
+    color: var(--faint);
+  }
+}
+
+.CodeMirrorSearchPanel-count {
+  flex: none;
+  min-width: 64px;
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  white-space: nowrap;
+
+  &.is-empty {
+    color: var(--danger-color, #ef4444);
+  }
+}
+
+.CodeMirrorSearchPanel-actions {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.CodeMirrorSearchPanel-button,
+.CodeMirrorSearchPanel-toggle {
+  display: grid;
+  place-items: center;
+  flex: none;
+  padding: 0;
+  color: var(--icon-color);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--animation-speed), color var(--animation-speed);
+
+  &:hover:not(:disabled) {
+    color: var(--text-color);
+    background: var(--hover);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.CodeMirrorSearchPanel-button {
+  width: 28px;
+  height: 28px;
+
+  &:active:not(:disabled) {
+    background: var(--accent-soft);
+  }
+}
+
+.CodeMirrorSearchPanel-expand {
+  height: 28px;
+  width: 20px;
+}
+
+.CodeMirrorSearchPanel-toggle {
+  width: 22px;
+  height: 22px;
+
+  &.is-active,
+  &.is-active:hover {
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent), transparent 60%);
+  }
+}

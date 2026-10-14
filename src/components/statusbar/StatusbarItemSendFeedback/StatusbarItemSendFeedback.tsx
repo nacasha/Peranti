@@ -1,5 +1,5 @@
 import { Icons } from "src/constants/icons"
-import { openLink } from "src/utils/open-link"
+import { openLink } from "src/utils/common/open-link"
 
 export const StatusbarItemSendFeedback = () => {
   const handleClick = () => {
@@ -8,7 +8,7 @@ export const StatusbarItemSendFeedback = () => {
 
   return (
     <div className="Statusbar-item" onClick={handleClick}>
-      <img src={Icons.Feedback} alt="Send Feedback" />
+      <Icons.Feedback size={12} aria-hidden />
       Send Feedback
     </div>
   )

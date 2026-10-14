@@ -2,23 +2,45 @@ import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
+import { DefaultAccentColor } from "src/constants/accent-colors"
+import { CornerRadiusScale } from "src/constants/corner-radius-scale"
+import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
 import { StorageKeys } from "src/constants/storage-keys"
 import { AppTitleBarStyle as AppTitlebarStyle } from "src/enums/app-titlebar-style"
+import { CardShadow } from "src/enums/card-shadow"
+import { ColorScheme } from "src/enums/color-scheme"
+import { CornerRadius } from "src/enums/corner-radius"
 import { SidebarMode } from "src/enums/sidebar-mode"
-import { Theme } from "src/enums/theme-2.js"
+import { type ResolvedTheme, Theme } from "src/enums/theme-2.js"
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
-import { getWindowSize } from "src/utils/get-window-size"
+import { getWindowSize } from "src/utils/common/get-window-size"
+import { getCardShadowVariable } from "src/utils/theme/get-card-shadow-variable"
+import { getSystemTheme } from "src/utils/theme/get-system-theme"
+import { resolveTheme } from "src/utils/theme/resolve-theme"
+import { watchSystemTheme } from "src/utils/theme/watch-system-theme"
 
-import { globalStyleVariables } from "./global-style-variables.js"
+import { globalStyles } from "./global-styles.js"
 import { userSettingsService } from "./user-settings-service.js"
 
 class InterfaceStore {
   /**
    * User theme preference
-   * Dark or Light
+   * Dark, Light, or System (follows the operating system color scheme)
    */
   @userSettingsService.watch(UserSettingsKeys.theme)
-  theme: Theme = userSettingsService.get(UserSettingsKeys.theme, Theme.Dark)
+  theme: Theme = userSettingsService.get(UserSettingsKeys.theme, Theme.System)
+
+  /**
+   * Color scheme restyling the palette of the dark and light themes
+   */
+  @userSettingsService.watch(UserSettingsKeys.colorScheme)
+  colorScheme: ColorScheme = userSettingsService.get(UserSettingsKeys.colorScheme, ColorScheme.Default)
+
+  /**
+   * Current operating system color scheme, kept in sync with `prefers-color-scheme`.
+   * Only used when the preference is `Theme.System`.
+   */
+  systemTheme: ResolvedTheme = getSystemTheme()
 
   /**
    * Sidebar view mode
@@ -51,6 +73,48 @@ class InterfaceStore {
    */
   @userSettingsService.watch(UserSettingsKeys.editorFontSize)
   editorFontSize = userSettingsService.get(UserSettingsKeys.editorFontSize, 13)
+
+  /**
+   * Roundness of every corner in the interface
+   */
+  @userSettingsService.watch(UserSettingsKeys.cornerRadius)
+  cornerRadius: CornerRadius = userSettingsService.get(UserSettingsKeys.cornerRadius, CornerRadius.Default)
+
+  /**
+   * Drop shadow strength of the floating cards
+   */
+  @userSettingsService.watch(UserSettingsKeys.cardShadow)
+  cardShadow: CardShadow = userSettingsService.get(UserSettingsKeys.cardShadow, CardShadow.Subtle)
+
+  /**
+   * Show the statusbar along the bottom of the window
+   */
+  @userSettingsService.watch(UserSettingsKeys.showStatusbar)
+  showStatusbar: boolean = userSettingsService.get(UserSettingsKeys.showStatusbar, true)
+
+  /**
+   * Show the group tabs by tool button in the tabbar
+   */
+  @userSettingsService.watch(UserSettingsKeys.tabbarShowGroupTabsButton)
+  showTabbarGroupTabsButton: boolean = userSettingsService.get(UserSettingsKeys.tabbarShowGroupTabsButton, true)
+
+  /**
+   * Show the add tab button in the tabbar
+   */
+  @userSettingsService.watch(UserSettingsKeys.tabbarShowAddTabButton)
+  showTabbarAddTabButton: boolean = userSettingsService.get(UserSettingsKeys.tabbarShowAddTabButton, true)
+
+  /**
+   * Show the type icon (tool, settings, history, ...) before each tab label
+   */
+  @userSettingsService.watch(UserSettingsKeys.tabbarShowTabIcon)
+  showTabbarTabIcon: boolean = userSettingsService.get(UserSettingsKeys.tabbarShowTabIcon, true)
+
+  /**
+   * Accent colour used for highlights, focus rings and active states
+   */
+  @userSettingsService.watch(UserSettingsKeys.accentColor)
+  accentColor: string = userSettingsService.get(UserSettingsKeys.accentColor, DefaultAccentColor)
 
   /**
    * State of sidebar show
@@ -91,6 +155,8 @@ class InterfaceStore {
     this.recalculateWindowSize()
     this.setupPersistence()
     userSettingsService.watchStore(this)
+
+    watchSystemTheme((theme) => { this.setSystemTheme(theme) })
   }
 
   /**
@@ -142,8 +208,16 @@ class InterfaceStore {
     this.sidebarActiveMenuId = menuId
   }
 
-  setTheme(theme: any) {
+  setTheme(theme: Theme) {
     this.theme = theme
+  }
+
+  setColorScheme(colorScheme: ColorScheme) {
+    this.colorScheme = colorScheme
+  }
+
+  setSystemTheme(theme: ResolvedTheme) {
+    this.systemTheme = theme
   }
 
   setAppTitlebarStyle(style: AppTitlebarStyle) {
@@ -160,16 +234,55 @@ class InterfaceStore {
 
   setEditorFontFamily(newEditorFontFamily: string) {
     this.editorFontFamily = newEditorFontFamily
-    globalStyleVariables.set("--font-family-mono", newEditorFontFamily)
+    globalStyles.setVariable(GlobalStyleVariables.editorFontFamily, newEditorFontFamily)
   }
 
   setEditorFontSize(newEditorFontSize: string) {
     this.editorFontSize = newEditorFontSize
-    globalStyleVariables.set("--input-output-font-size", `${newEditorFontSize}px`)
+    globalStyles.setVariable(GlobalStyleVariables.editorFontSize, `${newEditorFontSize}px`)
+  }
+
+  setCornerRadius(cornerRadius: CornerRadius) {
+    this.cornerRadius = cornerRadius
+    globalStyles.setVariable(GlobalStyleVariables.radiusScale, CornerRadiusScale[cornerRadius])
+  }
+
+  setAccentColor(color: string) {
+    this.accentColor = color
+    globalStyles.setVariable(GlobalStyleVariables.accentColor, color)
+  }
+
+  setShowStatusbar(value: boolean) {
+    this.showStatusbar = value
+  }
+
+  setShowTabbarGroupTabsButton(value: boolean) {
+    this.showTabbarGroupTabsButton = value
+  }
+
+  setShowTabbarAddTabButton(value: boolean) {
+    this.showTabbarAddTabButton = value
+  }
+
+  setShowTabbarTabIcon(value: boolean) {
+    this.showTabbarTabIcon = value
+  }
+
+  setCardShadow(cardShadow: CardShadow) {
+    this.cardShadow = cardShadow
+    globalStyles.setVariable(GlobalStyleVariables.cardShadow, getCardShadowVariable(cardShadow))
+  }
+
+  /**
+   * Theme applied to the interface, with `Theme.System` resolved to the
+   * current operating system color scheme.
+   */
+  get resolvedTheme(): ResolvedTheme {
+    return resolveTheme(this.theme, this.systemTheme)
   }
 
   get isDarkTheme() {
-    return this.theme === Theme.Dark
+    return this.resolvedTheme === Theme.Dark
   }
 }
 

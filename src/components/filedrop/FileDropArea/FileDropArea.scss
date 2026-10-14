@@ -1,72 +1,268 @@
 .FileDropArea {
+  position: fixed;
+  z-index: 10;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  max-width: calc(100vw - var(--space-5) * 2);
+  max-height: calc(100vh - var(--space-5) * 2);
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  background-color: var(--bg-raised);
+  box-shadow: var(--shadow-lg);
+  animation: FileDropArea-rise 200ms var(--ease-out);
+}
+
+.FileDropArea[data-mode="choose"] {
+  width: 420px;
+  padding: var(--space-3) 0;
+  overflow: hidden;
+}
+
+.FileDropArea-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.FileDropArea-icon {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed;
-  z-index: 10;
-  inset: 0;
-  flex-direction: column;
-  backdrop-filter: blur(3px);
-  border-radius: var(--border-radius);
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  color: var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary), transparent 88%);
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
-.FileDropArea-body {
+.FileDropArea[data-mode="hover"] .FileDropArea-icon svg {
+  animation: FileDropArea-nudge 1.6s ease-in-out infinite;
+}
+
+.FileDropArea-icon-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: calc(9px * var(--radius-scale));
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 18px;
+  text-align: center;
+}
+
+.FileDropArea-heading {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.FileDropArea-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--text-color);
+}
+
+.FileDropArea-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
 
   strong {
-    color: #c54718;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-color);
   }
 }
 
-.FileDropArea-prompt {
+.FileDropArea[data-mode="choose"] .FileDropArea-header {
+  padding: var(--space-1) var(--space-3) var(--space-3) var(--space-4);
+}
+
+.FileDropArea-file-icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.FileDropArea[data-mode="choose"] .FileDropArea-title {
+  flex: 1;
+  font-size: var(--font-size);
+  font-weight: var(--font-weight-semibold);
+}
+
+.FileDropArea-header-buttons {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 2px;
+}
+
+.FileDropArea-iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--button-background-color-hover);
+    color: var(--text-color);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+}
+
+.FileDropArea-files {
+  max-height: 220px;
+  margin-bottom: var(--space-3);
+}
+
+.FileDropArea-files-list {
+  display: flex;
   flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  // Same 8px inset as the tool rows below, so icons, names and the remove
+  // buttons line up with the heading and tool names (16px in).
+  padding: 0 var(--space-2);
+  list-style: none;
+}
 
-  .FileDropArea-prompt-text {
-    text-align: center;
-    font-size: 18px;
+.FileDropArea-file {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  border-radius: var(--radius-md);
+
+  &:hover {
+    background-color: var(--button-background-color-hover);
   }
 
-  .FileDropArea-prompt-selection {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    gap: 12px;
-    margin: 30px 0;
-  }
-
-  .FileDropArea-prompt-item {
-    border: 1px solid #3d3d3e;
-    background-color: #2e3135;
-    padding: 5px 10px;
-    border-radius: var(--border-radius);
-    text-align: center;
-    user-select: none;
-
-    &:hover {
-      background-color: #3a3e44;
-      cursor: pointer;
-    }
+  &[data-selected] {
+    background-color: color-mix(in srgb, var(--color-primary), transparent 86%);
   }
 }
 
-.FileDropArea-text {
-  font-size: 30px;
+.FileDropArea-file-main {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-md);
+  }
 }
 
-.AppRoot.dark {
-  .FileDropArea {
-    background-color: rgba(0,0,0,0.5);
+.FileDropArea-file-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--font-size);
+  line-height: var(--line-height-tight);
+  color: var(--text-color);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Kept on the right of the same row, so each file takes one line
+.FileDropArea-file-meta {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-subtle);
+  white-space: nowrap;
+}
+
+.FileDropArea-file-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-right: var(--space-2);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-subtle);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--button-background-color-active);
+    color: var(--text-color);
+  }
+}
+
+// Divider between the dropped files and the tool picker
+.FileDropArea-picker {
+  min-height: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+}
+
+@keyframes FileDropArea-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes FileDropArea-nudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .FileDropArea,
+  .FileDropArea[data-mode="hover"] .FileDropArea-icon svg {
+    animation: none;
   }
 }
 
 .AppRoot.light {
-  .FileDropArea {
-    background-color: rgba(255,255,255,0.5);
+  // The badge tints are tuned for dark surfaces; on light ones they need to go
+  // darker rather than lighter to keep contrast against the sunken row.
+  .FileDropArea-file-badge {
+    color: hsl(var(--badge-hue, 220) 60% 38%);
+    background-color: hsl(var(--badge-hue, 220) 55% 45% / 0.14);
   }
 }

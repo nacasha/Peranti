@@ -15,6 +15,11 @@ export namespace InputFieldsType {
   export type Text = ExtractType<typeof appletComponentService.inputs.Text>
   export type Switch = ExtractType<typeof appletComponentService.inputs.Switch>
   export type File = ExtractType<typeof appletComponentService.inputs.File>
+  export type Files = ExtractType<typeof appletComponentService.inputs.Files>
   export type Select = ExtractType<typeof appletComponentService.inputs.Select>
+  export type ListReorder = ExtractType<typeof appletComponentService.inputs.ListReorder>
+  export type ListPick = ExtractType<typeof appletComponentService.inputs.ListPick>
+  export type DateTime = ExtractType<typeof appletComponentService.inputs.DateTime>
+  export type DateRange = ExtractType<typeof appletComponentService.inputs.DateRange>
   export type Code = ExtractType<typeof appletComponentService.inputs.Code>
 }

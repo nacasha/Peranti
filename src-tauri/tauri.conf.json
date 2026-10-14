@@ -1,20 +1,16 @@
 {
   "productName": "Peranti",
-  "version": "0.0.7",
+  "version": "1.2.0",
   "identifier": "Peranti",
   "build": {
-    "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm build",
+    "beforeDevCommand": "bun run dev",
+    "beforeBuildCommand": "bun run build",
     "frontendDist": "../dist",
-    "devUrl": "http://localhost:1420"
+    "devUrl": "http://localhost:1422"
   },
   "bundle": {
     "active": true,
     "targets": "all",
-    "resources": [
-      "extensions-runner/runner.js",
-      "extensions-runner/node_modules/*"
-    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -34,10 +30,16 @@
         "minWidth": 600,
         "height": 650,
         "minHeight": 390,
-        "decorations": false,
-        "fileDropEnabled": true,
+        "decorations": true,
+        "dragDropEnabled": true,
         "center": true,
-        "visible": false
+        "visible": false,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "trafficLightPosition": {
+          "x": 15,
+          "y": 21
+        }
       }
     ],
     "security": {

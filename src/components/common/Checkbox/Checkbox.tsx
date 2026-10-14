@@ -8,10 +8,11 @@ interface CheckboxProps {
   value?: boolean
   onChange?: (checked: boolean) => any
   readOnly?: boolean
+  disabled?: boolean
 }
 
 export const Checkbox: FC<CheckboxProps> = (props) => {
-  const { label, onChange: onChangeProps, defaultChecked = false, readOnly, value } = props
+  const { label, onChange: onChangeProps, defaultChecked = false, readOnly, value, disabled } = props
   const [checked, setChecked] = useState(defaultChecked)
   const id = useId()
 
@@ -31,6 +32,7 @@ export const Checkbox: FC<CheckboxProps> = (props) => {
         type="checkbox"
         onChange={onChange}
         readOnly={readOnly}
+        disabled={disabled}
       />
       {label && <label htmlFor={id}>{label}</label>}
     </div>

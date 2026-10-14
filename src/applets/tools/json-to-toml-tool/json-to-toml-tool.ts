@@ -4,6 +4,7 @@ import { AppletConstructor } from "src/models/AppletConstructor"
 
 export const jsonToTomlTool = new AppletConstructor({
   appletId: "json-to-toml",
+  fileExtensions: ["json"],
   name: "JSON to TOML",
   description: "JSON to TOML Converter",
   category: "JSON",

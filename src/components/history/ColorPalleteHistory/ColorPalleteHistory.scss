@@ -1,0 +1,21 @@
+.ColorPalleteHistory {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+}
+
+.ColorPalleteHistory-swatch {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.ColorPalleteHistory-more {
+  margin-left: 3px;
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  color: var(--faint);
+}

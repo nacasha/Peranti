@@ -19,7 +19,7 @@ export const AppletSampleButton: FC = () => {
 
   return (
     <Button icon={Icons.Documents} onClick={handleClick}>
-      Sample
+      Presets
     </Button>
   )
 }

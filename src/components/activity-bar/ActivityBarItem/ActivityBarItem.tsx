@@ -2,6 +2,7 @@ import { clsx } from "clsx"
 import { type FC } from "react"
 
 import { Tooltip } from "src/components/common/Tooltip"
+import { type Icon as IconType } from "src/constants/icons"
 import { useSelector } from "src/hooks/useSelector"
 import { type AppletConstructor } from "src/models/AppletConstructor"
 import { interfaceStore } from "src/services/interface-store"
@@ -11,7 +12,7 @@ import "./ActivityBarItem.scss"
 
 interface ActivityBarItemProps {
   label: string
-  icon: string
+  icon: IconType
   menuId: string
   appletConstructor?: AppletConstructor
   onClick?: () => any
@@ -19,7 +20,7 @@ interface ActivityBarItemProps {
 }
 
 export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
-  const { icon, label, menuId, appletConstructor, onClick, clickHideOnFloatingSidebar } = props
+  const { icon: Icon, label, menuId, appletConstructor, onClick, clickHideOnFloatingSidebar } = props
   const isActive = useSelector(() => interfaceStore.sidebarActiveMenuId === menuId)
   const isFloatingSidebar = useSelector(() => interfaceStore.isFloatingSidebar)
 
@@ -54,7 +55,7 @@ export const ActivityBarItem: FC<ActivityBarItemProps> = (props) => {
   return (
     <Tooltip mouseEnterDelay={0} placement="right" overlay={label}>
       <div className={classNames} onClick={onClickItem()}>
-        <img src={icon} alt={label}/>
+        <Icon size={20} aria-label={label} />
       </div>
     </Tooltip>
   )

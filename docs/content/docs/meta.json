@@ -1,0 +1,13 @@
+{
+  "title": "Peranti",
+  "pages": [
+    "---Getting Started---",
+    "index",
+    "installation",
+    "---Using Peranti---",
+    "features",
+    "tools",
+    "---Extensions---",
+    "...extensions"
+  ]
+}

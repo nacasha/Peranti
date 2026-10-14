@@ -1,0 +1,21 @@
+.ColorHistory {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+.ColorHistory-swatch {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.ColorHistory-value {
+  font-family: var(--font-family-mono);
+  font-size: 11.5px;
+  color: var(--faint);
+  white-space: nowrap;
+}

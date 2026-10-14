@@ -3,10 +3,8 @@ import { useState, type FC, useEffect, useRef } from "react"
 
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons"
-import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { useSelector } from "src/hooks/useSelector"
 import { bottomPanelService } from "src/services/bottom-panel-service"
-import { hotkeysStore } from "src/services/hotkeys-store"
 import { interfaceStore } from "src/services/interface-store"
 
 import "./BottomPanel.scss"
@@ -21,11 +19,6 @@ export const BottomPanel: FC = () => {
   const handleClickClose = () => {
     bottomPanelService.hide()
   }
-
-  useHotkeysModified(hotkeysStore.keys.BOTTOM_PANEL, (event) => {
-    event.preventDefault()
-    bottomPanelService.toggleIsOpen()
-  })
 
   useEffect(() => {
     const hookedConsole = Hook(

@@ -1,23 +1,24 @@
 .AppletInfo {
   display: flex;
   flex-direction: column;
-}
-
-.AppletInfo-item {
-  font-size: 12px;
-  padding: 3px 10px;
-  display: flex;
-  flex-direction: column;
-
-  &:hover {
-    background-color: var(--secondary-sidebar-item-background-color-hover);
-  }
+  gap: 2px;
+  padding: 6px 12px;
 }
 
 .AppletInfo-item-title {
-  font-weight: 600;
+  display: none;
 }
 
 .AppletInfo-item-content {
-  word-wrap: normal;
+  color: var(--muted);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+// The tool name is the heading; the description follows as plain text.
+.AppletInfo-item:first-child .AppletInfo-item-content {
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+  color: var(--text-color);
 }

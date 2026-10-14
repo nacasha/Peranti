@@ -1,0 +1,43 @@
+import { AppletConstructor } from "src/models/AppletConstructor"
+import { type InputFieldsType } from "src/types/InputFieldsType"
+import { type OutputFieldsType } from "src/types/OutputFieldsType"
+
+interface InputFields {
+  markdown: InputFieldsType.Code
+}
+
+interface OutputFields {
+  output: OutputFieldsType.Markdown
+}
+
+export const markdownParserTool = new AppletConstructor<InputFields, OutputFields>({
+  appletId: "markdown-editor",
+  fileExtensions: ["md", "markdown"],
+  name: "Markdown Editor",
+  category: "Editor",
+  description: "Write Markdown and see it rendered as you type",
+  inputFields: [
+    {
+      key: "markdown",
+      label: "Markdown",
+      component: "Code",
+      defaultValue: "",
+      props: {
+        autoFocus: true,
+        language: "markdown"
+      }
+    }
+  ],
+  outputFields: [
+    {
+      key: "output",
+      label: "Output",
+      component: "Markdown",
+      hideInHistory: true
+    }
+  ],
+  action({ inputValues }) {
+    const { markdown } = inputValues
+    return { output: markdown }
+  }
+})

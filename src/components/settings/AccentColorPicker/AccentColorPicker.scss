@@ -1,0 +1,62 @@
+.AccentColorPicker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.AccentColorPicker-swatch {
+  all: unset;
+  position: relative;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  // A hairline inner edge keeps light swatches visible on a light card.
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  transition: transform var(--animation-speed), box-shadow var(--animation-speed);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:focus-visible {
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12), var(--focus-ring);
+  }
+
+  // Selected: a ring in the swatch's own colour, separated by a gap the
+  // colour of the card behind it.
+  &.active {
+    box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--accent);
+  }
+
+  &.custom {
+    background: var(--hover);
+    color: var(--icon-color);
+    box-shadow: inset 0 0 0 1px var(--line);
+
+    &:hover {
+      color: var(--text-color);
+    }
+
+    &.active {
+      box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--accent);
+    }
+
+    // The native picker covers the swatch but stays invisible; clicking
+    // anywhere on the swatch opens it.
+    input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      border: 0;
+      padding: 0;
+    }
+  }
+}

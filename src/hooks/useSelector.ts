@@ -1,8 +1,12 @@
-import { autorun } from "mobx"
+import { type IEqualsComparer, reaction } from "mobx"
 import { useEffect, useState } from "react"
 
-export function useSelector<T extends () => any, P = ReturnType<T>>(select: T): P {
-  const [selected, setSelected] = useState<T>(select)
-  useEffect(() => autorun(() => { setSelected(select()) }), [])
-  return (selected as unknown) as P
+/**
+ * Pass `equals` (e.g. `comparer.structural`) when `select` builds a new
+ * object / array on each run, so equal results don't re-render the component
+ */
+export function useSelector<P>(select: () => P, equals?: IEqualsComparer<P>): P {
+  const [selected, setSelected] = useState<P>(select)
+  useEffect(() => reaction(select, (value) => { setSelected(() => value) }, { equals, fireImmediately: true }), [])
+  return selected
 }

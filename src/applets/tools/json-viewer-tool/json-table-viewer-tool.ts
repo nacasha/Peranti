@@ -1,7 +1,8 @@
 import { AppletConstructor } from "src/models/AppletConstructor"
-import customerBook from "src/samples/customer-book-sample.json"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
+
+import customerBook from "./customer-book-sample.json"
 
 interface InputFields {
   json: InputFieldsType.Code
@@ -13,6 +14,7 @@ interface OutputFields {
 
 export const jsonTableViewerTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "json-table-viewer",
+  fileExtensions: ["json"],
   name: "JSON Table Viewer",
   description: "View JSON data format in pretty spreadsheet view",
   category: "JSON",

@@ -1,17 +1,23 @@
 // Fonts
-@import "fonts/inter-font.scss";
-@import "fonts/jetbrains-mono-font.scss";
+@use "fonts/inter-font";
+@use "fonts/jetbrains-mono-font";
 
-@import "app.scss";
-@import "variables.scss";
-@import "global.scss";
+@use "app";
+@use "variables";
+@use "global";
+@use "panes";
 
 // Themes
-@import "themes/dark-theme.scss";
-@import "themes/light-theme.scss";
+@use "themes/dark-theme";
+@use "themes/light-theme";
+
+// Color schemes, after the themes so they win on equal specificity
+@use "themes/schemes/nord";
+@use "themes/schemes/solarized";
+@use "themes/schemes/dracula";
 
 // Libraries
-@import "libraries/notifications.scss";
-@import "libraries/simplebar.scss";
-@import "libraries/tooltip.scss";
-@import "libraries/context-menu.scss";
+@use "libraries/notifications";
+@use "libraries/simplebar";
+@use "libraries/tooltip";
+@use "libraries/context-menu";

@@ -1,9 +1,13 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod extension_process;
+mod history;
+
 use opener::reveal;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use tauri::Manager;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -46,16 +50,35 @@ fn my_custom_command(word_count: usize) -> String {
 }
 
 fn main() {
-    tauri::Builder::default()
+    let builder = tauri::Builder::default();
+
+    // The window-state plugin is desktop-only; it has no mobile implementation.
+    #[cfg(desktop)]
+    let builder = builder.plugin(tauri_plugin_window_state::Builder::default().build());
+
+    builder
+        .setup(|app| {
+            let history_db = history::HistoryDb::open(app.handle())?;
+            app.manage(history_db);
+            Ok(())
+        })
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())
-        .plugin(tauri_plugin_window_state::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             greet,
             my_custom_command,
             reveal_file_manager,
+            extension_process::run_extension_process,
+            history::history_add,
+            history::history_list,
+            history::history_get,
+            history::history_get_blob,
+            history::history_fields,
+            history::history_remove,
+            history::history_trim,
+            history::history_clear,
         ])
         .plugin(tauri_plugin_clipboard_manager::init())
         .run(tauri::generate_context!())

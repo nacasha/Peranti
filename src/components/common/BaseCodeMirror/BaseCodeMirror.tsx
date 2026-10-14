@@ -3,15 +3,18 @@ import { jsonLanguage } from "@codemirror/lang-json"
 import { markdownLanguage } from "@codemirror/lang-markdown"
 import { MySQL } from "@codemirror/lang-sql"
 import { yamlLanguage } from "@codemirror/lang-yaml"
+import { search } from "@codemirror/search"
 import { githubLight } from "@uiw/codemirror-theme-github"
 import { vscodeDarkInit } from "@uiw/codemirror-theme-vscode"
 import CodeMirror, { EditorView, type ReactCodeMirrorRef, type ReactCodeMirrorProps, type ViewUpdate, EditorSelection } from "@uiw/react-codemirror"
 import fastDeepEqual from "fast-deep-equal"
-import { useRef, type FC, useEffect, useState, memo } from "react"
+import { useRef, type FC, useEffect, useState, memo, useMemo, useCallback } from "react"
 
 import { Theme } from "src/enums/theme-2"
 import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
+import { createSearchPanel } from "src/utils/search/create-search-panel"
+import { isLargeText } from "src/utils/text/is-large-text"
 
 import "./BaseCodeMirror.scss"
 
@@ -38,11 +41,20 @@ interface Props extends BaseCodeMirrorProps, Omit<ReactCodeMirrorProps, "theme" 
 const darkTheme = vscodeDarkInit({
   settings: {
     fontFamily: "Monolisa",
-    foreground: "#bcbec4",
-    background: "#292a30",
-    gutterBackground: "#292a30"
+    foreground: "#ececef",
+    // Transparent so the editor takes the pane card's colour.
+    background: "transparent",
+    gutterBackground: "transparent",
+    gutterForeground: "#5d5d68",
+    // CSS values, so they follow the user's accent colour setting
+    caret: "var(--accent)",
+    selection: "color-mix(in srgb, var(--accent) 28%, transparent)",
+    selectionMatch: "color-mix(in srgb, var(--accent) 16%, transparent)"
   }
 })
+
+// Ctrl/Cmd+F opens the app's own find & replace panel
+const searchPanel = search({ top: true, createPanel: createSearchPanel })
 
 const basicSetup = {
   highlightActiveLine: false,
@@ -73,24 +85,38 @@ const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => 
     ...codeMirrorProps
   } = props
 
-  const isDarkMode = useSelector(() => interfaceStore.theme === Theme.Dark)
+  const isDarkMode = useSelector(() => interfaceStore.resolvedTheme === Theme.Dark)
   const textAreaWordWrapEnabled = useSelector(() => interfaceStore.textAreaWordWrap)
 
   const editorComponentRef = useRef<ReactCodeMirrorRef>(null)
-  const editorStateRef = useRef(null)
+  const editorViewRef = useRef<EditorView | null>(null)
+  const isStateDirtyRef = useRef(false)
   const scrollStateRef = useRef<InitialStateCodeMirror["scroll"]>(
     initialStateCodeMirror?.scroll ?? { left: 0, top: 0 }
   )
+
+  // Read through a ref so the callbacks below keep the same identity across renders
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
 
   const initialState = initialStateCodeMirror?.editor
     ? { json: initialStateCodeMirror?.editor }
     : undefined
 
-  const getExtensions = () => {
-    const extensions = []
+  // Highlighting a huge document is what makes the editor lag, so large text
+  // is shown as plain text
+  const isLarge = isLargeText(value)
+
+  // Must keep its identity between renders, a new array makes CodeMirror
+  // reconfigure and re-parse the whole document
+  const extensions = useMemo(() => {
+    const extensions = [searchPanel]
 
     if (textAreaWordWrapEnabled) {
       extensions.push(EditorView.lineWrapping)
+    }
+    if (isLarge) {
+      return extensions
     }
     if (language === "json") {
       extensions.push(jsonLanguage)
@@ -105,27 +131,29 @@ const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => 
     }
 
     return extensions
-  }
+  }, [language, textAreaWordWrapEnabled, isLarge])
 
+  // Serialising the state copies the whole document, so it only happens on unmount
   const getCodeMirrorState = (): InitialStateCodeMirror => {
     return {
-      editor: editorStateRef.current,
+      editor: editorViewRef.current?.state.toJSON() ?? null,
       scroll: scrollStateRef.current
     }
   }
 
-  const handleStateChange = (viewUpdate: ViewUpdate) => {
-    editorStateRef.current = viewUpdate.state.toJSON()
-  }
-
-  const handleOnChange: ReactCodeMirrorProps["onChange"] = (value, viewUpdate) => {
-    handleStateChange(viewUpdate)
-    if (onChange) {
-      onChange(value, viewUpdate)
+  const handleStateChange = useCallback((viewUpdate: ViewUpdate) => {
+    if (viewUpdate.docChanged || viewUpdate.selectionSet) {
+      isStateDirtyRef.current = true
     }
-  }
+  }, [])
+
+  const handleOnChange = useCallback<NonNullable<ReactCodeMirrorProps["onChange"]>>((value, viewUpdate) => {
+    onChangeRef.current?.(value, viewUpdate)
+  }, [])
 
   const handleCreateEditor = (view: EditorView) => {
+    editorViewRef.current = view
+
     if (initialStateCodeMirror?.editor?.doc) {
       editorComponentRef.current?.view?.dispatch({
         selection: EditorSelection.create([
@@ -158,7 +186,7 @@ const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => 
 
   useEffect(() => {
     return () => {
-      if (editorStateRef.current && onStateChange) {
+      if (isStateDirtyRef.current && onStateChange) {
         if (!fastDeepEqual(getCodeMirrorState(), initialStateCodeMirror)) {
           onStateChange(getCodeMirrorState())
         }
@@ -172,7 +200,7 @@ const CodeMirrorInstance: FC<Props & { onReady: () => void }> = memo((props) => 
       ref={editorComponentRef}
       value={value}
       theme={isDarkMode ? darkTheme : githubLight}
-      extensions={getExtensions()}
+      extensions={extensions}
       initialState={initialState}
       onChange={handleOnChange}
       onUpdate={handleStateChange}

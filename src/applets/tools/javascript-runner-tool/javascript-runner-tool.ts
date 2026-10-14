@@ -19,6 +19,7 @@ interface OutputFields {
 
 export const javascriptRunnerTool = new AppletConstructor<InputFields, OutputFields>({
   appletId: "javascript-runner",
+  fileExtensions: ["js", "mjs", "cjs"],
   name: "Javascript Runner",
   description: "Safely execute untrusted code with ESM syntax support, dynamic injection of ESM modules from URL or plain JS code, and granular access control based on whitelisting for each JS object.",
   category: "Javascript",

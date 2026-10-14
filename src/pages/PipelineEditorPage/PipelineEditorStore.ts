@@ -1,8 +1,9 @@
 import { makeAutoObservable } from "mobx"
 import { type Edge, type Node, type OnConnect, type OnEdgesChange, type OnNodesChange, addEdge, applyEdgeChanges, applyNodeChanges } from "reactflow"
 
+import { stringEntries } from "src/constants/string-entries"
 import { type AppletConstructor } from "src/models/AppletConstructor"
-import { generateRandomString, stringEntries } from "src/utils/generate-random-string"
+import { generateRandomString } from "src/utils/text/generate-random-string"
 
 export class PipelineEditorStore {
   initialized: boolean = false

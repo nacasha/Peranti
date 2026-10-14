@@ -2,6 +2,7 @@ import { observer } from "mobx-react"
 import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
+import { PopoverConfirm } from "src/components/common/PopoverConfirm"
 import { Icons } from "src/constants/icons"
 import { activeAppletStore } from "src/services/active-applet-store"
 
@@ -18,12 +19,17 @@ export const ToggleBatchModeButton: FC = observer(() => {
   }
 
   return (
-    <Button
-      icon={Icons.Layers2}
-      onClick={onClickButton}
-      active={isBatchModeEnabled}
+    <PopoverConfirm
+      confirmation={() => activeAppletStore.getToggleBatchModeConfirmation()}
+      onConfirm={onClickButton}
     >
-      Batch Mode
-    </Button>
+      <Button
+        icon={Icons.Layers2}
+        onClick={onClickButton}
+        active={isBatchModeEnabled}
+      >
+        Batch Mode
+      </Button>
+    </PopoverConfirm>
   )
 })

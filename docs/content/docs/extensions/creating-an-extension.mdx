@@ -1,0 +1,129 @@
+---
+title: Creating an Extension
+description: The folder layout, peranti.json and peranti.tool.json.
+icon: Hammer
+---
+
+An extension is a folder with one `peranti.json`. Each tool is a folder in `tools/` with a `peranti.tool.json`,
+and each component is a folder in `components/` with a `peranti.component.json`. Peranti finds them on its own,
+so there is nothing to build or register.
+
+<Files>
+  <Folder name="text-kit" defaultOpen>
+    <File name="peranti.json" />
+    <Folder name="tools" defaultOpen>
+      <Folder name="slugify" defaultOpen>
+        <File name="peranti.tool.json" />
+        <File name="slugify.js" />
+      </Folder>
+      <Folder name="word-count">
+        <File name="peranti.tool.json" />
+        <File name="word_count.py" />
+      </Folder>
+    </Folder>
+    <Folder name="components">
+      <Folder name="hue-wheel">
+        <File name="peranti.component.json" />
+        <File name="index.html" />
+      </Folder>
+    </Folder>
+  </Folder>
+</Files>
+
+<Callout>
+  **Folder names are the IDs.** The extension's ID is its folder name, and a tool's or component's ID is its folder
+  name in kebab case (`Word Count` and `word_count` both become `word-count`). Renaming a folder renames the ID.
+</Callout>
+
+## `peranti.json`
+
+```json title="peranti.json"
+{
+  "name": "Text Kit",
+  "version": "1.0.0",
+  "category": "Text"
+}
+```
+
+| Field | Required | |
+| --- | --- | --- |
+| `name` | no | Falls back to the folder name |
+| `version` | no | Dotted numbers, like `1.2.0`. Bump it on every change so installed copies see an update |
+| `description`, `author` | no | Shown in the catalog |
+| `category` | no | Default for tools without one. Tools with neither show under "Extensions" |
+
+## `peranti.tool.json`
+
+<Tabs items={['JavaScript', 'Executable']}>
+<Tab value="JavaScript">
+
+```json title="tools/slugify/peranti.tool.json"
+{
+  "name": "Slugify",
+  "runtime": "javascript",
+  "javascript": { "entry": "slugify.js" },
+  "inputFields": [{ "key": "text", "label": "Text", "component": "TextArea" }],
+  "outputFields": [{ "key": "slug", "label": "Slug", "component": "Text" }]
+}
+```
+
+```js title="tools/slugify/slugify.js"
+export default function action({ text }) {
+  return { slug: text.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-') }
+}
+```
+
+</Tab>
+<Tab value="Executable">
+
+```json title="tools/word-count/peranti.tool.json"
+{
+  "name": "Word Count",
+  "runtime": "executable",
+  "executable": { "command": "python3", "args": ["word_count.py"] },
+  "inputFields": [{ "key": "text", "label": "Text", "component": "TextArea" }],
+  "outputFields": [{ "key": "count", "label": "Words", "component": "Text" }]
+}
+```
+
+```python title="tools/word-count/word_count.py"
+import json, sys
+
+values = json.load(sys.stdin)
+print(json.dumps({"count": len(values["text"].split())}))
+```
+
+</Tab>
+</Tabs>
+
+| Field | Required | |
+| --- | --- | --- |
+| `name` | no | Falls back to the folder name |
+| `runtime` | yes | `javascript` or `executable`, with its matching settings object |
+| `inputFields`, `outputFields` | yes | The tool's fields |
+| `description` | no | |
+| `category`, `version`, `author` | no | Fall back to the extension's |
+| `autoRun` | no | Runs whenever an input changes. On by default; set `false` to show a Run button |
+| `samples` | no | Examples to load: `[{ "name": "Hello", "inputValues": { "text": "Hello" } }]` |
+| `layoutSetting` | no | How the input and output areas and their fields are placed |
+| `disableMultipleSession` | no | `true` keeps only one open tab of the tool |
+
+### Fields
+
+Each field has a `key` (its name in the JSON the tool receives or returns), a `label` and a `component`.
+Inputs may also set `defaultValue`, and any field may set `props` for its component and `actions` for buttons
+in its header (at most 4).
+
+| Fields | Components |
+| --- | --- |
+| Inputs | `Text`, `TextArea`, `Switch`, `Checkbox`, `Select`, `DateTime`, `DateRange`, `Code`, `File`, `Files`, `ListPick`, `ListReorder`, `ColorPicker` |
+| Outputs | `Text`, `TextArea`, `Code`, `Markdown`, `KeyValue`, `GridStat`, `DataGrid`, `Diff`, `Image`, `File`, `IFrame`, `Mermaid`, `Pintora`, `Color`, `ColorPallete` |
+| Either | `@<component folder>` — one of the extension's own [components](/docs/extensions/components) |
+
+## Testing locally
+
+Add your extension's parent folder in **Settings → Extensions** (switch to **Local**, then **Choose Folder**).
+Peranti reads the folders as they are, so edits show up without a build step.
+
+For complete, working examples see the `sample-*` extensions in
+[nacasha/peranti-extensions](https://github.com/nacasha/peranti-extensions).

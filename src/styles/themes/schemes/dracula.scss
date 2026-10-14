@@ -1,0 +1,16 @@
+@use "palette";
+
+// Dracula has no light variant, so body.light keeps the default palette.
+body.dark[data-color-scheme="dracula"] {
+  @include palette.palette(
+    $bg: #1e1f29,
+    $panel: #282a36,
+    $raised: #343746,
+    $text: #f8f8f2,
+    $muted: #a4a9c4,
+    $faint: #6272a4,
+    $hover: rgba(248, 248, 242, 0.05),
+    $line: rgba(248, 248, 242, 0.1),
+    $line-strong: rgba(248, 248, 242, 0.18)
+  );
+}

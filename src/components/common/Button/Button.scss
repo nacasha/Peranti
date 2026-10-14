@@ -1,18 +1,23 @@
+// Ghost by default, as the design's pane actions ("Copy", "Clear", "Export"):
+// muted text, a hairline outline, and a soft fill on hover.
 .Button {
+  height: 30px;
   border: 1px solid var(--button-border-color);
   background: var(--button-background-color);
-  border-radius: var(--border-radius);
-  padding: 7px 11px;
+  border-radius: var(--radius-lg);
+  padding: 0 12px;
   user-select: none;
   font-family: var(--font-family);
   display: flex;
   align-items: center;
-  font-size: var(--font-size);
+  font-size: 12.5px;
   color: var(--text-color);
   word-break: keep-all;
   white-space: nowrap;
-  gap: 7px;
-  line-height: 1.35;
+  gap: 6px;
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-medium);
+  transition: background-color var(--animation-speed), border-color var(--animation-speed), box-shadow var(--animation-speed), color var(--animation-speed);
 
   &:hover {
     cursor: pointer;
@@ -25,16 +30,67 @@
     background: var(--button-background-color-active);
   }
 
+  &:focus-visible {
+    border-color: var(--accent);
+    box-shadow: var(--focus-ring);
+  }
+
   &.active {
-    border-color: var(--color-accent);
+    color: var(--accent-ink);
+    border-color: transparent;
+    background: var(--accent-soft);
 
     &:hover {
-      border-color: var(--color-accent);
+      border-color: transparent;
     }
   }
 
-  img {
-    width: 14px;
-    filter: var(--icon-color-filter);
+  svg {
+    flex: none;
+    color: var(--icon-color);
+    transition: color var(--animation-speed);
+  }
+
+  &:hover svg {
+    color: var(--text-color);
+  }
+
+  // An active (toggled-on) button tints its icon with its text.
+  &.active svg {
+    color: currentColor;
+  }
+
+  // Filled variants: solid color, white text, a touch darker on hover.
+  &.Button-primary,
+  &.Button-danger {
+    --button-fill: var(--accent);
+
+    color: #ffffff;
+    border-color: transparent;
+    background: var(--button-fill);
+
+    &:hover {
+      border-color: transparent;
+      background: color-mix(in oklch, var(--button-fill) 88%, black);
+    }
+
+    &:active {
+      border-color: transparent;
+      background: color-mix(in oklch, var(--button-fill) 80%, black);
+    }
+
+    &:focus-visible {
+      border-color: transparent;
+      box-shadow: 0 0 0 3px color-mix(in oklch, var(--button-fill), transparent 75%);
+    }
+
+    svg,
+    &:hover svg {
+      color: currentColor;
+    }
+  }
+
+  &.Button-danger {
+    --button-fill: var(--danger-fill);
   }
 }

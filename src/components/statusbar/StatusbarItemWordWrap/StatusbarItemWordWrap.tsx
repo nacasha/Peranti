@@ -12,7 +12,7 @@ export const StatusbarItemWordWrap = () => {
 
   return (
     <div className="Statusbar-item" onClick={handleClick}>
-      <img src={Icons.WordWrap} alt="Word Wrap" />
+      <Icons.WordWrap size={12} aria-hidden />
       Word Wrap: {label}
     </div>
   )

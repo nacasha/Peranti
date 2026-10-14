@@ -2,6 +2,7 @@ import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
+import { type PopoverConfirmation } from "src/components/common/PopoverConfirm"
 import { StorageKeys } from "src/constants/storage-keys"
 import { Applet } from "src/models/Applet"
 
@@ -46,8 +47,49 @@ class ActiveAppletStore {
   }
 
   toggleBatchMode() {
-    const enabled = !this.getActiveApplet().isBatchModeEnabled
-    this.getActiveApplet().setBatchMode(enabled)
+    this.setBatchMode(!this.getActiveApplet().isBatchModeEnabled)
+  }
+
+  /**
+   * Turning batch mode off keeps only the first line of the batch input
+   */
+  setBatchMode(enabled: boolean) {
+    const applet = this.getActiveApplet()
+
+    if (!enabled && applet.isBatchModeEnabled) {
+      const lines = this.getBatchInputLines()
+      if (lines.length > 1) {
+        applet.setInputValue(applet.batchModeInputKey, lines[0])
+      }
+    }
+
+    applet.setBatchMode(enabled)
+  }
+
+  /**
+   * Confirmation to show before toggling batch mode, `undefined` when nothing
+   * would be lost. Turning it off drops every line except the first
+   */
+  getToggleBatchModeConfirmation(): PopoverConfirmation | undefined {
+    const hasMultipleLines = this.getBatchInputLines().length > 1
+
+    if (!this.getActiveApplet().isBatchModeEnabled || !hasMultipleLines) {
+      return undefined
+    }
+
+    return {
+      title: "Disable Batch Mode",
+      description: "Only the first line of the input is kept, the other lines will be lost",
+      confirmLabel: "Disable",
+      variant: "danger"
+    }
+  }
+
+  private getBatchInputLines() {
+    const applet = this.getActiveApplet()
+    const batchInput = `${applet.inputValues[applet.batchModeInputKey] ?? ""}`
+
+    return batchInput.replace(/\n+$/, "").split("\n")
   }
 
   cleanState() {

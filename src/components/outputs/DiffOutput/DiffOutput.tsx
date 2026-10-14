@@ -12,6 +12,12 @@ import "./DiffOutput.scss"
 interface Output {
   oldCode: string
   newCode: string
+
+  /**
+   * Override the field's props, for tools that change them from an option
+   */
+  compareMethod?: DiffMethod
+  splitView?: boolean
 }
 
 interface DiffOutputProps extends OutputComponentProps<Output> {
@@ -31,12 +37,12 @@ export const DiffOutput: FC<DiffOutputProps> = observer((props) => {
         <ReactDiffViewer
           oldValue={value.oldCode}
           newValue={value.newCode}
-          compareMethod={compareMethod}
+          compareMethod={value.compareMethod ?? compareMethod}
           leftTitle={leftTitle}
           rightTitle={rightTitle}
-          splitView={splitView}
+          splitView={value.splitView ?? splitView}
           showDiffOnly={false}
-          useDarkTheme={interfaceStore.theme === Theme.Dark}
+          useDarkTheme={interfaceStore.resolvedTheme === Theme.Dark}
           styles={{
             variables: {
               dark: {

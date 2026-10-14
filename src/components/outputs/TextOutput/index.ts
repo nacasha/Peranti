@@ -1,1 +1,1 @@
-export { TextOutput } from "./TextOutput"
+export { TextOutput } from "./TextOutput.tsx"

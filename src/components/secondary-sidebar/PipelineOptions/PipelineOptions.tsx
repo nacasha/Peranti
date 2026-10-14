@@ -2,6 +2,7 @@ import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
 import { SecondarySidebarSection } from "src/components/sidebar/SecondarySidebar"
+import { Icons } from "src/constants/icons"
 import { SecondarySidebarSections } from "src/constants/secondary-sidebar-sections"
 import { AppletType } from "src/enums/applet-type"
 import { useSelector } from "src/hooks/useSelector"
@@ -27,7 +28,8 @@ export const PipelineOptions: FC = () => {
     <SecondarySidebarSection
       sectionKey={SecondarySidebarSections.Pipeline}
       title="Pipeline"
-      hidden={type !== AppletType.Pipeline} padding
+      icon={Icons.ThreeLineVertical}
+      hidden={type !== AppletType.Pipeline}
     >
       {viewMode === "main"
         ? (

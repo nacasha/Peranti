@@ -1,5 +1,5 @@
 .IFrameOutput {
-  border: none;
-  border-radius: var(--border-radius);
-  border: 1px solid var(--input-output-border-color);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
 }

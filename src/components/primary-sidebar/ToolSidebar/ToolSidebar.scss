@@ -1,40 +1,144 @@
+// Tool sidebar as a tree: each category is a collapsible node, and its tools
+// hang off a thin guide line drawn under the node's chevron. The active
+// tool's accent bar sits on that line, so the line itself points at it.
+
+// Horizontal position of the guide line, measured from the sidebar's left
+// edge: header margin (12) + header padding (6) + half the 12px chevron (6).
+$guide-x: 24px;
+
 .ToolSidebar {
-  &-section {
-    &:first-child {
-      .ToolSidebar-section-title {
-        padding-top: 0;
-      }
-    }
-
-    &-title {
-      padding-inline: 15px;
-      font-size: 14px;
-      font-weight: 600;
-      padding-bottom: 3px;
-      padding-top: 15px;
-      display: none;
-
-      &.show {
-        display: block;
-      }
-    }
-  }
+  width: 100%;
 
   .ToolSidebar-body {
-    padding-block: 5px;
+    padding: 6px 0 16px;
+  }
+}
+
+.ToolSidebar-section.collapsible {
+  margin-bottom: 2px;
+
+  &:not(.collapsed) {
+    margin-bottom: 8px;
+  }
+}
+
+// Category node: chevron, name, count.
+.ToolSidebar-section-title {
+  all: unset;
+  box-sizing: border-box;
+  width: calc(100% - 24px);
+  height: calc(var(--tool-sidebar-item-height) - 2px);
+  margin: 0 12px 2px;
+  padding: 0 10px 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: calc(7px * var(--radius-scale));
+  font-size: var(--font-size);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-color);
+  user-select: none;
+  cursor: pointer;
+  transition: background-color var(--animation-speed), color var(--animation-speed);
+
+  &:hover {
+    background-color: var(--hover);
   }
 
-  .ToolSidebar-section-title {
-    user-select: none;
+  &:focus-visible {
+    box-shadow: var(--focus-ring);
+  }
+}
+
+.ToolSidebar-section-chevron {
+  flex: none;
+  color: var(--faint);
+  transform: rotate(90deg);
+  transition: transform 0.18s var(--ease-out), color var(--animation-speed);
+
+  .ToolSidebar-section-title:hover & {
+    color: var(--muted);
   }
 
-  .ToolSidebarItem {
-    img {
-      filter: var(--tool-sidebar-icon-color);
+  .ToolSidebar-section.collapsed & {
+    transform: rotate(0deg);
+  }
+}
+
+.ToolSidebar-section-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// Marks a collapsed category that holds the open tool.
+.ToolSidebar-section-active-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.ToolSidebar-section-count {
+  flex: none;
+  font-size: 11.5px;
+  font-weight: var(--font-weight);
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+}
+
+.ToolSidebar-section-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.2s var(--ease-out);
+
+  .ToolSidebar-section.collapsed & {
+    grid-template-rows: 0fr;
+  }
+}
+
+.ToolSidebar-section-items {
+  min-height: 0;
+  overflow: hidden;
+
+  // Hidden only once the slide finishes, which also drops the collapsed
+  // items out of the keyboard tab order.
+  .ToolSidebar-section.collapsed & {
+    visibility: hidden;
+    transition: visibility 0s 0.2s;
+  }
+
+  // Tree branch: the guide line, with the tools indented past it. The line is
+  // drawn inside the branch, not as its border, because the branch clips its
+  // overflow for the slide animation — a border would sit outside the clip and
+  // hide the active bar laid over it.
+  .ToolSidebar-section.collapsible & {
+    position: relative;
+    margin-left: $guide-x - 1px;
+    padding-left: 8px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--line);
     }
-    &.active {
-      img {
-        filter: var(--tool-sidebar-icon-color-active);
+
+    .ToolSidebarItem {
+      height: calc(var(--tool-sidebar-item-height) - 2px);
+      margin: 0 12px 0 0;
+
+      // The accent bar moves onto the guide line.
+      &::before {
+        left: -8px;
+        top: 6px;
+        bottom: 6px;
       }
     }
   }

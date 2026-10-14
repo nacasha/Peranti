@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx"
+import { comparer } from "mobx"
 import { type CSSProperties, type FC, type FormEventHandler } from "react"
 
 import { useSelector } from "src/hooks/useSelector"
@@ -22,7 +23,7 @@ export const AppletComponentAreaInput: FC<AppletComponentAreaInputProps> = (prop
    * Active applet info
    */
   const activeApplet = useSelector(() => activeAppletStore.getActiveApplet())
-  const inputFields = useSelector(() => activeAppletStore.getActiveApplet().getInputFields())
+  const inputFields = useSelector(() => activeAppletStore.getActiveApplet().getInputFields(), comparer.structural)
 
   /**
    * Maximized field state

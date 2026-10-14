@@ -8,10 +8,15 @@
   border: 1px solid var(--input-output-border-color);
   background-color: var(--input-output-background-color);
   font-family: var(--font-family-mono);
-  transition: all var(--animation-speed);
+  transition: border-color var(--animation-speed), box-shadow var(--animation-speed);
   min-width: 100px;
 
+  &:hover:not(:focus) {
+    border-color: var(--input-output-border-color-hover);
+  }
+
   &:focus {
-    border: 1px solid var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: var(--focus-ring);
   }
 }

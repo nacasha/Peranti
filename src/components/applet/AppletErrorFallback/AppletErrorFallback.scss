@@ -1,0 +1,145 @@
+// Fills the whole area of the crashed view as one card on the canvas,
+// mirroring the welcome screen: dotted surface with a soft danger glow
+.AppletErrorFallback {
+  // Spans every cell when the area is a grid, grows when it is a flex
+  grid-area: 1 / 1 / -1 / -1;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  padding: 30px;
+  overflow: auto;
+  background-color: var(--panel);
+  background-image:
+    radial-gradient(
+      ellipse 50% 40% at 50% 35%,
+      color-mix(in srgb, var(--danger-color) 8%, transparent),
+      transparent 75%
+    ),
+    radial-gradient(var(--line) 1px, transparent 1px);
+  background-size: 100% 100%, 18px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+  position: relative;
+  z-index: 1;
+}
+
+.AppletErrorFallback-content {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+}
+
+// Icon in a tinted ring
+.AppletErrorFallback-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 6px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--danger-color) 12%, transparent);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--danger-color) 6%, transparent);
+  color: var(--danger-color);
+}
+
+.AppletErrorFallback-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.AppletErrorFallback-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+  color: var(--text-color);
+}
+
+.AppletErrorFallback-description {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+// The error itself, one line and cut off, the full text is in the details
+.AppletErrorFallback-message {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid color-mix(in srgb, var(--danger-color) 20%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--danger-color) 6%, transparent);
+  color: color-mix(in srgb, var(--danger-color) 80%, var(--text-color));
+  font-family: var(--font-family-mono);
+  font-size: 12px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.AppletErrorFallback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.AppletErrorFallback-details {
+  width: 100%;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.AppletErrorFallback-detailsBar {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.AppletErrorFallback-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  transition: background-color var(--animation-speed), color var(--animation-speed);
+
+  &:hover {
+    background: var(--hover);
+    color: var(--text-color);
+  }
+}
+
+.AppletErrorFallback-stack {
+  max-height: 220px;
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--raised);
+  color: var(--muted);
+  font-family: var(--font-family-mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: auto;
+  user-select: text;
+}

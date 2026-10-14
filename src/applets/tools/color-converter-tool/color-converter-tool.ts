@@ -14,13 +14,13 @@ interface InputFields {
 
 interface OutputFields {
   visual: OutputFieldsType.Color
-  hex: OutputFieldsType.Text
-  rgb: OutputFieldsType.Text
-  hsl: OutputFieldsType.Text
-  hwb: OutputFieldsType.Text
-  lch: OutputFieldsType.Text
-  minified: OutputFieldsType.Text
-  name: OutputFieldsType.Text
+  hex: OutputFieldsType.KeyValue
+  rgb: OutputFieldsType.KeyValue
+  hsl: OutputFieldsType.KeyValue
+  hwb: OutputFieldsType.KeyValue
+  lch: OutputFieldsType.KeyValue
+  minified: OutputFieldsType.KeyValue
+  name: OutputFieldsType.KeyValue
 }
 
 extend([hwbPlugin, lchPlugin, minifyPlugin, namesPlugin])
@@ -32,7 +32,7 @@ export const colorConverterTool = new AppletConstructor<InputFields, OutputField
   category: "Color",
   layoutSetting: {
     areaType: "grid",
-    areaGridTemplate: "'input' min-content 'output' 1fr"
+    areaGridTemplate: "'input' min-content 'output' min-content"
   },
   inputFields: [
     {
@@ -52,46 +52,51 @@ export const colorConverterTool = new AppletConstructor<InputFields, OutputField
     {
       key: "hex",
       label: "HEX",
-      component: "Text",
-      allowBatch: true
-
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
     },
     {
       key: "rgb",
       label: "RGB",
-      component: "Text",
-      allowBatch: true
-
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
     },
     {
       key: "hsl",
       label: "HSL",
-      component: "Text",
-      allowBatch: true
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
     },
     {
       key: "hwb",
       label: "HWB",
-      component: "Text",
-      allowBatch: true
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
     },
     {
       key: "lch",
       label: "LCH",
-      component: "Text",
-      allowBatch: true
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
     },
     {
       key: "minified",
       label: "Minified",
-      component: "Text",
-      allowBatch: true
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
     },
     {
       key: "name",
       label: "Name",
-      component: "Text",
-      allowBatch: true
+      allowBatch: true,
+      component: "KeyValue",
+      props: { label: "Result" }
     }
   ],
   action: async({ inputValues }) => {

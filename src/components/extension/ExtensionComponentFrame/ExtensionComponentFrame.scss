@@ -1,0 +1,46 @@
+// Same frame as the built-in fields: a label, then a bordered card. Like the
+// built-in editors it takes the whole place the tool's layout gives it, an
+// equal share when stacked and the full height when side by side. In a grid
+// row sized to "min-content" it fits its content: the body's height is the
+// content height the frame reports (see `fitContent`). Anywhere else the body
+// has no height of its own and fills the place, whatever the content says.
+.ExtensionComponentFrame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  .ExtensionComponentFrame-body {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid var(--input-output-border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--input-output-background-color);
+    transition: border-color var(--animation-speed);
+
+    &:hover {
+      border-color: var(--input-output-border-color-hover);
+    }
+
+    &:focus-within {
+      border-color: var(--input-output-border-color-active);
+    }
+  }
+
+  // Pinned to the body's edges: a percent height inside a flex item isn't
+  // resolved the same way by every webview
+  iframe {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+  }
+}

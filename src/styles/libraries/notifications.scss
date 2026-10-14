@@ -1,19 +1,18 @@
 .Notification {
   inset: 10px !important;
-  bottom: 35px !important;
+  bottom: 40px !important;
 }
 
+// Toasts read as small floating cards, like the design's status toasts.
 .Notification-item {
-  background: #1e1f22;
+  background: var(--panel);
   font-family: var(--font-family);
-  font-size: var(--font-size);
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--border-radius);
-  border-radius: 4px;
-  padding: 7px;
-  padding-left: 10px;
-  color: #bcbec4;
+  font-size: 12.5px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 8px 12px;
+  color: var(--text-color);
   animation: none;
 }
 

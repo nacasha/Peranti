@@ -5,7 +5,7 @@ import { useSelector } from "src/hooks/useSelector"
 import { interfaceStore } from "src/services/interface-store"
 
 export const ContextMenu: FC<ComponentProps<typeof Menu>> = (menuProps) => {
-  const currentTheme = useSelector(() => interfaceStore.theme)
+  const currentTheme = useSelector(() => interfaceStore.resolvedTheme)
 
   return (
     <Menu

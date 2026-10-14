@@ -2,10 +2,11 @@ import NiceModal from "@ebay/nice-modal-react"
 import clsx from "clsx"
 import { useEffect, type FC, type ReactNode } from "react"
 
+import { isMacOS, isWindows } from "./constants/os.ts"
 import { AppTitleBarStyle } from "./enums/app-titlebar-style.ts"
 import { useSelector } from "./hooks/useSelector.ts"
 import { interfaceStore } from "./services/interface-store.ts"
-import { isRunningInTauri } from "./utils/is-running-in-tauri.ts"
+import { isRunningInTauri } from "./utils/common/is-running-in-tauri.ts"
 
 export const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   const titlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
@@ -18,7 +19,9 @@ export const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
     withTextAreaWordWrap: textAreaWordWrap,
     withTabbar: titlebarStyle === AppTitleBarStyle.Tabbar,
     withRunningInTauri: isRunningInTauri,
-    withRunningInBrowser: !isRunningInTauri
+    withRunningInBrowser: !isRunningInTauri,
+    withMacOS: isMacOS,
+    withWindows: isWindows
   })
 
   useEffect(() => {

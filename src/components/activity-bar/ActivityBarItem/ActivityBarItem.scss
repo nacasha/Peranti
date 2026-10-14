@@ -31,13 +31,9 @@
     }
   }
 
-  img {
-    user-select: none;
-    display: flex;
-    align-items: center;
-    width: 21px;
-    margin: auto;
-    filter: var(--icon-color-filter);
+  svg {
+    flex: none;
+    color: var(--icon-color);
   }
 
   &:hover .tooltip {

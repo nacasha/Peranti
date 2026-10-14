@@ -27,6 +27,7 @@ interface Options {
 
 export const jsonToCsvTool = new AppletConstructor<InputFields, OutputFields, Options>({
   appletId: "json-to-csv",
+  fileExtensions: ["json"],
   name: "JSON to CSV",
   description: "JSON to CSV Converter",
   category: "JSON",

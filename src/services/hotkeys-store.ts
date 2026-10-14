@@ -1,17 +1,27 @@
+import { isMacOS } from "src/constants/os"
+
 class HotkeysStore {
+  /**
+   * "mod" is resolved by react-hotkeys-hook to Meta (⌘) on macOS and Ctrl on
+   * every other platform, so these defaults follow each platform's convention.
+   * Shortcuts that are Ctrl-based on macOS as well (tab cycling) intentionally
+   * stay on "ctrl".
+   *
+   * Previous/next session follow the browser's tab switching: ⌘⌥←/⌘⌥→ on macOS
+   * (plain ⌥← / ⌥→ is word navigation in text fields), Ctrl+PageUp/PageDown elsewhere.
+   */
   private readonly defaultKeys = {
     ESCAPE: "escape",
-    OPEN_COMMANDBAR: "ctrl+k || ctrl+p",
-    TAB_NEW_EDITOR: "ctrl+n",
-    TAB_CLOSE: "ctrl+w",
+    OPEN_COMMANDBAR: "mod+k || mod+p",
+    TAB_NEW_EDITOR: "mod+n || mod+t",
+    TAB_CLOSE: "mod+w",
     TAB_CYCLE_NEXT: "ctrl+tab",
     TAB_CYCLE_PREV: "ctrl+shift+tab",
-    RESTORE_CLOSED_TAB: "ctrl+shift+t",
+    RESTORE_CLOSED_TAB: "mod+shift+t",
     RENAME_ACTIVE_TAB: "f2",
-    BOTTOM_PANEL: "ctrl+`",
-    PREVIOUS_SESSION: "alt+ArrowLeft",
-    NEXT_SESSION: "alt+ArrowRight",
-    OPEN_SETTINGS: "ctrl+,"
+    PREVIOUS_SESSION: isMacOS ? "mod+alt+ArrowLeft" : "ctrl+PageUp",
+    NEXT_SESSION: isMacOS ? "mod+alt+ArrowRight" : "ctrl+PageDown",
+    OPEN_SETTINGS: "mod+,"
   }
 
   keys = {

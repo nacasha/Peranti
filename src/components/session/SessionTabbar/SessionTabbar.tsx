@@ -4,7 +4,7 @@ import SimpleBar from "simplebar-react"
 
 import { Tooltip } from "src/components/common/Tooltip/Tooltip.tsx"
 import { WindowControls } from "src/components/window/WindowControls"
-import { Icons } from "src/constants/icons"
+import { Icons, type Icon as IconType } from "src/constants/icons"
 import { AppTitleBarStyle } from "src/enums/app-titlebar-style"
 import { useHotkeysModified } from "src/hooks/useHotkeysModified"
 import { useSelector } from "src/hooks/useSelector.ts"
@@ -23,6 +23,10 @@ import "./SessionTabbar.scss"
 export const SessionTabbar: FC = () => {
   const appTitlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
   const scrollBarRef = useRef<HTMLDivElement>(null)
+
+  const handleClickShowSidebar = () => {
+    interfaceStore.showSidebar()
+  }
 
   useHotkeysModified(hotkeysStore.keys.TAB_NEW_EDITOR, (event) => {
     event.preventDefault()
@@ -122,6 +126,22 @@ export const SessionTabbar: FC = () => {
       <div className="SessionTabbar-border-bottom" data-tauri-drag-region />
 
       <div className="SessionTabbar-inner">
+        {/* Only takes up space once the sidebar collapses and the tabbar
+            becomes the leftmost thing under the macOS traffic lights.
+            Sized entirely from CSS (see SessionTabbar.scss). */}
+        <div className="SessionTabbar-macos-inset" data-tauri-drag-region />
+
+        {/* The sidebar header carries this toggle while the sidebar is open;
+            once hidden, the tabbar is the leftmost row and takes it over.
+            Shown only in that state, from CSS (see SessionTabbar.scss). */}
+        <div className="SessionTabbar-sidebar-toggle">
+          <SessionTabbarItemIcon
+            onClick={handleClickShowSidebar}
+            label="Show Sidebar"
+            icon={Icons.PanelLeft}
+          />
+        </div>
+
         <TabbarActions />
 
         <div className="SessionTabbar-inner-body" data-tauri-drag-region>
@@ -160,6 +180,8 @@ const TabbarList = observer(() => {
 
 const TabbarActions = () => {
   const groupTabsByTool = useSelector(() => sessionStore.groupTabsByTool)
+  const showGroupTabsButton = useSelector(() => interfaceStore.showTabbarGroupTabsButton)
+  const showAddTabButton = useSelector(() => interfaceStore.showTabbarAddTabButton)
   const hideTabbarActions = useSelector(() => activeAppletStore.getActiveApplet().appletId === "")
 
   const onClickAddTab = () => {
@@ -175,36 +197,40 @@ const TabbarActions = () => {
   }
 
   return (
-    <>
-      <SessionTabbarItemIcon
-        onClick={handleClickGroupTabs}
-        label="Group Tabs By Tool"
-        icon={groupTabsByTool ? Icons.FilterSolid : Icons.Filter}
-      />
-      <SessionTabbarItemIcon
-        onClick={onClickAddTab}
-        label="Add Tab"
-        icon={Icons.Plus}
-      />
-    </>
+    <div className="SessionTabbar-actions">
+      {showGroupTabsButton && (
+        <SessionTabbarItemIcon
+          onClick={handleClickGroupTabs}
+          label="Group Tabs By Tool"
+          icon={groupTabsByTool ? Icons.FilterSolid : Icons.Filter}
+        />
+      )}
+      {showAddTabButton && (
+        <SessionTabbarItemIcon
+          onClick={onClickAddTab}
+          label="Add Tab"
+          icon={Icons.Plus}
+        />
+      )}
+    </div>
   )
 }
 
 interface SessionTabbarItemIconProps {
   onClick: () => any
   label: string
-  icon: string
+  icon: IconType
   style?: CSSProperties
 }
 
 const SessionTabbarItemIcon: FC<SessionTabbarItemIconProps> = memo((props) => {
-  const { onClick, label, icon, style } = props
+  const { onClick, label, icon: Icon, style } = props
 
   return (
     <Tooltip overlay={label}>
       <div onClick={onClick} className="SessionTabbar-item-session icon" style={style}>
         <div className="SessionTabbar-item-session-icon">
-          <img src={icon} alt={label} />
+          <Icon size={14} aria-label={label} />
         </div>
       </div>
     </Tooltip>

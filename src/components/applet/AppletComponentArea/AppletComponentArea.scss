@@ -1,12 +1,36 @@
 $padding: var(--input-output-fields-spacing);
 
+// Cards sit flush with the sidebar on the left; the other edges keep the
+// same 8px gap the cards keep between each other.
 .AppletComponentArea {
   flex: 1;
+  min-width: 0;
   gap: $padding;
-  padding: $padding;
+  padding: 0 var(--card-gap) var(--card-gap) 0;
+  position: relative;
 
+  // Grid layout sits on the same dotted surface as the welcome screen. The
+  // dots fade out towards every edge; cards paint above it as they are later
+  // positioned siblings.
   &.grid {
     display: grid;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(var(--line) 1px, transparent 1px);
+      background-size: 18px 18px;
+      mask-image:
+        linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent),
+        linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+      mask-composite: intersect;
+      -webkit-mask-image:
+        linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent),
+        linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+      -webkit-mask-composite: source-in;
+    }
   }
 
   &.flex {
@@ -29,11 +53,21 @@ $padding: var(--input-output-fields-spacing);
     grid-area: output;
   }
 
+  // Not clipped: the cards inside carry their own overflow, and clipping here
+  // cut their shadows off at the edge of the area.
   .AppletComponentAreaInput, .AppletComponentAreaOutput {
-    overflow: hidden;
+    overflow: visible;
     position: relative;
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 0;
     gap: $padding;
+
+    // Side by side in a flex row, each field takes an equal share and can
+    // shrink below its content width instead of pushing the sibling area
+    &.flex.horizontal > * {
+      flex: 1 1 0;
+      min-width: 0;
+    }
 
     &.grid {
       display: grid;
@@ -54,5 +88,64 @@ $padding: var(--input-output-fields-spacing);
     &.hidden {
       display: none;
     }
+  }
+}
+
+// Maximize and restore animate the input / output area (see
+// run-view-transition). Maximize: the new area fades in scaling up.
+// Restore: the maximized area fades out scaling down. The rest of the window
+// stays put.
+.AppletComponentArea {
+  view-transition-name: applet-component-area;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+.field-maximizing {
+  &::view-transition-old(applet-component-area) {
+    animation: 160ms ease-out both AppletComponentArea-fade-out;
+  }
+
+  &::view-transition-new(applet-component-area) {
+    animation: 240ms cubic-bezier(0.2, 0, 0, 1) both AppletComponentArea-scale-up;
+  }
+}
+
+.field-restoring {
+  &::view-transition-old(applet-component-area) {
+    animation: 200ms cubic-bezier(0.2, 0, 0, 1) both AppletComponentArea-scale-down;
+  }
+
+  &::view-transition-new(applet-component-area) {
+    animation: 240ms ease-out both AppletComponentArea-fade-in;
+  }
+}
+
+@keyframes AppletComponentArea-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes AppletComponentArea-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes AppletComponentArea-scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes AppletComponentArea-scale-down {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
   }
 }

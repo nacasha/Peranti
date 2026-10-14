@@ -1,30 +1,64 @@
 import NiceModal from "@ebay/nice-modal-react"
+import { clsx } from "clsx"
 import localforage from "localforage"
-import { type FC } from "react"
+import { observer } from "mobx-react"
+import { useEffect, useState, type FC, type ReactNode } from "react"
+import SimpleBar from "simplebar-react"
 
 import { Button } from "src/components/common/Button"
 import { ConfirmDialog } from "src/components/dialog/ConfirmDialog"
+import { AccentColorPicker } from "src/components/settings/AccentColorPicker"
 import { AppTitleBarStyleSelect } from "src/components/settings/AppTitlebarStyleSelect"
-import { FileDropActionSelect } from "src/components/settings/FileDropActionSelect"
-import { FileDropFillTabbarName } from "src/components/settings/FileDropFillTabbarName"
+import { CardShadowSelect } from "src/components/settings/CardShadowSelect"
+import { ColorSchemeSelect } from "src/components/settings/ColorSchemeSelect"
+import { CornerRadiusSelect } from "src/components/settings/CornerRadiusSelect"
 import { SettingsCard, SettingsCardItem } from "src/components/settings/SettingsCard"
+import { SettingsExtensions } from "src/components/settings/SettingsExtensions"
+import { SettingsHistory } from "src/components/settings/SettingsHistory"
 import { SettingsItemInput } from "src/components/settings/SettingsItemInput"
 import { SettingsItemSwitch } from "src/components/settings/SettingsItemSwitch"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
+import { ToolSidebarDensitySelect } from "src/components/settings/ToolSidebarDensitySelect"
+import { Icons, type Icon } from "src/constants/icons"
 import { appDataService } from "src/services/app-data-service"
+import { fileDropService } from "src/services/file-drop-service"
+import { interfaceStore } from "src/services/interface-store"
 import { sessionStore } from "src/services/session-store"
+import { settingsPageStore, type SettingsSectionId } from "src/services/settings-page-store"
 import { toolSidebarService } from "src/services/tool-sidebar-service"
 
 import "./SettingsPage.scss"
 
-import { interfaceStore } from "src/services/interface-store"
+interface SettingsSection {
+  id: SettingsSectionId
+  label: string
+  icon: Icon
+  content: ReactNode
+}
 
-export const SettingsPage: FC = () => {
+/**
+ * Settings as one card filling the whole area, like the history page: the
+ * categories on the left, the chosen category's settings on the right
+ */
+export const SettingsPage: FC = observer(() => {
+  const { pendingSectionId } = settingsPageStore
+  const [activeSectionId, setActiveSectionId] = useState<SettingsSectionId>(
+    () => settingsPageStore.pendingSectionId ?? "appearance"
+  )
+
+  // Opened from another page while this page is already showing
+  useEffect(() => {
+    const sectionId = settingsPageStore.consumePendingSection()
+    if (sectionId) setActiveSectionId(sectionId)
+  }, [pendingSectionId])
+
   const handleClickResetAppData = () => {
     void NiceModal.show(ConfirmDialog, {
       title: "Reset App Data",
       description: "This action will clear data related to application state, your settings will not be touched",
+      confirmLabel: "Reset",
+      variant: "danger",
       confirmKeepOpen: true,
       onConfirm: () => {
         localStorage.clear()
@@ -40,102 +74,275 @@ export const SettingsPage: FC = () => {
     void appDataService.openAppDataFolder()
   }
 
+  const sections: SettingsSection[] = [
+    {
+      id: "appearance",
+      label: "Appearance",
+      icon: Icons.Palette,
+      content: (
+        <SettingsCard>
+          <SettingsCardItem label="Theme">
+            <ThemeSelect />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Color Scheme"
+            description="Palette of surfaces, text and borders, for both light and dark themes"
+          >
+            <ColorSchemeSelect />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Accent Color"
+            description="Highlights, active items and focus rings"
+          >
+            <AccentColorPicker />
+          </SettingsCardItem>
+
+          <SettingsCardItem label="Title Bar Style">
+            <AppTitleBarStyleSelect />
+          </SettingsCardItem>
+
+          <SettingsCardItem label="Text Area Word Wrap">
+            <TextAreaWordWrapSwitch />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Show Status Bar"
+            description="Version, theme and word wrap shortcuts along the bottom"
+          >
+            <SettingsItemSwitch
+              defaultChecked={interfaceStore.showStatusbar}
+              onChange={(value) => { interfaceStore.setShowStatusbar(value) }}
+            />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Corner Radius"
+            description="Roundness of cards, tabs, buttons and menus"
+          >
+            <CornerRadiusSelect />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Card Shadow"
+            description="Drop shadow under input, output and sidebar cards"
+          >
+            <CardShadowSelect />
+          </SettingsCardItem>
+        </SettingsCard>
+      )
+    },
+    {
+      id: "fonts",
+      label: "Fonts",
+      icon: Icons.Type,
+      content: (
+        <SettingsCard>
+          <SettingsCardItem label="Editor Font Family">
+            <SettingsItemInput
+              defaultValue={interfaceStore.editorFontFamily}
+              onChange={(value) => { interfaceStore.setEditorFontFamily(value) }}
+            />
+          </SettingsCardItem>
+
+          <SettingsCardItem label="Editor Font Size">
+            <SettingsItemInput
+              defaultValue={interfaceStore.editorFontSize}
+              onChange={(value) => { interfaceStore.setEditorFontSize(value) }}
+            />
+          </SettingsCardItem>
+        </SettingsCard>
+      )
+    },
+    {
+      id: "tabbar",
+      label: "Tabbar",
+      icon: Icons.PanelTop,
+      content: (
+        <SettingsCard>
+          <SettingsCardItem
+            label="Separate Tabbar For Each Tool"
+            description="Enabling this will only shows tabbars related to active tool"
+          >
+            <SettingsItemSwitch
+              defaultChecked={sessionStore.groupTabsByTool}
+              onChange={(value) => { sessionStore.setGroupTabsByTool(value) }}
+            />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Show Group Tabs Button"
+            description="Filter icon in the tabbar that groups tabs by tool"
+          >
+            <SettingsItemSwitch
+              defaultChecked={interfaceStore.showTabbarGroupTabsButton}
+              onChange={(value) => { interfaceStore.setShowTabbarGroupTabsButton(value) }}
+            />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Show Add Tab Button"
+            description="Plus icon in the tabbar that opens a new tab"
+          >
+            <SettingsItemSwitch
+              defaultChecked={interfaceStore.showTabbarAddTabButton}
+              onChange={(value) => { interfaceStore.setShowTabbarAddTabButton(value) }}
+            />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Show Tab Icons"
+            description="Icon before each tab label showing its type (tool, settings, history, ...)"
+          >
+            <SettingsItemSwitch
+              defaultChecked={interfaceStore.showTabbarTabIcon}
+              onChange={(value) => { interfaceStore.setShowTabbarTabIcon(value) }}
+            />
+          </SettingsCardItem>
+        </SettingsCard>
+      )
+    },
+    {
+      id: "toolSidebar",
+      label: "Tool Sidebar",
+      icon: Icons.PanelLeft,
+      content: (
+        <SettingsCard>
+          <SettingsCardItem label="Group By Category">
+            <SettingsItemSwitch
+              defaultChecked={toolSidebarService.groupByCategory}
+              onChange={(value) => { toolSidebarService.setGroupByCategory(value) }}
+            />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Show Group Tab Count"
+            description="Number of opened tabs beside each category"
+          >
+            <SettingsItemSwitch
+              defaultChecked={toolSidebarService.showGroupTabCount}
+              onChange={(value) => { toolSidebarService.setShowGroupTabCount(value) }}
+            />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Show Tool Tab Count"
+            description="Number of opened tabs beside each tool"
+          >
+            <SettingsItemSwitch
+              defaultChecked={toolSidebarService.showToolTabCount}
+              onChange={(value) => { toolSidebarService.setShowToolTabCount(value) }}
+            />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Item Density"
+            description="Vertical spacing of the tool list items and category headers"
+          >
+            <ToolSidebarDensitySelect />
+          </SettingsCardItem>
+        </SettingsCard>
+      )
+    },
+    {
+      id: "fileDrop",
+      label: "File Drop",
+      icon: Icons.Upload,
+      content: (
+        <SettingsCard>
+          <SettingsCardItem
+            label="Name New Tab After File"
+            description="When a dropped file opens a tool in a new tab"
+          >
+            <SettingsItemSwitch
+              defaultChecked={fileDropService.droppedFileReplaceSessionName}
+              onChange={(value) => { fileDropService.setDroppedFileReplaceSessionName(value) }}
+            />
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="Rename Current Tab After File"
+            description="When a file is dropped into a tool with a single input"
+          >
+            <SettingsItemSwitch
+              defaultChecked={fileDropService.droppedFileRenameSingleInputTab}
+              onChange={(value) => { fileDropService.setDroppedFileRenameSingleInputTab(value) }}
+            />
+          </SettingsCardItem>
+        </SettingsCard>
+      )
+    },
+    {
+      id: "extensions",
+      label: "Extensions",
+      icon: Icons.Extensions,
+      content: <SettingsExtensions />
+    },
+    {
+      id: "history",
+      label: "History",
+      icon: Icons.History,
+      content: <SettingsHistory />
+    },
+    {
+      id: "appData",
+      label: "Application Data",
+      icon: Icons.Database,
+      content: (
+        <SettingsCard>
+          <SettingsCardItem label="User Settings File">
+            <Button onClick={handleOpenAppDataFolder}>Open Folder</Button>
+          </SettingsCardItem>
+
+          <SettingsCardItem
+            label="App Data"
+            description="Date related opened sessions, closed editors, and application state"
+          >
+            <div
+              className="SettingsPage-item-value"
+              onClick={handleClickResetAppData}
+            >
+              <Button>Reset App Data</Button>
+            </div>
+          </SettingsCardItem>
+        </SettingsCard>
+      )
+    }
+  ]
+
+  const activeSection = sections.find((section) => section.id === activeSectionId)
+
   return (
     <div className="SettingsPage">
-      <SettingsCard title="Appearance">
-        <SettingsCardItem label="Theme">
-          <ThemeSelect />
-        </SettingsCardItem>
+      <div className="SettingsPage-header">
+        <span className="SettingsPage-title">Settings</span>
+      </div>
 
-        <SettingsCardItem label="Title Bar Style">
-          <AppTitleBarStyleSelect />
-        </SettingsCardItem>
+      <div className="SettingsPage-layout">
+        <nav className="SettingsPage-nav">
+          {sections.map((section) => (
+            <button
+              key={section.id}
+              type="button"
+              className={clsx("SettingsPage-nav-item", section.id === activeSectionId && "active")}
+              onClick={() => { setActiveSectionId(section.id) }}
+            >
+              <section.icon size={14} aria-hidden />
+              {section.label}
+            </button>
+          ))}
+        </nav>
 
-        <SettingsCardItem label="Text Area Word Wrap">
-          <TextAreaWordWrapSwitch />
-        </SettingsCardItem>
-      </SettingsCard>
-
-      <SettingsCard title="Fonts">
-        <SettingsCardItem label="Editor Font Family">
-          <SettingsItemInput
-            defaultValue={interfaceStore.editorFontFamily}
-            onChange={(value) => { interfaceStore.setEditorFontFamily(value) }}
-          />
-        </SettingsCardItem>
-
-        <SettingsCardItem label="Editor Font Size">
-          <SettingsItemInput
-            defaultValue={interfaceStore.editorFontSize}
-            onChange={(value) => { interfaceStore.setEditorFontSize(value) }}
-          />
-        </SettingsCardItem>
-      </SettingsCard>
-
-      <SettingsCard title="Tabbar">
-        <SettingsCardItem
-          label="Separate Tabbar For Each Tool"
-          description="Enabling this will only shows tabbars related to active tool"
-        >
-          <SettingsItemSwitch
-            defaultChecked={sessionStore.groupTabsByTool}
-            onChange={(value) => { sessionStore.setGroupTabsByTool(value) }}
-          />
-        </SettingsCardItem>
-      </SettingsCard>
-
-      <SettingsCard title="Tool Sidebar">
-        <SettingsCardItem
-          label="Sort Tool name A-Z"
-        >
-          <SettingsItemSwitch
-            defaultChecked={toolSidebarService.sortNameAZ}
-            onChange={(value) => { toolSidebarService.setSortNameAZ(value) }}
-          />
-        </SettingsCardItem>
-        <SettingsCardItem label="Group By Category">
-          <SettingsItemSwitch
-            defaultChecked={toolSidebarService.groupByCategory}
-            onChange={(value) => { toolSidebarService.setGroupByCategory(value) }}
-          />
-        </SettingsCardItem>
-        <SettingsCardItem
-          label="Sort Category name A-Z"
-          description="No effect when Group By Category is disabled"
-        >
-          <SettingsItemSwitch
-            defaultChecked={toolSidebarService.sortCategoryAZ}
-            onChange={(value) => { toolSidebarService.setSortCategoryAZ(value) }}
-          />
-        </SettingsCardItem>
-      </SettingsCard>
-
-      <SettingsCard title="File Drop">
-        <SettingsCardItem label="Action">
-          <FileDropActionSelect />
-        </SettingsCardItem>
-        <SettingsCardItem label="Dropped File Replace Tabbar Name">
-          <FileDropFillTabbarName />
-        </SettingsCardItem>
-      </SettingsCard>
-
-      <SettingsCard title="Application Data">
-        <SettingsCardItem label="User Settings File">
-          <Button onClick={handleOpenAppDataFolder}>Open Folder</Button>
-        </SettingsCardItem>
-
-        <SettingsCardItem
-          label="App Data"
-          description="Date related opened sessions, closed editors, and application state"
-        >
-          <div
-            className="SettingsPage-item-value"
-            onClick={handleClickResetAppData}
-          >
-            <Button>Reset App Data</Button>
-          </div>
-        </SettingsCardItem>
-      </SettingsCard>
+        <div className="SettingsPage-body">
+          <SimpleBar className="SettingsPage-scroll">
+            <div className="SettingsPage-section">
+              <div className="SettingsPage-section-title">{activeSection?.label}</div>
+              {activeSection?.content}
+            </div>
+          </SimpleBar>
+        </div>
+      </div>
     </div>
   )
-}
+})

@@ -1,27 +1,48 @@
+// The inspector: a 280px card floating beside the panes. Hidden by a negative
+// margin of exactly its own width, so it takes up no space and the panes keep
+// their 8px gutter to the window edge; the slide stays a pure margin transition.
 .SecondarySidebar {
-  width: 250px;
-  margin-right: -250px;
+  box-sizing: border-box;
+  flex: none;
+  width: 280px;
+  margin: 0 -280px var(--card-gap) 0;
   background-color: var(--secondary-sidebar-background-color);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  visibility: hidden;
+  transition: margin var(--animation-speed) var(--ease-out), visibility var(--animation-speed);
 
   &.show {
-    border-left: 1px solid var(--border-color);
-    margin-right: 0;
+    margin-right: var(--card-gap);
+    visibility: visible;
+  }
+
+  // An open inspector with nothing to show (e.g. on the home screen) would be
+  // an empty card, so it stays tucked away until a section appears.
+  &.show:not(:has(.SecondarySidebarSection:not(.hidden))) {
+    margin-right: -280px;
+    visibility: hidden;
   }
 }
 
-.SecondarySidebarSection {
-  --input-output-label-spacing: 5px;
+// Inside the applet viewer the panes already end in an 8px gap.
+.AppletViewer .SecondarySidebar.show {
+  margin-left: 0;
+}
 
-  overflow: hidden;
-  border-top: 1px solid var(--border-color);
-  transition: all var(--animation-speed);
+// Flat inspector: groups are separated by a hairline, rows carry their own
+// 12px gutter so every label and control lines up on the same two edges.
+.SecondarySidebarSection {
+  --input-output-label-spacing: 0;
+
+  padding: 6px 0;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
 
   &:first-child {
     border-top: none;
-  }
-
-  &:not(.expanded) {
-    max-height: 33px
   }
 
   &.hidden {
@@ -32,36 +53,123 @@
 .SecondarySidebarSection-header {
   display: flex;
   align-items: center;
-  gap: 5px;
-  line-height: 2;
+  gap: 6px;
+  padding: 6px 12px 4px;
+  margin-bottom: 6px;
+  line-height: 1;
   user-select: none;
-  padding: 3px 8px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  color: var(--faint);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 
-  &:hover {
-    cursor: pointer;
-  };
-
-  &:nth-child(1) {
-    border-top: none;
+  svg {
+    display: block;
+    flex: none;
+    color: var(--icon-color);
   }
 
-  img {
-    width: 12px;
-    filter: var(--icon-color-filter)
+  // Uppercase text has no descenders, so its box sits low against the icon.
+  span {
+    padding-top: 1px;
   }
 }
 
-.SecondarySidebarSection-title {
+.SecondarySidebarSection-actions {
   display: flex;
   align-items: center;
-  flex: 1;
-  justify-content: space-between;
+  margin-left: auto;
+  // Cancel the header's vertical padding so the button doesn't grow the row.
+  margin-block: -6px -4px;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .SecondarySidebarSection-body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  font-size: 12px;
+}
+
+// A label on the left, its control on the right.
+.SidebarRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
+  padding: 2px 12px;
+}
+
+.SidebarRow-label {
+  flex: none;
+  max-width: 45%;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.SidebarRow > :last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.SecondarySidebarSection-body > .Button {
+  margin: 2px 12px;
+}
+
+// One hover target per row; the remove button only shows on hover.
+.AppletSampleSelector-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  margin: 0 6px;
+  padding: 0 4px 0 8px;
+  border-radius: var(--radius-md);
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--animation-speed), color var(--animation-speed);
+
+  &:hover,
+  &:focus-visible {
+    background: var(--hover);
+    color: var(--text-color);
+    outline: none;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .ButtonIcon {
+    min-width: 22px;
+    height: 22px;
+  }
+}
+
+.AppletSampleSelector-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.AppletSampleSelector-actions {
+  display: flex;
+  opacity: 0;
+}
+
+.AppletSampleSelector-row:hover .AppletSampleSelector-actions,
+.AppletSampleSelector-row:focus-within .AppletSampleSelector-actions {
+  opacity: 1;
+}
+
+.AppletSampleSelector-empty {
+  padding: 4px 12px;
+  color: var(--faint);
 }

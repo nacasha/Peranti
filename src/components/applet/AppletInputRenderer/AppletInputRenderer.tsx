@@ -1,20 +1,31 @@
-import { toJS } from "mobx"
-import { type FC } from "react"
+import { comparer, toJS } from "mobx"
+import { type FC, memo, useCallback, useMemo } from "react"
 import { useContextMenu } from "react-contexify"
 
+import { FileDropTarget } from "src/components/filedrop/FileDropTarget"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
-import { AppletComponentContent } from "src/contexts/AppletInputContext/AppletInputContext"
+import { AppletComponentContext } from "src/contexts/AppletComponentContext"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
-import { type AppletInput } from "src/types/AppletInput"
+import { extensionComponentRegistry } from "src/services/extension-component-registry"
+import { fileDropService } from "src/services/file-drop-service"
+import { type AppletInput, type ComputedProp } from "src/types/AppletInput"
 import { type InputComponentProps } from "src/types/InputComponentProps"
+import { isFieldContentSized } from "src/utils/applet/is-field-content-sized"
+import { readComputedPropSources } from "src/utils/component/read-computed-prop-sources"
+import { transformComputedProps } from "src/utils/component/transform-computed-props"
 
 interface AppletInputRendererProps {
   appletInput: AppletInput
 }
 
-export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
+/**
+ * Stable fallback, so fields without computed props keep the same memo inputs
+ */
+const noComputedProps: Record<string, ComputedProp | undefined> = {}
+
+export const AppletInputRenderer: FC<AppletInputRendererProps> = memo((props) => {
   const { appletInput } = props
   const { show } = useContextMenu()
 
@@ -24,8 +35,18 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
    * Rendered field state
    */
   const inputValue = useSelector(() => activeApplet.inputValues[appletInput.key] ?? appletInput.defaultValue)
+  const computedProps: Record<string, ComputedProp | undefined> = appletInput.computedProps ?? noComputedProps
+  const computedPropSources = useSelector(
+    () => readComputedPropSources(computedProps, activeApplet.inputValues),
+    comparer.shallow
+  )
+  const computedPropValues = useMemo(
+    () => transformComputedProps(computedProps, computedPropSources),
+    [computedProps, computedPropSources]
+  )
   const initialState = activeApplet.inputFieldsState[appletInput.key]
   const isDeleted = useSelector(() => activeApplet.isDeleted)
+  const isHoveringFile = useSelector(() => fileDropService.isHoveringFile)
 
   /**
    * Batch mode state
@@ -44,15 +65,19 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   const inputComponent = appletComponentService.getInputComponent(appletInput.component, isBatchModeEnabled)
   const Component: FC<InputComponentProps<any>> = inputComponent.component
 
-  const handleValueChange = (val: unknown) => {
+  /**
+   * Stable callbacks and context value, so typing in a field doesn't
+   * re-render its head (label + buttons) or the other fields
+   */
+  const handleValueChange = useCallback((val: unknown) => {
     activeApplet.setInputValue(appletInput.key, val)
-  }
+  }, [activeApplet, appletInput.key])
 
-  const handleStateChange = (state: unknown) => {
+  const handleStateChange = useCallback((state: unknown) => {
     activeApplet.setInputFieldState(appletInput.key, state)
-  }
+  }, [activeApplet, appletInput.key])
 
-  const handleContextMenu = (event: any) => {
+  const handleContextMenu = useCallback((event: any) => {
     if (isDeleted) {
       return
     }
@@ -65,17 +90,42 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
         component: inputComponent
       }
     })
-  }
+  }, [isDeleted, show, appletInput, inputComponent])
+
+  const contextValue = useMemo(() => ({
+    type: "input" as const,
+    fieldKey: appletInput.key,
+    component: inputComponent,
+    showRegenerateButton: appletInput.showRegenerateButton,
+    showBatchModeButton: appletInput.allowBatch,
+    actions: appletInput.actions
+  }), [appletInput.key, inputComponent, appletInput.showRegenerateButton, appletInput.allowBatch, appletInput.actions])
 
   /**
    * Pass `initialState` related props to selected components
    * Only few components handling those events
    */
   const additionalProps: Record<string, any> = {}
-  if (["Code", "PipelineEditor"].includes(appletInput.component)) {
+  if (["Code", "PipelineEditor", "Extensions", "ExtensionPage"].includes(appletInput.component)) {
     additionalProps.initialState = initialState
     additionalProps.onStateChange = handleStateChange
   }
+
+  // Extension components follow their content only where the layout sizes
+  // the field by it, anywhere else they fill their place
+  if (extensionComponentRegistry.isExtensionComponent(appletInput.component)) {
+    // What the component saved with `peranti.setState`, handed back when it opens again
+    additionalProps.initialState = initialState
+    additionalProps.onStateChange = handleStateChange
+    additionalProps.fitContent = isFieldContentSized(
+      activeApplet.layoutSetting,
+      "input",
+      appletInput.key,
+      isBatchModeEnabled || maximizedField.enabled
+    )
+  }
+
+  Object.assign(additionalProps, computedPropValues)
 
   if (maximizedField.enabled && maximizedField.type === "input" && maximizedField.key !== appletInput.key) {
     return
@@ -86,7 +136,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
   }
 
   return (
-    <AppletComponentContent.Provider value={{ type: "input", fieldKey: appletInput.key }}>
+    <AppletComponentContext.Provider value={contextValue}>
       <Component
         {...appletInput.props}
         key={appletInput.key}
@@ -98,6 +148,9 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = (props) => {
         onContextMenu={handleContextMenu}
         {...additionalProps}
       />
-    </AppletComponentContent.Provider>
+      {isHoveringFile && !isDeleted && !!inputComponent.readFileAs && (
+        <FileDropTarget fieldKey={appletInput.key} label={appletInput.label} />
+      )}
+    </AppletComponentContext.Provider>
   )
-}
+})

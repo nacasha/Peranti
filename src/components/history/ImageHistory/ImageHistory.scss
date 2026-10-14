@@ -1,0 +1,11 @@
+// Dotted backdrop so transparent images still read as an image
+.ImageHistory {
+  flex: none;
+  height: 24px;
+  max-width: 72px;
+  object-fit: contain;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background-image: radial-gradient(var(--line) 1px, transparent 1px);
+  background-size: 8px 8px;
+}

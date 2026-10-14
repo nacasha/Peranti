@@ -3,6 +3,8 @@
   background-color: var(--session-tabbar-background-color);
   min-height: var(--session-tabbar-height);
   height: calc(var(--session-tabbar-height) + var(--session-tabbar-draggable-height));
+  user-select: none;
+  display: flex;
 
   .simplebar-track.simplebar-horizontal {
     height: 5px;
@@ -10,13 +12,12 @@
     pointer-events: all;
   }
 
-  .simplebar-offset:after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 6;
+  // Every SimpleBar layer has to be full height, or the tabs can't centre.
+  .simplebar-wrapper,
+  .simplebar-mask,
+  .simplebar-offset,
+  .simplebar-content-wrapper {
+    height: 100%;
   }
 
   .simplebar-offset {
@@ -29,104 +30,160 @@
 
   .simplebar-content {
     display: flex;
+    align-items: center;
     height: 100%;
   }
 }
 
+// Kept as the drag target behind the tabs; the design has no rule under the
+// tab strip, so it draws nothing.
 .SessionTabbar-border-bottom {
   position: absolute;
-  border-bottom: 1px solid var(--border-color);
   inset: 0;
 }
 
 .SessionTabbar-inner {
   display: flex;
+  align-items: center;
+  height: var(--session-tabbar-height);
+  gap: 2px;
+  flex: 1;
+}
+
+// Collapsed out by default; the rule further down gives it width only in the
+// one case that needs it (macOS + Tauri + tabbar mode + sidebar hidden).
+.SessionTabbar-macos-inset {
+  display: none;
+}
+
+// Show-sidebar button: only present while the sidebar is hidden, since an
+// open sidebar (docked or floating) shows the toggle in its own header.
+// `.AppContent` is the next sibling of `.PrimarySidebar`, so the state is
+// read off the DOM.
+.SessionTabbar-sidebar-toggle {
+  display: none;
+
+  .PrimarySidebar.hidden + .AppContent & {
+    display: flex;
+  }
 }
 
 .SessionTabbar-inner-body {
   position: relative;
   width: 100%;
+  height: 100%;
 }
 
 .SessionTabbar-inner-simplebar {
   position: absolute;
   inset: 0;
+  display: flex;
 }
 
 .SessionTabbar-inner-simplebar-border-right {
-  position: sticky;
-  right: 0;
-  height: var(--session-tabbar-height);
-  z-index: 10;
-  border-right: 1px solid var(--border-color);
+  display: none;
+}
+
+// Group tabs and add tab buttons, kept apart from the tab list
+.SessionTabbar-actions {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 2px;
+
+  // Last icon button gets a gap before the tab list
+  > .SessionTabbar-item-session.icon:last-child {
+    margin-right: 4px;
+  }
 }
 
 .SessionTabbar-item-session {
   display: flex;
-  height: var(--session-tabbar-height);
-  max-height: var(--session-tabbar-height);
-  border-right: 1px solid var(--border-color);
+  align-items: center;
+  flex: none;
   position: relative;
 
-  &:hover {
-    background-color: var(--session-tabbar-color-hover);
-    cursor: pointer;
-
-    .SessionTabbar-item-session-icon {
-      opacity: 1;
-    }
+  &:hover .SessionTabbar-item-session-icon {
+    visibility: visible;
   }
 
-  &:after {
-    content: "";
-    position: absolute;
-    border-bottom: 1px solid var(--border-color);
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1;
-  }
-
-  &:nth-last-child(1) {
-    border-right: none;
-  }
-
+  // Icon buttons (group tabs, add tab) — 28px ghost squares.
   &.icon {
-    background-color: var(--session-tabbar-color);
-    border-right: 1px solid var(--border-color) !important;
-    user-select: none;
+    width: 28px;
+    height: 28px;
+    justify-content: center;
+    border-radius: calc(8px * var(--radius-scale));
+    cursor: pointer;
+    transition: background-color var(--animation-speed);
 
     .SessionTabbar-item-session-icon {
-      opacity: 1;
-      padding-inline: 10px;
-      border-radius: 0;
+      visibility: visible;
+      padding: 0;
+
+      &:hover {
+        background: transparent;
+      }
     }
 
     &:hover {
-      background-color: var(--session-tabbar-color-hover);
-      cursor: pointer;
+      background-color: var(--hover);
+
+      .SessionTabbar-item-session-icon {
+        svg {
+          color: var(--text-color);
+        }
+      }
     }
   }
 }
 
-.SessionTabbar-item-session-body {
-  background-color: var(--session-tabbar-color);
-  padding: 5px 10px;
-  padding-right: 5px;
-  padding-top: 3px;
-  user-select: none;
-  color: var(--session-tabbar-text-color);
+.SessionTabbarList {
   display: flex;
   align-items: center;
-  gap: 5px;
-  border-top: 2px solid transparent;
+  gap: 4px;
+}
+
+.SessionTabbar-item-session-body {
+  height: 30px;
+  padding: 0 6px 0 12px;
+  border-radius: calc(9px * var(--radius-scale));
+  // Inactive tabs sit on a subtle fill with no outline; the active one takes
+  // the card colour and a border. The transparent border keeps both states
+  // the same box size, and the fill is clipped inside it so an inactive tab
+  // reads 1px smaller per side than the outlined active one, not larger.
+  border: 1px solid transparent;
+  background-color: var(--hover);
+  background-clip: padding-box;
+  color: var(--session-tabbar-text-color);
+  font-size: 12.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--animation-speed), background-color var(--animation-speed), border-color var(--animation-speed);
+
+  &:hover {
+    color: var(--session-tabbar-text-color-active);
+    background-color: color-mix(in oklch, var(--text-color) 8%, transparent);
+  }
 
   &.active {
     color: var(--session-tabbar-text-color-active);
-    background-color: var(--applet-viewer-background-color);
+    background-color: var(--panel);
+    border-color: var(--border-default);
     z-index: 7;
-    border-top: 3px solid var(--color-primary);
+  }
+}
+
+.SessionTabbar-item-session-type-icon {
+  flex: none;
+  color: var(--icon-color);
+  transition: color var(--animation-speed);
+
+  .SessionTabbar-item-session-body:hover &,
+  .SessionTabbar-item-session-body.active & {
+    color: var(--session-tabbar-text-color-active);
   }
 }
 
@@ -134,37 +191,67 @@
   max-width: var(--session-tabbar-item-max-width);
   overflow: hidden;
 
-  &[contenteditable=\"false\"] {
+  &[contenteditable="false"] {
     text-overflow: ellipsis;
   }
 }
 
-.SessionTabbar-item-session-icon {
-  display: flex;
-  border-radius: var(--border-radius);
-  padding: 3px;
-  opacity: 0;
+// While running, the close button slot shows a spinner instead, and swaps back
+// to the close icon on hover. `isActionRunning` is not debounced, so the
+// spinner waits 300ms; quick runs finish before it and the tab doesn't flicker.
+.SessionTabbar-item-session-spinner,
+.SessionTabbar-item-session-close {
+  grid-area: 1 / 1;
+}
 
-  &:hover {
-    background-color: var(--button-background-color-hover);
+.SessionTabbar-item-session-body.running {
+  .SessionTabbar-item-session-icon {
+    animation: SessionTabbar-show 0s 300ms forwards;
   }
 
-  img {
-    width: 13px;
-    filter: var(--icon-color-filter);
+  &:hover .SessionTabbar-item-session-spinner {
+    visibility: hidden;
+  }
+
+  &:not(:hover) .SessionTabbar-item-session-close {
+    visibility: hidden;
+  }
+}
+
+@keyframes SessionTabbar-show {
+  to {
+    visibility: visible;
+  }
+}
+
+.SessionTabbar-item-session-icon {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: calc(5px * var(--radius-scale));
+  // Shown and hidden with `visibility`, not an opacity fade: in WebKit an
+  // opacity transition here makes text elsewhere on the page flicker.
+  visibility: hidden;
+  transition: background-color var(--animation-speed);
+
+  &:hover {
+    background-color: var(--hover);
+  }
+
+  svg {
+    flex: none;
+    color: var(--icon-color);
+    transition: color var(--animation-speed);
+  }
+
+  &:hover svg {
+    color: var(--text-color);
   }
 }
 
 .SessionTabbar-window-extra-drag {
   background-color: var(--session-tabbar-background-color);
-}
-
-.SessionTabbarList {
-  display: flex;
-
-  &:empty ~ .SessionTabbar-inner-simplebar-border-right {
-    display: none;
-  }
 }
 
 .AppRoot.withTabbar {
@@ -173,15 +260,26 @@
   }
 }
 
-.AppRoot.withTabbar.withRunningInBrowser {
+.AppRoot.withTabbar.withMacOS {
   .SessionTabbar-inner-simplebar {
-    right: calc(var(--window-control-button-width) * 2.5);
+    right: 0;
   }
 }
 
-.AppRoot.withTabbar.withNotMaximized {
-  .SessionTabbar-item-session::before {
-    border-top: 1px solid var(--border-color);
+// In tabbar mode AppTitlebar renders nothing, so the sidebar header is what
+// holds the traffic lights clear. Hide the sidebar and the tabbar inherits
+// that job — `.AppContent` is the next sibling of `.PrimarySidebar`, so the
+// hidden state can be read straight off the DOM with no extra store wiring.
+.AppRoot.withTabbar.withRunningInTauri.withMacOS {
+  .PrimarySidebar.hidden + .AppContent .SessionTabbar-macos-inset {
+    display: block;
+    flex: 0 0 var(--macos-traffic-lights-inset-collapsed);
+  }
+}
+
+.AppRoot.withTabbar.withRunningInBrowser {
+  .SessionTabbar-inner-simplebar {
+    right: calc(var(--window-control-button-width) * 2.5);
   }
 }
 

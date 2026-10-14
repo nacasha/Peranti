@@ -17,13 +17,12 @@ export const AppTitlebar: FC = () => {
   }
 
   return (
+    // On macOS the system draws the traffic lights over the titlebar, so the
+    // left side is only padding (see AppTitlebar.scss) rather than a component.
     <div className="AppTitlebar" data-tauri-drag-region>
       <div />
       <AppletSearchBar />
-
-      <div>
-        <WindowControls />
-      </div>
+      <WindowControls />
     </div>
   )
 }

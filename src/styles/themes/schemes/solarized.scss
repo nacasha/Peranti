@@ -1,0 +1,29 @@
+@use "palette";
+
+body.dark[data-color-scheme="solarized"] {
+  @include palette.palette(
+    $bg: #00212b,
+    $panel: #002b36,
+    $raised: #073642,
+    $text: #eee8d5,
+    $muted: #93a1a1,
+    $faint: #586e75,
+    $hover: rgba(147, 161, 161, 0.08),
+    $line: rgba(147, 161, 161, 0.18),
+    $line-strong: rgba(147, 161, 161, 0.28)
+  );
+}
+
+body.light[data-color-scheme="solarized"] {
+  @include palette.palette(
+    $bg: #eee8d5,
+    $panel: #fdf6e3,
+    $raised: #f7f0dc,
+    $text: #073642,
+    $muted: #657b83,
+    $faint: #93a1a1,
+    $hover: rgba(7, 54, 66, 0.05),
+    $line: rgba(7, 54, 66, 0.12),
+    $line-strong: rgba(7, 54, 66, 0.2)
+  );
+}

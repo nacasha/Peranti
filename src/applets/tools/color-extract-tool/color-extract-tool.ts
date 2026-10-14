@@ -59,19 +59,28 @@ export const colorExtractTool = new AppletConstructor({
 
     const colorThief = new ColorThief()
     const img = new Image()
-    await new Promise<void>((resolve) => {
-      img.onload = () => {
-        resolve()
-      }
-      img.src = URL.createObjectURL(file)
-    })
+    const imageUrl = URL.createObjectURL(file)
 
-    const color = colorThief.getColor(img)
-    const colorRgb = `rgb(${color[0]}, ${color[1]}, ${color[2]})`
-    const palletes = colorThief.getPalette(img, Number(palleteCount)).map((colorArray: number[]) => (
-      `rgb(${colorArray[0]}, ${colorArray[1]}, ${colorArray[2]})`
-    ))
+    try {
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => {
+          resolve()
+        }
+        img.onerror = () => {
+          reject(new Error("Unable to read the file as an image"))
+        }
+        img.src = imageUrl
+      })
 
-    return { color: colorRgb, palletes }
+      const color = colorThief.getColor(img)
+      const colorRgb = `rgb(${color[0]}, ${color[1]}, ${color[2]})`
+      const palletes = colorThief.getPalette(img, Number(palleteCount)).map((colorArray: number[]) => (
+        `rgb(${colorArray[0]}, ${colorArray[1]}, ${colorArray[2]})`
+      ))
+
+      return { color: colorRgb, palletes }
+    } finally {
+      URL.revokeObjectURL(imageUrl)
+    }
   }
 })

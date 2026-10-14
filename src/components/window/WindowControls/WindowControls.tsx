@@ -1,12 +1,15 @@
 import { memo, type FC } from "react"
 
+import { extensionsApplet } from "src/applets/pages/extensions-applet"
+import { workbenchApplet } from "src/applets/pages/workbench-applet"
+import { ClosedTabsButton } from "src/components/buttons/ClosedTabsButton"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons"
-import { bottomPanelService } from "src/services/bottom-panel-service"
-import { interfaceStore } from "src/services/interface-store"
+import { isMacOS } from "src/constants/os"
 import { secondarySidebarService } from "src/services/secondary-sidebar-service"
+import { sessionStore } from "src/services/session-store"
 import { windowManager } from "src/services/window-manager"
-import { isRunningInTauri } from "src/utils/is-running-in-tauri"
+import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 
 import "./WindowControls.scss"
 
@@ -23,30 +26,31 @@ export const WindowControls: FC = memo(() => {
     void windowManager.close()
   }
 
+  const handleClickExtensions = () => {
+    sessionStore.findOrCreateSession(extensionsApplet)
+  }
+
+  const handleClickWorkbench = () => {
+    sessionStore.findOrCreateSession(workbenchApplet)
+  }
+
   const handleClickPanelRight = () => {
     secondarySidebarService.toggle()
-  }
-
-  const handleClickPanelLeft = () => {
-    interfaceStore.toggleSidebar()
-  }
-
-  const handleClickPanelBottom = () => {
-    bottomPanelService.toggleIsOpen()
   }
 
   return (
     <div className="WindowControls" data-tauri-drag-region>
       <div className="WindowControls-layout-controls">
+        <ClosedTabsButton />
         <ButtonIcon
-          tooltip="Toggle Primary Sidebar"
-          onClick={handleClickPanelLeft}
-          icon={Icons.PanelLeft}
+          tooltip="Extensions"
+          onClick={handleClickExtensions}
+          icon={Icons.Extensions}
         />
         <ButtonIcon
-          tooltip="Toggle Bottom Panel"
-          onClick={handleClickPanelBottom}
-          icon={Icons.PanelBottom}
+          tooltip="Manage Tools & Components"
+          onClick={handleClickWorkbench}
+          icon={Icons.Manage}
         />
         <ButtonIcon
           tooltip="Toggle Secondary Sidebar"
@@ -54,25 +58,25 @@ export const WindowControls: FC = memo(() => {
           icon={Icons.PanelRight}
         />
       </div>
-      {isRunningInTauri && (
+      {isRunningInTauri && !isMacOS && (
         <div className="WindowControls-window-controls">
           <div
             className="WindowControls-button"
             onClick={handleClickMinimize}
           >
-            <img src={Icons.Minimize} alt="Minimize" />
+            <Icons.Minimize size={14} aria-label="Minimize" />
           </div>
           <div
             className="WindowControls-button"
             onClick={handleClickMaximize}
           >
-            <img src={Icons.Box} alt="Maximize" />
+            <Icons.Box size={12} aria-label="Maximize" />
           </div>
           <div
-            className="WindowControls-button"
+            className="WindowControls-button WindowControls-button--close"
             onClick={handleClickClose}
           >
-            <img src={Icons.Close} alt="Close" />
+            <Icons.Close size={15} aria-label="Close" />
           </div>
         </div>
       )}

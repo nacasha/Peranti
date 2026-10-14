@@ -2,14 +2,29 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  // Was `--background-main`, which no theme declares — the window had no
+  // background of its own until this matched the theme variable.
+  background: var(--background-color-main);
 }
 
 body {
   font-family: var(--font-family);
   color: var(--text-color);
+  // UI chrome reads as an app, not a page: text is not selectable by default.
+  // Editable fields and code editors opt back in below.
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-input, text, select, option {
+input, textarea, [contenteditable="true"],
+.cm-editor, .cm-editor *,
+.GridStatOutput, .GridStatOutput * {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+input, text, select, option, textarea, button {
+  font-family: inherit;
   color: var(--text-color);
 }
 
@@ -23,10 +38,18 @@ input[type=number] {
   appearance: textfield;
 }
 
+::selection {
+  background: color-mix(in oklch, var(--accent), transparent 70%);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--faint);
+}
 :root {
   ::-webkit-scrollbar {
-    width: 7px;
-    height: 7px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
@@ -36,9 +59,18 @@ input[type=number] {
   ::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb-background-color);
     border-radius: var(--scrollbar-thumb-border-radius);
+    // Padding drawn with a transparent border, so the thumb reads as a
+    // floating pill rather than filling the gutter edge to edge.
+    border: 2px solid transparent;
+    background-clip: content-box;
   }
 
   ::-webkit-scrollbar-thumb:hover {
     background: var(--scrollbar-thumb-background-color-hover);
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
   }
 }

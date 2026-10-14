@@ -1,15 +1,16 @@
 import { type ComponentProps, type FC } from "react"
-import { Item, type ItemParams } from "react-contexify"
+import { type Item, type ItemParams } from "react-contexify"
 
-import { ContextMenu } from "src/components/common/ContextMenu"
+import { ContextMenu, ContextMenuItem } from "src/components/common/ContextMenu"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
+import { Icons } from "src/constants/icons"
 import { type AppletComponent } from "src/models/AppletComponent"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
-import { ClipboardService } from "src/services/clipboard-service"
-import { fileService } from "src/services/file-service"
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOutput } from "src/types/AppletOutput"
+import { copyComponentValue } from "src/utils/component/copy-component-value"
+import { saveComponentValue } from "src/utils/component/save-component-value"
 
 interface MenuParams {
   appletInput?: AppletInput
@@ -54,16 +55,7 @@ export const AppletContextMenu: FC = () => {
     const { component } = itemParams.props ?? {}
 
     if (component) {
-      const { saveAs } = component
-      const savedValue = getValue(itemParams)
-
-      if (savedValue) {
-        if (saveAs === "text") {
-          void fileService.saveToTextFile(savedValue)
-        } else if (saveAs === "image") {
-          void fileService.saveToImageFile(savedValue)
-        }
-      }
+      void saveComponentValue(component, getValue(itemParams))
     }
   }
 
@@ -71,14 +63,7 @@ export const AppletContextMenu: FC = () => {
     const { component } = itemParams.props ?? {}
 
     if (component) {
-      const { copyAs } = component
-      const copiedValue = getValue(itemParams)
-
-      if (copiedValue) {
-        if (copyAs === "text") {
-          void ClipboardService.copyAsText(copiedValue)
-        }
-      }
+      void copyComponentValue(component, getValue(itemParams))
     }
   }
 
@@ -96,34 +81,38 @@ export const AppletContextMenu: FC = () => {
 
   return (
     <ContextMenu id={ContextMenuKeys.AppletComponent}>
-      <Item
+      <ContextMenuItem
         id="copy"
+        icon={Icons.Copy}
         onClick={handleClickCopy}
         hidden={isHideCopy}
       >
         Copy
-      </Item>
-      <Item
+      </ContextMenuItem>
+      <ContextMenuItem
         id="paste"
+        icon={Icons.Paste}
         onClick={handleClickCopy}
         hidden={isHidePaste}
       >
         Paste
-      </Item>
-      <Item
+      </ContextMenuItem>
+      <ContextMenuItem
         id="pick-from-file"
+        icon={Icons.PickFile}
         onClick={(itemParams) => { void handleClickPickFile(itemParams) }}
         hidden={isHidePasteFromFile}
       >
         Pick File and Drop Here
-      </Item>
-      <Item
+      </ContextMenuItem>
+      <ContextMenuItem
         id="save-to-file"
+        icon={Icons.SaveToFile}
         onClick={handleClickSaveToFile}
         hidden={isHideSaveAsFile}
       >
         Save To File
-      </Item>
+      </ContextMenuItem>
     </ContextMenu>
   )
 }

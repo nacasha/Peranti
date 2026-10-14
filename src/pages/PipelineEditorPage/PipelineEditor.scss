@@ -4,7 +4,7 @@
   display: flex;
   gap: 8px;
   border-radius: var(--border-radius);
-  background-color: #1a1b1d;
+  background-color: var(--panel);
 }
 
 .DialogRoot {
@@ -28,7 +28,7 @@
     margin: auto;
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
-    background-color: #1a1b1d;
+    background-color: var(--panel);
     width: 100%;
     max-width: 400px;
     height: auto;

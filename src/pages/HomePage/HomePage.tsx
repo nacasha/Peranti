@@ -8,9 +8,7 @@ export const HomePage: FC = () => {
   return (
     <div className="HomePage">
       <div className="content">
-        <div className="logo">
-          <img src={Logo.SVG} alt="" />
-        </div>
+        <img className="logo" src={Logo.SVG} alt="Peranti" draggable={false} />
 
         <div className="headline">
           <div className="title">Peranti</div>
@@ -32,15 +30,6 @@ export const HomePage: FC = () => {
                 <div>+</div>
                 <kbd>K</kbd>
               </div>
-            </div>
-          </div>
-
-          <div className="guide-item">
-            <div className="guide-item-label">Toggle Bottom Panel</div>
-            <div className="guide-item-keys">
-              <kbd>CTRL</kbd>
-              <div>+</div>
-              <kbd>`</kbd>
             </div>
           </div>
 

@@ -2,7 +2,7 @@ import { type FC } from "react"
 import { type Node, Position, useNodeId, useStore } from "reactflow"
 
 import { ButtonIcon } from "src/components/common/ButtonIcon"
-import { Icons } from "src/constants/icons.js"
+import { Icons, type Icon as IconType } from "src/constants/icons.js"
 
 import { CustomHandle } from "./CustomHandle.js"
 
@@ -13,14 +13,14 @@ const itemGap = 10
 
 interface PipelineItemProps {
   title: string
-  icon?: string
+  icon?: IconType
   sources?: Array<Omit<PipelineItemHandleProps, "type" | "index">>
   targets?: Array<Omit<PipelineItemHandleProps, "type" | "index">>
   onClickSetting?: (node: Node) => void
 }
 
 export const PipelineItem: FC<PipelineItemProps> = (props) => {
-  const { title, icon, sources = [], targets = [], onClickSetting } = props
+  const { title, icon: Icon, sources = [], targets = [], onClickSetting } = props
   const numberOfFields = Math.max(sources.length, targets.length)
 
   const nodeInternals = useStore((s) => s.nodeInternals)
@@ -39,7 +39,7 @@ export const PipelineItem: FC<PipelineItemProps> = (props) => {
     <div className="PipelineItem">
       <div className="PipelineItem-header">
         <div className="PipelineItem-header-title">
-          {icon && <img src={icon} alt={title} />}
+          {Icon && <Icon size={14} aria-hidden />}
           <div>{title}</div>
         </div>
         {onClickSetting && (

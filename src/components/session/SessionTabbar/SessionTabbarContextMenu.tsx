@@ -1,8 +1,9 @@
 import { type FC } from "react"
-import { type ItemParams, Item, Separator } from "react-contexify"
+import { type ItemParams, Separator } from "react-contexify"
 
-import { ContextMenu } from "src/components/common/ContextMenu"
+import { ContextMenu, ContextMenuItem } from "src/components/common/ContextMenu"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
+import { Icons } from "src/constants/icons"
 import { sessionStore } from "src/services/session-store"
 import { type Session } from "src/types/Session"
 
@@ -31,6 +32,17 @@ export const SessionTabbarContextMenu: FC = () => {
     }
   }
 
+  const handleDuplicateSession = (itemParams: TabbarContextMenuItemParams) => {
+    const { session } = itemParams.props ?? {}
+    if (session) {
+      void sessionStore.duplicateSession(session)
+    }
+  }
+
+  const isDuplicateDisabled = ({ props }: { props?: MenuParams }) => (
+    !props?.session || !sessionStore.canDuplicateSession(props.session)
+  )
+
   const handleRenameSession = (itemParams: TabbarContextMenuItemParams) => {
     const { session } = itemParams.props ?? {}
     if (session) {
@@ -40,31 +52,44 @@ export const SessionTabbarContextMenu: FC = () => {
 
   return (
     <ContextMenu id={ContextMenuKeys.SessionTabbar}>
-      <Item
-        id="copy"
+      <ContextMenuItem
+        id="close"
+        icon={Icons.Close}
         onClick={handleCloseSession}
       >
         Close
-      </Item>
-      <Item
-        id="paste"
+      </ContextMenuItem>
+      <ContextMenuItem
+        id="close-others"
+        icon={Icons.CloseOthers}
         onClick={handleCloseOtherSession}
       >
         Close Others
-      </Item>
-      <Item
-        id="pick-from-file"
+      </ContextMenuItem>
+      <ContextMenuItem
+        id="close-all"
+        icon={Icons.CloseAll}
+        danger
         onClick={handleCloseAllSession}
       >
         Close All
-      </Item>
+      </ContextMenuItem>
       <Separator />
-      <Item
-        id="save-to-file"
+      <ContextMenuItem
+        id="duplicate"
+        icon={Icons.Duplicate}
+        disabled={isDuplicateDisabled}
+        onClick={handleDuplicateSession}
+      >
+        Duplicate
+      </ContextMenuItem>
+      <ContextMenuItem
+        id="rename"
+        icon={Icons.Rename}
         onClick={handleRenameSession}
       >
         Rename
-      </Item>
+      </ContextMenuItem>
     </ContextMenu>
   )
 }

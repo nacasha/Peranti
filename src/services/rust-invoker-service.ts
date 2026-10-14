@@ -1,11 +1,11 @@
 import { invoke } from "@tauri-apps/api/core"
-import { Command } from "@tauri-apps/plugin-shell"
 
-interface RunExtensionOptions {
-  external: string[]
-  builtin: string[]
-  file: string
+interface RunExtensionProcessOptions {
+  cwd: string
+  command: string
+  args: string[]
   input: string
+  timeoutMs?: number
 }
 
 export const rustInvokerService = {
@@ -13,21 +13,11 @@ export const rustInvokerService = {
     await invoke("reveal_file_manager", { path })
   },
 
-  async runExtension(options: RunExtensionOptions) {
-    const command = Command.create(
-      "run-extension",
-      ["scripts/extension-runner.js", JSON.stringify(options)]
-    )
-
-    command.stdout.addListener("data", (e) => {
-      console.log(e)
-    })
-
-    command.stderr.addListener("data", (e) => {
-      console.log(e)
-    })
-
-    const result = await command.execute()
-    return JSON.parse(result.stdout)
+  /**
+   * Run an executable extension, resolves with its stdout and rejects with
+   * its stderr when it exits with an error
+   */
+  async runExtensionProcess(options: RunExtensionProcessOptions) {
+    return await invoke<string>("run_extension_process", { ...options })
   }
 }

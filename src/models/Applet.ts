@@ -9,10 +9,9 @@ import { StorageKeys } from "src/constants/storage-keys"
 import { AppletType } from "src/enums/applet-type"
 import { appletComponentService } from "src/services/applet-component-service"
 import { appletStore } from "src/services/applet-store"
-import { rustInvokerService } from "src/services/rust-invoker-service"
 import { sessionStore } from "src/services/session-store"
 import { StorageManager } from "src/services/storage-manager"
-import { type AppletActionParams } from "src/types/AppletAction"
+import { type AppletActionParams, type AppletFieldErrors } from "src/types/AppletAction"
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOption } from "src/types/AppletOption"
 import { type AppletOutput } from "src/types/AppletOutput"
@@ -21,8 +20,11 @@ import { type AppletState } from "src/types/AppletState"
 import { type ExtensionMetadata } from "src/types/ExtensionMetadata"
 import { type LayoutSetting } from "src/types/LayoutSetting"
 import { type Session } from "src/types/Session"
-import { type SessionHistory } from "src/types/SessionHistory"
-import { generateRandomString } from "src/utils/generate-random-string"
+import { type HistoryBlob, type SessionHistorySnapshot, type SessionHistoryValue } from "src/types/SessionHistory"
+import { extractBinaryValues } from "src/utils/applet/extract-binary-values"
+import { runExtension } from "src/utils/extension/run-extension"
+import { generateRandomString } from "src/utils/text/generate-random-string"
+import { isLargeText } from "src/utils/text/is-large-text"
 
 import { type AppletConstructor } from "./AppletConstructor.js"
 
@@ -118,6 +120,12 @@ export class Applet<
    * Key value pair of output keys and its values
    */
   @observable outputValues: any = {}
+
+  /**
+   * Errors the last run reported for its fields, shown as a badge on their
+   * cards. Saved with the outputs they describe, so they come back with them.
+   */
+  @observable fieldErrors: AppletFieldErrors = {}
 
   /**
    * Indicates output values has been changed
@@ -251,6 +259,40 @@ export class Applet<
   }
 
   /**
+   * Input and output fields that can be maximized, inputs first
+   */
+  getMaximizableFields() {
+    const { isBatchModeEnabled } = this
+
+    const inputs = this.getInputFields()
+      .filter((field) => appletComponentService.getInputComponent(field.component, isBatchModeEnabled).maximizable)
+      .map((field) => ({ type: "input", key: field.key, label: field.label || field.key }))
+
+    const outputs = this.getOutputFields()
+      .filter((field) => appletComponentService.getOutputComponent(field.component, isBatchModeEnabled).maximizable)
+      .map((field) => ({ type: "output", key: field.key, label: field.label || field.key }))
+
+    return [...inputs, ...outputs]
+  }
+
+  /**
+   * Switch the maximized field to the next maximizable field, looping back to the first
+   */
+  @action
+  maximizeNextField() {
+    const fields = this.getMaximizableFields()
+    if (fields.length === 0) {
+      return
+    }
+
+    const { type, key } = this.maximizedField
+    const currentIndex = fields.findIndex((field) => field.type === type && field.key === key)
+    const nextField = fields[(currentIndex + 1) % fields.length]
+
+    this.maximizedField = { enabled: true, type: nextField.type, key: nextField.key }
+  }
+
+  /**
    * Empty applet
    *
    * @returns
@@ -354,6 +396,7 @@ export class Applet<
       this.isDeleted = initialState.isDeleted ?? this.isDeleted
       this.inputFieldsState = initialState.inputFieldsState ?? this.inputFieldsState
       this.outputFieldsState = initialState.outputFieldsState ?? this.outputFieldsState
+      this.fieldErrors = initialState.fieldErrors ?? this.fieldErrors
       this.isAutoRunAndFirstTime = initialState.isAutoRunAndFirstTime ?? this.isAutoRunAndFirstTime
       this.optionValues = initialState.optionValues ?? this.optionValues
       this.viewMode = initialState.viewMode ?? this.viewMode
@@ -423,6 +466,7 @@ export class Applet<
       isOutputValuesModified,
       outputFieldsState,
       outputValues,
+      fieldErrors,
       actionRunCount,
       sessionId,
       sessionName,
@@ -448,6 +492,7 @@ export class Applet<
       isOutputValuesModified,
       outputFieldsState: toJS(outputFieldsState),
       outputValues: toJS(outputValues),
+      fieldErrors: toJS(fieldErrors),
       actionRunCount,
       sessionId,
       sessionName,
@@ -466,11 +511,42 @@ export class Applet<
     return { sessionId, sessionName, sessionSequenceNumber, appletId }
   }
 
-  toHistory(): SessionHistory {
+  /**
+   * Entry for the closed tab history: the state without its input and output
+   * values, each value as text, and the bytes of its files and buffers, which
+   * the values hold placeholders for
+   */
+  async toHistory(): Promise<{ history: SessionHistorySnapshot, blobs: HistoryBlob[] }> {
     const { sessionId, sessionName, appletId } = this
     const deletedAt = new Date().getTime()
 
-    return { deletedAt, sessionId, sessionName, appletId }
+    const { value: storableState, blobs } = await extractBinaryValues({ ...this.toState(), isDeleted: false })
+    const { inputValues, outputValues, ...state } = storableState
+
+    // Each value is stored once, as text, and searched as is
+    const values: SessionHistoryValue[] = [
+      ...Object.entries(inputValues ?? {}).map(([key, value]) => ({ source: "input" as const, key, value })),
+      ...Object.entries(outputValues ?? {}).map(([key, value]) => ({ source: "output" as const, key, value }))
+    ]
+      .filter(({ value }) => value !== undefined && value !== null)
+      .map(({ source, key, value }) => (
+        typeof value === "string"
+          ? { source, key, kind: "text", text: value }
+          : { source, key, kind: "json", text: JSON.stringify(value) }
+      ))
+
+    return {
+      history: {
+        deletedAt,
+        sessionId,
+        sessionName,
+        appletId,
+        toolName: appletStore.mapOfLoadedAppletsName[appletId] ?? appletId,
+        state,
+        values
+      },
+      blobs
+    }
   }
 
   @action
@@ -616,7 +692,9 @@ export class Applet<
   setInputValue(key: string, value: unknown, options: { markAsModified: boolean } = { markAsModified: true }) {
     const newInputValues = { ...this.inputValues, [key]: value }
 
-    const inputValuesHasChanged = value instanceof File
+    // File has no enumerable keys, so deep equal treats any two files as equal
+    const isFileValue = value instanceof File || (Array.isArray(value) && value.some((item) => item instanceof File))
+    const inputValuesHasChanged = isFileValue
       ? true
       : !fastDeepEqual(this.inputValues, newInputValues)
 
@@ -680,10 +758,19 @@ export class Applet<
   setOptionValue(key: string, value: unknown) {
     this.optionValues = { ...this.optionValues, [key]: value }
 
-    /**
-     * Re-run action if input has been modified and autoRun is enabled
-     */
-    if (this.autoRun && this.isInputValuesModified) {
+    if (this.shouldRunOnOptionChange()) {
+      void this.run()
+    }
+  }
+
+  /**
+   * Restore every option to its default value and re-run if autoRun is enabled
+   */
+  @action
+  resetOptionValues() {
+    this.optionValues = this.getOptionValuesWithDefault()
+
+    if (this.shouldRunOnOptionChange()) {
       void this.run()
     }
   }
@@ -692,6 +779,16 @@ export class Applet<
   resetInputAndOutputValues() {
     this.inputValues = this.getInputValuesWithDefault()
     this.outputValues = {}
+    this.fieldErrors = {}
+  }
+
+  @action
+  setFieldErrors(fieldErrors: AppletFieldErrors) {
+    this.fieldErrors = fieldErrors
+  }
+
+  getFieldError(type: "input" | "output", key: string): string | undefined {
+    return this.fieldErrors[type]?.[key]
   }
 
   getInputValuesWithDefault() {
@@ -702,11 +799,25 @@ export class Applet<
     return Object.fromEntries(this.options.map((i) => [i.key, i.defaultValue]))
   }
 
-  getIsInputOrOutputHasValues(): boolean {
+  /**
+   * An option change re-runs an autoRun tool that has something to run on:
+   * input you edited, or input it was opened with, such as a dropped file or
+   * files an extension asked to open, which never mark the input as modified
+   */
+  private shouldRunOnOptionChange(): boolean {
+    return this.autoRun && (this.isInputValuesModified || this.getIsInputHasValues())
+  }
+
+  getIsInputHasValues(): boolean {
     const inputFields = this.getInputFields()
-    const hasInputValues = Object.entries(this.inputValues).filter(
+
+    return Object.entries(this.inputValues).filter(
       ([key, value]) => Boolean(value) && !inputFields.find((field) => field.key === key)?.skipValidateHasValue
     ).length > 0
+  }
+
+  getIsInputOrOutputHasValues(): boolean {
+    const hasInputValues = this.getIsInputHasValues()
 
     const hasOutputValues = Object.values(this.outputValues).filter(
       (value) => Boolean(value)
@@ -781,9 +892,16 @@ export class Applet<
       clearTimeout(this.autoRunSetTimeout)
     }
 
+    /**
+     * Running on every keystroke freezes the UI when the input is large,
+     * so wait until the user stops typing
+     */
+    const hasLargeInput = Object.values(this.inputValues).some((value) => isLargeText(value))
+    const delay = hasLargeInput ? Math.max(this.autoRunDelay, 400) : this.autoRunDelay
+
     this.autoRunSetTimeout = setTimeout(() => {
       void this.run()
-    }, this.autoRunDelay)
+    }, delay)
   }
 
   async run() {
@@ -808,62 +926,67 @@ export class Applet<
     }
   }
 
-  private async runAction(actionInput: any, actionOptions: any) {
-    const runResult = await new Promise<any>((resolve) => {
-      const actionParams = { inputValues: actionInput, toast, options: actionOptions }
-      const result = this.action(actionParams)
+  /**
+   * Run applet action, a failed action clears the outputs and shows its error
+   * instead of leaving the previous result on screen
+   */
+  private async runAction(actionInput: any, actionOptions: any, previousOutputValues: any = {}) {
+    const actionParams = { inputValues: actionInput, toast, options: actionOptions, previousOutputValues }
 
-      if ("then" in result) {
+    // One error toast per session, replaced while the user keeps typing
+    const errorToastId = `applet-error-${this.sessionId}`
+
+    try {
+      let result = this.action(actionParams)
+
+      if (typeof result?.then === "function") {
         this.setIsActionRunning(true)
-        result
-          .then((data: any) => {
-            this.setIsActionRunning(false)
-            resolve(data)
-          })
-          .catch(() => {
-            this.setIsActionRunning(false)
-            resolve(undefined)
-          })
+        try {
+          result = await result
+        } finally {
+          this.setIsActionRunning(false)
+        }
       }
 
-      resolve(result)
-    })
+      toast.dismiss(errorToastId)
+      return result ?? {}
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
 
-    return runResult
+      toast.error(`${this.name}: ${message}`, { id: errorToastId })
+      return {}
+    }
   }
 
   private async runExtension() {
     if (this.metadata) {
       this.setIsActionRunning(true)
 
-      const { actionFile, dependencies } = this.metadata
+      // One error toast per session, replaced while the user keeps typing
+      const errorToastId = `applet-error-${this.sessionId}`
 
       try {
-        const extensionResult = await rustInvokerService.runExtension({
-          builtin: dependencies.builtin,
-          external: dependencies.external,
-          file: actionFile,
-          input: this.inputValues
-        })
+        const extensionResult = await runExtension(this.metadata, toJS(this.inputValues))
 
+        toast.dismiss(errorToastId)
         this.setOutputValues(extensionResult)
-      } catch (exception) {
-        console.log(exception)
-        toast.error(`Failed to run ${this.name} extension`)
-      }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
 
-      this.setIsActionRunning(false)
+        toast.error(`${this.name}: ${message}`, { id: errorToastId })
+      } finally {
+        this.setIsActionRunning(false)
+      }
     }
   }
 
   private async runNormal() {
-    const runResult = await this.runAction(this.inputValues, this.optionValues)
+    const { $errors, ...runResult } = await this.runAction(this.inputValues, this.optionValues, toJS(this.outputValues))
+    this.setFieldErrors($errors ?? {})
     this.setOutputValues(runResult)
   }
 
   private async runPipeline() {
-    console.log(this.sessionId, "Run pipeline")
-
     const edges: Edge[] = this.inputValues.$PIPELINE.edges ?? []
     const nodes: Node[] = this.inputValues.$PIPELINE.nodes ?? []
     const nodesMap = Object.fromEntries(nodes.map((node) => [node.id, node]))
@@ -892,9 +1015,6 @@ export class Applet<
     let unresolved = edges.filter((edge) => !targetInputDependencies[edge.source] && !resolvedValues[edge.source])
 
     const countExecutedEdges: Record<string, number> = {}
-
-    console.log(this.sessionId, "Nodes", toJS(edges))
-    console.log(this.sessionId, "Edges", toJS(nodes))
 
     while (unresolved.length > 0 && !breakWhile) {
       const edge = unresolved[0]
@@ -939,8 +1059,6 @@ export class Applet<
         applet.setInputValuesMerge(resolvedValues[edge.source].inputValues)
         await applet.run()
 
-        console.log(this.sessionId, "Run node", applet.name, "with result", applet.outputValues)
-
         resolvedValues[edge.source].outputValues = merge(
           resolvedValues[edge.source].outputValues,
           applet.outputValues
@@ -957,7 +1075,6 @@ export class Applet<
       const sourceEdges = edges.filter((e) => e.source === edge.source)
 
       sourceEdges.forEach((sourceEdge) => {
-        console.log(this.sessionId, "Resolving edge", edge.source, "for", sourceEdge.target)
         if (sourceEdge.targetHandle && sourceEdge.sourceHandle) {
           const targetInputValues = {
             [sourceEdge.targetHandle]: resolvedValues[edge.source].outputValues[sourceEdge.sourceHandle]
@@ -988,12 +1105,7 @@ export class Applet<
           Object.values(resolvedValues[edge.source]?.outputValues ?? {}).length === 0
         ))
       }
-
-      console.log(this.sessionId, "Resolved values", resolvedValues)
     }
-
-    console.log(this.sessionId, "Final resolved values", resolvedValues)
-    console.log(this.sessionId, "Time(s) edge executed", countExecutedEdges)
 
     const outputNodes = nodes.filter((node) => node.type === "appletOutput" && resolvedValues[node.id]?.inputValues)
     outputNodes.forEach((outputNode) => {
@@ -1008,7 +1120,8 @@ export class Applet<
 
     const outputs = []
     for (const inputLine of inputLines) {
-      const runResult = await this.runAction({ ...inputValues, [batchInputKey]: inputLine }, optionValues)
+      // Field errors can't point at one line of a batch, so they're dropped
+      const { $errors: _errors, ...runResult } = await this.runAction({ ...inputValues, [batchInputKey]: inputLine }, optionValues)
       outputs.push(runResult)
     }
 
@@ -1104,9 +1217,13 @@ export class Applet<
   fillInputValuesWithSample(sample: AppletSample) {
     if (sample) {
       const defaultInputValues = this.getInputValuesWithDefault()
-      const { inputValues, isBatchModeEnabled = false } = sample
+      const { inputValues, optionValues, isBatchModeEnabled = false } = sample
 
       this.resetInputAndOutputFieldsState()
+
+      if (optionValues) {
+        this.optionValues = { ...this.getOptionValuesWithDefault(), ...optionValues }
+      }
 
       this.setBatchMode(isBatchModeEnabled)
       let computedInputValues

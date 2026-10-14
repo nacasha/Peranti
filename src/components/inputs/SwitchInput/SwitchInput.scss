@@ -2,33 +2,41 @@
   display: flex;
   flex-direction: column;
 
+  // Segmented control, as the design's Tools / Snippets switch: a soft track
+  // with the selected segment lifted onto a panel-coloured chip.
   .buttons {
-    border: 1px solid var(--input-output-border-color);
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-lg);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 100px));
     grid-auto-flow: row dense;
-    gap: 3px;
-    padding: 4px;
-    background-color: var(--input-output-background-color);
+    gap: 2px;
+    padding: 2px;
+    background-color: var(--hover);
+    border: 1px solid var(--line);
 
     .button {
       flex: 1;
-      text-align: center;
-      padding: 2px;
-      border-radius: var(--border-radius);
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12.5px;
+      color: var(--muted);
+      border-radius: var(--radius-md);
       user-select: none;
-      transition: background-color var(--animation-speed);
+      transition: background-color var(--animation-speed), color var(--animation-speed);
       background-color: transparent;
 
       &:hover {
         cursor: pointer;
-        background-color: color-mix(in srgb, var(--background-color-main), var(--opposite-color) 15%);
+        color: var(--text-color);
       }
 
       &.active {
-        background: var(--color-primary);
-        color: white;
+        background: var(--panel);
+        color: var(--text-color);
+        font-weight: var(--font-weight-medium);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
       }
     }
   }
@@ -37,11 +45,11 @@
     .buttons .button {
       &:hover {
         cursor: default;
-        background-color: transparent;
+        color: var(--muted);
       }
 
       &.active:hover {
-        background: var(--color-primary);
+        color: var(--text-color);
       }
     }
   }

@@ -1,22 +1,64 @@
 .FileDropTarget {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--border-radius);
-  z-index: 1;
-  background-color: rgba(0,0,0,0.3);
-  top: calc(var(--input-output-label-spacing) + var(--input-output-label-height));
+  position: fixed;
+  z-index: 9;
   display: flex;
-  border: 1px solid transparent;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1.5px solid color-mix(in srgb, var(--color-primary), transparent 35%);
+  border-radius: var(--border-radius);
+  background-color: color-mix(in srgb, var(--color-primary), transparent 92%);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 82%),
+    0 0 22px color-mix(in srgb, var(--color-primary), transparent 55%);
+  animation: FileDropTarget-glow 1.6s ease-in-out infinite;
+  transition:
+    background-color 120ms var(--ease-out),
+    border-color 120ms var(--ease-out);
 
-  &:hover {
-    cursor: pointer;
-    background-color: rgba(0,0,0,0.2);
-    border: 1px solid var(--input-output-border-color-hover);
+  // The one under the cursor stops pulsing and burns brighter, so it's clear
+  // which input the file will land in when several are glowing.
+  &[data-hovered] {
+    border-color: var(--color-primary);
+    background-color: color-mix(in srgb, var(--color-primary), transparent 80%);
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 60%),
+      0 0 34px color-mix(in srgb, var(--color-primary), transparent 25%);
+    animation: none;
   }
 }
 
 .FileDropTarget-text {
-  margin: auto;
-  font-size: 18px;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-raised);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
   user-select: none;
+  pointer-events: none;
+
+  strong {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+  }
+}
+
+@keyframes FileDropTarget-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 86%),
+      0 0 12px color-mix(in srgb, var(--color-primary), transparent 70%);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--color-primary), transparent 74%),
+      0 0 26px color-mix(in srgb, var(--color-primary), transparent 40%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .FileDropTarget {
+    animation: none;
+  }
 }

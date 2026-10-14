@@ -1,0 +1,303 @@
+import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "react"
+
+import { AppletComponentHead } from "src/components/common/ComponentLabel"
+import { useSelector } from "src/hooks/useSelector"
+import { activeAppletStore } from "src/services/active-applet-store"
+import { extensionComponentHeightStore } from "src/services/extension-component-height-store"
+import { fileDropService } from "src/services/file-drop-service"
+import { interfaceStore } from "src/services/interface-store"
+import { openToolService } from "src/services/open-tool-service"
+import { type ExtensionComponentDebugEvent } from "src/types/ExtensionComponentDebugEvent"
+import { type FieldAction, sanitizeFieldActions } from "src/types/FieldAction"
+import { openLink } from "src/utils/common/open-link"
+import { toPlainJson } from "src/utils/data/to-plain-json"
+import { buildExtensionComponentDocument } from "src/utils/extension/build-extension-component-document"
+import { getExtensionComponentTheme } from "src/utils/extension/get-extension-component-theme"
+
+import "./ExtensionComponentFrame.scss"
+
+/**
+ * Tallest the content can make the frame by itself, so a runaway layout
+ * can't push the rest of the tool away
+ */
+const MAX_CONTENT_HEIGHT = 1600
+
+interface ExtensionComponentFrameProps {
+  fieldKey: string
+  label?: string
+  value?: unknown
+  readOnly?: boolean
+  mode: "input" | "output"
+
+  /**
+   * The layout sizes the field by its content, a `min-content` row: the frame
+   * is as tall as the content it reports. Anywhere else it fills its place.
+   */
+  fitContent?: boolean
+
+  /**
+   * Shows the maximize button, from `maximizable` in `peranti.component.json`
+   */
+  maximizable?: boolean
+
+  /**
+   * Component HTML with its assets inlined
+   */
+  html: string
+
+  /**
+   * Names the component, its last height is kept under it with the mode and
+   * field key so the frame opens at that size
+   */
+  componentKey?: string
+  onValueChange?: (value: unknown) => void
+  onContextMenu?: any
+
+  /**
+   * Every message both ways, for the component playground
+   */
+  onDebugEvent?: (event: ExtensionComponentDebugEvent) => void
+
+  /**
+   * Height of the content, for the component playground
+   */
+  onHeightChange?: (height: number) => void
+
+  /**
+   * What the component last saved with `peranti.setState`, kept with the tab
+   */
+  initialState?: unknown
+
+  /**
+   * Called with what the component saves with `peranti.setState`
+   */
+  onStateChange?: (state: unknown) => void
+
+  /**
+   * The field's "props" from its tool, handed to the component as is
+   */
+  [prop: string]: unknown
+}
+
+/**
+ * Largest state a component can save with `peranti.setState`, as JSON
+ */
+const MAX_STATE_SIZE = 64 * 1024
+
+/**
+ * The URL when it is an http or https address, normalised
+ */
+function parseWebUrl(value: string): string | undefined {
+  try {
+    const url = new URL(value)
+    return url.protocol === "https:" || url.protocol === "http:" ? url.href : undefined
+  } catch {
+    return undefined
+  }
+}
+
+/**
+ * A field drawn by an extension's HTML, in a frame with no origin: it can't
+ * reach the app, its storage, Tauri or the network. It only exchanges JSON
+ * values with the app through messages, see `ExtensionComponentBridge`, and
+ * can ask to open files, which you then pick a tool for.
+ */
+export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props) => {
+  const {
+    fieldKey,
+    label,
+    value,
+    readOnly = false,
+    mode,
+    fitContent = false,
+    maximizable = false,
+    html,
+    componentKey,
+    onValueChange,
+    onContextMenu,
+    onDebugEvent,
+    onHeightChange,
+    initialState,
+    onStateChange,
+    ...fieldProps
+  } = props
+
+  const frameRef = useRef<HTMLIFrameElement>(null)
+  const isReadyRef = useRef(false)
+
+  // Its natural size, only used where the layout sizes the field by its content.
+  // Keyed by mode too, an input and an output may share a field key.
+  const heightKey = componentKey && `${componentKey}#${mode}#${fieldKey}`
+  const [contentHeight, setContentHeight] = useState(() => heightKey ? extensionComponentHeightStore.get(heightKey) : undefined)
+
+  // Header buttons the component asked for with `peranti.setActions`
+  const [actions, setActions] = useState<FieldAction[]>([])
+
+  // The last value the frame sent, as JSON, so it isn't echoed straight back
+  const valueFromFrameRef = useRef<string>()
+
+  // Read through refs, the message listener is attached once
+  const latestRef = useRef({ value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, onStateChange, fieldProps })
+  latestRef.current = { value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, onStateChange, fieldProps }
+
+  // The state saved when the frame opened; later saves go to the store, not back in
+  const initialStateRef = useRef(initialState)
+  const isRunningRef = useRef(false)
+
+  const themeName = useSelector(() => interfaceStore.resolvedTheme)
+
+  // Whether the tool is running, so a component can show it's busy
+  const isRunning = useSelector(() => activeAppletStore.getActiveApplet().isActionRunning)
+
+  // Built once: the frame reloads whenever its document changes
+  const frameDocument = useMemo(() => buildExtensionComponentDocument(html, getExtensionComponentTheme(themeName)), [html])
+
+  // Values come from mobx stores as proxies and props can hold functions,
+  // neither can be cloned into the frame
+  const post = (message: Record<string, unknown>) => {
+    const plain = toPlainJson({ source: "peranti-host", ...message })
+    frameRef.current?.contentWindow?.postMessage(plain, "*")
+    latestRef.current.onDebugEvent?.({ direction: "out", type: String(message.type), data: plain })
+  }
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      const data = event.data
+      if (event.source !== frameRef.current?.contentWindow || data?.source !== "peranti-component") {
+        return
+      }
+
+      latestRef.current.onDebugEvent?.({ direction: "in", type: String(data.type), data })
+
+      if (data.type === "ready") {
+        isReadyRef.current = true
+        const latest = latestRef.current
+        post({
+          type: "init",
+          mode,
+          value: latest.value,
+          readOnly: mode === "output" || latest.readOnly,
+          props: latest.fieldProps,
+          state: initialStateRef.current ?? null,
+          running: isRunningRef.current,
+          theme: getExtensionComponentTheme(interfaceStore.resolvedTheme)
+        })
+      } else if (data.type === "change" && mode === "input" && !latestRef.current.readOnly) {
+        valueFromFrameRef.current = JSON.stringify(data.value)
+        latestRef.current.onValueChange?.(data.value)
+      } else if (data.type === "resize" && typeof data.height === "number") {
+        const nextHeight = Math.min(Math.max(Math.ceil(data.height), 0), MAX_CONTENT_HEIGHT)
+        setContentHeight(nextHeight)
+        if (latestRef.current.heightKey) {
+          extensionComponentHeightStore.set(latestRef.current.heightKey, nextHeight)
+        }
+        latestRef.current.onHeightChange?.(nextHeight)
+      } else if (data.type === "open-tool" && typeof data.toolId === "string") {
+        // The extension's own tools open right away; the service asks for others
+        void openToolService.openFromComponent(componentKey?.split("#")[0], data.toolId, data.values)
+      } else if (data.type === "set-state") {
+        // UI state such as scroll positions and open rows, kept with the tab.
+        // Plain JSON and small: it is saved with the session
+        const json = JSON.stringify(data.state ?? null)
+        if (json.length <= MAX_STATE_SIZE) {
+          initialStateRef.current = JSON.parse(json)
+          latestRef.current.onStateChange?.(initialStateRef.current)
+        }
+      } else if (data.type === "key" && (data.event === "keydown" || data.event === "keyup") && typeof data.key === "string") {
+        // A shortcut pressed in the frame, replayed from the frame element so
+        // the app's hotkeys see it as if it were pressed here
+        frameRef.current?.dispatchEvent(new KeyboardEvent(data.event, {
+          key: data.key,
+          code: typeof data.code === "string" ? data.code : "",
+          ctrlKey: data.ctrlKey === true,
+          metaKey: data.metaKey === true,
+          shiftKey: data.shiftKey === true,
+          altKey: data.altKey === true,
+          repeat: data.repeat === true,
+          bubbles: true,
+          cancelable: true
+        }))
+      } else if (data.type === "set-actions") {
+        setActions(sanitizeFieldActions(data.actions))
+      } else if (data.type === "open-files" && Array.isArray(data.paths)) {
+        // Shown as a drop: nothing is read until a tool is picked for a file
+        void fileDropService.openFilesFromComponent(data.paths.filter((path: unknown): path is string => typeof path === "string"))
+      } else if (data.type === "open-url" && typeof data.url === "string") {
+        // Web pages only, in the default browser: no file:, app or custom schemes
+        const url = parseWebUrl(data.url)
+        if (url) {
+          void openLink(url)
+        }
+      }
+    }
+
+    window.addEventListener("message", handleMessage)
+    return () => { window.removeEventListener("message", handleMessage) }
+  }, [mode])
+
+  // New values from the app, such as a run's output or a loaded sample
+  useEffect(() => {
+    // Compared as JSON, the store hands the value back wrapped in a new proxy
+    if (!isReadyRef.current || JSON.stringify(value) === valueFromFrameRef.current) {
+      return
+    }
+    post({ type: "value", value })
+  }, [value])
+
+  useEffect(() => {
+    if (isReadyRef.current) {
+      post({ type: "readOnly", readOnly: mode === "output" || readOnly })
+    }
+  }, [readOnly])
+
+  useEffect(() => {
+    isRunningRef.current = isRunning
+    if (isReadyRef.current) {
+      post({ type: "running", running: isRunning })
+    }
+  }, [isRunning])
+
+  // Theme and accent colour live on the page's root and body
+  useEffect(() => {
+    const sendTheme = () => {
+      if (isReadyRef.current) {
+        post({ type: "theme", theme: getExtensionComponentTheme(interfaceStore.resolvedTheme) })
+      }
+    }
+
+    sendTheme()
+    const observer = new MutationObserver(sendTheme)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style"] })
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class", "style", "data-color-scheme"] })
+    return () => { observer.disconnect() }
+  }, [themeName])
+
+  // A reloaded document starts over with a handshake
+  useEffect(() => {
+    isReadyRef.current = false
+    valueFromFrameRef.current = undefined
+    setActions([])
+  }, [frameDocument])
+
+  // A header button: the frame's `peranti.onAction` handlers get its id
+  const handleAction = useCallback((id: string) => {
+    if (isReadyRef.current) {
+      post({ type: "action", id })
+    }
+  }, [])
+
+  return (
+    <div className="ExtensionComponentFrame" style={{ gridArea: fieldKey }} onContextMenu={onContextMenu}>
+      <AppletComponentHead showMaximize={maximizable} label={label} actions={actions} onAction={handleAction} />
+      <div className="ExtensionComponentFrame-body" style={fitContent ? { height: contentHeight } : undefined}>
+        <iframe
+          ref={frameRef}
+          title={label ?? fieldKey}
+          // Scripts only: no same origin, forms, popups or top navigation
+          sandbox="allow-scripts"
+          srcDoc={frameDocument}
+        />
+      </div>
+    </div>
+  )
+}

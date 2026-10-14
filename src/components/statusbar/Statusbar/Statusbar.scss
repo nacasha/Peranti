@@ -1,33 +1,41 @@
 .Statusbar {
-  border-top: 1px solid var(--border-color);
-  padding: 0 2px;
-  height: 26px;
+  border-top: 1px solid var(--line);
+  padding: 0 12px 0 16px;
+  height: 30px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
   background-color: var(--statusbar-background-color);
 }
 
 .Statusbar-section {
   display: flex;
-  gap: 3px;
+  align-items: center;
+  gap: 4px;
 }
 
 .Statusbar-item {
-  padding: 0 5px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: calc(6px * var(--radius-scale));
   user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  font-size: 11.3px;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--faint);
+  transition: background-color var(--animation-speed), color var(--animation-speed);
 
   &:hover {
     cursor: pointer;
     background-color: var(--statusbar-item-background-color-hover);
+    color: var(--text-color);
   }
 
-  img {
-    width: 12px;
-    filter: var(--icon-color-filter);
+  // The status bar text is already --faint, so its icons just follow it.
+  svg {
+    flex: none;
+    color: currentColor;
   }
 }

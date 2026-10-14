@@ -1,0 +1,102 @@
+.ListReorderInput {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  &-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: auto;
+  }
+
+  &-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: var(--input-output-font-size);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    transition: background-color var(--animation-speed);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background-color: var(--hover);
+    }
+
+    &[data-readonly="true"] {
+      cursor: default;
+    }
+
+    // The slot the dragged item will land in
+    &[data-placeholder="true"] {
+      background-color: color-mix(in oklch, var(--accent) 12%, transparent);
+
+      > * {
+        opacity: 0.35;
+      }
+    }
+  }
+
+  // Items glide into place only while dragging, so they don't animate back on drop
+  &-list[data-dragging="true"] &-item {
+    transition: transform var(--animation-speed) ease, background-color var(--animation-speed);
+  }
+
+  &-handle {
+    flex: none;
+    color: var(--icon-color);
+  }
+
+  &-label {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-family-mono);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// Follows the cursor, rendered in <body> so no card clips it
+.ListReorderInput-ghost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  box-sizing: border-box;
+  pointer-events: none;
+  border: 1px solid color-mix(in oklch, var(--accent) 45%, transparent);
+  border-radius: var(--border-radius);
+  background-color: var(--panel);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
+  font-size: var(--input-output-font-size);
+  cursor: grabbing;
+
+  .ListReorderInput-handle {
+    flex: none;
+    color: var(--accent);
+  }
+
+  .ListReorderInput-label {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-family-mono);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

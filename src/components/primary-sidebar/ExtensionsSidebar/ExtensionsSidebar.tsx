@@ -1,19 +1,21 @@
+import { observer } from "mobx-react"
+
+import { extensionsApplet } from "src/applets/pages/extensions-applet"
+import { workbenchApplet } from "src/applets/pages/workbench-applet"
 import { ButtonIcon } from "src/components/common/ButtonIcon"
 import { Icons } from "src/constants/icons"
-import { useSelector } from "src/hooks/useSelector"
 import { appletStore } from "src/services/applet-store"
-import { commandbarService } from "src/services/commandbar-service"
 import { extensionsService } from "src/services/extensions-service"
-import { toolSidebarService } from "src/services/tool-sidebar-service"
+import { sessionStore } from "src/services/session-store"
 
-export const ExtensionsSidebar = () => {
-  const loadedExtensions = useSelector(() => extensionsService.loadedExtensions)
+import "./ExtensionsSidebar.scss"
 
-  const handleClickRefresh = async() => {
-    await appletStore.loadExtensions()
-    appletStore.buildApplets()
-    toolSidebarService.setupItems()
-    commandbarService.setupItems()
+export const ExtensionsSidebar = observer(() => {
+  const { loadedTools, installedExtensions } = extensionsService
+  const failedCount = installedExtensions.filter((extension) => extension.error).length
+
+  const handleClickManage = () => {
+    sessionStore.findOrCreateSession(extensionsApplet)
   }
 
   return (
@@ -24,24 +26,58 @@ export const ExtensionsSidebar = () => {
           <ButtonIcon
             icon={Icons.Folder}
             tooltip="Open Extensions Folder"
-            onClick={() => { void handleClickRefresh() }}
+            onClick={() => { void extensionsService.openExtensionsFolder() }}
           />
           <ButtonIcon
             icon={Icons.Refresh}
-            tooltip="Refresh Extensions"
-            onClick={() => { void handleClickRefresh() }}
+            tooltip="Reload Extensions"
+            onClick={() => { void appletStore.reloadExtensions() }}
+          />
+          <ButtonIcon
+            icon={Icons.Manage}
+            tooltip="Manage Tools & Components"
+            onClick={() => { sessionStore.findOrCreateSession(workbenchApplet) }}
+          />
+          <ButtonIcon
+            icon={Icons.Settings}
+            tooltip="Manage Extensions"
+            onClick={handleClickManage}
           />
         </div>
       </div>
 
       <div className="ExtensionsSidebar-main">
-        {loadedExtensions.map((extension) => (
-          <div key={extension.appletId} style={{ padding: 10 }}>
-            <div>{extension.appletId}</div>
-            <div>{extension.name}</div>
+        {loadedTools.map(({ appletConstructor }) => (
+          <div
+            key={appletConstructor.appletId}
+            className="ExtensionsSidebar-item"
+            onClick={() => { sessionStore.findOrCreateSession(appletConstructor) }}
+          >
+            <Icons.Extension size={14} aria-hidden />
+            <span>{appletConstructor.name}</span>
           </div>
         ))}
+
+        {failedCount > 0 && (
+          <div
+            className="ExtensionsSidebar-item is-warning"
+            onClick={handleClickManage}
+          >
+            <Icons.Warning size={14} aria-hidden />
+            <span>{failedCount} failed to load</span>
+          </div>
+        )}
+
+        {installedExtensions.length === 0 && (
+          <div
+            className="ExtensionsSidebar-item"
+            onClick={handleClickManage}
+          >
+            <Icons.Extensions size={14} aria-hidden />
+            <span>No extensions installed</span>
+          </div>
+        )}
       </div>
     </div>
   )
-}
+})
