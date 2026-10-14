@@ -63,6 +63,7 @@
     "js-yaml": "^4.1.0",
     "json-2-csv": "^5.5.0",
     "jsonata": "^2.0.4",
+    "jsonrepair": "^3.15.0",
     "localforage": "^1.10.0",
     "lorem-ipsum": "^2.0.8",
     "lucide-react": "^1.52.0",

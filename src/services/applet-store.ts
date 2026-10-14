@@ -32,6 +32,7 @@ import { javascriptRunnerTool } from "src/applets/tools/javascript-runner-tool"
 import { jsonDiffTool } from "src/applets/tools/json-diff-tool"
 import { jsonFormatter } from "src/applets/tools/json-formatter-tool"
 import { jsonMergeTool } from "src/applets/tools/json-merge-tool"
+import { jsonRepairTool } from "src/applets/tools/json-repair-tool"
 import { jsonToCsvTool } from "src/applets/tools/json-to-csv-tool"
 import { jsonToTomlTool } from "src/applets/tools/json-to-toml-tool"
 import { jsonToYamlTool } from "src/applets/tools/json-to-yaml-tool"
@@ -119,6 +120,7 @@ class AppletStore {
     [csvTableViewerTool.appletId]: csvTableViewerTool,
     [jsonTableViewerTool.appletId]: jsonTableViewerTool,
     [jsonTreeViewerTool.appletId]: jsonTreeViewerTool,
+    [jsonRepairTool.appletId]: jsonRepairTool,
     [colorConverterTool.appletId]: colorConverterTool,
     [jsonToYamlTool.appletId]: jsonToYamlTool,
     [yamlToJsonTool.appletId]: yamlToJsonTool,
