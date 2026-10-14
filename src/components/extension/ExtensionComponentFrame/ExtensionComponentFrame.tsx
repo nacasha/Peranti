@@ -6,6 +6,7 @@ import { activeAppletStore } from "src/services/active-applet-store"
 import { extensionComponentHeightStore } from "src/services/extension-component-height-store"
 import { fileDropService } from "src/services/file-drop-service"
 import { interfaceStore } from "src/services/interface-store"
+import { openToolService } from "src/services/open-tool-service"
 import { type ExtensionComponentDebugEvent } from "src/types/ExtensionComponentDebugEvent"
 import { type FieldAction, sanitizeFieldActions } from "src/types/FieldAction"
 import { openLink } from "src/utils/common/open-link"
@@ -191,6 +192,9 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
           extensionComponentHeightStore.set(latestRef.current.heightKey, nextHeight)
         }
         latestRef.current.onHeightChange?.(nextHeight)
+      } else if (data.type === "open-tool" && typeof data.toolId === "string") {
+        // The extension's own tools open right away; the service asks for others
+        void openToolService.openFromComponent(componentKey?.split("#")[0], data.toolId, data.values)
       } else if (data.type === "set-state") {
         // UI state such as scroll positions and open rows, kept with the tab.
         // Plain JSON and small: it is saved with the session
@@ -199,6 +203,20 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
           initialStateRef.current = JSON.parse(json)
           latestRef.current.onStateChange?.(initialStateRef.current)
         }
+      } else if (data.type === "key" && (data.event === "keydown" || data.event === "keyup") && typeof data.key === "string") {
+        // A shortcut pressed in the frame, replayed from the frame element so
+        // the app's hotkeys see it as if it were pressed here
+        frameRef.current?.dispatchEvent(new KeyboardEvent(data.event, {
+          key: data.key,
+          code: typeof data.code === "string" ? data.code : "",
+          ctrlKey: data.ctrlKey === true,
+          metaKey: data.metaKey === true,
+          shiftKey: data.shiftKey === true,
+          altKey: data.altKey === true,
+          repeat: data.repeat === true,
+          bubbles: true,
+          cancelable: true
+        }))
       } else if (data.type === "set-actions") {
         setActions(sanitizeFieldActions(data.actions))
       } else if (data.type === "open-files" && Array.isArray(data.paths)) {

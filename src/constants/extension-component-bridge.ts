@@ -20,6 +20,9 @@
  *   peranti.running       true while the tool runs
  *   peranti.onRunning(fn) called with true when a run starts and false when it
  *                         ends (and now), returns an unsubscribe
+ *   peranti.openTool(id, values)
+ *                         opens a tool ("json-tree-viewer", "<extension>/<tool>")
+ *                         in a new tab with some inputs filled in
  *   peranti.openUrl(u)    opens an http(s) URL in the default browser
  *   peranti.setActions(a) buttons in the field header: [{ id, label?, icon?,
  *                         tooltip?, active?, disabled? }], replacing the last
@@ -55,6 +58,31 @@ export const ExtensionComponentBridge = `(() => {
     const original = console[level].bind(console)
     console[level] = (...args) => { log(level, args); original(...args) }
   })
+  // Keys pressed in the frame never reach the app, so shortcuts (anything
+  // with Ctrl, ⌘ or ⌥, Escape and F-keys) are passed up for the app's hotkeys.
+  // Read last, on the window: a key the component handled itself, with
+  // preventDefault, stays in the frame. Releases are passed too, so the app
+  // knows the keys are no longer held.
+  const modifierKeys = new Set(["Control", "Meta", "Alt", "Shift"])
+  const isShortcut = (event) => event.ctrlKey || event.metaKey || event.altKey || event.key === "Escape" || /^F\\d{1,2}$/.test(event.key)
+  const forwardKey = (event) => {
+    if (event.defaultPrevented || !event.key) return
+    if (!isShortcut(event) && !(event.type === "keyup" && modifierKeys.has(event.key))) return
+    post({
+      type: "key",
+      event: event.type,
+      key: event.key,
+      code: event.code,
+      ctrlKey: event.ctrlKey,
+      metaKey: event.metaKey,
+      shiftKey: event.shiftKey,
+      altKey: event.altKey,
+      repeat: event.repeat
+    })
+  }
+  window.addEventListener("keydown", forwardKey)
+  window.addEventListener("keyup", forwardKey)
+
   window.addEventListener("error", (event) => { log("error", [event.error || event.message]) })
   window.addEventListener("unhandledrejection", (event) => { log("error", ["Unhandled rejection:", event.reason]) })
 
@@ -135,6 +163,12 @@ export const ExtensionComponentBridge = `(() => {
       runningListeners.add(listener)
       if (state.ready) listener(state.running)
       return () => { runningListeners.delete(listener) }
+    },
+    openTool(toolId, values) {
+      if (typeof toolId !== "string" || !toolId) return
+      let plain = {}
+      try { plain = JSON.parse(JSON.stringify(values ?? {})) } catch { return }
+      post({ type: "open-tool", toolId, values: plain })
     },
     openUrl(url) {
       if (typeof url === "string" && /^https?:\\/\\//i.test(url)) post({ type: "open-url", url })

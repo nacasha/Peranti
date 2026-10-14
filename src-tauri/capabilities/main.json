@@ -12,6 +12,7 @@
 
     "dialog:allow-save",
     "dialog:allow-open",
+    "dialog:allow-ask",
 
     "core:window:default",
     "core:window:allow-toggle-maximize",
