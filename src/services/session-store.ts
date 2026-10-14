@@ -11,6 +11,7 @@ import { type Session } from "src/types/Session.ts"
 import { type SessionHistory } from "src/types/SessionHistory.ts"
 
 import { activeAppletStore } from "./active-applet-store.ts"
+import { appletStore } from "./applet-store.ts"
 import { sessionHistoryStore } from "./session-history-store.ts"
 import { userSettingsService } from "./user-settings-service.ts"
 
@@ -235,9 +236,14 @@ class SessionStore {
     /**
      * Exit process if below conditions is met
      * - Applet with type page can only have 1 session at time
+     * - Applet disables multiple session
      * - Multiple session is disabled
      */
-    if (appletConstructor.type === AppletType.Page || !this.enableMultipleSession) {
+    if (
+      appletConstructor.type === AppletType.Page ||
+      appletConstructor.disableMultipleSession === true ||
+      !this.enableMultipleSession
+    ) {
       if (this.getRunningSessionsFromAppletId(appletConstructor.appletId).length > 0) {
         return
       }
@@ -255,6 +261,49 @@ class SessionStore {
     const applet = new Applet(appletConstructor, newOptions)
 
     this.pushIntoSessionList(applet.toSession(), placeSessionAtTheEnd)
+    this.activateApplet(applet)
+    return applet
+  }
+
+  /**
+   * Tools of type page and tools limited to one session can't be duplicated
+   */
+  canDuplicateSession(session: Session) {
+    const appletConstructor = appletStore.mapOfLoadedApplets[session.appletId]
+    if (!appletConstructor || !this.enableMultipleSession) {
+      return false
+    }
+
+    return appletConstructor.type !== AppletType.Page && !appletConstructor.disableMultipleSession
+  }
+
+  /**
+   * Open a copy of a session, with its values, options and layout, in a new
+   * tab placed right after it
+   *
+   * @param session
+   */
+  async duplicateSession(session: Session) {
+    if (!this.canDuplicateSession(session)) {
+      return
+    }
+
+    const source = await StorageManager.getAppletFromStorage(session.sessionId)
+    if (!source) {
+      return
+    }
+
+    const { sessionId, sessionName, sessionSequenceNumber, createdAt, isDeleted, ...state } = source.toState()
+    const applet = new Applet(appletStore.mapOfLoadedApplets[session.appletId], {
+      initialState: {
+        ...state,
+        sessionName: sessionName ? `${sessionName} (copy)` : undefined,
+        sessionSequenceNumber: sessionName ? undefined : this.attachSessionSequence(session.appletId)
+      }
+    })
+
+    const sourceIndex = this.sessions.findIndex((openSession) => openSession.sessionId === session.sessionId)
+    this.sessions.splice(sourceIndex + 1, 0, applet.toSession())
     this.activateApplet(applet)
     return applet
   }

@@ -32,6 +32,17 @@ export const SessionTabbarContextMenu: FC = () => {
     }
   }
 
+  const handleDuplicateSession = (itemParams: TabbarContextMenuItemParams) => {
+    const { session } = itemParams.props ?? {}
+    if (session) {
+      void sessionStore.duplicateSession(session)
+    }
+  }
+
+  const isDuplicateDisabled = ({ props }: { props?: MenuParams }) => (
+    !props?.session || !sessionStore.canDuplicateSession(props.session)
+  )
+
   const handleRenameSession = (itemParams: TabbarContextMenuItemParams) => {
     const { session } = itemParams.props ?? {}
     if (session) {
@@ -64,6 +75,14 @@ export const SessionTabbarContextMenu: FC = () => {
         Close All
       </ContextMenuItem>
       <Separator />
+      <ContextMenuItem
+        id="duplicate"
+        icon={Icons.Duplicate}
+        disabled={isDuplicateDisabled}
+        onClick={handleDuplicateSession}
+      >
+        Duplicate
+      </ContextMenuItem>
       <ContextMenuItem
         id="rename"
         icon={Icons.Rename}

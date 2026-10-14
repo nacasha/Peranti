@@ -1,0 +1,157 @@
+// Card frame and header come from styles/panes.scss; the popover, calendar and
+// time row reuse the DateTime field's styles (DateTimeInput.scss).
+.DateRangeInput {
+  display: flex;
+  flex-direction: column;
+
+  &-field {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 10px 0 8px;
+    min-width: 0;
+  }
+
+  // Same flush text as a Text field, two of them side by side
+  &-end {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: 0;
+    outline: none;
+    background-color: transparent;
+    color: var(--text-color);
+    font-family: var(--font-family-mono);
+    font-size: var(--input-output-font-size);
+    cursor: text;
+    transition: background-color var(--animation-speed);
+
+    &:not([readonly]):hover {
+      background-color: var(--hover);
+    }
+
+    &:focus {
+      background-color: transparent;
+    }
+
+    &.invalid {
+      color: var(--danger-color);
+    }
+  }
+
+  &-arrow {
+    flex: none;
+    color: var(--muted);
+  }
+
+  // Names the quick range the value matches
+  &-preset {
+    flex: none;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+  }
+}
+
+// In the popover: quick ranges beside the calendar
+.DateRangeInput-panel {
+  display: flex;
+}
+
+// Quick ranges, with Until now at the bottom
+.DateRangeInput-side {
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  border-right: 1px solid var(--line);
+}
+
+.DateRangeInput-untilNow.Button {
+  margin: auto 8px 8px;
+  height: 28px;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.DateRangeInput-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+
+  button {
+    width: 100%;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-color);
+    font: inherit;
+    font-size: var(--input-output-font-size);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--animation-speed);
+
+    &:hover {
+      background: var(--hover);
+    }
+
+    &.active {
+      background: var(--accent-soft);
+      color: var(--accent-ink);
+    }
+  }
+}
+
+// As wide as the month grid: the time row below fits it instead of widening it
+.DateRangeInput-calendar {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+
+  .rdp-months {
+    flex-wrap: nowrap;
+    gap: 20px;
+  }
+}
+
+.DateRangeInput-times {
+  gap: 0;
+  padding: 0;
+
+  .DateRangeInput-arrow {
+    flex: none;
+    color: var(--muted);
+  }
+
+  input {
+    flex: 1;
+    width: 0;
+    padding: 0 12px;
+    text-align: center;
+  }
+}
+
+// Range days: the ends filled like the DateTime field's selected day, the days
+// between tinted
+.DateTimeInput-popover .rdp-root {
+  --rdp-range_middle-background-color: var(--accent-soft);
+  --rdp-range_middle-color: var(--accent-ink);
+  --rdp-range_start-date-background-color: var(--accent);
+  --rdp-range_end-date-background-color: var(--accent);
+  --rdp-range_start-color: #ffffff;
+  --rdp-range_end-color: #ffffff;
+}
+
+.DateTimeInput-popover .rdp-range_middle .rdp-day_button,
+.DateTimeInput-popover .rdp-range_middle .rdp-day_button:hover {
+  background-color: transparent;
+  color: var(--accent-ink);
+}

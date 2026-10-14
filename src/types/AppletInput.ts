@@ -66,6 +66,7 @@ export type AppletInput<K extends Record<string, string> | any = any> = {
 }
 | InputComponentField<"Text", K>
 | InputComponentField<"DateTime", K>
+| InputComponentField<"DateRange", K>
 | InputComponentField<"TextArea", K>
 | InputComponentField<"Switch", K>
 | InputComponentField<"Run", K>

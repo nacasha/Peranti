@@ -10,6 +10,7 @@ import { RunInput } from "src/components/inputs/ButtonInput"
 import { CheckboxInput } from "src/components/inputs/CheckboxInput"
 import { CodeInput } from "src/components/inputs/CodeInput"
 import { ColorPickerInput } from "src/components/inputs/ColorPickerInput"
+import { DateRangeInput } from "src/components/inputs/DateRangeInput"
 import { DateTimeInput } from "src/components/inputs/DateTimeInput"
 import { FileInput, FilesInput } from "src/components/inputs/FileInput"
 import { ListPickInput } from "src/components/inputs/ListPickInput"
@@ -147,6 +148,30 @@ class AppletComponentService {
       },
       batchComponent: "Code",
       copyAs: "text"
+    }),
+
+    DateRange: new AppletComponent({
+      component: DateRangeInput,
+      props: [
+        {
+          name: "presets",
+          type: "array",
+          description: "Quick ranges next to the calendar: [{ label, start, end }], replacing the default ones (last 5 minutes to last 30 days)",
+          example: [
+            { label: "Last 15 minutes", start: "now-15m", end: "now" },
+            { label: "Last 1 hour", start: "now-1h", end: "now" }
+          ]
+        }
+      ],
+      value: {
+        type: "object",
+        description: "{ start, end }, each \"now\", relative to now (\"now-15m\", s/m/h/d/w) or an ISO date with its offset",
+        fields: [
+          { name: "start", type: "string", required: true, description: "\"now-1h\" or \"2026-10-15T09:00:00+07:00\"" },
+          { name: "end", type: "string", required: true, description: "\"now\" or an ISO date" }
+        ],
+        example: { start: "now-1h", end: "now" }
+      }
     }),
 
     ListReorder: new AppletComponent({
