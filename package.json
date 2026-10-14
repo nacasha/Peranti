@@ -17,7 +17,9 @@
     "tauri": "tauri",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --ext .ts,.tsx src",
-    "lint-fix": "eslint --fix --ext .ts,.tsx src"
+    "lint-fix": "eslint --fix --ext .ts,.tsx src",
+    "docs:dev": "bun run --cwd docs dev",
+    "docs:build": "bun run --cwd docs build"
   },
   "dependencies": {
     "@codemirror/commands": "^6.3.3",

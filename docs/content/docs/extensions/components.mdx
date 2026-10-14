@@ -1,0 +1,66 @@
+---
+title: Components
+description: Draw your own input or output fields with HTML.
+icon: LayoutTemplate
+---
+
+When no built-in field fits, an extension can draw its own HTML. Tools use it with
+`"component": "@<component folder>"`, such as `"@hue-wheel"`. A component belongs to its extension: other
+extensions can't use it.
+
+```json title="components/hue-wheel/peranti.component.json"
+{ "name": "Hue Wheel", "kind": "input", "entry": "index.html" }
+```
+
+| Field | Required | |
+| --- | --- | --- |
+| `name` | no | Falls back to the folder name |
+| `entry` | yes | HTML file inside the component's folder, such as `index.html` or `dist/index.html` |
+| `kind` | no | `input`, `output` or `both` (default) |
+| `maximizable` | no | `true` shows a Maximize button in its header |
+| `value` | no | Describes its value; shown in **Manage → Components** |
+| `props` | no | Describes what it reads from `peranti.props` |
+| `description` | no | |
+
+## The `peranti` API
+
+The HTML runs in a sandboxed frame. It can't reach Peranti's storage, your files or the network, and can't load
+anything from outside. Scripts and stylesheets linked next to it are inlined when it loads, and images must be
+`data:` URLs. It talks to Peranti through `window.peranti`:
+
+```js
+peranti.onValue((value) => { /* draw it */ })  // now, and on every change from Peranti
+peranti.setValue({ hue: 120 })                  // inputs only
+peranti.mode       // "input" or "output"
+peranti.readOnly   // true for outputs and closed tabs
+peranti.props      // the field's "props" from peranti.tool.json
+peranti.running    // true while the tool runs
+peranti.onRunning((running) => { /* show or hide a spinner */ })
+peranti.openFiles(["/path/to/file.json"])       // asks Peranti to open files in a tool
+peranti.openUrl("https://example.com/")         // opens a URL in the default browser
+peranti.setActions([{ id: "wrap", label: "Wrap", active: true }])  // header buttons
+peranti.onAction((id) => { /* a header button was clicked */ })
+```
+
+Peranti's theme is exposed as CSS variables (`var(--accent)`, `var(--text-color)`, `var(--line)`,
+`var(--font-family)`, …) and follows dark mode and the accent color.
+
+## UI frameworks
+
+Any framework works, as long as everything it needs sits next to the component. With a build step, keep the output
+to one JS file and one CSS file, and commit `dist/`:
+
+```ts title="vite.config.ts"
+export default defineConfig({
+  base: './',
+  build: {
+    assetsInlineLimit: Number.MAX_SAFE_INTEGER, // images and fonts as data: URLs
+    cssCodeSplit: false,
+    modulePreload: false,
+    rollupOptions: { output: { inlineDynamicImports: true } },
+  },
+})
+```
+
+See `sample-react-kit`, `sample-svelte-kit`, `sample-vue-kit` and `sample-alpine-kit` in
+[nacasha/peranti-extensions](https://github.com/nacasha/peranti-extensions).

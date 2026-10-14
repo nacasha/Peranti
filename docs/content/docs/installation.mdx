@@ -1,0 +1,58 @@
+---
+title: Installation
+description: Download Peranti for your platform, or try it in the browser.
+icon: Download
+---
+
+## Desktop app
+
+Download the latest installer for your platform from the
+[GitHub releases page](https://github.com/nacasha/Peranti/releases).
+
+<Tabs items={['Windows', 'macOS', 'Linux']}>
+  <Tab value="Windows">Download the `.msi` or `.exe` installer and run it.</Tab>
+  <Tab value="macOS">Download the `.dmg`, open it and drag Peranti into **Applications**.</Tab>
+  <Tab value="Linux">Download the `.AppImage` or `.deb` package for your distribution.</Tab>
+</Tabs>
+
+## Web version
+
+Most built-in tools also run in the browser at [peranti.vercel.app](https://peranti.vercel.app/), with no install.
+Features that need the desktop, such as extensions with an `executable` runtime, are only available in the app.
+
+## Build from source
+
+Peranti is built with [Tauri](https://tauri.app), React and Vite. You need [Bun](https://bun.sh) and the
+[Tauri prerequisites](https://tauri.app/start/prerequisites/) for your platform.
+
+<Steps>
+<Step>
+
+### Clone the repository
+
+```bash
+git clone https://github.com/nacasha/Peranti.git
+cd Peranti
+```
+
+</Step>
+<Step>
+
+### Install dependencies
+
+```bash
+bun install
+```
+
+</Step>
+<Step>
+
+### Run it
+
+```bash
+bun tauri dev   # desktop app
+bun run dev     # web version only
+```
+
+</Step>
+</Steps>

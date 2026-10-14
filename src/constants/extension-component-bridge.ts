@@ -13,6 +13,10 @@
  *   peranti.setValue(v)   inputs only, sets the field's value
  *   peranti.openFiles(p)  asks to open files (absolute paths) with a tool:
  *                         Peranti shows the same picker as a file drop
+ *   peranti.state         what setState last saved for this field, or null
+ *   peranti.setState(s)   keeps UI state (scroll, open rows, …) with the tab, as
+ *                         JSON up to 64 KB; it comes back as peranti.state when
+ *                         the frame opens again, e.g. after switching tabs
  *   peranti.running       true while the tool runs
  *   peranti.onRunning(fn) called with true when a run starts and false when it
  *                         ends (and now), returns an unsubscribe
@@ -24,7 +28,7 @@
  *                         returns an unsubscribe
  */
 export const ExtensionComponentBridge = `(() => {
-  const state = { ready: false, mode: "output", value: undefined, readOnly: true, props: {}, running: false }
+  const state = { ready: false, mode: "output", value: undefined, readOnly: true, props: {}, state: null, running: false }
   const listeners = new Set()
   const actionListeners = new Set()
   const runningListeners = new Set()
@@ -78,6 +82,7 @@ export const ExtensionComponentBridge = `(() => {
       state.props = data.props || {}
       state.value = data.value
       state.running = data.running === true
+      state.state = data.state ?? null
       state.ready = true
       applyTheme(data.theme)
       emit()
@@ -105,6 +110,7 @@ export const ExtensionComponentBridge = `(() => {
     get readOnly() { return state.readOnly },
     get props() { return state.props },
     get running() { return state.running },
+    get state() { return state.state },
     onValue(listener) {
       listeners.add(listener)
       if (state.ready) listener(state.value)
@@ -118,6 +124,12 @@ export const ExtensionComponentBridge = `(() => {
     openFiles(paths) {
       const list = [].concat(paths).filter((path) => typeof path === "string" && path)
       if (list.length) post({ type: "open-files", paths: list })
+    },
+    setState(next) {
+      let plain = null
+      try { plain = JSON.parse(JSON.stringify(next ?? null)) } catch { return }
+      state.state = plain
+      post({ type: "set-state", state: plain })
     },
     onRunning(listener) {
       runningListeners.add(listener)

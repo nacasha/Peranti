@@ -107,6 +107,9 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = memo((props) 
   // Extension components follow their content only where the layout sizes
   // the field by it, anywhere else they fill their place
   if (extensionComponentRegistry.isExtensionComponent(appletOutput.component)) {
+    // What the component saved with `peranti.setState`, handed back when it opens again
+    additionalProps.initialState = initialState
+    additionalProps.onStateChange = handleStateChange
     additionalProps.fitContent = isFieldContentSized(
       activeApplet.layoutSetting,
       "output",

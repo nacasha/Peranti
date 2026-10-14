@@ -63,10 +63,25 @@ interface ExtensionComponentFrameProps {
   onHeightChange?: (height: number) => void
 
   /**
+   * What the component last saved with `peranti.setState`, kept with the tab
+   */
+  initialState?: unknown
+
+  /**
+   * Called with what the component saves with `peranti.setState`
+   */
+  onStateChange?: (state: unknown) => void
+
+  /**
    * The field's "props" from its tool, handed to the component as is
    */
   [prop: string]: unknown
 }
+
+/**
+ * Largest state a component can save with `peranti.setState`, as JSON
+ */
+const MAX_STATE_SIZE = 64 * 1024
 
 /**
  * The URL when it is an http or https address, normalised
@@ -101,6 +116,8 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
     onContextMenu,
     onDebugEvent,
     onHeightChange,
+    initialState,
+    onStateChange,
     ...fieldProps
   } = props
 
@@ -119,8 +136,11 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   const valueFromFrameRef = useRef<string>()
 
   // Read through refs, the message listener is attached once
-  const latestRef = useRef({ value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, fieldProps })
-  latestRef.current = { value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, fieldProps }
+  const latestRef = useRef({ value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, onStateChange, fieldProps })
+  latestRef.current = { value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, onStateChange, fieldProps }
+
+  // The state saved when the frame opened; later saves go to the store, not back in
+  const initialStateRef = useRef(initialState)
   const isRunningRef = useRef(false)
 
   const themeName = useSelector(() => interfaceStore.resolvedTheme)
@@ -157,6 +177,7 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
           value: latest.value,
           readOnly: mode === "output" || latest.readOnly,
           props: latest.fieldProps,
+          state: initialStateRef.current ?? null,
           running: isRunningRef.current,
           theme: getExtensionComponentTheme(interfaceStore.resolvedTheme)
         })
@@ -170,6 +191,14 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
           extensionComponentHeightStore.set(latestRef.current.heightKey, nextHeight)
         }
         latestRef.current.onHeightChange?.(nextHeight)
+      } else if (data.type === "set-state") {
+        // UI state such as scroll positions and open rows, kept with the tab.
+        // Plain JSON and small: it is saved with the session
+        const json = JSON.stringify(data.state ?? null)
+        if (json.length <= MAX_STATE_SIZE) {
+          initialStateRef.current = JSON.parse(json)
+          latestRef.current.onStateChange?.(initialStateRef.current)
+        }
       } else if (data.type === "set-actions") {
         setActions(sanitizeFieldActions(data.actions))
       } else if (data.type === "open-files" && Array.isArray(data.paths)) {
