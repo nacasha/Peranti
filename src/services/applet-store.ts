@@ -35,7 +35,7 @@ import { jsonMergeTool } from "src/applets/tools/json-merge-tool"
 import { jsonToCsvTool } from "src/applets/tools/json-to-csv-tool"
 import { jsonToTomlTool } from "src/applets/tools/json-to-toml-tool"
 import { jsonToYamlTool } from "src/applets/tools/json-to-yaml-tool"
-import { jsonTableViewerTool } from "src/applets/tools/json-viewer-tool"
+import { jsonTableViewerTool, jsonTreeViewerTool } from "src/applets/tools/json-viewer-tool"
 import { jsonataTool } from "src/applets/tools/jsonata-tool"
 import { loremIpsumGeneratorTool } from "src/applets/tools/lorem-ipsum-generator-tool"
 import { markdownParserTool } from "src/applets/tools/markdown-parser-tool"
@@ -118,6 +118,7 @@ class AppletStore {
     [javascriptRunnerTool.appletId]: javascriptRunnerTool,
     [csvTableViewerTool.appletId]: csvTableViewerTool,
     [jsonTableViewerTool.appletId]: jsonTableViewerTool,
+    [jsonTreeViewerTool.appletId]: jsonTreeViewerTool,
     [colorConverterTool.appletId]: colorConverterTool,
     [jsonToYamlTool.appletId]: jsonToYamlTool,
     [yamlToJsonTool.appletId]: yamlToJsonTool,

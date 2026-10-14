@@ -1,54 +1,49 @@
-// Fills the area of the crashed view, a card centered in it
+// Fills the whole area of the crashed view as one card on the canvas,
+// mirroring the welcome screen: dotted surface with a soft danger glow
 .AppletErrorFallback {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  // Spans every cell when the area is a grid, grows when it is a flex
+  grid-area: 1 / 1 / -1 / -1;
   flex: 1;
-  width: 100%;
-  min-height: 100%;
-  padding: 32px 16px;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  padding: 30px;
   overflow: auto;
+  background-color: var(--panel);
+  background-image:
+    radial-gradient(
+      ellipse 50% 40% at 50% 35%,
+      color-mix(in srgb, var(--danger-color) 8%, transparent),
+      transparent 75%
+    ),
+    radial-gradient(var(--line) 1px, transparent 1px);
+  background-size: 100% 100%, 18px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+  position: relative;
+  z-index: 1;
 }
 
-.AppletErrorFallback-card {
+.AppletErrorFallback-content {
+  margin: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
   width: 100%;
-  max-width: 460px;
-  padding: 32px 28px 20px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-card);
-  background: var(--panel);
-  box-shadow: var(--card-shadow);
+  max-width: 520px;
   text-align: center;
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-
-  // Soft danger glow behind the icon, fading out down the card
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background: radial-gradient(
-      ellipse 70% 45% at 50% 0%,
-      color-mix(in srgb, var(--danger-color) 12%, transparent),
-      transparent 75%
-    );
-  }
 }
 
 // Icon in a tinted ring
 .AppletErrorFallback-icon {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 6px;
+  border-radius: 16px;
   background: color-mix(in srgb, var(--danger-color) 12%, transparent);
   box-shadow: 0 0 0 6px color-mix(in srgb, var(--danger-color) 6%, transparent);
   color: var(--danger-color);
@@ -62,7 +57,7 @@
 
 .AppletErrorFallback-title {
   margin: 0;
-  font-size: 17px;
+  font-size: 20px;
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.01em;
   color: var(--text-color);

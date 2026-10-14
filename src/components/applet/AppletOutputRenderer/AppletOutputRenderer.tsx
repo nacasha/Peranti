@@ -98,7 +98,7 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = memo((props) 
    * Only few components handling those events
    */
   const additionalProps: Record<string, any> = {}
-  if (["Code", "Mermaid", "Image", "Pintora", "DataGrid"].includes(appletOutput.component)) {
+  if (["Code", "Mermaid", "Image", "Pintora", "DataGrid", "JsonTree"].includes(appletOutput.component)) {
     additionalProps.initialState = initialState
     additionalProps.onStateChange = handleStateChange
   }

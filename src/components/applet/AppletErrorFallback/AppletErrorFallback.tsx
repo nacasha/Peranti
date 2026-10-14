@@ -35,9 +35,9 @@ export const AppletErrorFallback: FC<FallbackProps> = ({ error, resetErrorBounda
 
   return (
     <div className="AppletErrorFallback" role="alert">
-      <div className="AppletErrorFallback-card">
+      <div className="AppletErrorFallback-content">
         <div className="AppletErrorFallback-icon">
-          <Icons.Warning size={22} aria-hidden />
+          <Icons.Warning size={26} aria-hidden />
         </div>
 
         <div className="AppletErrorFallback-heading">

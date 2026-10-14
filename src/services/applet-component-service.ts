@@ -27,6 +27,7 @@ import { FileOutput } from "src/components/outputs/FileOutput"
 import { GridStatOutput } from "src/components/outputs/GridStatOutput"
 import { IFrameOutput } from "src/components/outputs/IFrameOutput"
 import { ImageOutput } from "src/components/outputs/ImageOutput"
+import { JsonTreeOutput } from "src/components/outputs/JsonTreeOutput"
 import { KeyValueOutput } from "src/components/outputs/KeyValueOutput"
 import { MarkdownOutput } from "src/components/outputs/MarkdownOutput"
 import { MermaidOutput } from "src/components/outputs/MermaidOutput"
@@ -641,6 +642,31 @@ class AppletComponentService {
         type: "json-string",
         description: "Rows as a JSON array, written as text",
         example: "[{\"name\": \"a\", \"size\": 1}, {\"name\": \"b\", \"size\": 2}]"
+      },
+      maximizable: true,
+      hideInHistory: true
+    }),
+
+    JsonTree: new AppletComponent({
+      component: JsonTreeOutput,
+      props: [
+        {
+          name: "expandDepth",
+          type: "number",
+          default: 2,
+          description: "Levels opened when the data is first shown"
+        }
+      ],
+      value: {
+        type: "any",
+        description: "Any JSON value, or JSON written as text",
+        example: {
+          name: "Peranti",
+          tags: ["dev", "tools"],
+          stars: 42,
+          archived: false,
+          owner: null
+        }
       },
       maximizable: true,
       hideInHistory: true

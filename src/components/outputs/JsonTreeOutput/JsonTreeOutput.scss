@@ -1,0 +1,194 @@
+.JsonTreeOutput {
+  --json-tree-string: #0a7a3d;
+  --json-tree-number: #1d4ed8;
+  --json-tree-boolean: #9333ea;
+  --json-tree-null: var(--muted);
+  --json-tree-key: var(--text-color);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  &-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--input-output-border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--input-output-background-color);
+    transition: all var(--animation-speed);
+
+    &:hover {
+      border-color: var(--input-output-border-color-hover);
+    }
+  }
+
+  &-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  &-search {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: 4px 0;
+      border: 0;
+      outline: 0;
+      background: none;
+      color: var(--text-color);
+      font: inherit;
+      font-size: var(--input-output-font-size);
+    }
+  }
+
+  // The rows scroll in a layer taken out of the flow, so a long tree never
+  // makes the card taller than the place the layout gives it
+  &-rows {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+  }
+
+  &-scroll {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+    padding: 6px 0;
+    font-family: var(--font-family-mono);
+    font-size: var(--input-output-font-size);
+  }
+
+  // Rows are virtualized: only the visible ones are rendered, each placed at
+  // its own offset inside a spacer as tall as the whole tree
+  &-spacer {
+    position: relative;
+  }
+
+  &-row {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-right: 8px;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--hover);
+
+      .JsonTreeOutput-actions {
+        visibility: visible;
+      }
+    }
+  }
+
+  &-toggle {
+    flex: none;
+    width: 14px;
+    display: flex;
+    color: var(--icon-color);
+  }
+
+  &-key {
+    flex: none;
+    color: var(--json-tree-key);
+
+    &.is-index {
+      color: var(--muted);
+    }
+  }
+
+  &-colon {
+    flex: none;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+
+  &-value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.is-string { color: var(--json-tree-string); }
+    &.is-number { color: var(--json-tree-number); }
+    &.is-boolean { color: var(--json-tree-boolean); }
+    &.is-null { color: var(--json-tree-null); font-style: italic; }
+  }
+
+  &-mark {
+    padding: 0 1px;
+    border-radius: 2px;
+    background-color: var(--accent-soft);
+    color: inherit;
+  }
+
+  &-reveal {
+    flex: none;
+    margin-left: 8px;
+    padding: 1px 7px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: none;
+    color: var(--accent);
+    font-family: var(--font-family);
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--accent-soft);
+    }
+  }
+
+  &-summary {
+    color: var(--muted);
+  }
+
+  &-count {
+    margin: 0 4px;
+    font-family: var(--font-family);
+    font-size: var(--font-size-xs);
+  }
+
+  &-actions {
+    visibility: hidden;
+    display: flex;
+    gap: 2px;
+    margin-left: auto;
+    padding-left: 8px;
+  }
+
+  &-empty {
+    padding: 12px 16px;
+    color: var(--muted);
+    font-family: var(--font-family);
+  }
+
+  &-error {
+    padding: 6px 12px;
+    border-top: 1px solid var(--line);
+    color: var(--danger-color);
+    font-size: var(--font-size-sm);
+  }
+}
+
+body.dark .JsonTreeOutput {
+  --json-tree-string: #7ee2a8;
+  --json-tree-number: #8ab4ff;
+  --json-tree-boolean: #d6a8ff;
+}
