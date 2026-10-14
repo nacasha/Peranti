@@ -13,7 +13,6 @@ import { ExtensionPlatform } from "src/enums/extension-platform"
 import { useNow } from "src/hooks/useNow"
 import { usePageScroll } from "src/hooks/usePageScroll"
 import { usePageState } from "src/hooks/usePageState"
-import { appletStore } from "src/services/applet-store"
 import { extensionCatalogService } from "src/services/extension-catalog-service"
 import { extensionsPageStore, type ExtensionsPageTab } from "src/services/extensions-page-store"
 import { extensionsService } from "src/services/extensions-service"
@@ -24,6 +23,7 @@ import { type InstalledExtension } from "src/types/InstalledExtension"
 import { formatCatalogUpdatedLabel } from "src/utils/catalog/format-catalog-updated-label"
 import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-label"
 import { getInstalledSourceFilter } from "src/utils/catalog/get-installed-source-filter"
+import { refreshCatalogWithToast, reloadExtensionsWithToast } from "src/utils/catalog/refresh-with-toast"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { getExtensionPlatform } from "src/utils/extension/get-extension-platform"
 import { getExtensionProvidesLabels } from "src/utils/extension/get-extension-provides-labels"
@@ -86,8 +86,8 @@ const ExtensionsPageContent: FC = observer(() => {
     setIsReloading(true)
     try {
       await (activeTab === "browse"
-        ? extensionCatalogService.loadCatalog(true)
-        : appletStore.reloadExtensions())
+        ? refreshCatalogWithToast()
+        : reloadExtensionsWithToast())
     } finally {
       setIsReloading(false)
     }

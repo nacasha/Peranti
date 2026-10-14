@@ -13,12 +13,12 @@ import { ExtensionCatalog } from "src/constants/extension-catalog"
 import { Icons } from "src/constants/icons"
 import { CatalogSourceType } from "src/enums/catalog-source-type"
 import { useNow } from "src/hooks/useNow"
-import { appletStore } from "src/services/applet-store"
 import { extensionCatalogService } from "src/services/extension-catalog-service"
 import { extensionsService } from "src/services/extensions-service"
 import { detectCatalogSourceType } from "src/utils/catalog/detect-catalog-source-type"
 import { formatCatalogUpdatedLabel } from "src/utils/catalog/format-catalog-updated-label"
 import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-label"
+import { refreshAllSourcesWithToast, refreshSourceWithToast, reloadExtensionsWithToast } from "src/utils/catalog/refresh-with-toast"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { prettyDateFormat } from "src/utils/time/pretty-date-format"
 
@@ -126,7 +126,7 @@ export const SettingsExtensions: FC = observer(() => {
           label="Reload Extensions"
           description="Read every extension again, after editing one by hand"
         >
-          <Button icon={Icons.Refresh} onClick={() => { void appletStore.reloadExtensions() }}>Reload</Button>
+          <Button icon={Icons.Refresh} onClick={() => { void reloadExtensionsWithToast() }}>Reload</Button>
         </SettingsCardItem>
       </SettingsCard>
 
@@ -193,7 +193,7 @@ export const SettingsExtensions: FC = observer(() => {
                   <ButtonIcon
                     icon={Icons.Refresh}
                     tooltip={linkedCount !== undefined ? "Reload Extensions" : "Refresh Source"}
-                    onClick={() => { void extensionCatalogService.refreshSource(source) }}
+                    onClick={() => { void refreshSourceWithToast(source) }}
                   />
                 )}
 
@@ -211,7 +211,7 @@ export const SettingsExtensions: FC = observer(() => {
             <Button
               icon={Icons.Refresh}
               disabled={isLoading}
-              onClick={() => { void extensionCatalogService.refreshAllSources() }}
+              onClick={() => { void refreshAllSourcesWithToast() }}
             >
               {isLoading ? "Refreshing…" : "Refresh All"}
             </Button>
