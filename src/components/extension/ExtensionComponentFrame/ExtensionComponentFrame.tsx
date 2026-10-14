@@ -2,11 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "reac
 
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { useSelector } from "src/hooks/useSelector"
+import { activeAppletStore } from "src/services/active-applet-store"
 import { extensionComponentHeightStore } from "src/services/extension-component-height-store"
 import { fileDropService } from "src/services/file-drop-service"
 import { interfaceStore } from "src/services/interface-store"
 import { type ExtensionComponentDebugEvent } from "src/types/ExtensionComponentDebugEvent"
 import { type FieldAction, sanitizeFieldActions } from "src/types/FieldAction"
+import { openLink } from "src/utils/common/open-link"
 import { toPlainJson } from "src/utils/data/to-plain-json"
 import { buildExtensionComponentDocument } from "src/utils/extension/build-extension-component-document"
 import { getExtensionComponentTheme } from "src/utils/extension/get-extension-component-theme"
@@ -67,6 +69,18 @@ interface ExtensionComponentFrameProps {
 }
 
 /**
+ * The URL when it is an http or https address, normalised
+ */
+function parseWebUrl(value: string): string | undefined {
+  try {
+    const url = new URL(value)
+    return url.protocol === "https:" || url.protocol === "http:" ? url.href : undefined
+  } catch {
+    return undefined
+  }
+}
+
+/**
  * A field drawn by an extension's HTML, in a frame with no origin: it can't
  * reach the app, its storage, Tauri or the network. It only exchanges JSON
  * values with the app through messages, see `ExtensionComponentBridge`, and
@@ -107,8 +121,12 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   // Read through refs, the message listener is attached once
   const latestRef = useRef({ value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, fieldProps })
   latestRef.current = { value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, fieldProps }
+  const isRunningRef = useRef(false)
 
   const themeName = useSelector(() => interfaceStore.resolvedTheme)
+
+  // Whether the tool is running, so a component can show it's busy
+  const isRunning = useSelector(() => activeAppletStore.getActiveApplet().isActionRunning)
 
   // Built once: the frame reloads whenever its document changes
   const frameDocument = useMemo(() => buildExtensionComponentDocument(html, getExtensionComponentTheme(themeName)), [html])
@@ -139,6 +157,7 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
           value: latest.value,
           readOnly: mode === "output" || latest.readOnly,
           props: latest.fieldProps,
+          running: isRunningRef.current,
           theme: getExtensionComponentTheme(interfaceStore.resolvedTheme)
         })
       } else if (data.type === "change" && mode === "input" && !latestRef.current.readOnly) {
@@ -156,6 +175,12 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
       } else if (data.type === "open-files" && Array.isArray(data.paths)) {
         // Shown as a drop: nothing is read until a tool is picked for a file
         void fileDropService.openFilesFromComponent(data.paths.filter((path: unknown): path is string => typeof path === "string"))
+      } else if (data.type === "open-url" && typeof data.url === "string") {
+        // Web pages only, in the default browser: no file:, app or custom schemes
+        const url = parseWebUrl(data.url)
+        if (url) {
+          void openLink(url)
+        }
       }
     }
 
@@ -177,6 +202,13 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
       post({ type: "readOnly", readOnly: mode === "output" || readOnly })
     }
   }, [readOnly])
+
+  useEffect(() => {
+    isRunningRef.current = isRunning
+    if (isReadyRef.current) {
+      post({ type: "running", running: isRunning })
+    }
+  }, [isRunning])
 
   // Theme and accent colour live on the page's root and body
   useEffect(() => {

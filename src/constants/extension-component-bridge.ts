@@ -13,6 +13,10 @@
  *   peranti.setValue(v)   inputs only, sets the field's value
  *   peranti.openFiles(p)  asks to open files (absolute paths) with a tool:
  *                         Peranti shows the same picker as a file drop
+ *   peranti.running       true while the tool runs
+ *   peranti.onRunning(fn) called with true when a run starts and false when it
+ *                         ends (and now), returns an unsubscribe
+ *   peranti.openUrl(u)    opens an http(s) URL in the default browser
  *   peranti.setActions(a) buttons in the field header: [{ id, label?, icon?,
  *                         tooltip?, active?, disabled? }], replacing the last
  *                         list. The id "run" runs the tool
@@ -20,9 +24,15 @@
  *                         returns an unsubscribe
  */
 export const ExtensionComponentBridge = `(() => {
-  const state = { ready: false, mode: "output", value: undefined, readOnly: true, props: {} }
+  const state = { ready: false, mode: "output", value: undefined, readOnly: true, props: {}, running: false }
   const listeners = new Set()
   const actionListeners = new Set()
+  const runningListeners = new Set()
+  const emitRunning = () => {
+    runningListeners.forEach((listener) => {
+      try { listener(state.running) } catch (error) { console.error(error) }
+    })
+  }
 
   const post = (message) => {
     window.parent.postMessage(Object.assign({ source: "peranti-component" }, message), "*")
@@ -67,14 +77,19 @@ export const ExtensionComponentBridge = `(() => {
       state.readOnly = data.readOnly
       state.props = data.props || {}
       state.value = data.value
+      state.running = data.running === true
       state.ready = true
       applyTheme(data.theme)
       emit()
+      emitRunning()
     } else if (data.type === "value") {
       state.value = data.value
       emit()
     } else if (data.type === "readOnly") {
       state.readOnly = data.readOnly
+    } else if (data.type === "running") {
+      state.running = data.running === true
+      emitRunning()
     } else if (data.type === "theme") {
       applyTheme(data.theme)
     } else if (data.type === "action" && typeof data.id === "string") {
@@ -89,6 +104,7 @@ export const ExtensionComponentBridge = `(() => {
     get value() { return state.value },
     get readOnly() { return state.readOnly },
     get props() { return state.props },
+    get running() { return state.running },
     onValue(listener) {
       listeners.add(listener)
       if (state.ready) listener(state.value)
@@ -102,6 +118,14 @@ export const ExtensionComponentBridge = `(() => {
     openFiles(paths) {
       const list = [].concat(paths).filter((path) => typeof path === "string" && path)
       if (list.length) post({ type: "open-files", paths: list })
+    },
+    onRunning(listener) {
+      runningListeners.add(listener)
+      if (state.ready) listener(state.running)
+      return () => { runningListeners.delete(listener) }
+    },
+    openUrl(url) {
+      if (typeof url === "string" && /^https?:\\/\\//i.test(url)) post({ type: "open-url", url })
     },
     setActions(actions) {
       // Plain JSON only: functions or DOM nodes can't be posted
