@@ -14,6 +14,9 @@ import { userSettingsService } from "./services/user-settings-service.ts"
  * state is restored, so the default layout never flashes on startup
  */
 const AppMain = lazy(async() => {
+  const { registerBuiltInComponents } = await import("./components/registry/index.ts")
+  registerBuiltInComponents()
+
   const appMain = await import("./AppMain.tsx")
   const { waitForRestoredState } = await import("./bootstrap/wait-for-restored-state.ts")
   await waitForRestoredState()

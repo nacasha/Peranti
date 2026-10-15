@@ -1,7 +1,7 @@
 import { type FC } from "react"
 
+import { type InputComponents } from "src/components/registry/input-components.ts"
 import { type AppletComponent } from "src/models/AppletComponent.ts"
-import { type appletComponentService } from "src/services/applet-component-service.ts"
 
 import { type InputComponentProps } from "./InputComponentProps.ts"
 
@@ -9,17 +9,17 @@ type ExtractType<T> = T extends AppletComponent<FC<InputComponentProps<infer P>>
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace InputFieldsType {
-  export type Run = ExtractType<typeof appletComponentService.inputs.Run>
-  export type Checkbox = ExtractType<typeof appletComponentService.inputs.Checkbox>
-  export type TextArea = ExtractType<typeof appletComponentService.inputs.TextArea>
-  export type Text = ExtractType<typeof appletComponentService.inputs.Text>
-  export type Switch = ExtractType<typeof appletComponentService.inputs.Switch>
-  export type File = ExtractType<typeof appletComponentService.inputs.File>
-  export type Files = ExtractType<typeof appletComponentService.inputs.Files>
-  export type Select = ExtractType<typeof appletComponentService.inputs.Select>
-  export type ListReorder = ExtractType<typeof appletComponentService.inputs.ListReorder>
-  export type ListPick = ExtractType<typeof appletComponentService.inputs.ListPick>
-  export type DateTime = ExtractType<typeof appletComponentService.inputs.DateTime>
-  export type DateRange = ExtractType<typeof appletComponentService.inputs.DateRange>
-  export type Code = ExtractType<typeof appletComponentService.inputs.Code>
+  export type Run = ExtractType<InputComponents["Run"]>
+  export type Checkbox = ExtractType<InputComponents["Checkbox"]>
+  export type TextArea = ExtractType<InputComponents["TextArea"]>
+  export type Text = ExtractType<InputComponents["Text"]>
+  export type Switch = ExtractType<InputComponents["Switch"]>
+  export type File = ExtractType<InputComponents["File"]>
+  export type Files = ExtractType<InputComponents["Files"]>
+  export type Select = ExtractType<InputComponents["Select"]>
+  export type ListReorder = ExtractType<InputComponents["ListReorder"]>
+  export type ListPick = ExtractType<InputComponents["ListPick"]>
+  export type DateTime = ExtractType<InputComponents["DateTime"]>
+  export type DateRange = ExtractType<InputComponents["DateRange"]>
+  export type Code = ExtractType<InputComponents["Code"]>
 }

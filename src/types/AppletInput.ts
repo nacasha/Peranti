@@ -1,5 +1,5 @@
+import { type InputComponents } from "src/components/registry/input-components.ts"
 import { type AppletComponent } from "src/models/AppletComponent.ts"
-import { type appletComponentService } from "src/services/applet-component-service.ts"
 
 import { type FieldAction } from "./FieldAction.ts"
 import { type InputComponentProps } from "./InputComponentProps.ts"
@@ -18,8 +18,6 @@ export interface ComputedProp<K = any> {
   key: Extract<keyof K, string>
   transform?: (value: any) => any
 }
-
-type InputComponents = typeof appletComponentService.inputs
 
 /**
  * A field of one input component: its static `props`, plus `computedProps`

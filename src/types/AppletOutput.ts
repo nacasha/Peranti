@@ -1,6 +1,6 @@
 import { type KeyValueOutputProps } from "src/components/outputs/KeyValueOutput/KeyValueOutput.tsx"
+import { type OutputComponents } from "src/components/registry/output-components.ts"
 import { type AppletComponent } from "src/models/AppletComponent.ts"
-import { type appletComponentService } from "src/services/applet-component-service.ts"
 
 import { type FieldAction } from "./FieldAction.ts"
 import { type OutputComponentProps } from "./OutputComponentProps.ts"
@@ -48,57 +48,57 @@ export type AppletOutput<K extends Record<string, string> | any = any> = {
   hideInHistory?: boolean
 } & ({
   component: "Text"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Text>
+  props?: ExtractOutputComponentProps<OutputComponents["Text"]>
 } | {
   component: "TextArea"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.TextArea>
+  props?: ExtractOutputComponentProps<OutputComponents["TextArea"]>
 } | {
   component: "GridStat"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.GridStat>
+  props?: ExtractOutputComponentProps<OutputComponents["GridStat"]>
 } | {
   component: "Diff"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Diff>
+  props?: ExtractOutputComponentProps<OutputComponents["Diff"]>
 } | {
   component: "Image"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Image>
+  props?: ExtractOutputComponentProps<OutputComponents["Image"]>
 } | {
   component: "File"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.File>
+  props?: ExtractOutputComponentProps<OutputComponents["File"]>
 } | {
   component: "Code"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Code>
+  props?: ExtractOutputComponentProps<OutputComponents["Code"]>
 } | {
   component: "Markdown"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Markdown>
+  props?: ExtractOutputComponentProps<OutputComponents["Markdown"]>
 } | {
   component: "IFrame"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.IFrame>
+  props?: ExtractOutputComponentProps<OutputComponents["IFrame"]>
 } | {
   component: "Mermaid"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Mermaid>
+  props?: ExtractOutputComponentProps<OutputComponents["Mermaid"]>
 } | {
   component: "Pintora"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Mermaid>
+  props?: ExtractOutputComponentProps<OutputComponents["Pintora"]>
 } | {
   component: "React"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.React>
+  props?: ExtractOutputComponentProps<OutputComponents["React"]>
 } | {
   component: "DataGrid"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.DataGrid>
+  props?: ExtractOutputComponentProps<OutputComponents["DataGrid"]>
 } | {
   component: "JsonTree"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.JsonTree>
+  props?: ExtractOutputComponentProps<OutputComponents["JsonTree"]>
 } | {
   component: "Color"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.Color>
+  props?: ExtractOutputComponentProps<OutputComponents["Color"]>
 } | {
   component: "ColorPallete"
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.ColorPallete>
+  props?: ExtractOutputComponentProps<OutputComponents["ColorPallete"]>
 } | {
   component: "KeyValue"
   /**
    * `label` is the card title. KeyValue fields sharing the same `label` are
    * rendered together as one card, one row per field.
    */
-  props?: ExtractOutputComponentProps<typeof appletComponentService.outputs.KeyValue> & Pick<KeyValueOutputProps, "label">
+  props?: ExtractOutputComponentProps<OutputComponents["KeyValue"]> & Pick<KeyValueOutputProps, "label">
 })
