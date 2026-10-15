@@ -1,7 +1,7 @@
 import { type ExtensionComponentFile } from "src/types/ExtensionComponentFile"
 import { type ExtensionTool } from "src/types/ExtensionTool"
 
-import { getExtensionComponentKey } from "./get-extension-component-key.js"
+import { getExtensionComponentKey } from "./extension-ids.js"
 
 /**
  * Point the `"@<componentId>"` fields of a tool at the extension's own

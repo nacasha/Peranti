@@ -1,5 +1,6 @@
 import { type ExtensionComponentFile } from "src/types/ExtensionComponentFile"
 import { type ExtensionFolderReader } from "src/types/ExtensionFolderReader"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 
 import { resolveComponentAssetPath } from "./resolve-component-asset-path.js"
 
@@ -25,7 +26,7 @@ export async function loadExtensionComponentHtml(
   try {
     html = await readRelative(definition.entry)
   } catch (exception) {
-    const message = exception instanceof Error ? exception.message : String(exception)
+    const message = getErrorMessage(exception)
     throw new Error(`${path}: can't read "${definition.entry}": ${message}`)
   }
 

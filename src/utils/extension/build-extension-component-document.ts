@@ -1,5 +1,6 @@
-import { ExtensionComponentBridge } from "src/constants/extension-component-bridge"
 import { type ExtensionComponentTheme } from "src/types/ExtensionComponentTheme"
+
+import { getExtensionComponentBridgeScript } from "./extension-component-bridge.js"
 
 /**
  * Nothing can be loaded or fetched: no network, no Tauri IPC, no files.
@@ -41,7 +42,7 @@ export function buildExtensionComponentDocument(html: string, theme: ExtensionCo
   ].join("\n")
 
   const bridge = document.createElement("script")
-  bridge.textContent = ExtensionComponentBridge
+  bridge.textContent = getExtensionComponentBridgeScript()
 
   head.prepend(policy, style, bridge)
   document.documentElement.dataset.theme = theme.name

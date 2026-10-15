@@ -19,6 +19,7 @@ import { detectCatalogSourceType } from "src/utils/catalog/detect-catalog-source
 import { formatCatalogUpdatedLabel } from "src/utils/catalog/format-catalog-updated-label"
 import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-label"
 import { refreshAllSourcesWithToast, refreshSourceWithToast, reloadExtensionsWithToast } from "src/utils/catalog/refresh-with-toast"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { prettyDateFormat } from "src/utils/time/pretty-date-format"
 
@@ -100,7 +101,7 @@ export const SettingsExtensions: FC = observer(() => {
       setBranch("")
       setPickedType(undefined)
     } catch (exception) {
-      setError(exception instanceof Error ? exception.message : String(exception))
+      setError(getErrorMessage(exception))
     } finally {
       setIsAdding(false)
     }

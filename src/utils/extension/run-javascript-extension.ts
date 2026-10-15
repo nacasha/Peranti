@@ -1,3 +1,5 @@
+import { type ExtensionWorkerRequest, type ExtensionWorkerResponse } from "src/types/ExtensionWorkerMessage"
+
 /**
  * Runs JavaScript extension `code` in a fresh Web Worker and resolves with
  * the output values its default export returns. The worker is terminated
@@ -22,7 +24,7 @@ export async function runJavaScriptExtension(
       worker.terminate()
     }
 
-    worker.onmessage = (event: MessageEvent<{ result?: Record<string, any>, error?: string }>) => {
+    worker.onmessage = (event: MessageEvent<ExtensionWorkerResponse>) => {
       finish()
 
       if (event.data.error !== undefined) {
@@ -37,6 +39,7 @@ export async function runJavaScriptExtension(
       reject(new Error(event.message || "Extension worker failed"))
     }
 
-    worker.postMessage({ code, inputValues })
+    const request: ExtensionWorkerRequest = { code, inputValues }
+    worker.postMessage(request)
   })
 }

@@ -20,13 +20,12 @@ import { type InstalledExtension, type InstalledExtensionTool } from "src/types/
 import { type LoadedExtensionComponent } from "src/types/LoadedExtensionComponent"
 import { getCatalogSourceKey } from "src/utils/catalog/get-catalog-source-key"
 import { resolveLocalSourceFolder } from "src/utils/catalog/resolve-local-source-folder"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { createBrowserExtensionFolderReader } from "src/utils/extension/create-browser-extension-folder-reader"
 import { createLocalExtensionFolderReader } from "src/utils/extension/create-local-extension-folder-reader"
+import { getExtensionComponentKey, getExtensionId, getExtensionToolAppletId } from "src/utils/extension/extension-ids"
 import { getBrowserExtensionPath } from "src/utils/extension/get-browser-extension-path"
-import { getExtensionComponentKey } from "src/utils/extension/get-extension-component-key"
-import { getExtensionId } from "src/utils/extension/get-extension-id"
-import { getExtensionToolAppletId } from "src/utils/extension/get-extension-tool-applet-id"
 import { loadExtensionComponentHtml } from "src/utils/extension/load-extension-component-html"
 import { parseBrowserExtensionPath } from "src/utils/extension/parse-browser-extension-path"
 import { readExtensionComponents } from "src/utils/extension/read-extension-components"
@@ -248,7 +247,7 @@ class ExtensionsService {
       installedExtension.components = components
       installedExtension.tools = tools
     } catch (exception) {
-      installedExtension.error = exception instanceof Error ? exception.message : String(exception)
+      installedExtension.error = getErrorMessage(exception)
     }
 
     return installedExtension

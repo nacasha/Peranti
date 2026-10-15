@@ -5,14 +5,13 @@ import { useContextMenu } from "react-contexify"
 import { FileDropTarget } from "src/components/filedrop/FileDropTarget"
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { AppletComponentContext } from "src/contexts/AppletComponentContext"
+import { useExtensionFieldProps } from "src/hooks/useExtensionFieldProps"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
-import { extensionComponentRegistry } from "src/services/extension-component-registry"
 import { fileDropService } from "src/services/file-drop-service"
 import { type AppletInput, type ComputedProp } from "src/types/AppletInput"
 import { type InputComponentProps } from "src/types/InputComponentProps"
-import { isFieldContentSized } from "src/utils/applet/is-field-content-sized"
 import { readComputedPropSources } from "src/utils/component/read-computed-prop-sources"
 import { transformComputedProps } from "src/utils/component/transform-computed-props"
 
@@ -101,6 +100,16 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = memo((props) =>
     actions: appletInput.actions
   }), [appletInput.key, inputComponent, appletInput.showRegenerateButton, appletInput.allowBatch, appletInput.actions])
 
+  const extensionFieldProps = useExtensionFieldProps({
+    applet: activeApplet,
+    type: "input",
+    fieldKey: appletInput.key,
+    component: appletInput.component,
+    initialState,
+    onStateChange: handleStateChange,
+    isSideBySide: isBatchModeEnabled || maximizedField.enabled
+  })
+
   /**
    * Pass `initialState` related props to selected components
    * Only few components handling those events
@@ -111,21 +120,7 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = memo((props) =>
     additionalProps.onStateChange = handleStateChange
   }
 
-  // Extension components follow their content only where the layout sizes
-  // the field by it, anywhere else they fill their place
-  if (extensionComponentRegistry.isExtensionComponent(appletInput.component)) {
-    // What the component saved with `peranti.setState`, handed back when it opens again
-    additionalProps.initialState = initialState
-    additionalProps.onStateChange = handleStateChange
-    additionalProps.fitContent = isFieldContentSized(
-      activeApplet.layoutSetting,
-      "input",
-      appletInput.key,
-      isBatchModeEnabled || maximizedField.enabled
-    )
-    // `peranti.run(values)`: runs this tab's tool, after the run that is going
-    additionalProps.onRun = async(runValues: Record<string, unknown>) => { await activeApplet.runWhenIdle(runValues) }
-  }
+  Object.assign(additionalProps, extensionFieldProps)
 
   Object.assign(additionalProps, computedPropValues)
 

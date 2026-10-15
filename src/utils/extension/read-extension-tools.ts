@@ -3,6 +3,7 @@ import { type ExtensionFolderReader } from "src/types/ExtensionFolderReader"
 import { type ExtensionManifest } from "src/types/ExtensionManifest"
 import { type ExtensionTool } from "src/types/ExtensionTool"
 import { type ExtensionToolFile } from "src/types/ExtensionToolFile"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 
 import { findExtensionDefinitionFiles } from "./find-extension-definition-files.js"
 
@@ -28,7 +29,7 @@ export async function readExtensionTools(
     try {
       definition = JSON.parse(await folder.readText(file.path))
     } catch (exception) {
-      const message = exception instanceof Error ? exception.message : String(exception)
+      const message = getErrorMessage(exception)
       throw new Error(`${file.path}: ${message}`)
     }
 

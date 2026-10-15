@@ -22,6 +22,7 @@ import { type LayoutSetting } from "src/types/LayoutSetting"
 import { type Session } from "src/types/Session"
 import { type HistoryBlob, type SessionHistorySnapshot, type SessionHistoryValue } from "src/types/SessionHistory"
 import { extractBinaryValues } from "src/utils/applet/extract-binary-values"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 import { runExtension } from "src/utils/extension/run-extension"
 import { runPipeline } from "src/utils/pipeline/run-pipeline"
 import { generateRandomString } from "src/utils/text/generate-random-string"
@@ -958,7 +959,7 @@ export class Applet<
   }
 
   private showRunError(error: unknown) {
-    const message = error instanceof Error ? error.message : String(error)
+    const message = getErrorMessage(error)
     toast.error(`${this.name}: ${message}`, { id: this.runErrorToastId })
   }
 

@@ -23,11 +23,12 @@ import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-labe
 import { listCatalogRepoFiles } from "src/utils/catalog/list-catalog-repo-files"
 import { readCatalogExtension } from "src/utils/catalog/read-catalog-extension"
 import { resolveLocalSourceFolder } from "src/utils/catalog/resolve-local-source-folder"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { createLocalExtensionFolderReader } from "src/utils/extension/create-local-extension-folder-reader"
 import { createRemoteExtensionFolderReader } from "src/utils/extension/create-remote-extension-folder-reader"
+import { getExtensionId } from "src/utils/extension/extension-ids"
 import { getExtensionFolderName } from "src/utils/extension/get-extension-folder-name"
-import { getExtensionId } from "src/utils/extension/get-extension-id"
 import { isSafeRelativePath } from "src/utils/extension/is-safe-relative-path"
 import { parseBrowserExtensionPath } from "src/utils/extension/parse-browser-extension-path"
 import { readExtensionFileBytes } from "src/utils/extension/read-extension-file-bytes"
@@ -451,7 +452,7 @@ class ExtensionCatalogService {
       this.saveCatalogCache(source, updatedAt, extensions)
     } catch (exception) {
       // What was shown stays, with the error next to it
-      const message = exception instanceof Error ? exception.message : String(exception)
+      const message = getErrorMessage(exception)
       this.setSourceState(source.id, { isLoading: false, isLoaded: true, error: message })
     }
   }

@@ -3,18 +3,63 @@ import { type FC } from "react"
 import { ExtensionComponentFrame } from "src/components/extension/ExtensionComponentFrame"
 import { ExtensionComponentMissing } from "src/components/extension/ExtensionComponentMissing"
 import { AppletComponent } from "src/models/AppletComponent.js"
-import { type InputComponentProps } from "src/types/InputComponentProps"
+import { type ExtensionComponentKind } from "src/types/ExtensionComponent"
+import { type ExtensionComponentMode } from "src/types/ExtensionComponentMessage"
 import { type LoadedExtensionComponent } from "src/types/LoadedExtensionComponent"
-import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
+import { isExtensionId } from "src/utils/extension/extension-ids"
+
+const DEFAULT_KIND: ExtensionComponentKind = "both"
+
+/**
+ * Modes a component of each kind can be used in
+ */
+const MODES_BY_KIND: Record<ExtensionComponentKind, ExtensionComponentMode[]> = {
+  input: ["input"],
+  output: ["output"],
+  both: ["input", "output"]
+}
+
+interface RegisteredComponent {
+  loaded: LoadedExtensionComponent
+  fields: Partial<Record<ExtensionComponentMode, AppletComponent>>
+}
+
+/**
+ * Whether a reloaded component is the same as the one registered, so its
+ * fields can be kept instead of remounted
+ */
+function isUnchanged(registered: RegisteredComponent | undefined, loaded: LoadedExtensionComponent) {
+  return registered !== undefined &&
+    registered.loaded.html === loaded.html &&
+    JSON.stringify(registered.loaded.definition) === JSON.stringify(loaded.definition)
+}
+
+/**
+ * A field component drawing `loaded` in a frame
+ */
+function createFieldComponent(loaded: LoadedExtensionComponent, mode: ExtensionComponentMode): AppletComponent {
+  const { html, key, definition } = loaded
+  const maximizable = definition.maximizable === true
+
+  const Field: FC<Record<string, unknown> & { fieldKey: string }> = (props) => (
+    <ExtensionComponentFrame {...props} mode={mode} html={html} componentKey={key} maximizable={maximizable} />
+  )
+
+  return new AppletComponent({
+    component: Field,
+    hideInHistory: true,
+    maximizable,
+    value: definition.value ?? { type: "any" },
+    props: definition.props
+  })
+}
 
 /**
  * Field components that loaded extensions provide, looked up by the
- * applet component service when a field names one. Kept apart from that
- * service so the extension loader doesn't import the whole component list.
+ * applet component service when a field names one
  */
 class ExtensionComponentRegistry {
-  private inputs = new Map<string, AppletComponent>()
-  private outputs = new Map<string, AppletComponent>()
+  private components = new Map<string, RegisteredComponent>()
 
   /**
    * Shown for a key that is no longer loaded
@@ -25,44 +70,36 @@ class ExtensionComponentRegistry {
   })
 
   /**
-   * Replace every registered component with those of the loaded extensions
+   * Replace every registered component with those of the loaded extensions.
+   * Components that didn't change keep their field components, so their open
+   * fields aren't remounted and don't lose their state.
    */
   setComponents(components: LoadedExtensionComponent[]) {
-    this.inputs = new Map()
-    this.outputs = new Map()
+    const previous = this.components
 
-    components.forEach((component) => {
-      const kind = component.definition.kind ?? "both"
-      const value = component.definition.value ?? { type: "any" }
-      const propsInfo = component.definition.props
-      const maximizable = component.definition.maximizable === true
-
-      if (kind !== "output") {
-        const Input: FC<InputComponentProps<any>> = (props) => (
-          <ExtensionComponentFrame {...props} mode="input" html={component.html} componentKey={component.key} maximizable={maximizable} />
-        )
-        this.inputs.set(component.key, new AppletComponent({ component: Input, hideInHistory: true, maximizable, value, props: propsInfo }))
+    this.components = new Map(components.map((loaded) => {
+      const registered = previous.get(loaded.key)
+      if (isUnchanged(registered, loaded)) {
+        return [loaded.key, registered!]
       }
 
-      if (kind !== "input") {
-        const Output: FC<OutputComponentProps<any>> = (props) => (
-          <ExtensionComponentFrame {...props} mode="output" html={component.html} componentKey={component.key} maximizable={maximizable} />
-        )
-        this.outputs.set(component.key, new AppletComponent({ component: Output, hideInHistory: true, maximizable, value, props: propsInfo }))
-      }
-    })
+      const modes = MODES_BY_KIND[loaded.definition.kind ?? DEFAULT_KIND]
+      const fields = Object.fromEntries(modes.map((mode) => [mode, createFieldComponent(loaded, mode)]))
+
+      return [loaded.key, { loaded, fields }]
+    }))
   }
 
   isExtensionComponent(name: string) {
-    return name.startsWith("ext:")
+    return isExtensionId(name)
   }
 
   getInput(name: string) {
-    return this.inputs.get(name) ?? this.missing
+    return this.components.get(name)?.fields.input ?? this.missing
   }
 
   getOutput(name: string) {
-    return this.outputs.get(name) ?? this.missing
+    return this.components.get(name)?.fields.output ?? this.missing
   }
 }
 

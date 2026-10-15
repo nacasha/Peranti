@@ -5,6 +5,7 @@ import toast from "react-hot-toast"
 import { Button } from "src/components/common/Button"
 import { Icons } from "src/constants/icons"
 import { ClipboardService } from "src/services/clipboard-service"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 
 import "./AppletErrorFallback.scss"
 
@@ -16,7 +17,7 @@ export const AppletErrorFallback: FC<FallbackProps> = ({ error, resetErrorBounda
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
 
-  const message = error instanceof Error ? error.message : String(error)
+  const message = getErrorMessage(error)
   const details = error instanceof Error && error.stack ? error.stack : message
 
   const handleCopy = async() => {

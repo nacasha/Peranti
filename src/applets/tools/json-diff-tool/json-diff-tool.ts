@@ -3,6 +3,7 @@ import { DiffMethod } from "react-diff-viewer"
 import { AppletConstructor } from "src/models/AppletConstructor"
 import { type InputFieldsType } from "src/types/InputFieldsType"
 import { type OutputFieldsType } from "src/types/OutputFieldsType"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 
 interface InputFields {
   inputA: InputFieldsType.Code
@@ -48,7 +49,7 @@ function normalizeJson(text: string, sortKeys: boolean): { code: string, error?:
     const value: unknown = JSON.parse(text)
     return { code: JSON.stringify(sortKeys ? sortJsonKeys(value) : value, null, 2) }
   } catch (error) {
-    return { error: `Invalid JSON: ${error instanceof Error ? error.message : String(error)}` }
+    return { error: `Invalid JSON: ${getErrorMessage(error)}` }
   }
 }
 

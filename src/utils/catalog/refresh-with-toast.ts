@@ -5,6 +5,7 @@ import { appletStore } from "src/services/applet-store"
 import { extensionCatalogService } from "src/services/extension-catalog-service"
 import { extensionsService } from "src/services/extensions-service"
 import { type CatalogSource } from "src/types/CatalogSource"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 
 /**
  * One toast for every reload or refresh, replaced when another starts
@@ -13,10 +14,6 @@ const TOAST_ID = "extensions-refresh"
 
 function plural(count: number, word: string) {
   return `${count} ${word}${count === 1 ? "" : "s"}`
-}
-
-function getErrorMessage(exception: unknown) {
-  return exception instanceof Error ? exception.message : String(exception)
 }
 
 /**

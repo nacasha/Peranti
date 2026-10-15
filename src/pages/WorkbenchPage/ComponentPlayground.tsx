@@ -8,6 +8,7 @@ import { Button } from "src/components/common/Button"
 import { ExtensionComponentFrame } from "src/components/extension/ExtensionComponentFrame"
 import { ComponentValueTypeLabels } from "src/constants/component-value-types"
 import { ExtensionComponentKindLabels } from "src/constants/extension-component-kind-labels"
+import { ComponentMessageType, HostMessageType } from "src/constants/extension-component-protocol"
 import { Icons } from "src/constants/icons"
 import { AppletComponentContext } from "src/contexts/AppletComponentContext"
 import { ExtensionDetailsHeader } from "src/pages/ExtensionsPage/ExtensionDetailsHeader.tsx"
@@ -107,14 +108,14 @@ export const ComponentPlayground: FC<ComponentPlaygroundProps> = observer(({ tar
   }, [])
 
   const handleDebugEvent = useCallback((event: ExtensionComponentDebugEvent) => {
-    if (event.type === "log") {
+    if (event.type === ComponentMessageType.Log) {
       addLog({ direction: "console", type: "console", level: String(event.data.level), detail: String(event.data.message) })
       return
     }
 
     // Theme carries every CSS variable, its name is enough here
     const { source, theme, ...rest } = event.data
-    const detail = event.type === "theme" || theme
+    const detail = event.type === HostMessageType.Theme || theme
       ? JSON.stringify({ ...rest, theme: (theme as { name?: string } | undefined)?.name })
       : JSON.stringify(rest)
 

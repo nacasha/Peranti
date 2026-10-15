@@ -7,6 +7,7 @@ import { Icons } from "src/constants/icons"
 import { usePageState } from "src/hooks/usePageState"
 import { type CatalogExtensionFile } from "src/types/CatalogExtension"
 import { type FileTreeNode } from "src/types/FileTreeNode"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 import { buildFileTree } from "src/utils/file/build-file-tree"
 import { decodePreviewText } from "src/utils/file/decode-preview-text"
 import { formatFileSize } from "src/utils/file/format-file-size"
@@ -72,7 +73,7 @@ export const ExtensionFilesExplorer: FC<ExtensionFilesExplorerProps> = ({ files,
       })
       .catch((exception: unknown) => {
         if (!isCurrent) return
-        setPreview({ status: "error", message: exception instanceof Error ? exception.message : String(exception) })
+        setPreview({ status: "error", message: getErrorMessage(exception) })
       })
 
     return () => { isCurrent = false }

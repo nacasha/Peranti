@@ -14,6 +14,7 @@ import { sessionStore } from "src/services/session-store"
 import { type CatalogExtensionFile } from "src/types/CatalogExtension"
 import { type InstalledExtension } from "src/types/InstalledExtension"
 import { installCatalogExtension } from "src/utils/catalog/install-catalog-extension"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { openComponentInWorkbench } from "src/utils/component/open-component-in-workbench"
 import { getExtensionProvidesLabels } from "src/utils/extension/get-extension-provides-labels"
@@ -72,7 +73,7 @@ export const InstalledExtensionDetails: FC<InstalledExtensionDetailsProps> = obs
       await appletStore.reloadExtensions()
       toast.success(`Uninstalled ${name}`)
     } catch (exception) {
-      const message = exception instanceof Error ? exception.message : String(exception)
+      const message = getErrorMessage(exception)
       toast.error(`Failed to uninstall ${folderName}: ${message}`)
     }
   }

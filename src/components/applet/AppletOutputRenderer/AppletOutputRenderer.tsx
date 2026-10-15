@@ -4,13 +4,12 @@ import { useContextMenu } from "react-contexify"
 
 import { ContextMenuKeys } from "src/constants/context-menu-keys"
 import { AppletComponentContext } from "src/contexts/AppletComponentContext"
+import { useExtensionFieldProps } from "src/hooks/useExtensionFieldProps"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { appletComponentService } from "src/services/applet-component-service"
-import { extensionComponentRegistry } from "src/services/extension-component-registry"
 import { type AppletOutput } from "src/types/AppletOutput"
 import { type OutputComponentProps } from "src/types/OutputComponentProps.ts"
-import { isFieldContentSized } from "src/utils/applet/is-field-content-sized"
 import { shallowEqualArrays } from "src/utils/common/shallow-equal-arrays"
 
 interface AppletOutputRendererProps {
@@ -94,6 +93,16 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = memo((props) 
     groupedOutputs.map((output) => [output.key, { label: output.label }])
   ), [groupedOutputs])
 
+  const extensionFieldProps = useExtensionFieldProps({
+    applet: activeApplet,
+    type: "output",
+    fieldKey: appletOutput.key,
+    component: appletOutput.component,
+    initialState,
+    onStateChange: handleStateChange,
+    isSideBySide: isBatchModeEnabled || maximizedField.enabled
+  })
+
   /**
    * Pass `initialState` related props to selected components
    * Only few components handling those events
@@ -104,21 +113,7 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = memo((props) 
     additionalProps.onStateChange = handleStateChange
   }
 
-  // Extension components follow their content only where the layout sizes
-  // the field by it, anywhere else they fill their place
-  if (extensionComponentRegistry.isExtensionComponent(appletOutput.component)) {
-    // What the component saved with `peranti.setState`, handed back when it opens again
-    additionalProps.initialState = initialState
-    additionalProps.onStateChange = handleStateChange
-    additionalProps.fitContent = isFieldContentSized(
-      activeApplet.layoutSetting,
-      "output",
-      appletOutput.key,
-      isBatchModeEnabled || maximizedField.enabled
-    )
-    // `peranti.run(values)`: runs this tab's tool, after the run that is going
-    additionalProps.onRun = async(runValues: Record<string, unknown>) => { await activeApplet.runWhenIdle(runValues) }
-  }
+  Object.assign(additionalProps, extensionFieldProps)
 
   if (maximizedField.enabled && maximizedField.type === "output" && maximizedField.key !== appletOutput.key) {
     return

@@ -2,6 +2,7 @@ import { FileNames } from "src/constants/file-names"
 import { type ExtensionComponent } from "src/types/ExtensionComponent"
 import { type ExtensionComponentFile } from "src/types/ExtensionComponentFile"
 import { type ExtensionFolderReader } from "src/types/ExtensionFolderReader"
+import { getErrorMessage } from "src/utils/common/get-error-message"
 
 import { getComponentPropsDefinitionError } from "../component/get-component-props-definition-error.js"
 import { getComponentValueDefinitionError } from "../component/get-component-value-definition-error.js"
@@ -25,7 +26,7 @@ export async function readExtensionComponents(folder: ExtensionFolderReader): Pr
     try {
       definition = JSON.parse(await folder.readText(file.path))
     } catch (exception) {
-      const message = exception instanceof Error ? exception.message : String(exception)
+      const message = getErrorMessage(exception)
       throw new Error(`${file.path}: ${message}`)
     }
 
