@@ -9,9 +9,25 @@ type ExtractOutputComponentProps<T> = T extends AppletComponent<React.FC<infer P
   ? Omit<P, keyof OutputComponentProps>
   : never
 
+/**
+ * One output field of an applet: which component renders it, how it's
+ * labelled, and how it takes part in batch mode and history
+ */
 export type AppletOutput<K extends Record<string, string> | any = any> = {
+  /**
+   * Key of this field in the applet's output values
+   */
   key: Extract<keyof K, string>
+
+  /**
+   * Text shown in the field header
+   */
   label: string
+
+  /**
+   * Let this field be picked as the batch output. Batch mode shows only the
+   * picked output and hides the others
+   */
   allowBatch?: boolean
 
   /**

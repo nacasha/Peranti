@@ -34,12 +34,42 @@ interface InputComponentField<N extends keyof InputComponents, K> {
   }
 }
 
+/**
+ * One input field of an applet: which component renders it, how it's
+ * labelled, and how it takes part in batch mode, history and validation
+ */
 export type AppletInput<K extends Record<string, string> | any = any> = {
+  /**
+   * Key of this field in the applet's input values
+   */
   key: Extract<keyof K, string>
+
+  /**
+   * Text shown in the field header
+   */
   label: string
+
+  /**
+   * Value the field starts with
+   */
   defaultValue?: any
+
+  /**
+   * Let this field be the batch input in batch mode, where each line or file
+   * is run through the applet on its own
+   */
   allowBatch?: boolean
+
+  /**
+   * Ignore this field's value when checking whether the applet has any input,
+   * e.g. a field that always has a value shouldn't trigger auto-run on its own
+   */
   skipValidateHasValue?: boolean
+
+  /**
+   * `true` for the built-in page applets (Settings, History, …), which render
+   * a full-page component instead of a regular input component
+   */
   customComponent?: boolean
 
   /**
