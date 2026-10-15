@@ -55,7 +55,7 @@ export async function readExtensionComponents(folder: ExtensionFolderReader): Pr
     components.push({
       definition: { ...definition, componentId: file.id, name: definition.name || file.id },
       path: file.path,
-      folderPath: await folder.resolveFolder(file.folder)
+      folder: file.folder
     })
   }
 

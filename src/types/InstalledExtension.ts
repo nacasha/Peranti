@@ -2,6 +2,7 @@ import { type AppletConstructor } from "src/models/AppletConstructor"
 
 import { type ExtensionManifest } from "./ExtensionManifest.ts"
 import { type ExtensionSource } from "./ExtensionSource.ts"
+import { type ExtensionFolder } from "./ExtensionStorage.ts"
 import { type ExtensionTool } from "./ExtensionTool.ts"
 import { type LoadedExtensionComponent } from "./LoadedExtensionComponent.ts"
 
@@ -21,7 +22,7 @@ export interface InstalledExtensionTool {
  */
 export interface InstalledExtension {
   /**
-   * ID of the extension, see `getExtensionId`. Its only tool is registered
+   * ID of the extension, see `extension-ids`. Its only tool is registered
    * under it, tools of a package under `<id>/<toolId>`.
    */
   id: string
@@ -33,10 +34,14 @@ export interface InstalledExtension {
   sourceKey?: string
 
   /**
-   * Name of the folder, identifies the extension on disk
+   * Name of the folder, identifies the extension where it's kept
    */
   folderName: string
-  folderPath: string
+
+  /**
+   * Where its files are, on disk or in the browser
+   */
+  folder: ExtensionFolder
 
   /**
    * Parsed `peranti.json`, missing when the file can't be read or parsed

@@ -1,4 +1,4 @@
-import { exists, mkdir, readDir, writeTextFile } from "@tauri-apps/plugin-fs"
+import { exists, mkdir, writeTextFile } from "@tauri-apps/plugin-fs"
 import localforage from "localforage"
 
 import { FileNames } from "src/constants/file-names.js"
@@ -64,14 +64,6 @@ export const appDataService = {
       } catch (err: any) {
         console.log(err)
       }
-    }
-  },
-
-  async readExtensionsFolder() {
-    if (isRunningInTauri) {
-      await this.prepareExtensionsFolder()
-
-      return await readDir(await fileService.resolveFilePathInAppData(Folders.Extensions))
     }
   },
 

@@ -13,7 +13,8 @@ export interface ExtensionComponentFile {
   path: string
 
   /**
-   * Absolute folder of that file, the entry and its assets resolve against it
+   * Folder of that file, relative to the extension folder. Entry files
+   * resolve against it, and executables run inside it.
    */
-  folderPath: string
+  folder: string
 }

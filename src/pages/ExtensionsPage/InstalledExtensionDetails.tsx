@@ -15,11 +15,11 @@ import { type CatalogExtensionFile } from "src/types/CatalogExtension"
 import { type InstalledExtension } from "src/types/InstalledExtension"
 import { installCatalogExtension } from "src/utils/catalog/install-catalog-extension"
 import { getErrorMessage } from "src/utils/common/get-error-message"
-import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { openComponentInWorkbench } from "src/utils/component/open-component-in-workbench"
 import { getExtensionProvidesLabels } from "src/utils/extension/get-extension-provides-labels"
 import { getExtensionToolRuns } from "src/utils/extension/get-extension-tool-runs"
 import { getRuntimeSummary } from "src/utils/extension/get-runtime-summary"
+import { withoutInstallRecord } from "src/utils/extension/install-record"
 import { prettyDateFormat } from "src/utils/time/pretty-date-format"
 
 import { ExtensionComponentsSection, type ExtensionComponentsSectionItem } from "./ExtensionComponentsSection.tsx"
@@ -36,7 +36,7 @@ interface InstalledExtensionDetailsProps {
  * Details and actions of an installed extension
  */
 export const InstalledExtensionDetails: FC<InstalledExtensionDetailsProps> = observer(({ extension }) => {
-  const { manifest, tools, error, folderName, folderPath, source } = extension
+  const { manifest, tools, error, folderName, folder, source } = extension
   const name = manifest?.name ?? folderName
   const isEnabled = extensionsService.isEnabled(extension)
   const update = extensionCatalogService.getUpdate(extension)
@@ -51,12 +51,13 @@ export const InstalledExtensionDetails: FC<InstalledExtensionDetailsProps> = obs
     setFiles(undefined)
     setFilesError(undefined)
 
-    extensionCatalogService.listFolderFiles(folderPath)
+    folder.listFiles()
+      .then(withoutInstallRecord)
       .then((result) => { if (isCurrent) setFiles(result) })
       .catch((exception: unknown) => { if (isCurrent) setFilesError(String(exception)) })
 
     return () => { isCurrent = false }
-  }, [folderPath, installedAt])
+  }, [folder, installedAt])
 
   const handleToggle = (enabled: boolean) => {
     extensionsService.setEnabled(extension, enabled)
@@ -64,7 +65,9 @@ export const InstalledExtensionDetails: FC<InstalledExtensionDetailsProps> = obs
   }
 
   const handleReveal = () => {
-    void fileService.openPathInFileManager(folderPath)
+    if (folder.diskPath) {
+      void fileService.openPathInFileManager(folder.diskPath)
+    }
   }
 
   const handleUninstall = async() => {
@@ -124,7 +127,7 @@ export const InstalledExtensionDetails: FC<InstalledExtensionDetailsProps> = obs
             </Button>
           )}
 
-          {isRunningInTauri && <Button icon={Icons.Folder} onClick={handleReveal}>Show in Folder</Button>}
+          {folder.diskPath && <Button icon={Icons.Folder} onClick={handleReveal}>Show in Folder</Button>}
 
           {/* A linked folder belongs to its source, it's never deleted from here */}
           {!extension.linkedSourceId && (
@@ -132,7 +135,7 @@ export const InstalledExtensionDetails: FC<InstalledExtensionDetailsProps> = obs
               placement="bottomLeft"
               confirmation={() => ({
                 title: `Uninstall ${name}?`,
-                description: isRunningInTauri
+                description: folder.diskPath
                   ? "Its folder is deleted from disk, and its open tabs are closed"
                   : "It's removed from this browser, and its open tabs are closed",
                 confirmLabel: "Uninstall",
@@ -162,11 +165,11 @@ export const InstalledExtensionDetails: FC<InstalledExtensionDetailsProps> = obs
             : source ? source.catalog : "Added by hand"
         },
         source && { label: "Installed", value: prettyDateFormat(new Date(source.installedAt)) },
-        isRunningInTauri && {
+        folder.diskPath !== undefined && {
           label: "Folder",
           value: (
             <button type="button" className="ExtensionDetails-path" title="Show in Folder" onClick={handleReveal}>
-              {folderPath}
+              {folder.diskPath}
             </button>
           )
         }
@@ -193,7 +196,7 @@ export const InstalledExtensionDetails: FC<InstalledExtensionDetailsProps> = obs
             <ExtensionFilesExplorer
               files={files}
               placeholder={filesError ? `Couldn't read the folder: ${filesError}` : "Reading files…"}
-              readFile={async(file) => await extensionCatalogService.readInstalledFile(folderPath, file.path)}
+              readFile={async(file) => await folder.readBytes(file.path)}
             />
           )
         }

@@ -13,12 +13,12 @@ import { Icons } from "src/constants/icons"
 import { AppletComponentContext } from "src/contexts/AppletComponentContext"
 import { ExtensionDetailsHeader } from "src/pages/ExtensionsPage/ExtensionDetailsHeader.tsx"
 import { appletStore } from "src/services/applet-store"
+import { resolveDiskPath } from "src/services/extension-storage"
 import { fileService } from "src/services/file-service"
 import { type ComponentPlaygroundTarget } from "src/types/ComponentPlaygroundTarget"
 import { type ComponentPropInfo } from "src/types/ComponentPropInfo"
 import { type ComponentValueInfo } from "src/types/ComponentValueInfo"
 import { type ExtensionComponentDebugEvent } from "src/types/ExtensionComponentDebugEvent"
-import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { checkComponentProps } from "src/utils/component/check-component-props"
 import { checkComponentValueStructure } from "src/utils/component/check-component-value-structure"
 import { getBuiltInComponentUsages } from "src/utils/component/get-built-in-component-usages"
@@ -169,9 +169,12 @@ export const ComponentPlayground: FC<ComponentPlaygroundProps> = observer(({ tar
     void appletStore.reloadExtensions()
   }
 
-  const handleReveal = () => {
-    if (isExtension) {
-      void fileService.openPathInFileManager(target.component.folderPath)
+  // Only extension components have a folder of their own, on disk in the desktop app
+  const componentDiskFolder = isExtension ? target.component.extensionFolder.diskPath : undefined
+
+  const handleReveal = async() => {
+    if (isExtension && componentDiskFolder) {
+      await fileService.openPathInFileManager(await resolveDiskPath(componentDiskFolder, target.component.folder))
     }
   }
 
@@ -479,7 +482,7 @@ export const ComponentPlayground: FC<ComponentPlaygroundProps> = observer(({ tar
             {isExtension && (
               <>
                 <Button icon={Icons.Refresh} onClick={handleReloadExtensions}>Reload Files</Button>
-                {isRunningInTauri && <Button icon={Icons.Folder} onClick={handleReveal}>Show in Folder</Button>}
+                {componentDiskFolder && <Button icon={Icons.Folder} onClick={() => { void handleReveal() }}>Show in Folder</Button>}
               </>
             )}
           </>

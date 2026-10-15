@@ -1,43 +1,45 @@
-import { readDir, remove } from "@tauri-apps/plugin-fs"
 import { makeAutoObservable } from "mobx"
 import toast from "react-hot-toast"
 
 import { ExtensionCatalog } from "src/constants/extension-catalog"
 import { FileNames } from "src/constants/file-names"
-import { Folders } from "src/constants/folders.js"
 import { AppletType } from "src/enums/applet-type"
 import { CatalogSourceType } from "src/enums/catalog-source-type"
 import { ExtensionRuntime } from "src/enums/extension-runtime"
 import { UserSettingsKeys } from "src/enums/user-settings-keys.js"
 import { type AppletConstructor } from "src/models/AppletConstructor.js"
 import { type CatalogSource } from "src/types/CatalogSource"
-import { type ExtensionFolderReader } from "src/types/ExtensionFolderReader"
 import { type ExtensionManifest } from "src/types/ExtensionManifest"
 import { type ExtensionMetadata } from "src/types/ExtensionMetadata"
 import { type ExtensionSource } from "src/types/ExtensionSource"
+import { type ExtensionFolder } from "src/types/ExtensionStorage"
 import { type ExtensionTool } from "src/types/ExtensionTool"
 import { type InstalledExtension, type InstalledExtensionTool } from "src/types/InstalledExtension"
 import { type LoadedExtensionComponent } from "src/types/LoadedExtensionComponent"
-import { getCatalogSourceKey } from "src/utils/catalog/get-catalog-source-key"
-import { resolveLocalSourceFolder } from "src/utils/catalog/resolve-local-source-folder"
+import { getCatalogSourceKey, getUnknownSourceKey } from "src/utils/catalog/get-catalog-source-key"
+import { listLocalSourceFolders } from "src/utils/catalog/list-local-source-folders"
 import { getErrorMessage } from "src/utils/common/get-error-message"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
-import { createBrowserExtensionFolderReader } from "src/utils/extension/create-browser-extension-folder-reader"
-import { createLocalExtensionFolderReader } from "src/utils/extension/create-local-extension-folder-reader"
+import { createExtensionFolderReader } from "src/utils/extension/create-extension-folder-reader"
 import { getExtensionComponentKey, getExtensionId, getExtensionToolAppletId } from "src/utils/extension/extension-ids"
-import { getBrowserExtensionPath } from "src/utils/extension/get-browser-extension-path"
 import { loadExtensionComponentHtml } from "src/utils/extension/load-extension-component-html"
-import { parseBrowserExtensionPath } from "src/utils/extension/parse-browser-extension-path"
 import { readExtensionComponents } from "src/utils/extension/read-extension-components"
 import { readExtensionTools } from "src/utils/extension/read-extension-tools"
-import { resolveExtensionPath } from "src/utils/extension/resolve-extension-path"
 import { resolveExtensionToolComponents } from "src/utils/extension/resolve-extension-tool-components"
 
-import { appDataService } from "./app-data-service.js"
-import { browserExtensionStore } from "./browser-extension-store.js"
 import { extensionComponentRegistry } from "./extension-component-registry.tsx"
-import { fileService } from "./file-service.js"
+import { extensionStorage, resolveDiskPath } from "./extension-storage/index.js"
 import { userSettingsService } from "./user-settings-service.js"
+
+/**
+ * Category of an extension tool that names none
+ */
+const DEFAULT_TOOL_CATEGORY = "Extensions"
+
+/**
+ * Joins two paths relative to an extension folder
+ */
+const joinRelativePaths = (...paths: string[]) => paths.flatMap((path) => path.split("/")).filter(Boolean).join("/")
 
 class ExtensionsService {
   /**
@@ -110,7 +112,7 @@ class ExtensionsService {
     const catalogSource = customSources.find((item) => item.id === source.sourceId)
 
     // A removed source can't be looked up, its ID still keeps it apart
-    return catalogSource ? getCatalogSourceKey(catalogSource) : `unknown:${source.sourceId}`
+    return catalogSource ? getCatalogSourceKey(catalogSource) : getUnknownSourceKey(source.sourceId)
   }
 
   private setInstalledExtensions(installedExtensions: InstalledExtension[]) {
@@ -119,53 +121,52 @@ class ExtensionsService {
   }
 
   /**
-   * Build Applet Constructor from one tool of an extension
+   * Builds the applet constructor of one tool of an extension
+   *
+   * @param toolFolder Folder of the tool's definition, relative to the extension
    */
-  private async buildAppletConstructor(appletId: string, path: string, extension: ExtensionTool) {
-    // Errors name the tool, so a package says which of its tools is wrong
-    const prefix = extension.toolId ? `${extension.toolId}: ` : ""
-
-    if (!extension.toolId) {
+  private async buildAppletConstructor(appletId: string, folder: ExtensionFolder, toolFolder: string, tool: ExtensionTool) {
+    if (!tool.toolId) {
       throw new Error("\"toolId\" is required")
     }
 
-    const metadata: ExtensionMetadata = {
-      runtime: extension.runtime,
-      folderPath: path
-    }
+    // Errors name the tool, so a package says which of its tools is wrong
+    const prefix = `${tool.toolId}: `
+    const metadata: ExtensionMetadata = { runtime: tool.runtime, folder }
 
-    if (extension.runtime === ExtensionRuntime.JavaScript) {
-      if (!extension.javascript?.entry) {
+    if (tool.runtime === ExtensionRuntime.JavaScript) {
+      if (!tool.javascript?.entry) {
         throw new Error(`${prefix}"javascript.entry" is required for the javascript runtime`)
       }
 
-      metadata.entryFile = await resolveExtensionPath(path, extension.javascript.entry)
-    } else if (extension.runtime === ExtensionRuntime.Executable) {
-      if (!isRunningInTauri) {
+      metadata.entryFile = joinRelativePaths(toolFolder, tool.javascript.entry)
+    } else if (tool.runtime === ExtensionRuntime.Executable) {
+      if (!folder.diskPath) {
         throw new Error(`${prefix}the executable runtime needs the desktop app`)
       }
 
-      if (!extension.executable?.command) {
+      if (!tool.executable?.command) {
         throw new Error(`${prefix}"executable.command" is required for the executable runtime`)
       }
 
-      metadata.executable = extension.executable
+      metadata.executable = tool.executable
+      metadata.workingDirectory = await resolveDiskPath(folder.diskPath, toolFolder)
     } else {
       throw new Error(`${prefix}"runtime" must be "${ExtensionRuntime.JavaScript}" or "${ExtensionRuntime.Executable}"`)
     }
 
     const appletConstructor: AppletConstructor = {
       appletId,
-      name: extension.name,
-      description: extension.description,
-      category: extension.category ?? "Extensions",
-      inputFields: extension.inputFields,
-      outputFields: extension.outputFields,
-      layoutSetting: extension.layoutSetting,
-      autoRun: extension.autoRun,
+      name: tool.name,
+      description: tool.description,
+      category: tool.category ?? DEFAULT_TOOL_CATEGORY,
+      inputFields: tool.inputFields,
+      outputFields: tool.outputFields,
+      layoutSetting: tool.layoutSetting,
+      autoRun: tool.autoRun,
       type: AppletType.Extension,
-      presets: extension.presets,
-      disableMultipleSession: extension.disableMultipleSession,
+      presets: tool.presets,
+      disableMultipleSession: tool.disableMultipleSession,
       metadata
     }
 
@@ -178,25 +179,20 @@ class ExtensionsService {
    * A folder of a local source is linked: its ID is scoped by that source,
    * the same one a copy installed from it would get.
    */
-  private async readExtension(
-    folderPath: string,
-    folderName: string,
-    createFolder: () => Promise<ExtensionFolderReader>,
-    linkedSource?: CatalogSource
-  ): Promise<InstalledExtension> {
+  private async readExtension(extensionFolder: ExtensionFolder, linkedSource?: CatalogSource): Promise<InstalledExtension> {
     const linkedSourceKey = linkedSource && getCatalogSourceKey(linkedSource)
     const installedExtension: InstalledExtension = {
-      id: getExtensionId(linkedSourceKey, folderName),
+      id: getExtensionId(linkedSourceKey, extensionFolder.name),
       sourceKey: linkedSourceKey,
       linkedSourceId: linkedSource?.id,
-      folderName,
-      folderPath,
+      folderName: extensionFolder.name,
+      folder: extensionFolder,
       tools: [],
       components: []
     }
 
     try {
-      const folder = await createFolder()
+      const folder = await createExtensionFolderReader(extensionFolder)
 
       if (!folder.filePaths.includes(FileNames.ExtensionDefinition)) {
         throw new Error(`${FileNames.ExtensionDefinition} is missing`)
@@ -226,6 +222,7 @@ class ExtensionsService {
       for (const componentFile of componentFiles) {
         components.push({
           ...componentFile,
+          extensionFolder,
           key: getExtensionComponentKey(installedExtension.id, componentFile.definition.componentId),
           html: await loadExtensionComponentHtml(componentFile, folder)
         })
@@ -233,14 +230,14 @@ class ExtensionsService {
 
       const tools: InstalledExtensionTool[] = []
       const toolFiles = await readExtensionTools(manifest, folder)
-      for (const { definition, path, folderPath: toolFolderPath } of toolFiles) {
+      for (const { definition, path, folder: toolFolder } of toolFiles) {
         const appletId = getExtensionToolAppletId(installedExtension.id, definition.toolId)
         const resolvedDefinition = resolveExtensionToolComponents(definition, componentFiles, installedExtension.id)
 
         tools.push({
           definition,
           path,
-          appletConstructor: await this.buildAppletConstructor(appletId, toolFolderPath, resolvedDefinition)
+          appletConstructor: await this.buildAppletConstructor(appletId, extensionFolder, toolFolder, resolvedDefinition)
         })
       }
 
@@ -254,34 +251,11 @@ class ExtensionsService {
   }
 
   /**
-   * Every folder in the extensions folder
+   * Every installed extension, in the extensions folder or the browser
    */
-  private async readCopiedExtensions() {
-    const extensionEntries = await appDataService.readExtensionsFolder() ?? []
-    const extensionsFolderPath = await fileService.resolveFilePathInAppData(Folders.Extensions)
-
-    return await Promise.all(
-      extensionEntries
-        // Hidden folders can't be read through the fs scope on Unix anyway
-        .filter((entry) => entry.isDirectory && !entry.name.startsWith("."))
-        .map(async(entry) => {
-          const folderPath = await fileService.resolveFilePath(extensionsFolderPath, entry.name)
-          return await this.readExtension(folderPath, entry.name, async() => await createLocalExtensionFolderReader(folderPath))
-        })
-    )
-  }
-
-  /**
-   * Every extension the browser build installed into its storage
-   */
-  private async readBrowserExtensions() {
-    const folderNames = await browserExtensionStore.listFolderNames()
-
-    return await Promise.all(folderNames.map(async(folderName) => await this.readExtension(
-      getBrowserExtensionPath(folderName),
-      folderName,
-      async() => await createBrowserExtensionFolderReader(folderName)
-    )))
+  private async readInstalledExtensions() {
+    const folders = await extensionStorage.listFolders()
+    return await Promise.all(folders.map(async(folder) => await this.readExtension(folder)))
   }
 
   /**
@@ -301,24 +275,8 @@ class ExtensionsService {
 
     const perSource = await Promise.all(localSources.map(async(source) => {
       try {
-        const extensionsFolder = await resolveLocalSourceFolder(source.location)
-        const folders = []
-
-        for (const entry of await readDir(extensionsFolder)) {
-          if (!entry.isDirectory || entry.name.startsWith(".")) continue
-
-          const folderPath = await fileService.resolveFilePath(extensionsFolder, entry.name)
-          const entries = await readDir(folderPath)
-
-          // Only folders that are extensions, a source can hold other folders
-          if (entries.some((item) => item.name === FileNames.ExtensionDefinition)) {
-            folders.push({ folderPath, folderName: entry.name })
-          }
-        }
-
-        return await Promise.all(folders.map(async({ folderPath, folderName }) => (
-          await this.readExtension(folderPath, folderName, async() => await createLocalExtensionFolderReader(folderPath), source)
-        )))
+        const folders = await listLocalSourceFolders(source)
+        return await Promise.all(folders.map(async(folder) => await this.readExtension(folder, source)))
       } catch {
         // A missing source folder shows its error on the Sources dialog
         return []
@@ -335,12 +293,8 @@ class ExtensionsService {
    * @returns
    */
   async getExtensionsAsAppletContructor() {
-    const copiedExtensions = isRunningInTauri
-      ? await this.readCopiedExtensions()
-      : await this.readBrowserExtensions()
-
-    // After the copies, so a copy installed from a local source wins
-    const installedExtensions = [...copiedExtensions, ...await this.readLinkedExtensions()]
+    // Linked folders last, so a copy installed from a local source wins
+    const installedExtensions = [...await this.readInstalledExtensions(), ...await this.readLinkedExtensions()]
 
     /**
      * IDs are scoped by source, so only a copied folder, or a copy of a
@@ -383,14 +337,11 @@ class ExtensionsService {
   }
 
   async openExtensionsFolder() {
-    await appDataService.prepareExtensionsFolder()
-
-    const folderPath = await fileService.resolveFilePathInAppData(Folders.Extensions)
-    await fileService.openPathInFileManager(folderPath)
+    await extensionStorage.revealRoot?.()
   }
 
   /**
-   * Delete the extension folder from disk. A linked folder is never deleted,
+   * Delete the extension's folder. A linked folder is never deleted,
    * it belongs to its source.
    */
   async uninstall(extension: InstalledExtension) {
@@ -398,12 +349,7 @@ class ExtensionsService {
       throw new Error("Linked from a local source, turn the source off instead")
     }
 
-    const browserPath = parseBrowserExtensionPath(extension.folderPath)
-    if (browserPath) {
-      await browserExtensionStore.removeFolder(browserPath.folderName)
-    } else {
-      await remove(extension.folderPath, { recursive: true })
-    }
+    await extensionStorage.removeFolder(extension.folderName)
     this.setEnabled(extension, true)
   }
 }

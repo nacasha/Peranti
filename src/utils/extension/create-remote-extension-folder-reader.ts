@@ -27,7 +27,6 @@ export function createRemoteExtensionFolderReader(
       }
 
       return new TextDecoder().decode(response.body)
-    },
-    resolveFolder: async(relativePath) => resolve(relativePath)
+    }
   }
 }

@@ -1,11 +1,9 @@
 import { homeDir } from "@tauri-apps/api/path"
-import { exists, mkdir, readDir, readFile, remove, rename, stat, writeFile, writeTextFile } from "@tauri-apps/plugin-fs"
 import localforage from "localforage"
 import { makeAutoObservable } from "mobx"
 
 import { ExtensionCatalog } from "src/constants/extension-catalog"
 import { FileNames } from "src/constants/file-names"
-import { Folders } from "src/constants/folders"
 import { StorageKeys } from "src/constants/storage-keys"
 import { CatalogSourceType } from "src/enums/catalog-source-type"
 import { ExtensionRuntime } from "src/enums/extension-runtime"
@@ -14,31 +12,28 @@ import { type CatalogCache } from "src/types/CatalogCache"
 import { type CatalogExtension, type CatalogExtensionFile, type CatalogIndexEntry } from "src/types/CatalogExtension"
 import { type CatalogSource } from "src/types/CatalogSource"
 import { type ExtensionSource } from "src/types/ExtensionSource"
+import { type ExtensionFileData } from "src/types/ExtensionStorage"
 import { type InstalledExtension } from "src/types/InstalledExtension"
 import { compareVersions } from "src/utils/catalog/compare-versions"
 import { getCatalogBaseUrl } from "src/utils/catalog/get-catalog-base-url"
 import { getCatalogFilesSignature } from "src/utils/catalog/get-catalog-files-signature"
-import { getCatalogSourceKey } from "src/utils/catalog/get-catalog-source-key"
+import { getCatalogSourceKey, getUnknownSourceKey } from "src/utils/catalog/get-catalog-source-key"
 import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-label"
 import { listCatalogRepoFiles } from "src/utils/catalog/list-catalog-repo-files"
+import { listLocalSourceFolders } from "src/utils/catalog/list-local-source-folders"
 import { readCatalogExtension } from "src/utils/catalog/read-catalog-extension"
-import { resolveLocalSourceFolder } from "src/utils/catalog/resolve-local-source-folder"
 import { getErrorMessage } from "src/utils/common/get-error-message"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
-import { createLocalExtensionFolderReader } from "src/utils/extension/create-local-extension-folder-reader"
+import { createExtensionFolderReader } from "src/utils/extension/create-extension-folder-reader"
 import { createRemoteExtensionFolderReader } from "src/utils/extension/create-remote-extension-folder-reader"
 import { getExtensionId } from "src/utils/extension/extension-ids"
 import { getExtensionFolderName } from "src/utils/extension/get-extension-folder-name"
+import { isInstallRecord, withoutInstallRecord } from "src/utils/extension/install-record"
 import { isSafeRelativePath } from "src/utils/extension/is-safe-relative-path"
-import { parseBrowserExtensionPath } from "src/utils/extension/parse-browser-extension-path"
-import { readExtensionFileBytes } from "src/utils/extension/read-extension-file-bytes"
-import { resolveExtensionPath } from "src/utils/extension/resolve-extension-path"
 
-import { appDataService } from "./app-data-service.js"
 import { appletStore } from "./applet-store.js"
-import { type BrowserExtensionFileData, browserExtensionStore } from "./browser-extension-store.js"
+import { DiskExtensionFolder, extensionStorage } from "./extension-storage/index.js"
 import { extensionsService } from "./extensions-service.js"
-import { fileService } from "./file-service.js"
 import { httpRequest } from "./http-client.js"
 import { userSettingsService } from "./user-settings-service.js"
 
@@ -62,10 +57,7 @@ interface CatalogSourceState {
  */
 const DOWNLOAD_CONCURRENCY = 6
 
-/**
- * Names never listed or installed from a local folder
- */
-const IGNORED_FILE_NAMES = new Set(["node_modules", FileNames.ExtensionSource])
+const BYTES_PER_MEGABYTE = 1024 * 1024
 
 /**
  * Lists the extensions of every catalog source and installs them by copying
@@ -333,7 +325,7 @@ class ExtensionCatalogService {
    */
   getEntrySourceKey(entry: CatalogExtension) {
     const source = this.getSource(entry.sourceId)
-    return source ? getCatalogSourceKey(source) : `unknown:${entry.sourceId}`
+    return source ? getCatalogSourceKey(source) : getUnknownSourceKey(entry.sourceId)
   }
 
   /**
@@ -526,44 +518,6 @@ class ExtensionCatalogService {
   }
 
   /**
-   * Every file under `folderPath`, relative to it, skipping hidden files and
-   * the install record
-   */
-  async listFolderFiles(folderPath: string): Promise<CatalogExtensionFile[]> {
-    const browserPath = parseBrowserExtensionPath(folderPath)
-    if (browserPath) {
-      const browserFiles = await browserExtensionStore.listFiles(browserPath.folderName)
-      return browserFiles.filter((file) => !IGNORED_FILE_NAMES.has(file.path))
-    }
-
-    const files: CatalogExtensionFile[] = []
-
-    const walk = async(relativeFolder: string) => {
-      const absoluteFolder = relativeFolder ? await fileService.resolveFilePath(folderPath, relativeFolder) : folderPath
-
-      for (const entry of await readDir(absoluteFolder)) {
-        // Hidden entries can't be read through the fs scope, and aren't installed
-        if (IGNORED_FILE_NAMES.has(entry.name) || entry.name.startsWith(".")) continue
-        const relativePath = relativeFolder ? `${relativeFolder}/${entry.name}` : entry.name
-
-        if (entry.isDirectory) {
-          await walk(relativePath)
-        } else if (entry.isFile) {
-          const info = await stat(await fileService.resolveFilePath(folderPath, relativePath))
-          files.push({
-            path: relativePath,
-            size: info.size,
-            executable: info.mode !== null && (info.mode & 0o111) !== 0
-          })
-        }
-      }
-    }
-
-    await walk("")
-    return files
-  }
-
-  /**
    * A local folder lists every subfolder with a `peranti.json`, from its
    * `extensions` folder when it has one, so no index has to be built. Only
    * checks a source being added, its extensions are loaded in place.
@@ -573,22 +527,16 @@ class ExtensionCatalogService {
       throw new Error("Local folders need the desktop app")
     }
 
-    const extensionsFolder = await resolveLocalSourceFolder(source.location)
     const extensions: CatalogExtension[] = []
 
-    for (const entry of await readDir(extensionsFolder)) {
-      if (!entry.isDirectory || entry.name.startsWith(".")) continue
-
-      const folderPath = await fileService.resolveFilePath(extensionsFolder, entry.name)
-      const manifestPath = await fileService.resolveFilePath(folderPath, FileNames.ExtensionDefinition)
-      if (!(await exists(manifestPath))) continue
-
+    for (const folder of await listLocalSourceFolders(source)) {
       try {
-        const folder = await createLocalExtensionFolderReader(folderPath)
-        extensions.push(await readCatalogExtension(entry.name, folderPath, folder, await this.listFolderFiles(folderPath), source.id))
+        const files = withoutInstallRecord(await folder.listFiles())
+        const reader = await createExtensionFolderReader(folder, files.map((file) => file.path))
+        extensions.push(await readCatalogExtension(folder.name, folder.diskPath, reader, files, source.id))
       } catch (exception) {
         // A broken manifest only hides that one folder from the list
-        console.warn(`Extension folder ${folderPath} skipped:`, exception)
+        console.warn(`Extension folder ${folder.diskPath} skipped:`, exception)
       }
     }
 
@@ -602,7 +550,7 @@ class ExtensionCatalogService {
     // Hidden files can't be written: the fs scope's `**` doesn't match them on
     // Unix. They are repo leftovers (.gitignore, .DS_Store), never needed to run.
     const files = entry.files.filter((file) => (
-      file.path !== FileNames.ExtensionSource &&
+      !isInstallRecord(file.path) &&
       !file.path.split("/").some((segment) => segment.startsWith("."))
     ))
 
@@ -616,7 +564,7 @@ class ExtensionCatalogService {
 
     const totalBytes = files.reduce((total, file) => total + (file.size ?? 0), 0)
     if (totalBytes > ExtensionCatalog.maxTotalBytes) {
-      throw new Error(`Extension is larger than ${ExtensionCatalog.maxTotalBytes / 1024 / 1024} MB`)
+      throw new Error(`Extension is larger than ${ExtensionCatalog.maxTotalBytes / BYTES_PER_MEGABYTE} MB`)
     }
 
     const unsafeFile = files.find((file) => !isSafeRelativePath(file.path))
@@ -651,18 +599,11 @@ class ExtensionCatalogService {
   }
 
   /**
-   * Bytes of one file inside an installed extension's folder
-   */
-  async readInstalledFile(folderPath: string, filePath: string) {
-    return await readExtensionFileBytes(await resolveExtensionPath(folderPath, filePath))
-  }
-
-  /**
    * Bytes of one file, downloaded from a remote source or read from a local one
    */
   private async readSourceFile(source: CatalogSource, entry: CatalogExtension, file: CatalogExtensionFile) {
     if (source.type === CatalogSourceType.Local) {
-      return await readFile(await fileService.resolveFilePath(entry.path, ...file.path.split("/")))
+      return await new DiskExtensionFolder(entry.id, entry.path).readBytes(file.path)
     }
 
     const encodedPath = [...entry.path.split("/"), ...file.path.split("/")].map(encodeURIComponent).join("/")
@@ -677,9 +618,9 @@ class ExtensionCatalogService {
 
   /**
    * Install or update an extension into a folder named by its source, so the
-   * same tool ID from two catalogs can sit side by side. Files are written
-   * into a staging folder first and moved into place at the end, so a failure
-   * never leaves a half-installed extension behind.
+   * same tool ID from two catalogs can sit side by side. Every file is
+   * downloaded before anything is written, and the storage replaces the folder
+   * as a whole, so a failure leaves the installed version as it was.
    */
   async install(entry: CatalogExtension) {
     if (!isRunningInTauri && this.needsDesktopApp(entry)) {
@@ -719,71 +660,20 @@ class ExtensionCatalogService {
       installedAt: Date.now()
     }
 
-    if (!isRunningInTauri) {
-      this.setInstalling(extensionId, true)
-      try {
-        await this.installInBrowser(source, entry, folderName, extensionSource)
-
-        if (previousInstall && previousInstall.folderName !== folderName) {
-          await browserExtensionStore.removeFolder(previousInstall.folderName).catch(() => {})
-        }
-      } finally {
-        this.setInstalling(extensionId, false)
-      }
-
-      await appletStore.reloadExtensions()
-      return
-    }
-
     this.setInstalling(extensionId, true)
-    let tempPath: string | undefined
 
     try {
-      await appDataService.prepareExtensionsFolder()
-      tempPath = await fileService.resolveFilePathInAppData(Folders.ExtensionInstalls, folderName)
-      const targetPath = await fileService.resolveFilePathInAppData(Folders.Extensions, folderName)
-      const files = this.getInstallFiles(entry)
+      const files = await this.downloadFiles(source, entry)
+      files.push({
+        path: FileNames.ExtensionSource,
+        bytes: new TextEncoder().encode(JSON.stringify(extensionSource, undefined, 2))
+      })
 
-      if (await exists(tempPath)) {
-        await remove(tempPath, { recursive: true })
+      await extensionStorage.writeFolder(folderName, files)
+
+      if (previousInstall && !previousInstall.linkedSourceId && previousInstall.folderName !== folderName) {
+        await extensionStorage.removeFolder(previousInstall.folderName).catch(() => {})
       }
-      await mkdir(tempPath, { recursive: true })
-
-      for (let index = 0; index < files.length; index += DOWNLOAD_CONCURRENCY) {
-        const folderPath = tempPath
-        await Promise.all(files.slice(index, index + DOWNLOAD_CONCURRENCY).map(async(file) => {
-          const data = await this.readSourceFile(source, entry, file)
-
-          const segments = file.path.split("/")
-          if (segments.length > 1) {
-            await mkdir(await fileService.resolveFilePath(folderPath, ...segments.slice(0, -1)), { recursive: true })
-          }
-
-          // Keep the executable bit, so a bundled binary can be run directly
-          await writeFile(await fileService.resolveFilePath(folderPath, ...segments), data, {
-            mode: file.executable ? 0o755 : 0o644
-          })
-        }))
-      }
-
-      await writeTextFile(
-        await fileService.resolveFilePath(tempPath, FileNames.ExtensionSource),
-        JSON.stringify(extensionSource, undefined, 2)
-      )
-
-      if (await exists(targetPath)) {
-        await remove(targetPath, { recursive: true })
-      }
-      await rename(tempPath, targetPath)
-
-      if (previousInstall && previousInstall.folderPath !== targetPath) {
-        await remove(previousInstall.folderPath, { recursive: true }).catch(() => {})
-      }
-    } catch (exception) {
-      if (tempPath) {
-        await remove(tempPath, { recursive: true }).catch(() => {})
-      }
-      throw exception
     } finally {
       this.setInstalling(extensionId, false)
     }
@@ -792,38 +682,29 @@ class ExtensionCatalogService {
   }
 
   /**
+   * Every file to install, downloaded a few at a time
+   */
+  private async downloadFiles(source: CatalogSource, entry: CatalogExtension): Promise<ExtensionFileData[]> {
+    const files = this.getInstallFiles(entry)
+    const downloaded: ExtensionFileData[] = []
+
+    for (let index = 0; index < files.length; index += DOWNLOAD_CONCURRENCY) {
+      const batch = files.slice(index, index + DOWNLOAD_CONCURRENCY)
+      downloaded.push(...await Promise.all(batch.map(async(file) => ({
+        path: file.path,
+        bytes: await this.readSourceFile(source, entry, file),
+        executable: file.executable
+      }))))
+    }
+
+    return downloaded
+  }
+
+  /**
    * Whether `entry` has a tool only the desktop app can run
    */
   needsDesktopApp(entry: CatalogExtension) {
     return entry.tools.some((tool) => tool.runtime === ExtensionRuntime.Executable)
-  }
-
-  /**
-   * Install into the browser's storage: every file is downloaded first, so a
-   * failed download leaves the installed version as it was
-   */
-  private async installInBrowser(
-    source: CatalogSource,
-    entry: CatalogExtension,
-    folderName: string,
-    extensionSource: ExtensionSource
-  ) {
-    const files = this.getInstallFiles(entry)
-    const downloaded: BrowserExtensionFileData[] = []
-
-    for (let index = 0; index < files.length; index += DOWNLOAD_CONCURRENCY) {
-      downloaded.push(...await Promise.all(files.slice(index, index + DOWNLOAD_CONCURRENCY).map(async(file) => ({
-        path: file.path,
-        bytes: await this.readSourceFile(source, entry, file)
-      }))))
-    }
-
-    downloaded.push({
-      path: FileNames.ExtensionSource,
-      bytes: new TextEncoder().encode(JSON.stringify(extensionSource, undefined, 2))
-    })
-
-    await browserExtensionStore.writeFolder(folderName, downloaded)
   }
 }
 

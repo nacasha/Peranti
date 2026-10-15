@@ -43,7 +43,7 @@ export async function readExtensionTools(
         author: definition.author ?? manifest.author
       },
       path: file.path,
-      folderPath: await folder.resolveFolder(file.folder)
+      folder: file.folder
     })
   }
 

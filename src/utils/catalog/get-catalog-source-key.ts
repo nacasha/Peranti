@@ -24,3 +24,13 @@ export function getCatalogSourceKey(source: CatalogSource): string {
 
   return key
 }
+
+const UNKNOWN_SOURCE_KEY_PREFIX = "unknown:"
+
+/**
+ * Key of a source that can't be looked up any more, such as one since
+ * removed. Its ID still keeps its extensions apart from other sources'.
+ */
+export function getUnknownSourceKey(sourceId: string): string {
+  return UNKNOWN_SOURCE_KEY_PREFIX + sourceId
+}
