@@ -2,7 +2,7 @@ import fastDeepEqual from "fast-deep-equal"
 import { observable, action, makeObservable, toJS, when } from "mobx"
 import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, stopPersisting } from "mobx-persist-store"
 import toast from "react-hot-toast"
-import { type Edge, type Node } from "reactflow"
+import { type Node } from "reactflow"
 import { merge } from "ts-deepmerge"
 
 import { StorageKeys } from "src/constants/storage-keys"
@@ -23,223 +23,170 @@ import { type Session } from "src/types/Session"
 import { type HistoryBlob, type SessionHistorySnapshot, type SessionHistoryValue } from "src/types/SessionHistory"
 import { extractBinaryValues } from "src/utils/applet/extract-binary-values"
 import { runExtension } from "src/utils/extension/run-extension"
+import { runPipeline } from "src/utils/pipeline/run-pipeline"
 import { generateRandomString } from "src/utils/text/generate-random-string"
 import { isLargeText } from "src/utils/text/is-large-text"
 
 import { type AppletConstructor } from "./AppletConstructor.js"
 
+type ViewMode = "main" | "pipeline"
+type FieldType = "input" | "output"
+
+interface SetValueOptions {
+  markAsModified: boolean
+}
+
+const MARK_AS_MODIFIED: SetValueOptions = { markAsModified: true }
+
+/**
+ * Delay before a running action is shown as running, so quick runs don't flash
+ * a spinner
+ */
+const RUNNING_INDICATOR_DELAY = 200
+
+/**
+ * Minimum auto run delay when an input holds large text, running on every
+ * keystroke would freeze the UI
+ */
+const LARGE_INPUT_AUTO_RUN_DELAY = 400
+
 /**
  * Applet, a small program that performs a specific task.
+ *
+ * One instance is one open tab (session) of a tool: its field values, how its
+ * fields are shown, and how it runs.
  */
 export class Applet<
   InputFields extends Record<string, any> = any,
   OutputFields extends Record<string, any> = any,
   OptionKeys extends Record<string, any> = any
 > {
-  /**
-   * Unique ID of applet
-   */
+  // ---------------------------------------------------------------------------
+  // Definition, from the tool's constructor
+  // ---------------------------------------------------------------------------
+
   readonly appletId: string
-
-  /**
-   * Type of applet
-   */
   readonly type: AppletType
-
-  /**
-   * Applet name
-   */
   readonly name: string
-
-  /**
-   * Applet description
-   */
   readonly description: string = ""
-
-  /**
-   * Applet category
-   */
   readonly category: string
-
-  /**
-   * Applet input and output layout settings
-   */
   readonly layoutSetting: LayoutSetting
+  readonly metadata?: ExtensionMetadata
+  readonly presets: Array<AppletPreset<InputFields>> = []
+  readonly options: Array<AppletOption<OptionKeys>>
+  readonly action: (actionParams: AppletActionParams<InputFields, OptionKeys, OutputFields>) => any
 
   /**
-   * Allow applet to run its pipeline
-   */
-  private readonly canRunPipeline = true
-
-  /**
-   * Unique ID of each created session based on this applet
-   */
-  readonly sessionId: string
-
-  /**
-   * Custom session name for created applet session
-   */
-  sessionName?: string
-
-  /**
-   * Sequence number of every applet session has been created
-   */
-  sessionSequenceNumber?: number
-
-  /**
-   * Input fields for applet
+   * Fields can be a fixed list, or computed from the current input values
    */
   readonly inputFields: Array<AppletInput<InputFields>> | ((inputValues: any) => Array<AppletInput<InputFields>>)
+  readonly outputFields: Array<AppletOutput<OutputFields>> | ((inputValues: any) => Array<AppletOutput<OutputFields>>)
 
   /**
-   * Component's state of input fields (scroll position, text selection, zoom, etc)
-   */
-  @observable inputFieldsState: any = {}
-
-  /**
-   * Key value pair of input keys and its values
-   */
-  @observable inputValues: any = {}
-
-  /**
-   * Indicates input values has been changed
-   */
-  isInputValuesModified: boolean = false
-
-  /**
-   * Output fields for applet
-   */
-  readonly outputFields: Array<AppletOutput<OutputFields>> | ((outputValues: any) => Array<AppletOutput<OutputFields>>)
-
-  /**
-   * Component's state of output fields (scroll position, text selection, zoom, etc)
-   */
-  @observable outputFieldsState: Record<string, any> = {}
-
-  /**
-   * Key value pair of output keys and its values
-   */
-  @observable outputValues: any = {}
-
-  /**
-   * Errors the last run reported for its fields, shown as a badge on their
-   * cards. Saved with the outputs they describe, so they come back with them.
-   */
-  @observable fieldErrors: AppletFieldErrors = {}
-
-  /**
-   * Indicates output values has been changed
-   */
-  isOutputValuesModified: boolean = false
-
-  /**
-   * Auto execute applet action when input values is changed
+   * Run the action whenever an input changes. Defaults to true, except for
+   * pipelines
    */
   readonly autoRun: boolean = false
-
-  /**
-   * Debounce input delay when autoRun is enabled
-   */
   autoRunDelay: number = 0
 
   /**
-   * Variable to store setTimeout when running action
-   */
-  private autoRunSetTimeout?: NodeJS.Timeout
-
-  /**
-   * Indicates that the applet has auto run enabled and hasn't been run
-   * for at least once
-   */
-  isAutoRunAndFirstTime: boolean = false
-
-  /**
-   * Applet action
-   */
-  readonly action: (actionParams: AppletActionParams<InputFields, OutputFields>) => any
-
-  /**
-   * Running count for action
-   */
-  @observable actionRunCount: number = 0
-
-  /**
-   * Is action still running asynchronous
-   */
-  @observable isActionRunning: boolean = false
-
-  /**
-   * Is action still running asynchronous more than 500 milliseconds
-   * Used to show on user interface
-   */
-  @observable isActionRunningDebounced: boolean = false
-
-  /**
-   * Variable to store the setTimeout number for debounced value
-   */
-  private isActionRunningDebouncedTimeout?: NodeJS.Timeout
-
-  /**
-   * Input field key when batch mode enabled
-   */
-  @observable batchModeInputKey: string = ""
-
-  /**
-   * Output fields key when batch mode enabled
-   */
-  @observable batchModeOutputKey: string = ""
-
-  /**
-   * Indicates batch mode is enabled
-   */
-  @observable isBatchModeEnabled: boolean = false
-
-  /**
-   * Indicates the session has been deleted
-   */
-  @observable isDeleted: boolean = false
-
-  /**
-   * Key to store applet session state into storage
-   */
-  readonly state?: AppletState = undefined
-
-  /**
-   * Disable persistence for applet session
-   */
-  readonly disablePersistence: boolean = false
-
-  /**
-   * Disable creating session more than once for the applet
+   * Only one tab of this tool may be open at a time
    */
   readonly disableMultipleSession: boolean = false
 
   /**
-   * Metadata used for other type of applet
-   */
-  readonly metadata?: ExtensionMetadata
-
-  /**
-   * Applet input presets
-   */
-  readonly presets: Array<AppletPreset<InputFields>> = []
-
-  /**
-   * Applet input and output options
-   */
-  readonly options: Array<AppletOption<OptionKeys>>
-
-  /**
-   * Applet options values
-   */
-  @observable optionValues: any = {}
-
-  /**
-   * Indicates inputs values of the applet is overridden by preset
+   * The default input values come from a preset instead of the tool itself
    */
   readonly hasOverriddenDefaultState: boolean = false
 
-  @observable viewMode: "main" | "pipeline"
+  /**
+   * Don't save this session to storage, used for throwaway runs such as
+   * pipeline steps
+   */
+  readonly disablePersistence: boolean = false
+
+  /**
+   * Read by mobx-persist-store when hydrating, see `setupPersistence`
+   */
+  readonly state?: AppletState = undefined
+
+  // ---------------------------------------------------------------------------
+  // Session (tab)
+  // ---------------------------------------------------------------------------
+
+  readonly sessionId: string
+  sessionName?: string
+
+  /**
+   * Number shown after the tool name when several tabs of it are open
+   */
+  sessionSequenceNumber?: number
+
+  @observable isDeleted: boolean = false
+
+  // ---------------------------------------------------------------------------
+  // Values
+  // ---------------------------------------------------------------------------
+
+  @observable inputValues: any = {}
+  @observable outputValues: any = {}
+  @observable optionValues: any = {}
+
+  /**
+   * Errors the last run reported per field, shown as a badge on the field
+   */
+  @observable fieldErrors: AppletFieldErrors = {}
+
+  isInputValuesModified: boolean = false
+  isOutputValuesModified: boolean = false
+
+  /**
+   * UI state of each field component, such as scroll position, selection and
+   * zoom, keyed by field key
+   */
+  @observable inputFieldsState: Record<string, any> = {}
+  @observable outputFieldsState: Record<string, any> = {}
+
+  // ---------------------------------------------------------------------------
+  // Running
+  // ---------------------------------------------------------------------------
+
+  @observable actionRunCount: number = 0
+  @observable isActionRunning: boolean = false
+
+  /**
+   * Same as `isActionRunning`, but only turns on after the run has taken a
+   * moment. Use this one to show a running indicator
+   */
+  @observable isActionRunningDebounced: boolean = false
+
+  /**
+   * True until the first auto run, which runs on the default values and so
+   * shouldn't count as a modification or a run
+   */
+  isAutoRunAndFirstTime: boolean = false
+
+  private autoRunTimeout?: NodeJS.Timeout
+  private runningIndicatorTimeout?: NodeJS.Timeout
+
+  /**
+   * The run waiting for the current one to finish, see `runWhenIdle`
+   */
+  private queuedRun?: { runValues: Record<string, unknown>, promise: Promise<void> }
+
+  // ---------------------------------------------------------------------------
+  // Batch mode: run once per line of one input field
+  // ---------------------------------------------------------------------------
+
+  @observable isBatchModeEnabled: boolean = false
+  @observable batchModeInputKey: string = ""
+  @observable batchModeOutputKey: string = ""
+
+  // ---------------------------------------------------------------------------
+  // View
+  // ---------------------------------------------------------------------------
+
+  @observable viewMode: ViewMode
 
   @observable maximizedField = {
     enabled: false,
@@ -247,15 +194,477 @@ export class Applet<
     key: ""
   }
 
-  @action
-  toggleMaximizedFieldKey(options: typeof this.maximizedField) {
-    if (this.maximizedField.enabled === options.enabled &&
-      this.maximizedField.key === options.key &&
-      this.maximizedField.type === options.type) {
-      options.enabled = false
+  static empty() {
+    return new Applet({
+      name: "",
+      appletId: "",
+      category: "",
+      action: () => ({}),
+      inputFields: [],
+      outputFields: []
+    })
+  }
+
+  constructor(
+    appletConstructor: AppletConstructor<InputFields, OutputFields>,
+    options: {
+      initialState?: Partial<AppletState>
+      disablePersistence?: boolean
+    } = {}
+  ) {
+    const isPipeline = appletConstructor.type === AppletType.Pipeline
+
+    this.appletId = appletConstructor.appletId
+    this.sessionId = options.initialState?.sessionId ?? (
+      this.appletId === ""
+        ? ""
+        : this.appletId.concat(generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm"))
+    )
+    this.name = appletConstructor.name
+    this.description = appletConstructor.description ?? ""
+    this.category = appletConstructor.category
+    this.type = appletConstructor.type ?? AppletType.Tool
+    this.metadata = appletConstructor.metadata
+    this.action = appletConstructor.action ?? (() => ({}))
+    this.inputFields = appletConstructor.inputFields
+    this.outputFields = appletConstructor.outputFields
+    this.options = appletConstructor.options ?? []
+    this.presets = appletConstructor.presets ?? []
+    this.autoRun = isPipeline ? false : appletConstructor.autoRun ?? true
+    this.isAutoRunAndFirstTime = this.autoRun
+    this.disableMultipleSession = appletConstructor.disableMultipleSession ?? !sessionStore.enableMultipleSession
+    this.hasOverriddenDefaultState = appletConstructor.hasOverriddenDefaultState ?? false
+    this.disablePersistence = options.disablePersistence ?? false
+    this.viewMode = isPipeline ? "pipeline" : "main"
+    this.inputValues = this.getInputValuesWithDefault()
+    this.optionValues = this.getOptionValuesWithDefault()
+
+    // By default inputs sit beside outputs, and fields stack top to bottom
+    this.layoutSetting = {
+      areaType: "flex",
+      areaFlexDirection: "horizontal",
+      fieldsType: "flex",
+      fieldsInputFlexDirection: "vertical",
+      fieldsOutputFlexDirection: "vertical",
+      ...appletConstructor.layoutSetting ?? {}
     }
 
-    this.maximizedField = options
+    if (options.initialState) {
+      this.restoreState(options.initialState)
+    }
+
+    // A tool with a single tab is simply named after the tool
+    if (this.disableMultipleSession && this.appletId !== "") {
+      this.sessionName = appletStore.mapOfLoadedApplets[this.appletId].name
+    }
+
+    makeObservable(this)
+    this.setupPersistence()
+  }
+
+  // ---------------------------------------------------------------------------
+  // Persistence
+  // ---------------------------------------------------------------------------
+
+  private restoreState(state: Partial<AppletState>) {
+    this.sessionName = state.sessionName ?? this.sessionName
+    this.sessionSequenceNumber = state.sessionSequenceNumber ?? this.sessionSequenceNumber
+    this.inputValues = Object.assign(this.inputValues, state.inputValues)
+    this.outputValues = Object.assign(this.outputValues, state.outputValues)
+    this.isBatchModeEnabled = state.isBatchModeEnabled ?? this.isBatchModeEnabled
+    this.batchModeInputKey = state.batchModeInputKey ?? this.batchModeInputKey
+    this.batchModeOutputKey = state.batchModeOutputKey ?? this.batchModeOutputKey
+    this.actionRunCount = state.actionRunCount ?? this.actionRunCount
+    this.isOutputValuesModified = state.isOutputValuesModified ?? this.isOutputValuesModified
+    this.isInputValuesModified = state.isInputValuesModified ?? this.isInputValuesModified
+    this.isDeleted = state.isDeleted ?? this.isDeleted
+    this.inputFieldsState = state.inputFieldsState ?? this.inputFieldsState
+    this.outputFieldsState = state.outputFieldsState ?? this.outputFieldsState
+    this.fieldErrors = state.fieldErrors ?? this.fieldErrors
+    this.isAutoRunAndFirstTime = state.isAutoRunAndFirstTime ?? this.isAutoRunAndFirstTime
+    this.optionValues = state.optionValues ?? this.optionValues
+    this.viewMode = state.viewMode ?? this.viewMode
+    this.maximizedField = state.maximizedField ?? this.maximizedField
+  }
+
+  /**
+   * Saves the session to storage on every change, as one `state` property
+   * built by `toState`
+   */
+  private setupPersistence() {
+    // Forget any earlier store registered for this session id
+    Array.from(PersistStoreMap.keys()).forEach((store) => {
+      if (store?.sessionId === this.sessionId) {
+        PersistStoreMap.delete(store)
+      }
+    })
+
+    if (!this.appletId || this.disablePersistence) {
+      return
+    }
+
+    void makePersistable(
+      this,
+      {
+        name: StorageKeys.AppletState.concat(this.sessionId),
+        properties: [
+          {
+            key: "state",
+            serialize: () => this.toState(),
+            deserialize: () => this.state
+          }
+        ]
+      },
+      { delay: 100 }
+    )
+  }
+
+  async hydrateStore() {
+    await hydrateStore(this)
+  }
+
+  stopStore() {
+    stopPersisting(this)
+  }
+
+  toState(): AppletState {
+    return {
+      appletId: this.appletId,
+      sessionId: this.sessionId,
+      sessionName: this.sessionName,
+      sessionSequenceNumber: this.sessionSequenceNumber,
+      // Time of this snapshot, kept under its original name for stored state
+      createdAt: new Date().getTime(),
+      isDeleted: this.isDeleted,
+      inputValues: toJS(this.inputValues),
+      outputValues: toJS(this.outputValues),
+      optionValues: toJS(this.optionValues),
+      fieldErrors: toJS(this.fieldErrors),
+      isInputValuesModified: this.isInputValuesModified,
+      isOutputValuesModified: this.isOutputValuesModified,
+      inputFieldsState: toJS(this.inputFieldsState),
+      outputFieldsState: toJS(this.outputFieldsState),
+      actionRunCount: this.actionRunCount,
+      isAutoRunAndFirstTime: this.isAutoRunAndFirstTime,
+      isBatchModeEnabled: this.isBatchModeEnabled,
+      batchModeInputKey: this.batchModeInputKey,
+      batchModeOutputKey: this.batchModeOutputKey,
+      viewMode: this.viewMode,
+      maximizedField: toJS(this.maximizedField)
+    }
+  }
+
+  toSession(): Session {
+    const { sessionId, sessionName, sessionSequenceNumber, appletId } = this
+
+    return { sessionId, sessionName, sessionSequenceNumber, appletId }
+  }
+
+  /**
+   * Builds the closed tab history entry for this session.
+   *
+   * Input and output values are stored separately from the rest of the state,
+   * each as searchable text. Files and buffers inside the values are replaced
+   * by placeholders, and their bytes are returned as `blobs`.
+   */
+  async toHistory(): Promise<{ history: SessionHistorySnapshot, blobs: HistoryBlob[] }> {
+    const { sessionId, sessionName, appletId } = this
+
+    const { value: storableState, blobs } = await extractBinaryValues({ ...this.toState(), isDeleted: false })
+    const { inputValues, outputValues, ...state } = storableState
+
+    const values: SessionHistoryValue[] = [
+      ...Object.entries(inputValues ?? {}).map(([key, value]) => ({ source: "input" as const, key, value })),
+      ...Object.entries(outputValues ?? {}).map(([key, value]) => ({ source: "output" as const, key, value }))
+    ]
+      .filter(({ value }) => value !== undefined && value !== null)
+      .map(({ source, key, value }) => (
+        typeof value === "string"
+          ? { source, key, kind: "text", text: value }
+          : { source, key, kind: "json", text: JSON.stringify(value) }
+      ))
+
+    return {
+      history: {
+        deletedAt: new Date().getTime(),
+        sessionId,
+        sessionName,
+        appletId,
+        toolName: appletStore.mapOfLoadedAppletsName[appletId] ?? appletId,
+        state,
+        values
+      },
+      blobs
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Session
+  // ---------------------------------------------------------------------------
+
+  @action
+  setSessionName(value: string) {
+    this.sessionName = value
+  }
+
+  @action
+  setSessionSequenceNumber(value?: number) {
+    this.sessionSequenceNumber = value
+  }
+
+  @action
+  setIsDeleted(isDeleted: boolean) {
+    this.isDeleted = isDeleted
+  }
+
+  @action
+  async markAsDeleted() {
+    this.setIsDeleted(true)
+    this.resetInputAndOutputFieldsState()
+
+    // A closed pipeline reopens in the editor
+    if (this.type === AppletType.Pipeline) {
+      this.setViewMode("pipeline")
+    }
+
+    // A tab closed while not active (Close Others, Close All, ...) isn't being
+    // persisted, so write the change to storage directly
+    if (!isPersisting(this)) {
+      await StorageManager.updateAppletStatePropertyInStorage(this.sessionId, {
+        inputFieldsState: {},
+        outputFieldsState: {},
+        isDeleted: true,
+        viewMode: this.viewMode
+      })
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Fields
+  // ---------------------------------------------------------------------------
+
+  getInputFields(): Array<AppletInput<InputFields>> {
+    if (this.isPipelineInMainView()) {
+      return this.getPipelineFields("appletInput")
+    }
+
+    return typeof this.inputFields === "function"
+      ? this.inputFields(this.inputValues)
+      : this.inputFields
+  }
+
+  getOutputFields(): Array<AppletOutput<OutputFields>> {
+    if (this.isPipelineInMainView()) {
+      return this.getPipelineFields("appletOutput")
+    }
+
+    return typeof this.outputFields === "function"
+      ? this.outputFields(this.inputValues)
+      : this.outputFields
+  }
+
+  private isPipelineInMainView() {
+    return this.type === AppletType.Pipeline && this.viewMode === "main"
+  }
+
+  /**
+   * A pipeline's own fields are its input or output nodes
+   */
+  private getPipelineFields(nodeType: "appletInput" | "appletOutput") {
+    const nodes: Node[] = this.inputValues?.$PIPELINE?.nodes ?? []
+
+    return nodes
+      .filter((node) => node.type === nodeType)
+      .map((node) => ({
+        key: node.data.key,
+        label: node.data.label,
+        component: node.data.component
+      }))
+  }
+
+  /**
+   * Input fields a dropped or opened file can be read into.
+   *
+   * Returns the fields, and whether they're only readable in batch mode (no
+   * field reads files normally, but a batch field's batch component does).
+   */
+  getInputFieldsWithReadableFile(): [Array<AppletInput<InputFields>>, boolean] {
+    const inputFields = this.getInputFields()
+    const canReadFile = (field: AppletInput<InputFields>, isBatch: boolean) => (
+      !!appletComponentService.getInputComponent(field.component, isBatch).readFileAs
+    )
+
+    const readableFields = inputFields.filter((field) => canReadFile(field, false))
+    if (readableFields.length > 0) {
+      return [readableFields, false]
+    }
+
+    if (!inputFields.some((field) => field.allowBatch)) {
+      return [[], false]
+    }
+
+    return [inputFields.filter((field) => canReadFile(field, true)), true]
+  }
+
+  // ---------------------------------------------------------------------------
+  // Input, output and option values
+  // ---------------------------------------------------------------------------
+
+  getInputValue(key: string) {
+    return this.inputValues[key]
+  }
+
+  getOutputValue(key: string) {
+    return this.outputValues[key]
+  }
+
+  @action
+  setInputValue(key: string, value: unknown, options = MARK_AS_MODIFIED) {
+    const newInputValues = { ...this.inputValues, [key]: value }
+
+    // File has no enumerable keys, so deep equal treats any two files as equal
+    const isFileValue = value instanceof File || (Array.isArray(value) && value.some((item) => item instanceof File))
+
+    if (isFileValue || !fastDeepEqual(this.inputValues, newInputValues)) {
+      this.inputValues = newInputValues
+    }
+
+    this.markInputModified(options)
+  }
+
+  @action
+  setInputValues(inputValues: any, options = MARK_AS_MODIFIED) {
+    this.inputValues = inputValues
+    this.markInputModified(options)
+  }
+
+  @action
+  setInputValuesMerge(inputValues: any, options = MARK_AS_MODIFIED) {
+    this.setInputValues(merge(this.inputValues, inputValues), options)
+  }
+
+  @action
+  setOutputValue(key: string, value: unknown, options = MARK_AS_MODIFIED) {
+    this.setOutputValues({ ...this.outputValues, [key]: value }, options)
+  }
+
+  @action
+  setOutputValues(outputValues: any, options = MARK_AS_MODIFIED) {
+    this.outputValues = outputValues
+
+    if (!this.isAutoRunAndFirstTime) {
+      this.isOutputValuesModified = options.markAsModified
+    }
+  }
+
+  private markInputModified(options: SetValueOptions) {
+    if (!this.isAutoRunAndFirstTime) {
+      this.isInputValuesModified = options.markAsModified
+    }
+  }
+
+  /**
+   * Sets an option, and re-runs the tool if it auto runs
+   */
+  @action
+  setOptionValue(key: string, value: unknown) {
+    this.optionValues = { ...this.optionValues, [key]: value }
+    this.runAfterOptionChange()
+  }
+
+  /**
+   * Restores every option to its default, and re-runs the tool if it auto runs
+   */
+  @action
+  resetOptionValues() {
+    this.optionValues = this.getOptionValuesWithDefault()
+    this.runAfterOptionChange()
+  }
+
+  /**
+   * An option change re-runs an auto run tool only when it has input to run
+   * on. That's input the user edited, or input the tab was opened with (a
+   * dropped file, files sent by an extension), which isn't marked as modified.
+   */
+  private runAfterOptionChange() {
+    if (this.autoRun && (this.isInputValuesModified || this.getIsInputHasValues())) {
+      void this.run()
+    }
+  }
+
+  @action
+  resetInputAndOutputValues() {
+    this.inputValues = this.getInputValuesWithDefault()
+    this.outputValues = {}
+    this.fieldErrors = {}
+  }
+
+  getInputValuesWithDefault() {
+    return Object.fromEntries(this.getInputFields().map((field) => [field.key, field.defaultValue]))
+  }
+
+  getOptionValuesWithDefault() {
+    return Object.fromEntries(this.options.map((option) => [option.key, option.defaultValue]))
+  }
+
+  getIsInputHasValues(): boolean {
+    const inputFields = this.getInputFields()
+
+    return Object.entries(this.inputValues).some(([key, value]) => (
+      Boolean(value) && !inputFields.find((field) => field.key === key)?.skipValidateHasValue
+    ))
+  }
+
+  getIsInputOrOutputHasValues(): boolean {
+    return this.getIsInputHasValues() || Object.values(this.outputValues).some(Boolean)
+  }
+
+  @action
+  setFieldErrors(fieldErrors: AppletFieldErrors) {
+    this.fieldErrors = fieldErrors
+  }
+
+  getFieldError(type: FieldType, key: string): string | undefined {
+    return this.fieldErrors[type]?.[key]
+  }
+
+  // ---------------------------------------------------------------------------
+  // Field UI state
+  // ---------------------------------------------------------------------------
+
+  @action
+  setInputFieldState(key: string, state: unknown) {
+    if (!this.isDeleted) {
+      this.inputFieldsState = { ...this.inputFieldsState, [key]: state }
+    }
+  }
+
+  @action
+  setOutputFieldState(key: string, state: unknown) {
+    if (!this.isDeleted) {
+      this.outputFieldsState = { ...this.outputFieldsState, [key]: state }
+    }
+  }
+
+  @action
+  resetInputAndOutputFieldsState() {
+    this.inputFieldsState = {}
+    this.outputFieldsState = {}
+  }
+
+  // ---------------------------------------------------------------------------
+  // Maximized field and view mode
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Maximizes a field, or restores it if it's already the maximized one
+   */
+  @action
+  toggleMaximizedFieldKey(options: typeof this.maximizedField) {
+    const { enabled, type, key } = this.maximizedField
+    const isSameField = enabled === options.enabled && type === options.type && key === options.key
+
+    this.maximizedField = isSameField ? { ...options, enabled: false } : options
   }
 
   /**
@@ -276,7 +685,7 @@ export class Applet<
   }
 
   /**
-   * Switch the maximized field to the next maximizable field, looping back to the first
+   * Maximizes the next maximizable field, wrapping back to the first
    */
   @action
   maximizeNextField() {
@@ -292,304 +701,34 @@ export class Applet<
     this.maximizedField = { enabled: true, type: nextField.type, key: nextField.key }
   }
 
-  /**
-   * Empty applet
-   *
-   * @returns
-   */
-  static empty() {
-    return new Applet({
-      name: "",
-      appletId: "",
-      category: "",
-      action: () => ({}),
-      inputFields: [],
-      outputFields: []
-    })
-  }
-
-  /**
-   * Constructor
-   *
-   * @param appletConstructor
-   * @param options
-   */
-  constructor(
-    appletConstructor: AppletConstructor<InputFields, OutputFields>,
-    options: {
-      initialState?: Partial<AppletState>
-      disablePersistence?: boolean
-    } = {}
-  ) {
-    this.appletId = appletConstructor.appletId
-    this.sessionId = appletConstructor.appletId === ""
-      ? ""
-      : this.appletId.concat(generateRandomString(10, "1234567890qwertyuiopasdfghjklzxcvbnm"))
-    this.name = appletConstructor.name
-    this.action = appletConstructor.action ?? (() => ({}))
-    this.category = appletConstructor.category
-    this.inputFields = appletConstructor.inputFields
-    this.outputFields = appletConstructor.outputFields
-    this.autoRun = appletConstructor.autoRun ?? true
-    this.type = appletConstructor.type ?? AppletType.Tool
-    this.metadata = appletConstructor.metadata
-    this.presets = appletConstructor.presets ?? []
-    this.disableMultipleSession = appletConstructor.disableMultipleSession ?? !sessionStore.enableMultipleSession
-    this.hasOverriddenDefaultState = appletConstructor.hasOverriddenDefaultState ?? false
-    this.inputValues = this.getInputValuesWithDefault()
-    this.options = appletConstructor.options ?? []
-    this.optionValues = this.getOptionValuesWithDefault()
-    this.description = appletConstructor.description ?? ""
-    this.viewMode = "main"
-
-    /**
-     * Set default viewMode when opening pipeline for the first time
-     */
-    if (appletConstructor.type === AppletType.Pipeline) {
-      this.viewMode = "pipeline"
-      this.autoRun = false
-    }
-
-    /**
-     * Default true when autoRun is enabled
-     */
-    if (this.autoRun) {
-      this.isAutoRunAndFirstTime = true
-    }
-
-    /**
-     * Default layout for applet
-     */
-    this.layoutSetting = {
-      /**
-       * Default area type is horizontal, input and output area are side-by-side
-       */
-      areaType: "flex",
-      areaFlexDirection: "horizontal",
-
-      /**
-       * Default fields placement are vertically stacked from top to bottom
-       */
-      fieldsType: "flex",
-      fieldsInputFlexDirection: "vertical",
-      fieldsOutputFlexDirection: "vertical",
-
-      ...appletConstructor.layoutSetting ?? {}
-    }
-
-    /**
-     * Replace constructed state with initialState if exist
-     */
-    const { initialState } = options
-    if (initialState) {
-      this.sessionId = initialState.sessionId ?? this.sessionId
-      this.sessionName = initialState.sessionName ?? this.sessionName
-      this.sessionSequenceNumber = initialState.sessionSequenceNumber ?? this.sessionSequenceNumber
-      this.inputValues = Object.assign(this.inputValues, initialState.inputValues)
-      this.outputValues = Object.assign(this.outputValues, initialState.outputValues)
-      this.isBatchModeEnabled = initialState.isBatchModeEnabled ?? this.isBatchModeEnabled
-      this.batchModeInputKey = initialState.batchModeInputKey ?? this.batchModeInputKey
-      this.batchModeOutputKey = initialState.batchModeOutputKey ?? this.batchModeOutputKey
-      this.actionRunCount = initialState.actionRunCount ?? this.actionRunCount
-      this.isOutputValuesModified = initialState.isOutputValuesModified ?? this.isOutputValuesModified
-      this.isInputValuesModified = initialState.isInputValuesModified ?? this.isInputValuesModified
-      this.isDeleted = initialState.isDeleted ?? this.isDeleted
-      this.inputFieldsState = initialState.inputFieldsState ?? this.inputFieldsState
-      this.outputFieldsState = initialState.outputFieldsState ?? this.outputFieldsState
-      this.fieldErrors = initialState.fieldErrors ?? this.fieldErrors
-      this.isAutoRunAndFirstTime = initialState.isAutoRunAndFirstTime ?? this.isAutoRunAndFirstTime
-      this.optionValues = initialState.optionValues ?? this.optionValues
-      this.viewMode = initialState.viewMode ?? this.viewMode
-      this.maximizedField = initialState.maximizedField ?? this.maximizedField
-    }
-
-    /**
-     * Use applet name as sessionName if the applet only allowed
-     * to have one session at once
-     */
-    if (this.disableMultipleSession && this.appletId !== "") {
-      this.sessionName = appletStore.mapOfLoadedApplets[this.appletId].name
-    }
-
-    /**
-     * Disable persistence if needed
-     */
-    const { disablePersistence = false } = options
-    this.disablePersistence = disablePersistence
-
-    makeObservable(this)
-    this.setupPersistence()
-  }
-
-  private setupPersistence() {
-    Array.from(PersistStoreMap.keys()).forEach((sessionKey) => {
-      if (sessionKey?.sessionId === this.sessionId) {
-        PersistStoreMap.delete(sessionKey)
-      }
-    })
-
-    if (!this.appletId || this.disablePersistence) {
-      return
-    }
-
-    void makePersistable(
-      this,
-      {
-        name: StorageKeys.AppletState.concat(this.sessionId),
-        properties: [
-          {
-            key: "state",
-            serialize: () => {
-              return this.toState()
-            },
-            deserialize: () => {
-              return this.state
-            }
-          }
-        ]
-      },
-      {
-        delay: 100
-      }
-    )
-  }
-
-  toState(): AppletState {
-    const {
-      batchModeInputKey,
-      batchModeOutputKey,
-      inputFieldsState,
-      inputValues,
-      isBatchModeEnabled,
-      isDeleted,
-      isInputValuesModified,
-      isOutputValuesModified,
-      outputFieldsState,
-      outputValues,
-      fieldErrors,
-      actionRunCount,
-      sessionId,
-      sessionName,
-      sessionSequenceNumber,
-      appletId,
-      isAutoRunAndFirstTime,
-      optionValues,
-      viewMode,
-      maximizedField
-    } = this
-
-    const createdAt = new Date().getTime()
-
-    return {
-      batchModeInputKey,
-      batchModeOutputKey,
-      createdAt,
-      inputFieldsState: toJS(inputFieldsState),
-      inputValues: toJS(inputValues),
-      isBatchModeEnabled,
-      isDeleted,
-      isInputValuesModified,
-      isOutputValuesModified,
-      outputFieldsState: toJS(outputFieldsState),
-      outputValues: toJS(outputValues),
-      fieldErrors: toJS(fieldErrors),
-      actionRunCount,
-      sessionId,
-      sessionName,
-      sessionSequenceNumber,
-      appletId,
-      isAutoRunAndFirstTime,
-      optionValues: toJS(optionValues),
-      viewMode,
-      maximizedField: toJS(maximizedField)
-    }
-  }
-
-  toSession(): Session {
-    const { sessionId, sessionName, sessionSequenceNumber, appletId } = this
-
-    return { sessionId, sessionName, sessionSequenceNumber, appletId }
-  }
-
-  /**
-   * Entry for the closed tab history: the state without its input and output
-   * values, each value as text, and the bytes of its files and buffers, which
-   * the values hold placeholders for
-   */
-  async toHistory(): Promise<{ history: SessionHistorySnapshot, blobs: HistoryBlob[] }> {
-    const { sessionId, sessionName, appletId } = this
-    const deletedAt = new Date().getTime()
-
-    const { value: storableState, blobs } = await extractBinaryValues({ ...this.toState(), isDeleted: false })
-    const { inputValues, outputValues, ...state } = storableState
-
-    // Each value is stored once, as text, and searched as is
-    const values: SessionHistoryValue[] = [
-      ...Object.entries(inputValues ?? {}).map(([key, value]) => ({ source: "input" as const, key, value })),
-      ...Object.entries(outputValues ?? {}).map(([key, value]) => ({ source: "output" as const, key, value }))
-    ]
-      .filter(({ value }) => value !== undefined && value !== null)
-      .map(({ source, key, value }) => (
-        typeof value === "string"
-          ? { source, key, kind: "text", text: value }
-          : { source, key, kind: "json", text: JSON.stringify(value) }
-      ))
-
-    return {
-      history: {
-        deletedAt,
-        sessionId,
-        sessionName,
-        appletId,
-        toolName: appletStore.mapOfLoadedAppletsName[appletId] ?? appletId,
-        state,
-        values
-      },
-      blobs
-    }
-  }
-
   @action
-  setSessionName(value: string) {
-    this.sessionName = value
+  setViewMode(viewMode: ViewMode) {
+    this.viewMode = viewMode
   }
 
-  @action
-  setSessionSequenceNumber(value?: number) {
-    this.sessionSequenceNumber = value
-  }
-
-  @action
-  setIsDeleted(isDeleted: boolean) {
-    this.isDeleted = isDeleted
-  }
+  // ---------------------------------------------------------------------------
+  // Batch mode
+  // ---------------------------------------------------------------------------
 
   get hasBatchMode() {
-    return this.getInputFields().some((output) => output.allowBatch)
+    return this.getInputFields().some((field) => field.allowBatch)
   }
 
+  /**
+   * Turns batch mode on or off, picking the first batch capable input and
+   * output fields if none were picked yet
+   */
   @action
   setBatchMode(isEnabled: boolean) {
     this.isBatchModeEnabled = isEnabled
 
     if (this.batchModeInputKey === "") {
-      const batchInputField = this.getInputFields().filter((input) => input.allowBatch)[0]
-      if (batchInputField) {
-        this.batchModeInputKey = batchInputField.key
-      }
+      this.batchModeInputKey = this.getInputFields().find((field) => field.allowBatch)?.key ?? ""
     }
 
     if (this.batchModeOutputKey === "") {
-      const batchOutputField = this.getOutputFields().filter((output) => output.allowBatch)[0]
-      if (batchOutputField) {
-        this.batchModeOutputKey = batchOutputField.key
-      }
+      this.batchModeOutputKey = this.getOutputFields().find((field) => field.allowBatch)?.key ?? ""
     }
-  }
-
-  @action
-  setBatchModeOutputKey(batchOutputKey: string) {
-    this.batchModeOutputKey = batchOutputKey
   }
 
   @action
@@ -598,322 +737,72 @@ export class Applet<
   }
 
   @action
+  setBatchModeOutputKey(batchOutputKey: string) {
+    this.batchModeOutputKey = batchOutputKey
+  }
+
+  @action
   toggleBatchMode() {
     this.setBatchMode(!this.isBatchModeEnabled)
   }
 
-  getInputFields() {
-    if (this.type === AppletType.Pipeline && this.viewMode === "main") {
-      return this.getInputFieldsFromPipeline()
-    }
+  // ---------------------------------------------------------------------------
+  // Presets
+  // ---------------------------------------------------------------------------
 
-    if (typeof this.inputFields === "function") {
-      return this.inputFields(this.inputValues)
-    }
-    return this.inputFields
-  }
-
-  private getInputFieldsFromPipeline() {
-    const inputNodes: Node[] = this.inputValues?.$PIPELINE?.nodes ?? []
-
-    if (inputNodes.length > 0) {
-      const appletInputNodes = inputNodes.filter((inputNode) => inputNode.type === "appletInput")
-      const appletInput: Array<AppletInput<InputFields>> = appletInputNodes.map((inputNode) => ({
-        key: inputNode.data.key,
-        label: inputNode.data.label,
-        component: inputNode.data.component
-      }))
-
-      return appletInput
-    }
-
-    return []
-  }
-
-  getInputFieldsWithReadableFile(): [Array<AppletInput<InputFields>>, boolean] {
-    const inputFields = this.getInputFields()
-
-    let hasAllowBatch = false
-    const filteredInputFields = inputFields.filter((inputField) => {
-      if (inputField.allowBatch) {
-        hasAllowBatch = true
-      }
-
-      const inputToCompare = appletComponentService.getInputComponent(inputField.component)
-      return !!inputToCompare.readFileAs
-    })
-
-    if (filteredInputFields.length > 0) {
-      return [filteredInputFields, false]
-    }
-
-    if (!hasAllowBatch) {
-      return [[], hasAllowBatch]
-    }
-
-    const filteredBatchInputFields = inputFields.filter((inputField) => {
-      const inputToCompare = appletComponentService.getInputComponent(inputField.component, true)
-
-      return !!inputToCompare.readFileAs
-    })
-
-    return [filteredBatchInputFields, true]
-  }
-
-  getOutputFields() {
-    if (this.type === AppletType.Pipeline && this.viewMode === "main") {
-      return this.getOutputFieldsFromPipeline()
-    }
-
-    if (typeof this.outputFields === "function") {
-      return this.outputFields(this.inputValues)
-    }
-    return this.outputFields
-  }
-
-  private getOutputFieldsFromPipeline() {
-    const outputNodes: Node[] = this.inputValues?.$PIPELINE?.nodes ?? []
-
-    if (outputNodes.length > 0) {
-      const appletOutputNodes = outputNodes.filter((inputNode) => inputNode.type === "appletOutput")
-      const appletOutput: Array<AppletOutput<InputFields>> = appletOutputNodes.map((outputNode) => ({
-        key: outputNode.data.key,
-        label: outputNode.data.label,
-        component: outputNode.data.component
-      }))
-
-      return appletOutput
-    }
-
-    return []
-  }
-
-  @action
-  setInputValue(key: string, value: unknown, options: { markAsModified: boolean } = { markAsModified: true }) {
-    const newInputValues = { ...this.inputValues, [key]: value }
-
-    // File has no enumerable keys, so deep equal treats any two files as equal
-    const isFileValue = value instanceof File || (Array.isArray(value) && value.some((item) => item instanceof File))
-    const inputValuesHasChanged = isFileValue
-      ? true
-      : !fastDeepEqual(this.inputValues, newInputValues)
-
-    if (inputValuesHasChanged) {
-      this.inputValues = { ...this.inputValues, [key]: value }
-    }
-
-    if (!this.isAutoRunAndFirstTime) {
-      this.isInputValuesModified = options.markAsModified
-    }
-  }
-
-  @action
-  setInputValues(inputValues: any, options: { markAsModified: boolean } = { markAsModified: true }) {
-    this.inputValues = inputValues
-
-    if (!this.isAutoRunAndFirstTime) {
-      this.isInputValuesModified = options.markAsModified
-    }
-  }
-
-  @action
-  setInputValuesMerge(inputValues: any, options: { markAsModified: boolean } = { markAsModified: true }) {
-    const mergedValues = merge(this.inputValues, inputValues)
-    this.setInputValues(mergedValues, options)
-  }
-
-  getInputValue(key: string) {
-    return this.inputValues[key]
-  }
-
-  @action
-  setOutputValue(key: string, value: unknown, options: { markAsModified: boolean } = { markAsModified: true }) {
-    this.outputValues = { ...this.outputValues, [key]: value }
-
-    if (!this.isAutoRunAndFirstTime) {
-      this.isOutputValuesModified = options.markAsModified
-    }
-  }
-
-  @action
-  setOutputValues(outputValues: any, options: { markAsModified: boolean } = { markAsModified: true }) {
-    this.outputValues = outputValues
-
-    if (!this.isAutoRunAndFirstTime) {
-      this.isOutputValuesModified = options.markAsModified
-    }
-  }
-
-  getOutputValue(key: string) {
-    return this.outputValues[key]
+  getHasPresets() {
+    return this.presets.length > 0
   }
 
   /**
-   * Set option value and re-run applet action if possible
-   *
-   * @param key
-   * @param value
+   * Replaces the input values with a preset's, and runs it
    */
   @action
-  setOptionValue(key: string, value: unknown) {
-    this.optionValues = { ...this.optionValues, [key]: value }
+  fillInputValuesWithPreset(preset: AppletPreset) {
+    const { inputValues, optionValues, isBatchModeEnabled = false } = preset
+    const presetInputValues = typeof inputValues === "function" ? inputValues() : inputValues
 
-    if (this.shouldRunOnOptionChange()) {
+    this.resetInputAndOutputFieldsState()
+
+    if (optionValues) {
+      this.optionValues = { ...this.getOptionValuesWithDefault(), ...optionValues }
+    }
+
+    this.setBatchMode(isBatchModeEnabled)
+    this.setInputValues({ ...this.getInputValuesWithDefault(), ...presetInputValues })
+
+    // An auto run tool runs from the input change, any other tool runs here
+    if (!this.autoRun) {
       void this.run()
     }
   }
 
-  /**
-   * Restore every option to its default value and re-run if autoRun is enabled
-   */
-  @action
-  resetOptionValues() {
-    this.optionValues = this.getOptionValuesWithDefault()
-
-    if (this.shouldRunOnOptionChange()) {
-      void this.run()
-    }
-  }
-
-  @action
-  resetInputAndOutputValues() {
-    this.inputValues = this.getInputValuesWithDefault()
-    this.outputValues = {}
-    this.fieldErrors = {}
-  }
-
-  @action
-  setFieldErrors(fieldErrors: AppletFieldErrors) {
-    this.fieldErrors = fieldErrors
-  }
-
-  getFieldError(type: "input" | "output", key: string): string | undefined {
-    return this.fieldErrors[type]?.[key]
-  }
-
-  getInputValuesWithDefault() {
-    return Object.fromEntries(this.getInputFields().map((i) => [i.key, i.defaultValue]))
-  }
-
-  getOptionValuesWithDefault() {
-    return Object.fromEntries(this.options.map((i) => [i.key, i.defaultValue]))
-  }
+  // ---------------------------------------------------------------------------
+  // Running
+  // ---------------------------------------------------------------------------
 
   /**
-   * An option change re-runs an autoRun tool that has something to run on:
-   * input you edited, or input it was opened with, such as a dropped file or
-   * files an extension asked to open, which never mark the input as modified
+   * Runs after the user stops typing, waiting longer when an input is large
    */
-  private shouldRunOnOptionChange(): boolean {
-    return this.autoRun && (this.isInputValuesModified || this.getIsInputHasValues())
-  }
-
-  getIsInputHasValues(): boolean {
-    const inputFields = this.getInputFields()
-
-    return Object.entries(this.inputValues).filter(
-      ([key, value]) => Boolean(value) && !inputFields.find((field) => field.key === key)?.skipValidateHasValue
-    ).length > 0
-  }
-
-  getIsInputOrOutputHasValues(): boolean {
-    const hasInputValues = this.getIsInputHasValues()
-
-    const hasOutputValues = Object.values(this.outputValues).filter(
-      (value) => Boolean(value)
-    ).length > 0
-
-    return hasInputValues || hasOutputValues
-  }
-
-  @action
-  setInputFieldState(key: string, state: unknown) {
-    if (this.isDeleted) {
-      return
-    }
-
-    this.inputFieldsState = { ...this.inputFieldsState, [key]: state }
-  }
-
-  @action
-  setOutputFieldState(key: string, state: unknown) {
-    if (this.isDeleted) {
-      return
-    }
-
-    this.outputFieldsState = { ...this.outputFieldsState, [key]: state }
-  }
-
-  @action
-  resetInputAndOutputFieldsState() {
-    this.inputFieldsState = {}
-    this.outputFieldsState = {}
-  }
-
-  /**
-   * Mark applet has action running
-   *
-   * @param newActionValue
-   */
-  @action
-  private setIsActionRunning(newActionValue: boolean) {
-    this.isActionRunning = newActionValue
-
-    /**
-     * Clear existing debounced setTimeout
-     */
-    if (this.isActionRunningDebouncedTimeout) {
-      clearTimeout(this.isActionRunningDebouncedTimeout)
-      this.isActionRunningDebouncedTimeout = undefined
-    }
-
-    /**
-     * If isActionRunning has value true, wait few milliseconds to set value of
-     * session store and debounced value
-     */
-    if (newActionValue) {
-      this.isActionRunningDebouncedTimeout = setTimeout(() => {
-        this.isActionRunningDebounced = newActionValue
-        sessionStore.setSessionHasRunningAction(this.sessionId, newActionValue)
-      }, 200)
-    } else {
-      this.isActionRunningDebounced = newActionValue
-      sessionStore.setSessionHasRunningAction(this.sessionId, newActionValue)
-    }
-  }
-
-  @action
-  private incrementActionRunCount() {
-    this.actionRunCount = this.actionRunCount + 1
-  }
-
   async runDebounced() {
-    if (this.autoRunSetTimeout) {
-      clearTimeout(this.autoRunSetTimeout)
-    }
+    clearTimeout(this.autoRunTimeout)
 
-    /**
-     * Running on every keystroke freezes the UI when the input is large,
-     * so wait until the user stops typing
-     */
     const hasLargeInput = Object.values(this.inputValues).some((value) => isLargeText(value))
-    const delay = hasLargeInput ? Math.max(this.autoRunDelay, 400) : this.autoRunDelay
+    const delay = hasLargeInput
+      ? Math.max(this.autoRunDelay, LARGE_INPUT_AUTO_RUN_DELAY)
+      : this.autoRunDelay
 
-    this.autoRunSetTimeout = setTimeout(() => {
+    this.autoRunTimeout = setTimeout(() => {
       void this.run()
     }, delay)
   }
 
   /**
-   * A run asked for while one is going, waiting for it: asks made meanwhile
-   * share it, with their values merged (the last one wins per key)
-   */
-  private queuedRun?: { runValues: Record<string, unknown>, promise: Promise<void> }
-
-  /**
-   * Runs the tool, after the run that is going if there is one, instead of
-   * being skipped like `run` while busy. What a component asks for with
-   * `peranti.run(values)`.
+   * Runs the tool once the current run finishes, instead of being skipped like
+   * `run` is while busy. Used by `peranti.run(values)` from components.
+   *
+   * Only one run is queued: calls made while one is waiting join it, and their
+   * `runValues` are merged into it (the latest call wins per key).
    */
   async runWhenIdle(runValues: Record<string, unknown> = {}) {
     if (this.queuedRun) {
@@ -928,13 +817,16 @@ export class Applet<
       this.queuedRun = undefined
       await this.run(queued.runValues)
     })()
+
     this.queuedRun = queued
     await queued.promise
   }
 
   /**
-   * @param runValues Extension tools only: values sent to this run alongside
-   * the input values, not kept with the tab. See `runWhenIdle`
+   * Runs the tool, unless it's closed or already running
+   *
+   * @param runValues Extension tools only: extra values sent with this run,
+   * not saved with the tab. See `runWhenIdle`
    */
   async run(runValues?: Record<string, unknown>) {
     if (this.isDeleted || this.isActionRunning) {
@@ -943,7 +835,7 @@ export class Applet<
 
     if (this.type === AppletType.Extension) {
       await this.runExtension(runValues)
-    } else if (this.canRunPipeline && this.type === AppletType.Pipeline) {
+    } else if (this.type === AppletType.Pipeline) {
       await this.runPipeline()
     } else if (this.isBatchModeEnabled) {
       await this.runBatch()
@@ -958,19 +850,88 @@ export class Applet<
     }
   }
 
-  /**
-   * Run applet action, a failed action clears the outputs and shows its error
-   * instead of leaving the previous result on screen
-   */
-  private async runAction(actionInput: any, actionOptions: any, previousOutputValues: any = {}) {
-    const actionParams = { inputValues: actionInput, toast, options: actionOptions, previousOutputValues }
+  private async runNormal() {
+    const { $errors, ...outputValues } = await this.runAction(this.inputValues, this.optionValues, toJS(this.outputValues))
 
-    // One error toast per session, replaced while the user keeps typing
-    const errorToastId = `applet-error-${this.sessionId}`
+    this.setFieldErrors($errors ?? {})
+    this.setOutputValues(outputValues)
+  }
+
+  /**
+   * Runs the action once per line of the batch input, and joins each output's
+   * results back into lines
+   */
+  private async runBatch() {
+    const { inputValues, batchModeInputKey, optionValues } = this
+    const batchInput = inputValues[batchModeInputKey]
+    const inputLines = typeof batchInput === "string" ? batchInput.split("\n") : []
+
+    const linesByOutputKey: Record<string, unknown[]> = {}
+    for (const inputLine of inputLines) {
+      // Field errors can't point at one line of a batch, so they're dropped
+      const { $errors: _errors, ...outputValues } = await this.runAction({ ...inputValues, [batchModeInputKey]: inputLine }, optionValues)
+
+      Object.entries(outputValues).forEach(([key, value]) => {
+        (linesByOutputKey[key] ??= []).push(value)
+      })
+    }
+
+    this.setOutputValues(
+      Object.fromEntries(
+        Object.entries(linesByOutputKey).map(([key, lines]) => [key, lines.join("\n")])
+      )
+    )
+  }
+
+  private async runPipeline() {
+    const { nodes = [], edges = [] } = this.inputValues.$PIPELINE ?? {}
+
+    const outputValues = await runPipeline({
+      nodes,
+      edges,
+      pipelineInputValues: this.inputValues,
+      runApplet: async(appletId, inputValues) => {
+        const applet = new Applet(appletStore.mapOfLoadedApplets[appletId], { disablePersistence: true })
+        applet.setInputValuesMerge(inputValues)
+        await applet.run()
+
+        return applet.outputValues
+      }
+    })
+
+    Object.entries(outputValues).forEach(([key, value]) => {
+      this.setOutputValue(key, value)
+    })
+  }
+
+  private async runExtension(runValues: Record<string, unknown> = {}) {
+    if (!this.metadata) {
+      return
+    }
+
+    this.setIsActionRunning(true)
 
     try {
-      let result = this.action(actionParams)
+      const outputValues = await runExtension(this.metadata, { ...toJS(this.inputValues), ...runValues })
 
+      this.dismissRunError()
+      this.setOutputValues(outputValues)
+    } catch (error) {
+      this.showRunError(error)
+    } finally {
+      this.setIsActionRunning(false)
+    }
+  }
+
+  /**
+   * Calls the tool's action. A failed action returns no outputs, so the
+   * previous result is cleared instead of staying on screen
+   */
+  private async runAction(inputValues: any, optionValues: any, previousOutputValues: any = {}) {
+    try {
+      let result = this.action({ inputValues, toast, options: optionValues, previousOutputValues })
+
+      // Only async actions are shown as running
       if (typeof result?.then === "function") {
         this.setIsActionRunning(true)
         try {
@@ -980,304 +941,55 @@ export class Applet<
         }
       }
 
-      toast.dismiss(errorToastId)
+      this.dismissRunError()
       return result ?? {}
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error)
-
-      toast.error(`${this.name}: ${message}`, { id: errorToastId })
+      this.showRunError(error)
       return {}
     }
   }
 
-  private async runExtension(runValues: Record<string, unknown> = {}) {
-    if (this.metadata) {
-      this.setIsActionRunning(true)
-
-      // One error toast per session, replaced while the user keeps typing
-      const errorToastId = `applet-error-${this.sessionId}`
-
-      try {
-        const extensionResult = await runExtension(this.metadata, { ...toJS(this.inputValues), ...runValues })
-
-        toast.dismiss(errorToastId)
-        this.setOutputValues(extensionResult)
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error)
-
-        toast.error(`${this.name}: ${message}`, { id: errorToastId })
-      } finally {
-        this.setIsActionRunning(false)
-      }
-    }
-  }
-
-  private async runNormal() {
-    const { $errors, ...runResult } = await this.runAction(this.inputValues, this.optionValues, toJS(this.outputValues))
-    this.setFieldErrors($errors ?? {})
-    this.setOutputValues(runResult)
-  }
-
-  private async runPipeline() {
-    const edges: Edge[] = this.inputValues.$PIPELINE.edges ?? []
-    const nodes: Node[] = this.inputValues.$PIPELINE.nodes ?? []
-    const nodesMap = Object.fromEntries(nodes.map((node) => [node.id, node]))
-
-    const resolvedValues: Record<string, Record<any, any>> = {}
-
-    const targetInputDependencies: Record<string, number> = {}
-    edges.forEach((edge) => {
-      if (!targetInputDependencies[edge.target]) {
-        targetInputDependencies[edge.target] = 0
-      }
-      targetInputDependencies[edge.target]++
-    })
-
-    let breakWhile = false
-
-    /**
-     * Resolve node outputValues that has no input dependencies
-     */
-    let resolveTargetWithoutDependencies = true
-
-    /**
-     * Find unresolved edge by filtering the source edge that has value and does not
-     * resolving the target value
-     */
-    let unresolved = edges.filter((edge) => !targetInputDependencies[edge.source] && !resolvedValues[edge.source])
-
-    const countExecutedEdges: Record<string, number> = {}
-
-    while (unresolved.length > 0 && !breakWhile) {
-      const edge = unresolved[0]
-      const node = nodesMap[edge.source]
-
-      /**
-       * Count number of time(s) edge has been executed
-       */
-      if (!countExecutedEdges[edge.id]) {
-        countExecutedEdges[edge.id] = 0
-      }
-      countExecutedEdges[edge.id]++
-
-      /**
-       * Break while loop if edge is executed more than 1 times
-       * It's supposed to run once
-       */
-      if (countExecutedEdges[edge.id] > 1) {
-        breakWhile = true
-      }
-
-      /**
-       * Set default value for source node
-       */
-      if (!resolvedValues[edge.source]) {
-        resolvedValues[edge.source] = { inputValues: {}, outputValues: {} }
-      }
-
-      /**
-       * Set default value for target node
-       */
-      if (!resolvedValues[edge.target]) {
-        resolvedValues[edge.target] = { inputValues: {}, outputValues: {} }
-      }
-
-      /**
-       * Fill source node input and output values
-       */
-      if (node.type === "applet") {
-        const appletConstructor = appletStore.mapOfLoadedApplets[node.data.appletId]
-        const applet = new Applet(appletConstructor, { disablePersistence: true })
-        applet.setInputValuesMerge(resolvedValues[edge.source].inputValues)
-        await applet.run()
-
-        resolvedValues[edge.source].outputValues = merge(
-          resolvedValues[edge.source].outputValues,
-          applet.outputValues
-        )
-      } else if (node.type === "appletInput") {
-        if (edge.sourceHandle && edge.targetHandle) {
-          resolvedValues[edge.source].outputValues[edge.sourceHandle] = this.inputValues[node.data.key]
-        }
-      }
-
-      /**
-       * Fill target node input and output values
-       */
-      const sourceEdges = edges.filter((e) => e.source === edge.source)
-
-      sourceEdges.forEach((sourceEdge) => {
-        if (sourceEdge.targetHandle && sourceEdge.sourceHandle) {
-          const targetInputValues = {
-            [sourceEdge.targetHandle]: resolvedValues[edge.source].outputValues[sourceEdge.sourceHandle]
-          }
-
-          /**
-           * Set default value for target node
-           */
-          if (!resolvedValues[sourceEdge.target]) {
-            resolvedValues[sourceEdge.target] = { inputValues: {}, outputValues: {} }
-          }
-
-          resolvedValues[sourceEdge.target].inputValues = merge(
-            resolvedValues[sourceEdge.target].inputValues,
-            targetInputValues
-          )
-        }
-      })
-
-      if (resolveTargetWithoutDependencies) {
-        unresolved = edges.filter((edge) => !targetInputDependencies[edge.source] && !resolvedValues[edge.source])
-      }
-
-      if (unresolved.length === 0 || !resolveTargetWithoutDependencies) {
-        resolveTargetWithoutDependencies = false
-        unresolved = edges.filter((edge) => (
-          (targetInputDependencies[edge.source] === Object.values(resolvedValues?.[edge.source]?.inputValues ?? {}).length) &&
-          Object.values(resolvedValues[edge.source]?.outputValues ?? {}).length === 0
-        ))
-      }
-    }
-
-    const outputNodes = nodes.filter((node) => node.type === "appletOutput" && resolvedValues[node.id]?.inputValues)
-    outputNodes.forEach((outputNode) => {
-      this.setOutputValue(outputNode.data.key, resolvedValues[outputNode.id].inputValues[outputNode.data.key])
-    })
-  }
-
-  private async runBatch() {
-    const { inputValues, batchModeInputKey: batchInputKey, optionValues } = this
-    const batchInputValues = inputValues[batchInputKey]
-    const inputLines = batchInputValues.split("\n")
-
-    const outputs = []
-    for (const inputLine of inputLines) {
-      // Field errors can't point at one line of a batch, so they're dropped
-      const { $errors: _errors, ...runResult } = await this.runAction({ ...inputValues, [batchInputKey]: inputLine }, optionValues)
-      outputs.push(runResult)
-    }
-
-    const listOfOutputParams: Record<string, string[]> = outputs.reduce((sum, a) => {
-      Object.entries(a).forEach(([key, value]) => {
-        if (!sum[key]) sum[key] = []
-        sum[key].push(value)
-      })
-
-      return sum
-    }, {})
-
-    this.setOutputValues(
-      Object.fromEntries(
-        Object.entries(listOfOutputParams).map(([key, value]) => [key, value.join("\n")])
-      )
-    )
-  }
-
   /**
-   * Manually hydrate applet state to storage
+   * One error toast per session, replaced on each failed run while the user
+   * keeps typing
    */
-  async hydrateStore() {
-    await hydrateStore(this)
+  private get runErrorToastId() {
+    return `applet-error-${this.sessionId}`
   }
 
-  /**
-   * Stop and destroy reference to mobx persist store
-   */
-  stopStore() {
-    stopPersisting(this)
+  private showRunError(error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    toast.error(`${this.name}: ${message}`, { id: this.runErrorToastId })
   }
 
-  /**
-   * Set value of isDeleted
-   *
-   * @param isDeleted
-   */
+  private dismissRunError() {
+    toast.dismiss(this.runErrorToastId)
+  }
+
   @action
-  setDeleted(isDeleted: boolean) {
-    this.isDeleted = isDeleted
-  }
+  private setIsActionRunning(isRunning: boolean) {
+    this.isActionRunning = isRunning
 
-  /**
-   * Mark applet as deleted
-   */
-  @action
-  async markAsDeleted() {
-    this.setDeleted(true)
+    clearTimeout(this.runningIndicatorTimeout)
+    this.runningIndicatorTimeout = undefined
 
-    /**
-     * Reset input and output field state
-     */
-    this.resetInputAndOutputFieldsState()
-
-    /**
-     * Reset to pipeline mode when deleted applet type is Pipeline
-     */
-    if (this.type === AppletType.Pipeline) {
-      this.viewMode = "pipeline"
-    }
-
-    /**
-     * Direcly update to storage if the applet session if not persisting
-     *
-     * Example case for this one is when the tab are not currently active and
-     * closed through tabbar context menu (Close Tab, Close Others or Close All)
-     */
-    if (!isPersisting(this)) {
-      await StorageManager.updateAppletStatePropertyInStorage(this.sessionId, {
-        inputFieldsState: {},
-        outputFieldsState: {},
-        isDeleted: true,
-        viewMode: this.type === AppletType.Pipeline ? "pipeline" : this.viewMode
-      })
-    }
-  }
-
-  /**
-   * Indicates applet has presets
-   *
-   * @returns
-   */
-  getHasPresets() {
-    return this.presets.length > 0
-  }
-
-  /**
-   * Fill current inputValues with preset data
-   *
-   * @param preset
-   */
-  fillInputValuesWithPreset(preset: AppletPreset) {
-    if (preset) {
-      const defaultInputValues = this.getInputValuesWithDefault()
-      const { inputValues, optionValues, isBatchModeEnabled = false } = preset
-
-      this.resetInputAndOutputFieldsState()
-
-      if (optionValues) {
-        this.optionValues = { ...this.getOptionValuesWithDefault(), ...optionValues }
-      }
-
-      this.setBatchMode(isBatchModeEnabled)
-      let computedInputValues
-      if (typeof inputValues === "function") {
-        computedInputValues = inputValues()
-      } else {
-        computedInputValues = inputValues
-      }
-
-      this.setInputValues({ ...defaultInputValues, ...computedInputValues })
-
-      /**
-       * Always run the preset even the applet has autoRun disabled
-       */
-      if (!this.autoRun) {
-        void this.run()
-      }
+    if (isRunning) {
+      this.runningIndicatorTimeout = setTimeout(() => {
+        this.setIsActionRunningDebounced(true)
+      }, RUNNING_INDICATOR_DELAY)
+    } else {
+      this.setIsActionRunningDebounced(false)
     }
   }
 
   @action
-  setViewMode(viewMode: "main" | "pipeline") {
-    this.viewMode = viewMode
+  private setIsActionRunningDebounced(isRunning: boolean) {
+    this.isActionRunningDebounced = isRunning
+    sessionStore.setSessionHasRunningAction(this.sessionId, isRunning)
+  }
+
+  @action
+  private incrementActionRunCount() {
+    this.actionRunCount += 1
   }
 }
