@@ -10,9 +10,15 @@ import { userSettingsService } from "./services/user-settings-service.ts"
 
 /**
  * Lazy load main application entry after user settings has been
- * successfully loaded
+ * successfully loaded, and only hand it over once the persisted interface
+ * state is restored, so the default layout never flashes on startup
  */
-const AppMain = lazy(async() => await import("./AppMain.tsx"))
+const AppMain = lazy(async() => {
+  const appMain = await import("./AppMain.tsx")
+  const { waitForRestoredState } = await import("./bootstrap/wait-for-restored-state.ts")
+  await waitForRestoredState()
+  return appMain
+})
 
 export const DefferedApp = () => {
   const isLoaded = useSelector(() => userSettingsService.isLoaded)

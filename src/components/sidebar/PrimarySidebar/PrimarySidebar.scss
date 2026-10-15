@@ -1,8 +1,9 @@
 // The sidebar sits directly on the window canvas — no border, no own panel —
 // so the floating cards to its right carry all the separation.
 .PrimarySidebar {
-  width: 100%;
-  max-width: var(--primary-sidebar-width);
+  position: relative;
+  flex: none;
+  width: var(--primary-sidebar-width);
   background-color: var(--primary-sidebar-background-color);
   display: flex;
   flex-direction: column;

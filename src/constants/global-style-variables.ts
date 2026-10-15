@@ -4,5 +4,7 @@ export const GlobalStyleVariables = {
   radiusScale: "--radius-scale",
   cardShadow: "--card-shadow",
   accentColor: "--accent",
-  toolSidebarItemHeight: "--tool-sidebar-item-height"
+  toolSidebarItemHeight: "--tool-sidebar-item-height",
+  primarySidebarWidth: "--primary-sidebar-width",
+  secondarySidebarWidth: "--secondary-sidebar-width"
 }

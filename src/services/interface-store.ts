@@ -1,10 +1,11 @@
 import localforage from "localforage"
-import { makeAutoObservable } from "mobx"
+import { autorun, makeAutoObservable } from "mobx"
 import { makePersistable } from "mobx-persist-store"
 
 import { DefaultAccentColor } from "src/constants/accent-colors"
 import { CornerRadiusScale } from "src/constants/corner-radius-scale"
 import { GlobalStyleVariables } from "src/constants/global-style-variables.js"
+import { PrimarySidebarWidth, SecondarySidebarWidth } from "src/constants/sidebar-width"
 import { StorageKeys } from "src/constants/storage-keys"
 import { AppTitleBarStyle as AppTitlebarStyle } from "src/enums/app-titlebar-style"
 import { CardShadow } from "src/enums/card-shadow"
@@ -21,6 +22,10 @@ import { watchSystemTheme } from "src/utils/theme/watch-system-theme"
 
 import { globalStyles } from "./global-styles.js"
 import { userSettingsService } from "./user-settings-service.js"
+
+const clampWidth = (width: number, bounds: { min: number, max: number }) => (
+  Math.round(Math.min(bounds.max, Math.max(bounds.min, width)))
+)
 
 class InterfaceStore {
   /**
@@ -132,6 +137,19 @@ class InterfaceStore {
   _sidebarMode: SidebarMode = SidebarMode.DockPinned
 
   /**
+   * Width in pixels of the primary (left) and secondary (right) sidebars,
+   * changed by dragging their inner edge
+   */
+  primarySidebarWidth = PrimarySidebarWidth.default
+  secondarySidebarWidth = SecondarySidebarWidth.default
+
+  /**
+   * True while a sidebar edge is being dragged, so the sidebars can skip their
+   * slide transition and follow the pointer
+   */
+  isResizingSidebar = false
+
+  /**
    * TODO: Used to show currently active sidebar content
    */
   sidebarActiveMenuId = "tools"
@@ -157,6 +175,11 @@ class InterfaceStore {
     userSettingsService.watchStore(this)
 
     watchSystemTheme((theme) => { this.setSystemTheme(theme) })
+
+    autorun(() => {
+      globalStyles.setVariable(GlobalStyleVariables.primarySidebarWidth, `${this.primarySidebarWidth}px`)
+      globalStyles.setVariable(GlobalStyleVariables.secondarySidebarWidth, `${this.secondarySidebarWidth}px`)
+    })
   }
 
   /**
@@ -169,7 +192,9 @@ class InterfaceStore {
       stringify: false,
       properties: [
         "isSidebarShow",
-        "_sidebarMode"
+        "_sidebarMode",
+        "primarySidebarWidth",
+        "secondarySidebarWidth"
       ]
     })
   }
@@ -202,6 +227,18 @@ class InterfaceStore {
   toggleSidebarAlwaysFloating() {
     this.isFloatingSidebar = !this.isFloatingSidebar
     this.isSidebarShow = !this.isFloatingSidebar
+  }
+
+  setPrimarySidebarWidth(width: number) {
+    this.primarySidebarWidth = clampWidth(width, PrimarySidebarWidth)
+  }
+
+  setSecondarySidebarWidth(width: number) {
+    this.secondarySidebarWidth = clampWidth(width, SecondarySidebarWidth)
+  }
+
+  setIsResizingSidebar(value: boolean) {
+    this.isResizingSidebar = value
   }
 
   setSidebarMenuId(menuId: string) {

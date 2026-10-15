@@ -1,11 +1,14 @@
-// The inspector: a 280px card floating beside the panes. Hidden by a negative
+// The inspector: a resizable card (280px by default) floating beside the panes. Hidden by a negative
 // margin of exactly its own width, so it takes up no space and the panes keep
 // their 8px gutter to the window edge; the slide stays a pure margin transition.
 .SecondarySidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   flex: none;
-  width: 280px;
-  margin: 0 -280px var(--card-gap) 0;
+  width: var(--secondary-sidebar-width);
+  margin: 0 calc(0px - var(--secondary-sidebar-width)) var(--card-gap) 0;
   background-color: var(--secondary-sidebar-background-color);
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
@@ -22,9 +25,14 @@
   // An open inspector with nothing to show (e.g. on the home screen) would be
   // an empty card, so it stays tucked away until a section appears.
   &.show:not(:has(.SecondarySidebarSection:not(.hidden))) {
-    margin-right: -280px;
+    margin-right: calc(0px - var(--secondary-sidebar-width));
     visibility: hidden;
   }
+}
+
+.SecondarySidebar-body {
+  flex: 1;
+  min-height: 0;
 }
 
 // Inside the applet viewer the panes already end in an 8px gap.

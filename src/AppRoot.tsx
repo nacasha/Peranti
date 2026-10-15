@@ -12,11 +12,13 @@ export const AppRoot: FC<{ children: ReactNode }> = ({ children }) => {
   const titlebarStyle = useSelector(() => interfaceStore.appTitlebarStyle)
   const isWindowMaximized = useSelector(() => interfaceStore.isWindowMaximized)
   const textAreaWordWrap = useSelector(() => interfaceStore.textAreaWordWrap)
+  const isResizingSidebar = useSelector(() => interfaceStore.isResizingSidebar)
 
   const classNames = clsx("AppRoot", {
     withMaximized: isWindowMaximized,
     withNotMaximized: !isWindowMaximized,
     withTextAreaWordWrap: textAreaWordWrap,
+    withSidebarResizing: isResizingSidebar,
     withTabbar: titlebarStyle === AppTitleBarStyle.Tabbar,
     withRunningInTauri: isRunningInTauri,
     withRunningInBrowser: !isRunningInTauri,

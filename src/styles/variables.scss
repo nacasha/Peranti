@@ -128,7 +128,9 @@ body {
   // Sidebar
   --activitybar-width: 50px;
   --activitybar-item-height: 30px;
+  // Both overridden by dragging the sidebar edge (see constants/sidebar-width.ts)
   --primary-sidebar-width: 256px;
+  --secondary-sidebar-width: 280px;
 
   // Input and output component styles
   --input-output-fields-spacing: 8px;
