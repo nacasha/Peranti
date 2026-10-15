@@ -13,10 +13,15 @@ interface Option<T = any> {
 
 interface SelectInputProps<T extends string> extends InputComponentProps<T> {
   options?: Array<Option<T>>
+
+  /**
+   * Show a search box above the options that filters them by label
+   */
+  searchable?: boolean
 }
 
 export const SelectInput: <T extends string>(props: SelectInputProps<T>) => JSX.Element = (props) => {
-  const { label, options = [], onValueChange, readOnly, value, fieldKey } = props
+  const { label, options = [], onValueChange, readOnly, value, fieldKey, searchable } = props
 
   const onChange = (value: any) => {
     onValueChange(value)
@@ -31,6 +36,7 @@ export const SelectInput: <T extends string>(props: SelectInputProps<T>) => JSX.
         readOnly={readOnly}
         onChange={onChange}
         options={options}
+        searchable={searchable}
       />
     </div>
   )
