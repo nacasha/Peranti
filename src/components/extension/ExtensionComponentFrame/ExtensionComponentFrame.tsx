@@ -74,6 +74,12 @@ interface ExtensionComponentFrameProps {
   onStateChange?: (state: unknown) => void
 
   /**
+   * Runs the tool for `peranti.run(values)`, with values for that run only.
+   * Without it (the component playground) the component's call fails
+   */
+  onRun?: (runValues: Record<string, unknown>) => Promise<void>
+
+  /**
    * The field's "props" from its tool, handed to the component as is
    */
   [prop: string]: unknown
@@ -119,6 +125,7 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
     onHeightChange,
     initialState,
     onStateChange,
+    onRun,
     ...fieldProps
   } = props
 
@@ -137,8 +144,8 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
   const valueFromFrameRef = useRef<string>()
 
   // Read through refs, the message listener is attached once
-  const latestRef = useRef({ value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, onStateChange, fieldProps })
-  latestRef.current = { value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, onStateChange, fieldProps }
+  const latestRef = useRef({ value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, onStateChange, onRun, fieldProps })
+  latestRef.current = { value, readOnly, heightKey, onValueChange, onDebugEvent, onHeightChange, onStateChange, onRun, fieldProps }
 
   // The state saved when the frame opened; later saves go to the store, not back in
   const initialStateRef = useRef(initialState)
@@ -217,6 +224,19 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
           bubbles: true,
           cancelable: true
         }))
+      } else if (data.type === "run" && typeof data.runId === "number") {
+        // Answered once the run ends, so the component knows its ask was handled
+        const { runId } = data
+        const runValues = data.values && typeof data.values === "object" && !Array.isArray(data.values) ? data.values : {}
+        const { onRun: run, readOnly: isReadOnly } = latestRef.current
+        const done = (error?: string) => { post({ type: "run-done", runId, error }) }
+        if (!run) {
+          done("This field can't run its tool here")
+        } else if (mode === "input" && isReadOnly) {
+          done("The tab is closed")
+        } else {
+          run(runValues).then(() => { done() }, (error: unknown) => { done(error instanceof Error ? error.message : String(error)) })
+        }
       } else if (data.type === "set-actions") {
         setActions(sanitizeFieldActions(data.actions))
       } else if (data.type === "open-files" && Array.isArray(data.paths)) {

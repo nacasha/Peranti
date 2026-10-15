@@ -116,6 +116,8 @@ export const AppletOutputRenderer: FC<AppletOutputRendererProps> = memo((props) 
       appletOutput.key,
       isBatchModeEnabled || maximizedField.enabled
     )
+    // `peranti.run(values)`: runs this tab's tool, after the run that is going
+    additionalProps.onRun = async(runValues: Record<string, unknown>) => { await activeApplet.runWhenIdle(runValues) }
   }
 
   if (maximizedField.enabled && maximizedField.type === "output" && maximizedField.key !== appletOutput.key) {

@@ -29,11 +29,19 @@
  *                         list. The id "run" runs the tool
  *   peranti.onAction(fn)  called with the id of a clicked header button,
  *                         returns an unsubscribe
+ *   peranti.run(values)   runs the tool, from an input or an output. `values`
+ *                         (an object) go to this run only, next to the input
+ *                         values, and aren't kept with the tab. A run asked
+ *                         for while one is going waits for it. Returns a
+ *                         promise that settles when the run ends; the result
+ *                         arrives as usual, through onValue of the outputs
  */
 export const ExtensionComponentBridge = `(() => {
   const state = { ready: false, mode: "output", value: undefined, readOnly: true, props: {}, state: null, running: false }
   const listeners = new Set()
   const actionListeners = new Set()
+  const pendingRuns = new Map()
+  let runCount = 0
   const runningListeners = new Set()
   const emitRunning = () => {
     runningListeners.forEach((listener) => {
@@ -125,6 +133,11 @@ export const ExtensionComponentBridge = `(() => {
       emitRunning()
     } else if (data.type === "theme") {
       applyTheme(data.theme)
+    } else if (data.type === "run-done" && pendingRuns.has(data.runId)) {
+      const { resolve, reject } = pendingRuns.get(data.runId)
+      pendingRuns.delete(data.runId)
+      if (data.error) reject(new Error(data.error))
+      else resolve()
     } else if (data.type === "action" && typeof data.id === "string") {
       actionListeners.forEach((listener) => {
         try { listener(data.id) } catch (error) { console.error(error) }
@@ -182,6 +195,16 @@ export const ExtensionComponentBridge = `(() => {
     onAction(listener) {
       actionListeners.add(listener)
       return () => { actionListeners.delete(listener) }
+    },
+    run(values) {
+      let plain = {}
+      try { plain = JSON.parse(JSON.stringify(values ?? {})) } catch { return Promise.reject(new Error("peranti.run: values must be JSON")) }
+      if (!plain || typeof plain !== "object" || Array.isArray(plain)) return Promise.reject(new Error("peranti.run: values must be an object"))
+      const runId = ++runCount
+      return new Promise((resolve, reject) => {
+        pendingRuns.set(runId, { resolve, reject })
+        post({ type: "run", runId, values: plain })
+      })
     }
   })
 

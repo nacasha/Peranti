@@ -123,6 +123,8 @@ export const AppletInputRenderer: FC<AppletInputRendererProps> = memo((props) =>
       appletInput.key,
       isBatchModeEnabled || maximizedField.enabled
     )
+    // `peranti.run(values)`: runs this tab's tool, after the run that is going
+    additionalProps.onRun = async(runValues: Record<string, unknown>) => { await activeApplet.runWhenIdle(runValues) }
   }
 
   Object.assign(additionalProps, computedPropValues)

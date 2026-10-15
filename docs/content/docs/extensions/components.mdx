@@ -40,7 +40,14 @@ peranti.openFiles(["/path/to/file.json"])       // asks Peranti to open files in
 peranti.openUrl("https://example.com/")         // opens a URL in the default browser
 peranti.setActions([{ id: "wrap", label: "Wrap", active: true }])  // header buttons
 peranti.onAction((id) => { /* a header button was clicked */ })
+await peranti.run({ action: "refresh" })        // runs the tool, from an input or an output
 ```
+
+`peranti.run(values)` runs the tool, so an output can drive its tool without an input field. `values` go to that
+run only, next to the input values (an executable tool reads them from stdin with the inputs), and aren't saved with
+the tab. A run asked for while one is going waits for it instead of being dropped; asks made meanwhile share one run.
+The promise settles when the run ends, and the result arrives as usual through the outputs' `onValue`. A tool whose
+only field is an output component can use it to poll: call `peranti.run()` on a timer.
 
 Peranti's theme is exposed as CSS variables (`var(--accent)`, `var(--text-color)`, `var(--line)`,
 `var(--font-family)`, …) and follows dark mode and the accent color.

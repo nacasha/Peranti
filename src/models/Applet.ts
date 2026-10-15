@@ -1,5 +1,5 @@
 import fastDeepEqual from "fast-deep-equal"
-import { observable, action, makeObservable, toJS } from "mobx"
+import { observable, action, makeObservable, toJS, when } from "mobx"
 import { PersistStoreMap, hydrateStore, isPersisting, makePersistable, stopPersisting } from "mobx-persist-store"
 import toast from "react-hot-toast"
 import { type Edge, type Node } from "reactflow"
@@ -904,13 +904,45 @@ export class Applet<
     }, delay)
   }
 
-  async run() {
+  /**
+   * A run asked for while one is going, waiting for it: asks made meanwhile
+   * share it, with their values merged (the last one wins per key)
+   */
+  private queuedRun?: { runValues: Record<string, unknown>, promise: Promise<void> }
+
+  /**
+   * Runs the tool, after the run that is going if there is one, instead of
+   * being skipped like `run` while busy. What a component asks for with
+   * `peranti.run(values)`.
+   */
+  async runWhenIdle(runValues: Record<string, unknown> = {}) {
+    if (this.queuedRun) {
+      Object.assign(this.queuedRun.runValues, runValues)
+      await this.queuedRun.promise
+      return
+    }
+
+    const queued = { runValues: { ...runValues }, promise: Promise.resolve() }
+    queued.promise = (async() => {
+      await when(() => !this.isActionRunning)
+      this.queuedRun = undefined
+      await this.run(queued.runValues)
+    })()
+    this.queuedRun = queued
+    await queued.promise
+  }
+
+  /**
+   * @param runValues Extension tools only: values sent to this run alongside
+   * the input values, not kept with the tab. See `runWhenIdle`
+   */
+  async run(runValues?: Record<string, unknown>) {
     if (this.isDeleted || this.isActionRunning) {
       return
     }
 
     if (this.type === AppletType.Extension) {
-      await this.runExtension()
+      await this.runExtension(runValues)
     } else if (this.canRunPipeline && this.type === AppletType.Pipeline) {
       await this.runPipeline()
     } else if (this.isBatchModeEnabled) {
@@ -958,7 +990,7 @@ export class Applet<
     }
   }
 
-  private async runExtension() {
+  private async runExtension(runValues: Record<string, unknown> = {}) {
     if (this.metadata) {
       this.setIsActionRunning(true)
 
@@ -966,7 +998,7 @@ export class Applet<
       const errorToastId = `applet-error-${this.sessionId}`
 
       try {
-        const extensionResult = await runExtension(this.metadata, toJS(this.inputValues))
+        const extensionResult = await runExtension(this.metadata, { ...toJS(this.inputValues), ...runValues })
 
         toast.dismiss(errorToastId)
         this.setOutputValues(extensionResult)
