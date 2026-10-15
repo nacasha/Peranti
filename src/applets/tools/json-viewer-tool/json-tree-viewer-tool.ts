@@ -36,7 +36,7 @@ export const jsonTreeViewerTool = new AppletConstructor<InputFields, OutputField
       component: "JsonTree"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Customer Book",
       inputValues: {

@@ -37,7 +37,7 @@ export const cronReadableTool = new AppletConstructor({
       component: "Code"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Sample 1",
       inputValues: {

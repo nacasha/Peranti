@@ -96,7 +96,7 @@ export const jsonRepairTool = new AppletConstructor<InputFields, OutputFields, O
       }
     }
   ],
-  samples: [
+  presets: [
     {
       name: "JavaScript Object",
       inputValues: {

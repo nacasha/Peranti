@@ -3,14 +3,14 @@ import localforage from "localforage"
 import { makeAutoObservable, runInAction } from "mobx"
 
 import { FileNames } from "src/constants/file-names"
-import { type AppletSample } from "src/types/AppletSample"
+import { type AppletPreset } from "src/types/AppletPreset"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 import { generateRandomString } from "src/utils/text/generate-random-string"
 
 import { appDataService } from "./app-data-service.js"
 import { fileService } from "./file-service.js"
 
-export interface Snippet extends AppletSample {
+export interface Snippet extends AppletPreset {
   id: string
   appletId: string
   inputValues: Record<string, unknown>

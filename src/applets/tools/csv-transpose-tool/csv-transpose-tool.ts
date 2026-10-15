@@ -34,7 +34,7 @@ export const csvTransposeTool = new AppletConstructor<InputFields, OutputFields>
       component: "Code"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Customer Book",
       inputValues: {

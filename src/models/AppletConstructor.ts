@@ -3,7 +3,7 @@ import { type AppletActionParams, type AppletFieldErrors } from "src/types/Apple
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOption } from "src/types/AppletOption"
 import { type AppletOutput } from "src/types/AppletOutput"
-import { type AppletSample } from "src/types/AppletSample"
+import { type AppletPreset } from "src/types/AppletPreset"
 import { type LayoutSetting } from "src/types/LayoutSetting"
 
 type AppletActionResult<OutputFields> = OutputFields & { $errors?: AppletFieldErrors }
@@ -28,7 +28,7 @@ export class AppletConstructor<
   layoutSetting?: LayoutSetting
   autoRun?: boolean
   type?: AppletType
-  samples?: Array<AppletSample<InputFields>>
+  presets?: Array<AppletPreset<InputFields>>
   metadata?: any
   disableMultipleSession?: boolean
   hideOnSidebar?: boolean
@@ -52,7 +52,7 @@ export class AppletConstructor<
     this.layoutSetting = data.layoutSetting
     this.autoRun = data.autoRun
     this.type = data.type ?? AppletType.Tool
-    this.samples = data.samples
+    this.presets = data.presets
     this.metadata = data.metadata
     this.disableMultipleSession = data.disableMultipleSession
     this.hideOnSidebar = data.hideOnSidebar

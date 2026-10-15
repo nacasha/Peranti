@@ -88,7 +88,7 @@ export const millisecondsToDate = new AppletConstructor<InputFields, OutputField
       props: { label: "Result" }
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Current Millis",
       inputValues: () => ({

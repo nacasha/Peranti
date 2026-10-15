@@ -77,7 +77,7 @@ export const csvDelimiterConverterTool = new AppletConstructor<InputFields, Outp
       defaultValue: false
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Customer Book",
       inputValues: {

@@ -62,7 +62,7 @@ export const csvToJsonTool = new AppletConstructor<InputFields, OutputFields, Op
       label: "Trim Header Fields"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Customer Book",
       inputValues: {

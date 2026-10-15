@@ -73,7 +73,7 @@ export const generateRandomStringTool = new AppletConstructor<InputFields, Outpu
       component: "Code"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Numbers",
       inputValues: {

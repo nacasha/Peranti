@@ -59,7 +59,7 @@ export const jsonataTool = new AppletConstructor<InputFields, OutputFields>({
       }
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Invoice",
       inputValues: {

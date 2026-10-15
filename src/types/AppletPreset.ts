@@ -1,4 +1,4 @@
-export interface AppletSample<InputFields = any> {
+export interface AppletPreset<InputFields = any> {
   name: string
   inputValues: Partial<InputFields> | (() => Partial<InputFields>)
   optionValues?: Record<string, unknown>

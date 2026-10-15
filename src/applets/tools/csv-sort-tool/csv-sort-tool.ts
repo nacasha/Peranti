@@ -82,7 +82,7 @@ export const csvSortTool = new AppletConstructor<InputFields, OutputFields, Opti
       defaultValue: true
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Customer Book",
       inputValues: {

@@ -48,7 +48,7 @@ export const prefixSuffixLines = new AppletConstructor<InputFields, OutputFields
       component: "Code"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "SQL Query",
       inputValues: {

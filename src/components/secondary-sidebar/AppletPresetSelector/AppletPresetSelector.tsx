@@ -12,22 +12,22 @@ import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 import { sessionStore } from "src/services/session-store"
 import { snippetsStore } from "src/services/snippets-store"
-import { type AppletSample } from "src/types/AppletSample"
+import { type AppletPreset } from "src/types/AppletPreset"
 
-export const AppletSampleSelector: FC = () => {
+export const AppletPresetSelector: FC = () => {
   const appletId = useSelector(() => activeAppletStore.getActiveApplet().appletId)
   const isDeleted = useSelector(() => activeAppletStore.getActiveApplet().isDeleted)
-  const samples = useSelector(() => activeAppletStore.getActiveApplet().samples)
+  const presets = useSelector(() => activeAppletStore.getActiveApplet().presets)
   const snippets = useSelector(() => snippetsStore.getByAppletId(activeAppletStore.getActiveApplet().appletId))
 
   const hasApplet = appletId !== ""
 
-  const handleClickSample = (sample: typeof samples[0]) => {
-    activeAppletStore.getActiveApplet().fillInputValuesWithSample(sample)
+  const handleClickPreset = (preset: typeof presets[0]) => {
+    activeAppletStore.getActiveApplet().fillInputValuesWithPreset(preset)
   }
 
-  const handleOpenInNewTab = (sample: typeof samples[0]) => {
-    sessionStore.createSessionOfActiveApplet()?.fillInputValuesWithSample(sample)
+  const handleOpenInNewTab = (preset: typeof presets[0]) => {
+    sessionStore.createSessionOfActiveApplet()?.fillInputValuesWithPreset(preset)
   }
 
   const handleSave = (name: string, includeOptions: boolean) => {
@@ -37,7 +37,7 @@ export const AppletSampleSelector: FC = () => {
 
   return (
     <SecondarySidebarSection
-      sectionKey={SecondarySidebarSections.Samples}
+      sectionKey={SecondarySidebarSections.Presets}
       title="Presets"
       icon={Icons.Thunder}
       hidden={!hasApplet}
@@ -50,24 +50,24 @@ export const AppletSampleSelector: FC = () => {
         />
       )}
     >
-      {samples.length === 0 && snippets.length === 0 && (
-        <div className="AppletSampleSelector-empty">No presets</div>
+      {presets.length === 0 && snippets.length === 0 && (
+        <div className="AppletPresetSelector-empty">No presets</div>
       )}
-      {samples.map((sample, index) => (
-        <SampleRow
-          key={sample.name.concat(index.toString())}
-          sample={sample}
+      {presets.map((preset, index) => (
+        <PresetRow
+          key={preset.name.concat(index.toString())}
+          preset={preset}
           disabled={isDeleted}
-          onClick={() => { handleClickSample(sample) }}
-          onOpenInNewTab={() => { handleOpenInNewTab(sample) }}
+          onClick={() => { handleClickPreset(preset) }}
+          onOpenInNewTab={() => { handleOpenInNewTab(preset) }}
         />
       ))}
       {snippets.map((snippet) => (
-        <SampleRow
+        <PresetRow
           key={snippet.id}
-          sample={snippet}
+          preset={snippet}
           disabled={isDeleted}
-          onClick={() => { handleClickSample(snippet) }}
+          onClick={() => { handleClickPreset(snippet) }}
           onOpenInNewTab={() => { handleOpenInNewTab(snippet) }}
           onRemove={() => { snippetsStore.remove(snippet.id) }}
         />
@@ -76,24 +76,24 @@ export const AppletSampleSelector: FC = () => {
   )
 }
 
-interface SampleRowProps {
-  sample: AppletSample
+interface PresetRowProps {
+  preset: AppletPreset
   disabled: boolean
   onClick: () => void
   onOpenInNewTab: () => void
   onRemove?: () => void
 }
 
-const SampleRow: FC<SampleRowProps> = ({ sample, disabled, onClick, onOpenInNewTab, onRemove }) => (
+const PresetRow: FC<PresetRowProps> = ({ preset, disabled, onClick, onOpenInNewTab, onRemove }) => (
   <div
-    className={clsx("AppletSampleSelector-row", { disabled })}
+    className={clsx("AppletPresetSelector-row", { disabled })}
     role="button"
     tabIndex={disabled ? -1 : 0}
     onClick={onClick}
   >
-    <span className="AppletSampleSelector-name">{sample.name}</span>
+    <span className="AppletPresetSelector-name">{preset.name}</span>
     <span
-      className="AppletSampleSelector-actions"
+      className="AppletPresetSelector-actions"
       onClick={(event) => { event.stopPropagation() }}
     >
       <ButtonIcon icon={Icons.OpenInNewTab} iconSize={12} tooltip="Open in new tab" onClick={onOpenInNewTab} />

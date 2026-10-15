@@ -90,7 +90,7 @@ export const jsonFormatter = new AppletConstructor<InputFields, OutputFields, Op
       }
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Prettify",
       inputValues: {

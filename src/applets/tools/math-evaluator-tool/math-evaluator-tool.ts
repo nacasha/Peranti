@@ -36,7 +36,7 @@ export const mathEvaluatorTool = new AppletConstructor<InputFields, OutputFields
       component: "Code"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Sample 1",
       inputValues: {

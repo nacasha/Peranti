@@ -5,16 +5,16 @@ import { Icons } from "src/constants/icons"
 import { useSelector } from "src/hooks/useSelector"
 import { activeAppletStore } from "src/services/active-applet-store"
 
-export const AppletSampleButton: FC = () => {
-  const hasSample = useSelector(() => activeAppletStore.getActiveApplet().getHasSamples())
+export const AppletPresetButton: FC = () => {
+  const hasPreset = useSelector(() => activeAppletStore.getActiveApplet().getHasPresets())
   const isDeleted = useSelector(() => activeAppletStore.getActiveApplet().isDeleted)
 
-  if (!hasSample || isDeleted) {
+  if (!hasPreset || isDeleted) {
     return null
   }
 
   const handleClick = () => {
-    // activeAppletStore.fillInputValuesWithSample()
+    // activeAppletStore.fillInputValuesWithPreset()
   }
 
   return (

@@ -74,7 +74,7 @@ export const csvDedupeRowsTool = new AppletConstructor<InputFields, OutputFields
       defaultValue: true
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Customer Book",
       inputValues: {

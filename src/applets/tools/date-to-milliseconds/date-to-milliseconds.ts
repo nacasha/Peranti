@@ -44,7 +44,7 @@ export const dateToMillisecondsTool = new AppletConstructor<InputFields, OutputF
       allowBatch: true
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Current Date",
       inputValues: () => ({

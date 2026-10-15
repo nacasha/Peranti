@@ -45,7 +45,7 @@ export const csvTableViewerTool = new AppletConstructor<InputFields, OutputField
       defaultValue: false
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Sample 1",
       inputValues: {

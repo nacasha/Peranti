@@ -108,7 +108,7 @@ export const jsonDiffTool = new AppletConstructor<InputFields, OutputFields, Opt
       }
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Reordered And Reformatted",
       inputValues: {

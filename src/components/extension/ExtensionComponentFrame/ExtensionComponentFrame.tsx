@@ -255,7 +255,7 @@ export const ExtensionComponentFrame: FC<ExtensionComponentFrameProps> = (props)
     return () => { window.removeEventListener("message", handleMessage) }
   }, [mode])
 
-  // New values from the app, such as a run's output or a loaded sample
+  // New values from the app, such as a run's output or a loaded preset
   useEffect(() => {
     // Compared as JSON, the store hands the value back wrapped in a new proxy
     if (!isReadyRef.current || JSON.stringify(value) === valueFromFrameRef.current) {

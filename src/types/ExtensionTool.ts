@@ -2,7 +2,7 @@ import { type ExtensionRuntime } from "src/enums/extension-runtime"
 
 import { type AppletInput } from "./AppletInput.ts"
 import { type AppletOutput } from "./AppletOutput.ts"
-import { type AppletSample } from "./AppletSample.ts"
+import { type AppletPreset } from "./AppletPreset.ts"
 import { type LayoutSetting } from "./LayoutSetting.ts"
 
 /**
@@ -29,7 +29,7 @@ export interface ExtensionTool<
   outputFields: Array<AppletOutput<OutputFields>> | ((outputParams: OutputFields) => Array<AppletOutput<OutputFields>>)
   layoutSetting?: LayoutSetting
   autoRun?: boolean
-  samples?: Array<AppletSample<InputFields>>
+  presets?: Array<AppletPreset<InputFields>>
   disableMultipleSession?: boolean
   runtime: ExtensionRuntime
   javascript?: {

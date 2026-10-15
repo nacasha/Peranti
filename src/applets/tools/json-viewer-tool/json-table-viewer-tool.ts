@@ -36,7 +36,7 @@ export const jsonTableViewerTool = new AppletConstructor<InputFields, OutputFiel
       component: "DataGrid"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Customer Book",
       inputValues: {

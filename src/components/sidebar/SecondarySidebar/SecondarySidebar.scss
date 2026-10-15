@@ -128,7 +128,7 @@
 }
 
 // One hover target per row; the remove button only shows on hover.
-.AppletSampleSelector-row {
+.AppletPresetSelector-row {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -159,7 +159,7 @@
   }
 }
 
-.AppletSampleSelector-name {
+.AppletPresetSelector-name {
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -167,17 +167,17 @@
   text-overflow: ellipsis;
 }
 
-.AppletSampleSelector-actions {
+.AppletPresetSelector-actions {
   display: flex;
   opacity: 0;
 }
 
-.AppletSampleSelector-row:hover .AppletSampleSelector-actions,
-.AppletSampleSelector-row:focus-within .AppletSampleSelector-actions {
+.AppletPresetSelector-row:hover .AppletPresetSelector-actions,
+.AppletPresetSelector-row:focus-within .AppletPresetSelector-actions {
   opacity: 1;
 }
 
-.AppletSampleSelector-empty {
+.AppletPresetSelector-empty {
   padding: 4px 12px;
   color: var(--faint);
 }

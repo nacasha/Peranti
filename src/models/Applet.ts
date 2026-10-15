@@ -15,7 +15,7 @@ import { type AppletActionParams, type AppletFieldErrors } from "src/types/Apple
 import { type AppletInput } from "src/types/AppletInput"
 import { type AppletOption } from "src/types/AppletOption"
 import { type AppletOutput } from "src/types/AppletOutput"
-import { type AppletSample } from "src/types/AppletSample"
+import { type AppletPreset } from "src/types/AppletPreset"
 import { type AppletState } from "src/types/AppletState"
 import { type ExtensionMetadata } from "src/types/ExtensionMetadata"
 import { type LayoutSetting } from "src/types/LayoutSetting"
@@ -220,9 +220,9 @@ export class Applet<
   readonly metadata?: ExtensionMetadata
 
   /**
-   * Applet input samples
+   * Applet input presets
    */
-  readonly samples: Array<AppletSample<InputFields>> = []
+  readonly presets: Array<AppletPreset<InputFields>> = []
 
   /**
    * Applet input and output options
@@ -333,7 +333,7 @@ export class Applet<
     this.autoRun = appletConstructor.autoRun ?? true
     this.type = appletConstructor.type ?? AppletType.Tool
     this.metadata = appletConstructor.metadata
-    this.samples = appletConstructor.samples ?? []
+    this.presets = appletConstructor.presets ?? []
     this.disableMultipleSession = appletConstructor.disableMultipleSession ?? !sessionStore.enableMultipleSession
     this.hasOverriddenDefaultState = appletConstructor.hasOverriddenDefaultState ?? false
     this.inputValues = this.getInputValuesWithDefault()
@@ -1233,23 +1233,23 @@ export class Applet<
   }
 
   /**
-   * Indicates applet has samples
+   * Indicates applet has presets
    *
    * @returns
    */
-  getHasSamples() {
-    return this.samples.length > 0
+  getHasPresets() {
+    return this.presets.length > 0
   }
 
   /**
-   * Fill current inputValues with sample data
+   * Fill current inputValues with preset data
    *
-   * @param sample
+   * @param preset
    */
-  fillInputValuesWithSample(sample: AppletSample) {
-    if (sample) {
+  fillInputValuesWithPreset(preset: AppletPreset) {
+    if (preset) {
       const defaultInputValues = this.getInputValuesWithDefault()
-      const { inputValues, optionValues, isBatchModeEnabled = false } = sample
+      const { inputValues, optionValues, isBatchModeEnabled = false } = preset
 
       this.resetInputAndOutputFieldsState()
 
@@ -1268,7 +1268,7 @@ export class Applet<
       this.setInputValues({ ...defaultInputValues, ...computedInputValues })
 
       /**
-       * Always run the sample even the applet has autoRun disabled
+       * Always run the preset even the applet has autoRun disabled
        */
       if (!this.autoRun) {
         void this.run()

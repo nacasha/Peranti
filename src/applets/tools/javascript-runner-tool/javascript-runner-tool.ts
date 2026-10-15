@@ -47,7 +47,7 @@ export const javascriptRunnerTool = new AppletConstructor<InputFields, OutputFie
       component: "Code"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Prime Number",
       inputValues: {

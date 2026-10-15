@@ -3,7 +3,7 @@ import { type FC } from "react"
 import SimpleBar from "simplebar-react"
 
 import { AppletOptions } from "src/components/secondary-sidebar/AppletOptions"
-import { AppletSampleSelector } from "src/components/secondary-sidebar/AppletSampleSelector"
+import { AppletPresetSelector } from "src/components/secondary-sidebar/AppletPresetSelector"
 import { PipelineOptions } from "src/components/secondary-sidebar/PipelineOptions"
 import { SidebarResizeHandle } from "src/components/sidebar/SidebarResizeHandle"
 import { SecondarySidebarWidth } from "src/constants/sidebar-width"
@@ -42,7 +42,7 @@ const SecondarySidebar: FC = () => {
     <div className={className}>
       <SimpleBar className="SecondarySidebar-body">
         <PipelineOptions />
-        <AppletSampleSelector />
+        <AppletPresetSelector />
         <AppletOptions />
       </SimpleBar>
       {isOpen && (

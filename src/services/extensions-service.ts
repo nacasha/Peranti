@@ -165,7 +165,7 @@ class ExtensionsService {
       layoutSetting: extension.layoutSetting,
       autoRun: extension.autoRun,
       type: AppletType.Extension,
-      samples: extension.samples,
+      presets: extension.presets,
       disableMultipleSession: extension.disableMultipleSession,
       metadata
     }

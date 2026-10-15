@@ -61,7 +61,7 @@ export const compareListTool = new AppletConstructor<InputFields, OutputFields>(
       component: "Code"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Sample 1",
       inputValues: {

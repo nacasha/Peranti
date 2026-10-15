@@ -32,7 +32,7 @@ export const mermaidEditorTool = new AppletConstructor<InputFields, OutputFields
       hideInHistory: true
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Pie",
       inputValues: {

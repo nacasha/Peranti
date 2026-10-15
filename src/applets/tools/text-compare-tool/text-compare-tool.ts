@@ -132,7 +132,7 @@ export const textCompareTool = new AppletConstructor<InputFields, OutputFields, 
       }
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Paragraph Edit",
       inputValues: {

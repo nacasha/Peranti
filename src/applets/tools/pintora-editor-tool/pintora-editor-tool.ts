@@ -32,7 +32,7 @@ export const pintoraEditorTool = new AppletConstructor<InputFields, OutputFields
       hideInHistory: true
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Activity Diagram",
       inputValues: {

@@ -66,7 +66,7 @@ export const hashTool = new AppletConstructor<InputFields, OutputFields>({
       allowBatch: true
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Random String",
       inputValues: () => ({

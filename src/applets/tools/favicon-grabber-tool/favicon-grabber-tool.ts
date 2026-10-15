@@ -55,7 +55,7 @@ export const faviconGrabberTool = new AppletConstructor<InputFields, OutputField
       }
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Google",
       inputValues: { websiteUrl: "google.com" }

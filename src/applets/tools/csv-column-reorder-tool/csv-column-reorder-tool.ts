@@ -51,7 +51,7 @@ export const csvColumnReorderTool = new AppletConstructor<InputFields, OutputFie
       component: "Code"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Customer Book",
       inputValues: {

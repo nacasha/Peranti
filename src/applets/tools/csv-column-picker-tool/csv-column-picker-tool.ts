@@ -53,7 +53,7 @@ export const csvColumnPickerTool = new AppletConstructor<InputFields, OutputFiel
       component: "Code"
     }
   ],
-  samples: [
+  presets: [
     {
       name: "Customer Book",
       inputValues: {
