@@ -2,13 +2,23 @@ import { CatalogSourceType } from "src/enums/catalog-source-type"
 import { type CatalogSource } from "src/types/CatalogSource"
 
 /**
+ * Branch of a repo source that names none
+ */
+export const DEFAULT_CATALOG_BRANCH = "main"
+
+/**
+ * Category of extension tools and pages that name none
+ */
+export const EXTENSIONS_CATEGORY = "Extensions"
+
+/**
  * Catalog every install starts with. It can be turned off but not removed.
  */
 const defaultSource: CatalogSource = {
   id: "default",
   type: CatalogSourceType.GitHub,
   location: "https://github.com/nacasha/peranti-extensions",
-  branch: "main"
+  branch: DEFAULT_CATALOG_BRANCH
 }
 
 export const ExtensionCatalog = {
@@ -18,6 +28,11 @@ export const ExtensionCatalog = {
    * Catalogs that list extensions in this folder, otherwise at their root
    */
   extensionsFolderName: "extensions",
+
+  /**
+   * Version of an extension whose `peranti.json` names none
+   */
+  unversioned: "0.0.0",
 
   /**
    * GitHub's API rejects requests without a user agent

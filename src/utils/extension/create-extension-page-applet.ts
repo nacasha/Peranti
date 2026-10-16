@@ -1,3 +1,4 @@
+import { EXTENSIONS_CATEGORY } from "src/constants/extension-catalog"
 import { EXTENSION_PAGE_APPLET_PREFIX } from "src/constants/extension-page"
 import { AppletType } from "src/enums/applet-type"
 import { AppletConstructor } from "src/models/AppletConstructor"
@@ -11,7 +12,7 @@ export function createExtensionPageApplet(extensionId: string, name: string): Ap
     appletId: `${EXTENSION_PAGE_APPLET_PREFIX}${extensionId}`,
     // Tells its tab apart from a tool of the same name
     name: `Extensions: ${name}`,
-    category: "Extensions",
+    category: EXTENSIONS_CATEGORY,
     inputFields: [
       {
         key: "content",

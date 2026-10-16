@@ -1,9 +1,9 @@
 import { useEffect, useState, type CSSProperties, type FC } from "react"
 
 import { Icons } from "src/constants/icons"
-import { getExtensionHue } from "src/utils/extension/get-extension-hue"
 import { formatFileSize } from "src/utils/file/format-file-size"
 import { getFileExtension } from "src/utils/file/get-file-extension"
+import { getFileTypeHue } from "src/utils/file/get-file-type-hue"
 import { isImageFile } from "src/utils/file/is-image-file"
 
 interface FileInputItemProps {
@@ -23,7 +23,7 @@ export const FileInputItem: FC<FileInputItemProps> = (props) => {
 
   const extension = getFileExtension(file.name)
   const isImage = isImageFile(file)
-  const badgeStyle: CSSProperties & Record<"--badge-hue", number> = { "--badge-hue": getExtensionHue(extension) }
+  const badgeStyle: CSSProperties & Record<"--badge-hue", number> = { "--badge-hue": getFileTypeHue(extension) }
 
   useEffect(() => {
     if (!isImage) {

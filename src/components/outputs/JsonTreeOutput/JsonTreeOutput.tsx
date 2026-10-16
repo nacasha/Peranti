@@ -7,6 +7,7 @@ import { Icons } from "src/constants/icons"
 import { ClipboardService } from "src/services/clipboard-service"
 import { type OutputComponentProps } from "src/types/OutputComponentProps"
 import { clamp } from "src/utils/common/clamp"
+import { pluralize } from "src/utils/text/pluralize"
 
 import {
   collectJsonBranchPaths,
@@ -204,7 +205,7 @@ export const JsonTreeOutput: FC<JsonTreeOutputProps> = (props) => {
   const renderValue = (row: JsonTreeRow) => {
     if (row.size !== undefined) {
       const isArray = row.kind === "array"
-      const summary = `${row.size} ${isArray ? "item" : "key"}${row.size === 1 ? "" : "s"}`
+      const summary = pluralize(row.size, isArray ? "item" : "key")
       return (
         <span className="JsonTreeOutput-summary">
           {isArray ? "[" : "{"}

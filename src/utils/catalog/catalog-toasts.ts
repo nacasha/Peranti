@@ -4,33 +4,46 @@ import { CatalogSourceType } from "src/enums/catalog-source-type"
 import { appletStore } from "src/services/applet-store"
 import { extensionCatalogService } from "src/services/extension-catalog-service"
 import { extensionsService } from "src/services/extensions-service"
+import { type CatalogExtension } from "src/types/CatalogExtension"
 import { type CatalogSource } from "src/types/CatalogSource"
 import { getErrorMessage } from "src/utils/common/get-error-message"
+import { pluralize } from "src/utils/text/pluralize"
+
+/**
+ * Catalog and extension actions started from the UI, each reporting its
+ * outcome in a toast
+ */
 
 /**
  * One toast for every reload or refresh, replaced when another starts
  */
 const TOAST_ID = "extensions-refresh"
 
-function plural(count: number, word: string) {
-  return `${count} ${word}${count === 1 ? "" : "s"}`
-}
+/**
+ * One toast per extension being installed, followed by its outcome
+ */
+const INSTALL_TOAST_ID_PREFIX = "extension-install-"
 
 /**
- * Sources whose last read failed, with the error. A failed source keeps
- * showing what it had, so the failure only shows in its state.
+ * Install or update a catalog extension, reporting the outcome in a toast
  */
-function getFailedSources(sources: CatalogSource[]) {
-  return sources
-    .map((source) => ({ source, error: extensionCatalogService.sourceStates[source.id]?.error }))
-    .filter((failed): failed is { source: CatalogSource, error: string } => Boolean(failed.error))
+export async function installCatalogExtension(entry: CatalogExtension, isUpdate: boolean = false) {
+  const toastId = INSTALL_TOAST_ID_PREFIX + entry.id
+
+  try {
+    await extensionCatalogService.install(entry)
+    toast.success(`${isUpdate ? "Updated" : "Installed"} ${entry.name} ${entry.version}`, { id: toastId })
+  } catch (exception) {
+    const message = getErrorMessage(exception)
+    toast.error(`Failed to ${isUpdate ? "update" : "install"} ${entry.name}: ${message}`, { id: toastId })
+  }
 }
 
 function reportFailedSources(failed: Array<{ source: CatalogSource, error: string }>, prefix = "") {
   const labels = failed.map(({ source }) => extensionCatalogService.getSourceLabel(source.id))
   const message = failed.length === 1
     ? `${prefix}Couldn't refresh ${labels[0]}: ${failed[0].error}`
-    : `${prefix}Couldn't refresh ${plural(failed.length, "source")}: ${labels.join(", ")}`
+    : `${prefix}Couldn't refresh ${pluralize(failed.length, "source")}: ${labels.join(", ")}`
 
   toast.error(message, { id: TOAST_ID })
 }
@@ -43,7 +56,7 @@ export async function reloadExtensionsWithToast() {
 
   try {
     await appletStore.reloadExtensions()
-    toast.success(`Reloaded ${plural(extensionsService.installedExtensions.length, "extension")}`, { id: TOAST_ID })
+    toast.success(`Reloaded ${pluralize(extensionsService.installedExtensions.length, "extension")}`, { id: TOAST_ID })
   } catch (exception) {
     toast.error(`Couldn't reload extensions: ${getErrorMessage(exception)}`, { id: TOAST_ID })
   }
@@ -64,7 +77,7 @@ export async function refreshSourceWithToast(source: CatalogSource) {
     return
   }
 
-  const failed = getFailedSources([source])
+  const failed = extensionCatalogService.getFailedSources([source])
   if (failed.length > 0) {
     reportFailedSources(failed)
     return
@@ -77,7 +90,7 @@ export async function refreshSourceWithToast(source: CatalogSource) {
   }
 
   const count = extensionCatalogService.sourceStates[source.id]?.extensions.length ?? 0
-  toast.success(`Refreshed ${label}, ${plural(count, "extension")}`, { id: TOAST_ID })
+  toast.success(`Refreshed ${label}, ${pluralize(count, "extension")}`, { id: TOAST_ID })
 }
 
 /**
@@ -94,13 +107,13 @@ export async function refreshCatalogWithToast() {
     return
   }
 
-  const failed = getFailedSources(sources)
+  const failed = extensionCatalogService.getFailedSources(sources)
   if (failed.length > 0) {
     reportFailedSources(failed)
     return
   }
 
-  toast.success(`Refreshed ${plural(sources.length, "source")}`, { id: TOAST_ID })
+  toast.success(`Refreshed ${pluralize(sources.length, "source")}`, { id: TOAST_ID })
 }
 
 /**
@@ -118,18 +131,18 @@ export async function refreshAllSourcesWithToast() {
     return
   }
 
-  const failed = getFailedSources(sources)
+  const failed = extensionCatalogService.getFailedSources(sources)
   if (failed.length > 0) {
     const refreshedCount = sources.length - failed.length
-    reportFailedSources(failed, refreshedCount > 0 ? `Refreshed ${plural(refreshedCount, "source")}. ` : "")
+    reportFailedSources(failed, refreshedCount > 0 ? `Refreshed ${pluralize(refreshedCount, "source")}. ` : "")
     return
   }
 
   const hasLocal = sources.length > extensionCatalogService.remoteSources.length
   toast.success(
     hasLocal
-      ? `Refreshed ${plural(sources.length, "source")} and reloaded extensions`
-      : `Refreshed ${plural(sources.length, "source")}`,
+      ? `Refreshed ${pluralize(sources.length, "source")} and reloaded extensions`
+      : `Refreshed ${pluralize(sources.length, "source")}`,
     { id: TOAST_ID }
   )
 }

@@ -1,5 +1,6 @@
 import { appletComponentService } from "src/services/applet-component-service"
 import { type ComponentValueInfo } from "src/types/ComponentValueInfo"
+import { parseComponentReference } from "src/utils/extension/extension-ids"
 
 /**
  * What a tool field's value is, from the component it names: a built-in
@@ -10,8 +11,9 @@ export function getFieldValueInfo(
   mode: "input" | "output",
   extensionComponents: Array<{ componentId: string, value?: ComponentValueInfo }> = []
 ): ComponentValueInfo | undefined {
-  if (component.startsWith("@")) {
-    const extensionComponent = extensionComponents.find((item) => item.componentId === component.slice(1))
+  const componentId = parseComponentReference(component)
+  if (componentId !== undefined) {
+    const extensionComponent = extensionComponents.find((item) => item.componentId === componentId)
     if (!extensionComponent) {
       return undefined
     }

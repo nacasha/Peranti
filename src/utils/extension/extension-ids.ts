@@ -5,6 +5,7 @@
  *   extension  ext:github.com/owner/repo/color-kit      (ext:local/<folder> for a hand-added folder)
  *   tool       ext:github.com/owner/repo/color-kit/picker
  *   component  ext:github.com/owner/repo/color-kit#color-wheel
+ *   folder     github.com-owner-repo--color-kit       (where a catalog install is kept)
  *
  * IDs are scoped to the source an extension came from, so authors in
  * different catalogs can use the same names, and the `ext:` prefix keeps them
@@ -20,6 +21,21 @@ const LOCAL_SOURCE_KEY = "local"
 
 const TOOL_SEPARATOR = "/"
 const COMPONENT_SEPARATOR = "#"
+
+/**
+ * How a tool field names a component of its own extension: `@<componentId>`
+ */
+const COMPONENT_REFERENCE_PREFIX = "@"
+
+/**
+ * Longest part of a source key kept in a folder name
+ */
+const MAX_FOLDER_SOURCE_LENGTH = 80
+
+/**
+ * Separates the source from the extension in a folder name
+ */
+const FOLDER_NAME_SEPARATOR = "--"
 
 /**
  * Separates the parts of a component field's height key, see
@@ -60,4 +76,36 @@ export function isExtensionId(name: string): boolean {
  */
 export function getExtensionComponentHeightKey(componentKey: string, mode: string, fieldKey: string): string {
   return [componentKey, mode, fieldKey].join(HEIGHT_KEY_SEPARATOR)
+}
+
+/**
+ * `@<componentId>`, as a tool field names a component of its own extension
+ */
+export function toComponentReference(componentId: string): string {
+  return COMPONENT_REFERENCE_PREFIX + componentId
+}
+
+/**
+ * The component ID a tool field's `component` refers to, or undefined when it
+ * names a built-in component
+ */
+export function parseComponentReference(component: unknown): string | undefined {
+  return typeof component === "string" && component.startsWith(COMPONENT_REFERENCE_PREFIX)
+    ? component.slice(COMPONENT_REFERENCE_PREFIX.length)
+    : undefined
+}
+
+/**
+ * Folder a catalog extension is installed into, unique per source so two
+ * catalogs can ship the same extension ID side by side, e.g.
+ * `github.com-nacasha-peranti-extensions--sample-color-kit`.
+ * Never starts with a dot, the fs scope doesn't match hidden folders on Unix.
+ */
+export function getExtensionFolderName(sourceKey: string, extensionId: string): string {
+  const slug = (value: string) => value
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/^[-.]+|-+$/g, "")
+
+  return `${slug(sourceKey).slice(0, MAX_FOLDER_SOURCE_LENGTH)}${FOLDER_NAME_SEPARATOR}${slug(extensionId)}`
 }

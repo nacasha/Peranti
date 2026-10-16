@@ -17,9 +17,8 @@ import { type FieldAction } from "src/types/FieldAction"
 import { getErrorMessage } from "src/utils/common/get-error-message"
 import { openLink } from "src/utils/common/open-link"
 import { toPlainJson } from "src/utils/data/to-plain-json"
-import { buildExtensionComponentDocument } from "src/utils/extension/build-extension-component-document"
+import { buildExtensionComponentDocument, getExtensionComponentTheme } from "src/utils/extension/extension-component-document"
 import { getExtensionComponentHeightKey, getExtensionIdFromComponentKey } from "src/utils/extension/extension-ids"
-import { getExtensionComponentTheme } from "src/utils/extension/get-extension-component-theme"
 import { parseComponentMessage } from "src/utils/extension/parse-component-message"
 
 const RunErrors = {

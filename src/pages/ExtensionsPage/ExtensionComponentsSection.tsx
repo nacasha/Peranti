@@ -3,10 +3,12 @@ import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
 import { ComponentValueTypeLabels } from "src/constants/component-value-types"
-import { ExtensionComponentKindLabels } from "src/constants/extension-component-kind-labels"
+import { ExtensionComponentKindLabels } from "src/constants/extension-component-kinds"
 import { Icons } from "src/constants/icons"
 import { type CatalogExtensionComponent } from "src/types/CatalogExtension"
 import { formatJson } from "src/utils/data/format-json"
+import { getComponentKind } from "src/utils/extension/extension-definitions"
+import { pluralize, pluralWord } from "src/utils/text/pluralize"
 
 import { ComponentFieldsTable } from "./ComponentFieldsTable.tsx"
 import { ExtensionAccordion, ExtensionAccordionMeta, ExtensionAccordionPanel } from "./ExtensionAccordion.tsx"
@@ -29,9 +31,9 @@ interface ExtensionComponentsSectionProps {
 export const ExtensionComponentsSection: FC<ExtensionComponentsSectionProps> = ({ components }) => (
   <ExtensionAccordion
     stateKey="components.expanded"
-    label={components.length === 1 ? "component" : "components"}
+    label={pluralWord(components.length, "component")}
     items={components.map((component) => {
-      const kind = component.kind ?? "both"
+      const kind = getComponentKind(component)
       const valueType = component.value?.type ?? "any"
       const propsCount = component.props?.length ?? 0
 
@@ -42,7 +44,7 @@ export const ExtensionComponentsSection: FC<ExtensionComponentsSectionProps> = (
         description: component.description,
         // Which side it draws, its value type is in the summary
         tags: <span className={clsx("ExtensionComponents-kind", `is-${kind}`)}>{ExtensionComponentKindLabels[kind]}</span>,
-        summary: `${ComponentValueTypeLabels[valueType]} value · ${propsCount} prop${propsCount === 1 ? "" : "s"}`,
+        summary: `${ComponentValueTypeLabels[valueType]} value · ${pluralize(propsCount, "prop")}`,
         actions: component.onOpen && (
           <Button icon={Icons.OpenInNewTab} onClick={component.onOpen}>Playground</Button>
         ),

@@ -20,15 +20,14 @@ import { sessionStore } from "src/services/session-store"
 import { settingsPageStore } from "src/services/settings-page-store"
 import { type CatalogExtension } from "src/types/CatalogExtension"
 import { type InstalledExtension } from "src/types/InstalledExtension"
-import { formatCatalogUpdatedLabel } from "src/utils/catalog/format-catalog-updated-label"
-import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-label"
-import { getInstalledSourceFilter } from "src/utils/catalog/get-installed-source-filter"
-import { refreshCatalogWithToast, reloadExtensionsWithToast } from "src/utils/catalog/refresh-with-toast"
+import { formatCatalogUpdatedLabel, getInstalledSourceFilter } from "src/utils/catalog/catalog-display"
+import { getCatalogSourceLabel } from "src/utils/catalog/catalog-sources"
+import { refreshCatalogWithToast, reloadExtensionsWithToast } from "src/utils/catalog/catalog-toasts"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
-import { getExtensionPlatform } from "src/utils/extension/get-extension-platform"
-import { getExtensionProvidesLabels } from "src/utils/extension/get-extension-provides-labels"
+import { getExtensionPlatform, getExtensionProvidesLabels } from "src/utils/extension/extension-summary"
 import { openExtensionPage } from "src/utils/extension/open-extension-page"
 import { matchesSearchKeyword } from "src/utils/search/matches-search-keyword"
+import { pluralize } from "src/utils/text/pluralize"
 import { prettyDateFormat } from "src/utils/time/pretty-date-format"
 
 import { CatalogInstallButton } from "./CatalogInstallButton.tsx"
@@ -112,7 +111,7 @@ const ExtensionsPageContent: FC = observer(() => {
             <span className="ExtensionsPage-count">{extensionsService.installedExtensions.length}</span>
             {extensionCatalogService.updateCount > 0 && (
               <span className="ExtensionsPage-count is-update">
-                {extensionCatalogService.updateCount} update{extensionCatalogService.updateCount > 1 ? "s" : ""}
+                {pluralize(extensionCatalogService.updateCount, "update")}
               </span>
             )}
           </button>
@@ -381,7 +380,7 @@ const BrowseTab: FC = observer(() => {
         ? "Loading the catalog…"
         : (
           <>
-            {`${catalogExtensions.length} extension${catalogExtensions.length === 1 ? "" : "s"} from ${enabledSources.length} source${enabledSources.length === 1 ? "" : "s"}`}
+            {`${pluralize(catalogExtensions.length, "extension")} from ${pluralize(enabledSources.length, "source")}`}
             {updatedAt !== undefined && (
               <span title={`Catalog read ${prettyDateFormat(new Date(updatedAt))}`}>
                 {" · "}{formatCatalogUpdatedLabel(updatedAt, isLoading, now)}

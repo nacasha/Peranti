@@ -7,7 +7,7 @@ import { BaseCodeMirror } from "src/components/common/BaseCodeMirror"
 import { Button } from "src/components/common/Button"
 import { ExtensionComponentFrame } from "src/components/extension/ExtensionComponentFrame"
 import { ComponentValueTypeLabels } from "src/constants/component-value-types"
-import { ExtensionComponentKindLabels } from "src/constants/extension-component-kind-labels"
+import { ExtensionComponentKindLabels, FieldModes } from "src/constants/extension-component-kinds"
 import { ComponentMessageType, HostMessageType } from "src/constants/extension-component-protocol"
 import { Icons } from "src/constants/icons"
 import { AppletComponentContext } from "src/contexts/AppletComponentContext"
@@ -25,7 +25,8 @@ import { getBuiltInComponentUsages } from "src/utils/component/get-built-in-comp
 import { getComponentPropStartingValue } from "src/utils/component/get-component-prop-starting-value"
 import { formatJson } from "src/utils/data/format-json"
 import { parseJsonOrError } from "src/utils/data/parse-json-or-error"
-import { getExtensionComponentUsages } from "src/utils/extension/get-extension-component-usages"
+import { getComponentKind, isComponentKindUsableAs } from "src/utils/extension/extension-definitions"
+import { getExtensionComponentUsages } from "src/utils/extension/extension-summary"
 
 import "./ComponentPlayground.scss"
 
@@ -55,7 +56,7 @@ interface ComponentPlaygroundProps {
  */
 export const ComponentPlayground: FC<ComponentPlaygroundProps> = observer(({ target }) => {
   const isExtension = target.type === "extension"
-  const kind = isExtension ? (target.component.definition.kind ?? "both") : target.entry.kind
+  const kind = isExtension ? getComponentKind(target.component.definition) : target.entry.kind
   const name = isExtension ? target.component.definition.name : target.entry.name
   const description = isExtension ? target.component.definition.description : undefined
   const usages = isExtension
@@ -63,7 +64,7 @@ export const ComponentPlayground: FC<ComponentPlaygroundProps> = observer(({ tar
     : getBuiltInComponentUsages(target.entry.name)
 
   // Starts from the first tool field that uses it, so it opens looking real
-  const firstUsage = usages.find((usage) => kind === "both" || usage.mode === kind) ?? usages[0]
+  const firstUsage = usages.find((usage) => isComponentKindUsableAs(kind, usage.mode)) ?? usages[0]
 
   const initialMode = kind === "output" ? "output" : (firstUsage?.mode ?? "input")
 
@@ -491,14 +492,14 @@ export const ComponentPlayground: FC<ComponentPlaygroundProps> = observer(({ tar
 
       <div className="ComponentPlayground-toolbar">
         <div className="ComponentPlayground-segmented" role="radiogroup" aria-label="Mode">
-          {(["input", "output"] as const).map((item) => (
+          {FieldModes.map((item) => (
             <button
               key={item}
               type="button"
               role="radio"
               aria-checked={mode === item}
               className={clsx(mode === item && "active")}
-              disabled={kind !== "both" && kind !== item}
+              disabled={!isComponentKindUsableAs(kind, item)}
               onClick={() => { setMode(item); setFrameKey((key) => key + 1) }}
             >
               As {item === "input" ? "Input" : "Output"}

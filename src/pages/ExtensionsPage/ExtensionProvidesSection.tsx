@@ -1,9 +1,10 @@
 import { type FC } from "react"
 
 import { Button } from "src/components/common/Button"
-import { ExtensionComponentKindLabels } from "src/constants/extension-component-kind-labels"
+import { ExtensionComponentKindLabels } from "src/constants/extension-component-kinds"
 import { Icons } from "src/constants/icons"
 import { type ExtensionComponentKind } from "src/types/ExtensionComponent"
+import { getComponentKind } from "src/utils/extension/extension-definitions"
 
 import { ExtensionDetailsSection } from "./ExtensionDetails.tsx"
 
@@ -50,7 +51,7 @@ export const ExtensionProvidesSection: FC<ExtensionProvidesSectionProps> = ({ to
               <code className="ExtensionProvides-description">@{component.componentId}</code>
             </div>
             <span className="ExtensionDetails-chip">
-              {ExtensionComponentKindLabels[component.kind ?? "both"]} Component
+              {ExtensionComponentKindLabels[getComponentKind(component)]} Component
             </span>
           </li>
         ))}

@@ -15,7 +15,7 @@ import { extensionsService } from "src/services/extensions-service"
 import { sessionStore } from "src/services/session-store"
 import { type InstalledExtension, type InstalledExtensionTool } from "src/types/InstalledExtension"
 import { resolveAppletFields } from "src/utils/applet/resolve-applet-fields"
-import { getExtensionToolRuns } from "src/utils/extension/get-extension-tool-runs"
+import { getExtensionToolRuns } from "src/utils/extension/extension-summary"
 import { matchesSearchKeyword } from "src/utils/search/matches-search-keyword"
 
 type SourceFilter = "all" | "extension" | "builtin"

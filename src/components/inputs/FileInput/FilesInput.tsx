@@ -3,6 +3,7 @@ import { useRef, type FC } from "react"
 import { AppletComponentHead } from "src/components/common/ComponentLabel"
 import { type InputComponentProps } from "src/types/InputComponentProps"
 import { formatFileSize } from "src/utils/file/format-file-size"
+import { pluralize } from "src/utils/text/pluralize"
 
 import { FileInputDropZone } from "./FileInputDropZone.tsx"
 import { FileInputItem } from "./FileInputItem.tsx"
@@ -64,7 +65,7 @@ export const FilesInput: FC<InputFilesProps> = (props) => {
 
             <div className="FileInput-footer">
               <span>
-                {selectedFiles.length} file{selectedFiles.length > 1 ? "s" : ""} · {formatFileSize(totalSize)}
+                {pluralize(selectedFiles.length, "file")} · {formatFileSize(totalSize)}
               </span>
               <button type="button" className="FileInput-clear" onClick={() => { onValueChange([]) }}>
                 Clear all

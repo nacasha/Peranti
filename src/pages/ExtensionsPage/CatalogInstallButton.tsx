@@ -8,7 +8,7 @@ import { Icons } from "src/constants/icons"
 import { ExtensionRuntime } from "src/enums/extension-runtime"
 import { extensionCatalogService } from "src/services/extension-catalog-service"
 import { type CatalogExtension } from "src/types/CatalogExtension"
-import { installCatalogExtension } from "src/utils/catalog/install-catalog-extension"
+import { installCatalogExtension } from "src/utils/catalog/catalog-toasts"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
 
 interface CatalogInstallButtonProps {

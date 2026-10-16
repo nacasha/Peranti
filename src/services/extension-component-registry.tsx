@@ -2,22 +2,12 @@ import { type FC } from "react"
 
 import { ExtensionComponentFrame } from "src/components/extension/ExtensionComponentFrame"
 import { ExtensionComponentMissing } from "src/components/extension/ExtensionComponentMissing"
+import { FieldModes } from "src/constants/extension-component-kinds"
 import { AppletComponent } from "src/models/AppletComponent.js"
-import { type ExtensionComponentKind } from "src/types/ExtensionComponent"
 import { type ExtensionComponentMode } from "src/types/ExtensionComponentMessage"
 import { type LoadedExtensionComponent } from "src/types/LoadedExtensionComponent"
+import { getComponentKind, isComponentKindUsableAs } from "src/utils/extension/extension-definitions"
 import { isExtensionId } from "src/utils/extension/extension-ids"
-
-const DEFAULT_KIND: ExtensionComponentKind = "both"
-
-/**
- * Modes a component of each kind can be used in
- */
-const MODES_BY_KIND: Record<ExtensionComponentKind, ExtensionComponentMode[]> = {
-  input: ["input"],
-  output: ["output"],
-  both: ["input", "output"]
-}
 
 interface RegisteredComponent {
   loaded: LoadedExtensionComponent
@@ -83,7 +73,8 @@ class ExtensionComponentRegistry {
         return [loaded.key, registered!]
       }
 
-      const modes = MODES_BY_KIND[loaded.definition.kind ?? DEFAULT_KIND]
+      const kind = getComponentKind(loaded.definition)
+      const modes = FieldModes.filter((mode) => isComponentKindUsableAs(kind, mode))
       const fields = Object.fromEntries(modes.map((mode) => [mode, createFieldComponent(loaded, mode)]))
 
       return [loaded.key, { loaded, fields }]

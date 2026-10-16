@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx"
 import toast from "react-hot-toast"
 
-import { ExtensionCatalog } from "src/constants/extension-catalog"
+import { EXTENSIONS_CATEGORY, ExtensionCatalog } from "src/constants/extension-catalog"
 import { FileNames } from "src/constants/file-names"
 import { AppletType } from "src/enums/applet-type"
 import { CatalogSourceType } from "src/enums/catalog-source-type"
@@ -16,30 +16,20 @@ import { type ExtensionFolder } from "src/types/ExtensionStorage"
 import { type ExtensionTool } from "src/types/ExtensionTool"
 import { type InstalledExtension, type InstalledExtensionTool } from "src/types/InstalledExtension"
 import { type LoadedExtensionComponent } from "src/types/LoadedExtensionComponent"
-import { getCatalogSourceKey, getUnknownSourceKey } from "src/utils/catalog/get-catalog-source-key"
-import { listLocalSourceFolders } from "src/utils/catalog/list-local-source-folders"
+import { getCatalogSourceKey, getUnknownSourceKey } from "src/utils/catalog/catalog-sources"
+import { listLocalSourceFolders } from "src/utils/catalog/local-source-folders"
 import { getErrorMessage } from "src/utils/common/get-error-message"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
-import { createExtensionFolderReader } from "src/utils/extension/create-extension-folder-reader"
+import { loadExtensionComponentHtml } from "src/utils/extension/extension-component-document"
+import { readExtensionComponents, readExtensionTools, resolveExtensionToolComponents } from "src/utils/extension/extension-definitions"
+import { createExtensionFolderReader } from "src/utils/extension/extension-folder-readers"
 import { getExtensionComponentKey, getExtensionId, getExtensionToolAppletId } from "src/utils/extension/extension-ids"
-import { loadExtensionComponentHtml } from "src/utils/extension/load-extension-component-html"
-import { readExtensionComponents } from "src/utils/extension/read-extension-components"
-import { readExtensionTools } from "src/utils/extension/read-extension-tools"
-import { resolveExtensionToolComponents } from "src/utils/extension/resolve-extension-tool-components"
+import { joinRelativePaths } from "src/utils/extension/extension-paths"
+import { pluralize } from "src/utils/text/pluralize"
 
 import { extensionComponentRegistry } from "./extension-component-registry.tsx"
 import { extensionStorage, resolveDiskPath } from "./extension-storage/index.js"
 import { userSettingsService } from "./user-settings-service.js"
-
-/**
- * Category of an extension tool that names none
- */
-const DEFAULT_TOOL_CATEGORY = "Extensions"
-
-/**
- * Joins two paths relative to an extension folder
- */
-const joinRelativePaths = (...paths: string[]) => paths.flatMap((path) => path.split("/")).filter(Boolean).join("/")
 
 class ExtensionsService {
   /**
@@ -159,7 +149,7 @@ class ExtensionsService {
       appletId,
       name: tool.name,
       description: tool.description,
-      category: tool.category ?? DEFAULT_TOOL_CATEGORY,
+      category: tool.category ?? EXTENSIONS_CATEGORY,
       inputFields: tool.inputFields,
       outputFields: tool.outputFields,
       layoutSetting: tool.layoutSetting,
@@ -325,7 +315,7 @@ class ExtensionsService {
 
     const failedCount = installedExtensions.filter((extension) => extension.error).length
     if (failedCount > 0) {
-      toast.error(`${failedCount} extension${failedCount > 1 ? "s" : ""} failed to load, see the Extensions page`, {
+      toast.error(`${pluralize(failedCount, "extension")} failed to load, see the Extensions page`, {
         id: "extensions-failed"
       })
     }

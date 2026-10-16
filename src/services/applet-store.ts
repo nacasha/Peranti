@@ -241,19 +241,21 @@ class AppletStore {
       .filter((applet) => applet.type === AppletType.Extension && !mapOfExtensions[applet.appletId])
       .map((applet) => applet.appletId)
 
+    /**
+     * Tabs of a tool that no longer exists can't run, close them. Closed while
+     * the tool is still loaded: a tab that isn't open is rebuilt from its tool
+     * to be closed and kept in the closed tab history.
+     */
+    await Promise.all(sessionStore.sessions
+      .filter((session) => removedAppletIds.includes(session.appletId))
+      .map(async(session) => { await sessionStore.closeSession(session) }))
+
     this.mapOfLoadedApplets = { ...mapOfNonExtensions, ...mapOfExtensions }
 
     // Every installed extension can open its page, named after it
     extensionsService.installedExtensions.forEach((extension) => {
       this.registerExtensionPage(extension.id, extension.manifest?.name ?? extension.folderName)
     })
-
-    /**
-     * Tabs of a tool that no longer exists can't run, close them
-     */
-    sessionStore.sessions
-      .filter((session) => removedAppletIds.includes(session.appletId))
-      .forEach((session) => { void sessionStore.closeSession(session) })
   }
 
   /**

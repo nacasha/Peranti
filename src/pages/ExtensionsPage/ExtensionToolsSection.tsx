@@ -10,6 +10,7 @@ import { type AppletOutput } from "src/types/AppletOutput"
 import { type ComponentValueInfo } from "src/types/ComponentValueInfo"
 import { getFieldCountSummary } from "src/utils/applet/get-field-count-summary"
 import { getFieldValueInfo } from "src/utils/component/get-field-value-info"
+import { pluralWord } from "src/utils/text/pluralize"
 
 import { ExtensionAccordion, ExtensionAccordionMeta, ExtensionAccordionPanel } from "./ExtensionAccordion.tsx"
 
@@ -55,7 +56,7 @@ interface ExtensionToolsSectionProps {
 export const ExtensionToolsSection: FC<ExtensionToolsSectionProps> = ({ tools, components }) => (
   <ExtensionAccordion
     stateKey="tools.expanded"
-    label={tools.length === 1 ? "tool" : "tools"}
+    label={pluralWord(tools.length, "tool")}
     items={tools.map((tool) => {
       const inputs = Array.isArray(tool.inputFields) ? tool.inputFields as AppletInput[] : []
       const outputs = Array.isArray(tool.outputFields) ? tool.outputFields as AppletOutput[] : []

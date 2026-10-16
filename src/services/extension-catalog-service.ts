@@ -14,22 +14,15 @@ import { type CatalogSource } from "src/types/CatalogSource"
 import { type ExtensionSource } from "src/types/ExtensionSource"
 import { type ExtensionFileData } from "src/types/ExtensionStorage"
 import { type InstalledExtension } from "src/types/InstalledExtension"
-import { compareVersions } from "src/utils/catalog/compare-versions"
-import { getCatalogBaseUrl } from "src/utils/catalog/get-catalog-base-url"
-import { getCatalogFilesSignature } from "src/utils/catalog/get-catalog-files-signature"
-import { getCatalogSourceKey, getUnknownSourceKey } from "src/utils/catalog/get-catalog-source-key"
-import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-label"
-import { listCatalogRepoFiles } from "src/utils/catalog/list-catalog-repo-files"
-import { listLocalSourceFolders } from "src/utils/catalog/list-local-source-folders"
-import { readCatalogExtension } from "src/utils/catalog/read-catalog-extension"
+import { getCatalogFilesSignature, listCatalogRepoFiles, readCatalogExtension } from "src/utils/catalog/catalog-listing"
+import { getCatalogBaseUrl, getCatalogSourceKey, getUnknownSourceKey, getCatalogSourceLabel } from "src/utils/catalog/catalog-sources"
+import { listLocalSourceFolders } from "src/utils/catalog/local-source-folders"
+import { compareVersions } from "src/utils/common/compare-versions"
 import { getErrorMessage } from "src/utils/common/get-error-message"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
-import { createExtensionFolderReader } from "src/utils/extension/create-extension-folder-reader"
-import { createRemoteExtensionFolderReader } from "src/utils/extension/create-remote-extension-folder-reader"
-import { getExtensionId } from "src/utils/extension/extension-ids"
-import { getExtensionFolderName } from "src/utils/extension/get-extension-folder-name"
-import { isInstallRecord, withoutInstallRecord } from "src/utils/extension/install-record"
-import { isSafeRelativePath } from "src/utils/extension/is-safe-relative-path"
+import { createExtensionFolderReader, createRemoteExtensionFolderReader } from "src/utils/extension/extension-folder-readers"
+import { getExtensionId, getExtensionFolderName } from "src/utils/extension/extension-ids"
+import { isInstallRecord, withoutInstallRecord, isSafeRelativePath } from "src/utils/extension/extension-paths"
 
 import { appletStore } from "./applet-store.js"
 import { DiskExtensionFolder, extensionStorage } from "./extension-storage/index.js"
@@ -180,9 +173,17 @@ class ExtensionCatalogService {
    * Sources that failed to load, with the reason
    */
   get failedSources() {
-    return this.remoteSources
+    return this.getFailedSources(this.remoteSources)
+  }
+
+  /**
+   * Those of `sources` whose last read failed, with the error. A failed source
+   * keeps showing what it had, so the failure only shows in its state.
+   */
+  getFailedSources(sources: CatalogSource[]) {
+    return sources
       .map((source) => ({ source, error: this.sourceStates[source.id]?.error }))
-      .filter((item): item is { source: CatalogSource, error: string } => !!item.error)
+      .filter((item): item is { source: CatalogSource, error: string } => item.error !== undefined)
   }
 
   /**

@@ -1,3 +1,4 @@
+import { FieldModes } from "src/constants/extension-component-kinds"
 import { AppletType } from "src/enums/applet-type"
 import { appletStore } from "src/services/applet-store"
 import { type ExtensionComponentUsage } from "src/types/ExtensionComponentUsage"
@@ -9,7 +10,7 @@ import { type ExtensionComponentUsage } from "src/types/ExtensionComponentUsage"
 export function getBuiltInComponentUsages(name: string): ExtensionComponentUsage[] {
   return appletStore.listOfLoadedApplets
     .filter((applet) => applet.type !== AppletType.Page)
-    .flatMap((applet) => (["input", "output"] as const).flatMap((mode) => {
+    .flatMap((applet) => FieldModes.flatMap((mode) => {
       const fields: unknown = mode === "input" ? applet.inputFields : applet.outputFields
       if (!Array.isArray(fields)) {
         return []

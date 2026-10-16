@@ -15,12 +15,12 @@ import { CatalogSourceType } from "src/enums/catalog-source-type"
 import { useNow } from "src/hooks/useNow"
 import { extensionCatalogService } from "src/services/extension-catalog-service"
 import { extensionsService } from "src/services/extensions-service"
-import { detectCatalogSourceType } from "src/utils/catalog/detect-catalog-source-type"
-import { formatCatalogUpdatedLabel } from "src/utils/catalog/format-catalog-updated-label"
-import { getCatalogSourceLabel } from "src/utils/catalog/get-catalog-source-label"
-import { refreshAllSourcesWithToast, refreshSourceWithToast, reloadExtensionsWithToast } from "src/utils/catalog/refresh-with-toast"
+import { formatCatalogUpdatedLabel } from "src/utils/catalog/catalog-display"
+import { detectCatalogSourceType, getCatalogSourceLabel } from "src/utils/catalog/catalog-sources"
+import { refreshAllSourcesWithToast, refreshSourceWithToast, reloadExtensionsWithToast } from "src/utils/catalog/catalog-toasts"
 import { getErrorMessage } from "src/utils/common/get-error-message"
 import { isRunningInTauri } from "src/utils/common/is-running-in-tauri"
+import { pluralize } from "src/utils/text/pluralize"
 import { prettyDateFormat } from "src/utils/time/pretty-date-format"
 
 import "./SettingsExtensions.scss"
@@ -95,8 +95,8 @@ export const SettingsExtensions: FC = observer(() => {
       })
 
       toast.success(isLocal
-        ? `Linked ${count} extension${count === 1 ? "" : "s"}, see Installed`
-        : `Added source with ${count} extension${count === 1 ? "" : "s"}`)
+        ? `Linked ${pluralize(count, "extension")}, see Installed`
+        : `Added source with ${pluralize(count, "extension")}`)
       setLocation("")
       setBranch("")
       setPickedType(undefined)
@@ -169,9 +169,9 @@ export const SettingsExtensions: FC = observer(() => {
                     {!isEnabled
                       ? "Off"
                       : linkedCount !== undefined
-                        ? `${linkedCount} extension${linkedCount === 1 ? "" : "s"}`
+                        ? pluralize(linkedCount, "extension")
                         : state?.isLoaded
-                          ? `${state.extensions.length} extension${state.extensions.length === 1 ? "" : "s"}`
+                          ? pluralize(state.extensions.length, "extension")
                           : state?.isLoading
                             ? "Loading…"
                             : ""}

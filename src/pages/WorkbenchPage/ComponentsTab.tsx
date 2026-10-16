@@ -4,12 +4,15 @@ import { useEffect, useMemo, useState, type FC } from "react"
 import SimpleBar from "simplebar-react"
 
 import { ComponentValueTypeLabels } from "src/constants/component-value-types"
+import { FieldModes } from "src/constants/extension-component-kinds"
 import { Icons } from "src/constants/icons"
 import { ExtensionListItem, type ExtensionListItemBadge } from "src/pages/ExtensionsPage/ExtensionListItem.tsx"
 import { extensionsService } from "src/services/extensions-service"
 import { workbenchPageStore } from "src/services/workbench-page-store"
 import { type ComponentPlaygroundTarget } from "src/types/ComponentPlaygroundTarget"
 import { getBuiltInComponentEntries } from "src/utils/component/get-built-in-component-entries"
+import { getComponentKind, isComponentKindUsableAs } from "src/utils/extension/extension-definitions"
+import { toComponentReference } from "src/utils/extension/extension-ids"
 import { matchesSearchKeyword } from "src/utils/search/matches-search-keyword"
 
 import { ComponentPlayground } from "./ComponentPlayground.tsx"
@@ -60,8 +63,8 @@ export const ComponentsTab: FC = observer(() => {
     if (kindFilter === "all") {
       return true
     }
-    const kind = target.type === "extension" ? (target.component.definition.kind ?? "both") : target.entry.kind
-    return kind === "both" || kind === kindFilter
+    const kind = target.type === "extension" ? getComponentKind(target.component.definition) : target.entry.kind
+    return isComponentKindUsableAs(kind, kindFilter)
   }
 
   const matches = (target: ComponentPlaygroundTarget) => matchesKind(target) && (target.type === "extension"
@@ -92,9 +95,9 @@ export const ComponentsTab: FC = observer(() => {
           key={target.key}
           name={definition.name}
           description={definition.description}
-          meta={`@${definition.componentId} · ${target.extension.manifest?.name ?? target.extension.folderName}`}
-          provides={(["input", "output"] as const)
-            .filter((side) => (definition.kind ?? "both") === "both" || definition.kind === side)
+          meta={`${toComponentReference(definition.componentId)} · ${target.extension.manifest?.name ?? target.extension.folderName}`}
+          provides={FieldModes
+            .filter((side) => isComponentKindUsableAs(getComponentKind(definition), side))
             .map((side) => ({
               label: side === "input" ? "Input" : "Output",
               detail: ComponentValueTypeLabels[definition.value?.type ?? "any"],
@@ -111,7 +114,7 @@ export const ComponentsTab: FC = observer(() => {
         key={target.key}
         name={target.entry.name}
         // A name can be two components, each side with its own type
-        provides={(["input", "output"] as const).flatMap((side): ExtensionListItemBadge[] => {
+        provides={FieldModes.flatMap((side): ExtensionListItemBadge[] => {
           const appletComponent = target.entry[side]
           if (!appletComponent) {
             return []
