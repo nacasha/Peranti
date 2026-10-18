@@ -2693,7 +2693,7 @@ dependencies = [
 
 [[package]]
 name = "peranti"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "opener",
  "rand 0.8.8",
