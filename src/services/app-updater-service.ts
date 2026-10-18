@@ -1,6 +1,6 @@
 import { relaunch } from "@tauri-apps/plugin-process"
 import { check, type Update } from "@tauri-apps/plugin-updater"
-import { makeAutoObservable, runInAction } from "mobx"
+import { makeAutoObservable, observable, runInAction } from "mobx"
 
 import { UserSettingsKeys } from "src/enums/user-settings-keys"
 import { getErrorMessage } from "src/utils/common/get-error-message"
@@ -57,7 +57,9 @@ class AppUpdaterService {
   readonly currentVersion = __APP_VERSION__
 
   constructor() {
-    makeAutoObservable(this, { update: false })
+    // A ref, not deep: the Update is a plugin class holding a native resource
+    // handle, and only swapping it for another needs to be seen
+    makeAutoObservable(this, { update: observable.ref })
     userSettingsService.watchStore(this)
   }
 
