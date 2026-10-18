@@ -30,6 +30,10 @@
 
     "window-state:default",
 
+    "updater:default",
+
+    "process:allow-restart",
+
     "shell:allow-open",
 
     "clipboard-manager:allow-write-text",

@@ -34,5 +34,8 @@ export enum UserSettingsKeys {
   // Extensions
   extensionsDisabled = "extensions.disabled",
   extensionsCatalogSources = "extensions.catalogSources",
-  extensionsDisabledCatalogSources = "extensions.disabledCatalogSources"
+  extensionsDisabledCatalogSources = "extensions.disabledCatalogSources",
+
+  // Updates
+  updaterCheckOnStartup = "updater.checkOnStartup"
 }

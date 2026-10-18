@@ -17,6 +17,7 @@ import { SettingsExtensions } from "src/components/settings/SettingsExtensions"
 import { SettingsHistory } from "src/components/settings/SettingsHistory"
 import { SettingsItemInput } from "src/components/settings/SettingsItemInput"
 import { SettingsItemSwitch } from "src/components/settings/SettingsItemSwitch"
+import { SettingsUpdates } from "src/components/settings/SettingsUpdates"
 import { TextAreaWordWrapSwitch } from "src/components/settings/TextAreaWordWrapSwitch"
 import { ThemeSelect } from "src/components/settings/ThemeSelect"
 import { ToolSidebarDensitySelect } from "src/components/settings/ToolSidebarDensitySelect"
@@ -284,6 +285,12 @@ export const SettingsPage: FC = observer(() => {
       label: "History",
       icon: Icons.History,
       content: <SettingsHistory />
+    },
+    {
+      id: "updates",
+      label: "Updates",
+      icon: Icons.Download,
+      content: <SettingsUpdates />
     },
     {
       id: "appData",

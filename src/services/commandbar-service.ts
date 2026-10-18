@@ -1,3 +1,4 @@
+import NiceModal from "@ebay/nice-modal-react"
 import Fuse from "fuse.js"
 import { makeAutoObservable, observable, reaction } from "mobx"
 
@@ -5,6 +6,7 @@ import { extensionsApplet } from "src/applets/pages/extensions-applet"
 import { historyApplet } from "src/applets/pages/history-applet"
 import { settingsApplet } from "src/applets/pages/settings-applet"
 import { workbenchApplet } from "src/applets/pages/workbench-applet"
+import { UpdateDialog } from "src/components/dialog/UpdateDialog"
 import { type Session } from "src/types/Session.ts"
 import { getSessionDisplayName } from "src/utils/applet/get-session-display-name.ts"
 import { extractSearchableText } from "src/utils/search/extract-searchable-text.ts"
@@ -334,6 +336,11 @@ class CommandbarService {
         key: "cmd:reload-extensions",
         label: "Reload Extensions",
         run: () => { void appletStore.reloadExtensions() }
+      },
+      {
+        key: "cmd:check-for-updates",
+        label: "Check for Updates",
+        run: () => { void NiceModal.show(UpdateDialog, { check: true }) }
       }
     ]
   }

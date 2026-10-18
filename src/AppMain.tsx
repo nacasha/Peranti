@@ -1,6 +1,7 @@
 import { AppRoot } from "./AppRoot.js"
 import { AppThemeListener } from "./components/app/AppThemeListener"
 import { AppTitlebar } from "./components/app/AppTitlebar"
+import { AppUpdateListener } from "./components/app/AppUpdateListener"
 import { AppletViewer } from "./components/applet/AppletViewer"
 import { Commandbar } from "./components/commandbar/Commandbar"
 import { FileDropArea } from "./components/filedrop/FileDropArea"
@@ -20,6 +21,7 @@ export const AppMain = () => {
       <NotificationProvider />
 
       <AppThemeListener />
+      <AppUpdateListener />
       <Commandbar />
 
       <WindowResizeEventListener />

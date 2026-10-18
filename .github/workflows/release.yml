@@ -18,10 +18,6 @@ on:
           - patch
           - minor
           - major
-      prerelease:
-        description: "Mark the release as a prerelease"
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -203,16 +199,24 @@ jobs:
 
           echo "::notice::Apple signing and notarization enabled."
 
+      # tauri.conf.json sets `createUpdaterArtifacts`, so every bundle is also
+      # signed for the in-app updater, and tauri-action merges the per-platform
+      # entries of each matrix job into one `latest.json` on the release. The
+      # app reads it from releases/latest, so a draft is never offered.
+      # Without the private key the build fails rather than shipping bundles
+      # the updater would reject.
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: v${{ needs.prepare.outputs.version }}
           releaseName: "Peranti v${{ needs.prepare.outputs.version }}"
           releaseBody: ${{ needs.prepare.outputs.changelog }}
           # Always a draft. "2. Publish" is what makes a release public.
           releaseDraft: true
-          prerelease: ${{ inputs.prerelease }}
+          prerelease: false
 
       # Tauri notarizes and staples the .app, but only *signs* the DMG it wraps
       # it in — macos/app.rs calls notarize(), macos/dmg/mod.rs never does

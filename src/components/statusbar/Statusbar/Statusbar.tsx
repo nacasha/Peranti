@@ -3,6 +3,7 @@ import { interfaceStore } from "src/services/interface-store"
 
 import { StatusbarItemSendFeedback } from "../StatusbarItemSendFeedback"
 import { StatusbarItemTheme } from "../StatusbarItemTheme"
+import { StatusbarItemUpdate } from "../StatusbarItemUpdate"
 import { StatusbarItemWordWrap } from "../StatusbarItemWordWrap"
 
 import "./Statusbar.scss"
@@ -20,6 +21,7 @@ export const Statusbar = () => {
         <div className="Statusbar-item">
           {__APP_VERSION__}
         </div>
+        <StatusbarItemUpdate />
       </div>
 
       <div className="Statusbar-section">

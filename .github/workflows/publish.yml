@@ -169,19 +169,43 @@ jobs:
           set -euo pipefail
           REPO="${{ github.repository }}"
 
-          # The draft was built before the bump commit existed, so by default
-          # its tag would be created against the parent commit — one whose
-          # package.json still holds the previous version. Repointing it while
-          # the release is still a draft (the only time target_commitish is
-          # mutable) means `git checkout $TAG` gives a tree that matches $TAG.
-          if [ -n "$NEW_SHA" ]; then
-            gh api -X PATCH "repos/$REPO/releases/$RELEASE_ID" \
-              -f target_commitish="$NEW_SHA" > /dev/null
-            echo "Tag will be created at $NEW_SHA"
+          # The draft was built before the bump commit existed, so the tag has
+          # to point at the bump commit for `git checkout $TAG` to give a tree
+          # that matches $TAG. With no new commit (already bumped on a previous
+          # run) the default branch head is that commit or a descendant of it.
+          SHA="$NEW_SHA"
+          if [ -z "$SHA" ]; then
+            SHA=$(gh api "repos/$REPO/commits/${{ github.event.repository.default_branch }}" --jq '.sha')
           fi
 
+          # The tag is created here rather than left to GitHub on publish. A
+          # PATCH that omits tag_name — as repointing target_commitish alone
+          # did — drops a draft's pending tag, and the release then goes live
+          # as `untagged-…` with no git tag. latest.json links the updater
+          # bundles under /download/$TAG/, so those links would all 404.
+          EXISTING=$(gh api "repos/$REPO/git/ref/tags/$TAG" --jq '.object.sha' 2>/dev/null || true)
+          if [ -z "$EXISTING" ]; then
+            gh api -X POST "repos/$REPO/git/refs" \
+              -f ref="refs/tags/$TAG" \
+              -f sha="$SHA" > /dev/null
+            echo "Created tag $TAG at $SHA"
+          elif [ "$EXISTING" != "$SHA" ]; then
+            echo "::error::Tag $TAG already exists at $EXISTING, expected $SHA. Delete it or publish by hand."
+            exit 1
+          fi
+
+          # tag_name goes in the same request as draft=false, so the release
+          # can never be published without it
           gh api -X PATCH "repos/$REPO/releases/$RELEASE_ID" \
+            -f tag_name="$TAG" \
+            -f target_commitish="$SHA" \
             -F draft=false \
             -f make_latest="$MAKE_LATEST" > /dev/null
+
+          PUBLISHED_TAG=$(gh api "repos/$REPO/releases/$RELEASE_ID" --jq '.tag_name')
+          if [ "$PUBLISHED_TAG" != "$TAG" ]; then
+            echo "::error::Release went live as $PUBLISHED_TAG instead of $TAG."
+            exit 1
+          fi
 
           echo "::notice::Published $TAG -> ${{ github.server_url }}/$REPO/releases/tag/$TAG"

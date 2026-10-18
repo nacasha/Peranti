@@ -1,0 +1,48 @@
+.UpdateDialog {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.UpdateDialog-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.UpdateDialog-description {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.UpdateDialog-error {
+  word-break: break-word;
+}
+
+// Release notes come from the GitHub release body, a plain list of commits
+.UpdateDialog-notes {
+  max-height: 220px;
+  overflow: auto;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: calc(6px * var(--radius-scale));
+  font-size: 12px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  user-select: text;
+}
+
+.UpdateDialog-progress {
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  background-color: var(--line);
+}
+
+.UpdateDialog-progress-bar {
+  height: 100%;
+  background-color: var(--accent);
+  transition: width var(--animation-speed) linear;
+}

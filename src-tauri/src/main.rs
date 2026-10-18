@@ -52,9 +52,13 @@ fn my_custom_command(word_count: usize) -> String {
 fn main() {
     let builder = tauri::Builder::default();
 
-    // The window-state plugin is desktop-only; it has no mobile implementation.
+    // The window-state, updater and process plugins are desktop-only; they have
+    // no mobile implementation.
     #[cfg(desktop)]
-    let builder = builder.plugin(tauri_plugin_window_state::Builder::default().build());
+    let builder = builder
+        .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init());
 
     builder
         .setup(|app| {

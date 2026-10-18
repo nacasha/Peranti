@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx"
 
-export type SettingsSectionId = "appearance" | "fonts" | "tabbar" | "toolSidebar" | "fileDrop" | "extensions" | "history" | "appData"
+export type SettingsSectionId = "appearance" | "fonts" | "tabbar" | "toolSidebar" | "fileDrop" | "extensions" | "history" | "updates" | "appData"
 
 class SettingsPageStore {
   /**
