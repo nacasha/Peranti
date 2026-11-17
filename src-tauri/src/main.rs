@@ -8,6 +8,8 @@ use opener::reveal;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use tauri::Manager;
+#[cfg(desktop)]
+use tauri_plugin_window_state::StateFlags;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -56,11 +58,25 @@ fn main() {
     // no mobile implementation.
     #[cfg(desktop)]
     let builder = builder
-        .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(
+            tauri_plugin_window_state::Builder::default()
+                // Never persist visibility: a state saved while the window was hidden
+                // would keep it hidden on every later launch. The window is shown in
+                // `on_page_load` below instead.
+                .with_state_flags(StateFlags::all() - StateFlags::VISIBLE)
+                .build(),
+        )
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init());
 
     builder
+        // The window starts hidden (`visible: false`) so it does not flash before
+        // its saved size and position are restored; show it once the page loaded.
+        .on_page_load(|webview, payload| {
+            if matches!(payload.event(), tauri::webview::PageLoadEvent::Finished) {
+                let _ = webview.window().show();
+            }
+        })
         .setup(|app| {
             let history_db = history::HistoryDb::open(app.handle())?;
             app.manage(history_db);
